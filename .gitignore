@@ -268,3 +268,15 @@ FakesAssemblies/
 *.*.tlog
 \vs
 /vs
+
+/Debug
+\Debug
+
+\v16
+/v16
+
+\x64
+/x64
+
+/x32
+\x32

@@ -1,0 +1,6 @@
+﻿  iPoint.cpp
+C:\workspace\BGA\TowerDefense\lib\iFPS.h(16,17): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\workspace\BGA\TowerDefense\lib\iFPS.h(18,25): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\workspace\BGA\TowerDefense\lib\iPoint.cpp(147,14): warning C4244: 'return': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\workspace\BGA\TowerDefense\lib\iPoint.cpp(153,23): warning C4244: 'return': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  TowerDefense.vcxproj -> C:\workspace\BGA\Debug\TowerDefense.exe

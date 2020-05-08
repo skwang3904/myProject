@@ -48,6 +48,8 @@ void createMeleeWeapon()
 
 	_meleeWP[0] = nomalSword;
 	_meleeWP[1] = nomalSpear;
+
+	printf("hi");
 }
 
 void freeMeleeWeapon()

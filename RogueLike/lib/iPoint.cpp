@@ -114,6 +114,7 @@ float iPointLength(iPoint p)
 
 iPoint iPointRotate(const iPoint& p, const iPoint& t, float degree)
 {
+	// 점 t를 기준점으로 p를 degree만큼 시계방향 회전
 	while (degree < 0)		degree += 360;
 	while (degree > 360)	degree -= 360;
 	float sinr = _sin(degree);

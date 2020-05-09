@@ -13,6 +13,9 @@ void loadRgGame()
 	gamestat = gs_proc;
 #else
 #endif
+
+	iPoint p = iPointRotate(iPointMake(5, 0), iPointMake(3,0), 90);
+	printf("x = %.2f, y = %.2f\n",p.x,p.y );
 }
 
 void freeRgGame()

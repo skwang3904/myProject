@@ -191,6 +191,15 @@ void Player::rootCombat(bool key)
 	if (key == false || evasion == true || falling == true)
 		return;
 
+	for (int i = 0; i < meleeNum; i++)
+	{
+		if (mw == _mw[i])
+		{
+			weapon->wDropPos[i] = iPointMake(playerPosition.x + HALF_OF_TEX_WIDTH,
+				playerPosition.y + HALF_OF_TEX_HEIGHT);
+		}
+	}
+
 	int num = meleeNum;	
 	for (int i = 0; i < num; i++)
 	{

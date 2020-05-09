@@ -64,7 +64,7 @@ static int vertical = TOP;
 static int horizon = LEFT;
 static float angle = 0.0f;
 
-iPoint weaponPosition(float dt, iPoint& wp)
+void weaponPosition(meleeWeapon* mw, float dt, iPoint& wp)
 {
 	//임시
 	static iPoint p = iPointMake(pc->playerPosition.x + HALF_OF_TEX_WIDTH * 2.0f,
@@ -72,16 +72,16 @@ iPoint weaponPosition(float dt, iPoint& wp)
 
 	if (pc->weaponVector.x < 0)
 	{
-		p.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH;
-		p.y = pc->playerPosition.y + 15;
+		p.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH - mw->img->tex->height/2;
+		p.y = pc->playerPosition.y;
 		vertical = BOTTOM;
 		horizon = RIGHT;
 		angle = 90.0f;
 	}
 	else if (pc->weaponVector.x > 0)
 	{
-		p.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH;
-		p.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT * 2.0f - 15;
+		p.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH + mw->img->tex->height / 2;
+		p.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT * 2.0f ;
 		vertical = TOP;
 		horizon = LEFT;
 		angle = 270.0f;
@@ -90,7 +90,7 @@ iPoint weaponPosition(float dt, iPoint& wp)
 	if (pc->weaponVector.y < 0)
 	{
 		p.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH * 2.0f;
-		p.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT;
+		p.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT - mw->img->tex->height / 2;
 		vertical = BOTTOM;
 		horizon = LEFT;
 		angle = 0.0f;
@@ -98,57 +98,67 @@ iPoint weaponPosition(float dt, iPoint& wp)
 	else if (pc->weaponVector.y > 0)
 	{
 		p.x = pc->playerPosition.x;
-		p.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT;
+		p.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT + mw->img->tex->height / 2;
 		vertical = TOP;
 		horizon = RIGHT;
 		angle = 180.0f;
 	}
 
 	wp = p;
-	return p;
 }
 
+
+static bool att = false;
 void attackMelee(meleeWeapon* mw ,float dt, bool drop, iPoint dropP)
 {
 	// 공격할때 움직이는 거리, 각도, 속도 등,,
-	static iPoint index = pc->weaponVector;
 
-	mw->attackSpeed = 0.0f;
-	mw->attackSpeed += dt;
-	if (mw->attackSpeed < mw->_attackSpeed)
-	{
-		iPoint p = pc->weaponVector;
-		float range = 100.0f;
-
-		mw->combatPosition += p * (range * dt);
-		index += p * (range * dt);
-	}
-	else
-	{
-		mw->combatPosition -= index;
-		mw->attackSpeed -= mw->_attackSpeed;
-		index = pc->weaponVector;
-	}
+	
 }
 
 //void attackMelee(meleeWeapon* wMelee, 'data...');
 
+// 히트박스
+// 이미지가 히트박스에 곂치면
+
+
 void draw(meleeWeapon* melee, float dt, bool drop, iPoint dropP)
 {
+
+	if (getKeyDown(keyboard_attack))
+	{
+		if (att == false)
+			melee->attackSpeed = 0.0f;
+		att = true;
+		
+	}
+
+	if (att == true)
+	{
+		attackMelee(melee, dt, drop, dropP);
+		//return;
+	}
+
+
 	Texture* tex = melee->img->tex;
 
 	if (drop == false)
 	{
-		iPoint p = weaponPosition(dt, melee->combatPosition);
-
+		weaponPosition(melee,dt, melee->combatPosition);
+		iPoint p = melee->combatPosition;
+#if 0
 		drawImage(tex, p.x, p.y, 0, 0,
 			tex->width, tex->height,
 			vertical | horizon, 1.0f, 1.0f, 2, angle, REVERSE_NONE);
-		setRGBA(0, 1, 0, 1);
-
+#else
+		drawImage(tex, p.x, p.y, 0, 0,
+			tex->width, tex->height,
+			VCENTER | HCENTER, 1.0f, 1.0f, 2, angle, REVERSE_NONE);
+#endif
 		melee->hitBox = drawHitBox(tex, p.x, p.y, 0, 0,
 			tex->width, tex->height,
-			vertical | horizon, 1.0f, 1.0f, 2, angle);
+			VCENTER | HCENTER, 1.0f, 1.0f, 2, angle);
+		setRGBA(0, 1, 0, 1);
 		drawRect(melee->hitBox);
 
 		setRGBA(1, 1, 1, 1);
@@ -160,10 +170,10 @@ void draw(meleeWeapon* melee, float dt, bool drop, iPoint dropP)
 			0, 0, tex->width, tex->height,
 			VCENTER | HCENTER, 1.5f, 1.5f, 2, 0, REVERSE_NONE);
 
-		setRGBA(0, 1, 0, 1);
 		melee->hitBox = drawHitBox(tex, p.x, p.y, 0, 0,
 			tex->width, tex->height,
 			VCENTER | HCENTER, 1.5f, 1.5f, 2, 0);
+		setRGBA(0, 1, 0, 1);
 		drawRect(melee->hitBox);
 
 		setRGBA(1, 1, 1, 1);
@@ -236,8 +246,6 @@ void meleeWeapon::init()
 
 void nomalSwordMethod(float dt,bool drop, iPoint dropP)
 {
-	if(drop == false && getKeyDown(keyboard_attack))
-		attackMelee(nomalSword, dt, drop, dropP);
 	draw(nomalSword, dt, drop, dropP);
 
 }

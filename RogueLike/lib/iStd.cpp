@@ -805,21 +805,14 @@ void drawImage(Texture* tex, int x, int y,
         {x+width, y},       // top|right
         {x+width, y+height} // bottom|right
     };
-#if 0
-    iPoint coordinate[4] = {
-        {0.0, 0.0},
-        {0.0, tex->height / tex->potHeight},
-        {tex->width / tex->potWidth, 0.0},
-        {tex->width / tex->potWidth, tex->height / tex->potHeight}
-    };
-#else
+
     iPoint coordinate[4] = {
         {ix / tex->potWidth, iy / tex->potHeight},
         {ix / tex->potWidth, (iy + ih) / tex->potHeight},
         {(ix + iw) / tex->potWidth, iy / tex->potHeight},
         {(ix + iw) / tex->potWidth, (iy + ih) / tex->potHeight}
     };
-#endif
+
     float color[4][4] = {
         {_r, _g, _b, _a},
         {_r, _g, _b, _a},
@@ -911,12 +904,32 @@ iRect drawHitBox(Texture* tex, int x, int y,
     }
 
     // 수정 필요
-    iRect rt = iRectMake(x, y, width, height);
-    if (degree == 90 || degree == 270)
+#if 1
+    iRect rt = iRectMake(x, y , width, height);
+	if (degree == 90 || degree == 270)
     {
-        rt = iRectMake(x-15, y+15, height, width);
+        rt = iRectMake(x  + width/2 - height / 2, y  - width/2 + height / 2, height, width);
     }
+#else
+#endif
+#if 1
+	iPoint p1 = iPointMake(rt.origin.x + width/2, rt.origin.y);
+	iPoint p2 = iPointMake(0, rt.size.height);
 
+	if (degree == 90 || degree == 270)
+	{
+		p1 = iPointMake(rt.origin.x, (rt.origin.y + width / 2));
+		p2 = iPointMake(rt.size.width, 0);
+	}
+#else
+	iPoint p1 = iPointMake(rt.origin.x + width / 2, rt.origin.y );
+	iPoint p2 = iPointMake(0, rt.size.height);
+
+	iPoint p = iPointRotate(p2 + p1, p1, degree);
+#endif
+	setRGBA(0, 0, 1, 1);
+	drawLine(p1, p1 + p2);
+	setRGBA(1,1,1,1);
     return rt;
 }
 

@@ -54,7 +54,7 @@ struct meleeWeapon {
 
 void createMeleeWeapon();
 void freeMeleeWeapon();
-iPoint weaponPosition(float dt, iPoint& wp);
+void weaponPosition(meleeWeapon* mw, float dt, iPoint& wp);
 void attackMelee(meleeWeapon* mw, float dt, bool drop, iPoint dropP);
 //void attackMelee(meleeWeapon* wMelee, 'data...');
 

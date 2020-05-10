@@ -107,7 +107,7 @@ void drawImage(Texture* tex, int x, int y,
     float ratX, float ratY, int xyz, float degree,
     int reverse=REVERSE_NONE);
 
-iRect drawHitBox(Texture* tex, int x, int y,
+iRect getHitBoxRect(Texture* tex, int x, int y,
     int ix, int iy, int iw, int ih, int anc,
     float ratX, float ratY, int xyz, int degree);
 

@@ -28,7 +28,6 @@ struct meleeWeapon {
 	iImage* img;
 
 	bool melee;
-	char name[64];
 
 	float attackDmg;
 	float attackSpeed;
@@ -38,11 +37,10 @@ struct meleeWeapon {
 	iPoint combatPosition;
 	iRect hitBox;
 
-	void init();
+	void init(); // 임시
 	void init(
 		iImage* iImg,
 		bool isMelee,
-		char iName,
 		float iAttackDmg,
 		float iAttackSpeed,
 		float _iAttackSpeed,
@@ -55,7 +53,8 @@ struct meleeWeapon {
 void createMeleeWeapon();
 void freeMeleeWeapon();
 void weaponPosition(meleeWeapon* mw, float dt, iPoint& wp);
-void attackMelee(meleeWeapon* mw, float dt, bool drop, iPoint dropP);
+void weaponVector(meleeWeapon* mw, float dt);
+bool attackMelee(meleeWeapon* mw, float dt, bool attacking, bool drop, iPoint dropP);
 //void attackMelee(meleeWeapon* wMelee, 'data...');
 
 void draw(meleeWeapon* melee, float dt, bool drop, iPoint dropP);

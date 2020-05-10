@@ -884,7 +884,7 @@ void drawImage(Texture* tex, int x, int y,
 }
 
 // 임시 // 무기 히트박스용
-iRect drawHitBox(Texture* tex, int x, int y, 
+iRect getHitBoxRect(Texture* tex, int x, int y, 
     int ix, int iy, int iw, int ih,
     int anc, float ratX, float ratY, 
     int xyz, int degree)

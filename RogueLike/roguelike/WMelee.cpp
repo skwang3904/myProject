@@ -10,6 +10,10 @@ meleeWeapon* nomalSpear; //창
 
 int meleeNum;
 
+static int vertical = TOP;
+static int horizon = LEFT;
+static float angle = 0.0f;
+
 void createMeleeWeapon()
 {
 	meleeNum = 0;
@@ -42,8 +46,7 @@ void createMeleeWeapon()
 	freeImage(tex);
 	//-----------------------------------------------------------
 
-	char name= 'a';
-	nomalSpear->init(imgSpear, true, name, 10, 0.3f, 0.3f, 70.0f, iPointZero, iRectZero);
+	nomalSpear->init(imgSpear, true, 10, 0.3f, 0.3f, 70.0f, iPointZero, iRectZero);
 	meleeNum++;
 
 	_meleeWP[0] = nomalSword;
@@ -54,15 +57,15 @@ void createMeleeWeapon()
 void freeMeleeWeapon()
 {
 	for (int i = 0; i < meleeNum; i++)
-		delete _meleeWP[i]->img;
+	{
+		if(_meleeWP[i]->img)
+			delete _meleeWP[i]->img;
+		free(_meleeWP[i]);
+	}
 	free(_meleeWP);
 
 	meleeNum = 0;
 }
-
-static int vertical = TOP;
-static int horizon = LEFT;
-static float angle = 0.0f;
 
 void weaponPosition(meleeWeapon* mw, float dt, iPoint& wp)
 {
@@ -107,13 +110,79 @@ void weaponPosition(meleeWeapon* mw, float dt, iPoint& wp)
 	wp = p;
 }
 
-
 static bool att = false;
-void attackMelee(meleeWeapon* mw ,float dt, bool drop, iPoint dropP)
+static iPoint saveCP = iPointZero;
+static iPoint mv = iPointZero;
+
+void weaponVector(meleeWeapon* mw, float dt)
+{
+	if (getKeyStat(keyboard_left)) // 무기방향
+	{
+		mv.x = -1;
+		mv.y = 0;
+
+	}
+	else if (getKeyStat(keyboard_right))
+	{
+		mv.x = 1;
+		mv.y = 0;
+
+	}
+	if (getKeyStat(keyboard_up))
+	{
+		mv.x = 0;
+		mv.y = -1;
+
+	}
+	else if (getKeyStat(keyboard_down))
+	{
+		mv.x = 0;
+		mv.y = 1;
+	}
+}
+
+bool attackMelee(meleeWeapon* mw ,float dt,bool attacking, bool drop, iPoint dropP)
 {
 	// 공격할때 움직이는 거리, 각도, 속도 등,,
+	if (attacking == false || drop == true)
+		return false;
 
-	
+	weaponPosition(mw, dt, mw->combatPosition);
+	if (saveCP == iPointZero)
+		saveCP = mw->combatPosition;
+
+	static float delta = 0.0f;
+	delta += dt;
+	if (delta > 0.2f)
+	{
+		delta = 0.0f;
+		mw->combatPosition = saveCP;
+		saveCP = iPointZero;
+		att = false;
+		return false;
+	}
+
+	float range = 50.0f;
+	float test = easeIn(delta / 0.1f, 0, range);
+
+	iPoint p = mv * test;
+	mw->combatPosition += p;
+
+	iPoint cp = mw->combatPosition;
+	Texture* tex = mw->img->tex;
+
+	drawImage(tex, cp.x, cp.y, 0, 0,
+		tex->width, tex->height,
+		VCENTER | HCENTER, 1.0f, 1.0f, 2, angle, REVERSE_NONE);
+
+	mw->hitBox = getHitBoxRect(tex, cp.x, cp.y, 0, 0,
+		tex->width, tex->height,
+		VCENTER | HCENTER, 1.0f, 1.0f, 2, angle);
+	setRGBA(0, 1, 0, 1);
+	drawRect(mw->hitBox);
+	setRGBA(1, 1, 1, 1);
+
+	return true;
 }
 
 //void attackMelee(meleeWeapon* wMelee, 'data...');
@@ -124,43 +193,22 @@ void attackMelee(meleeWeapon* mw ,float dt, bool drop, iPoint dropP)
 
 void draw(meleeWeapon* melee, float dt, bool drop, iPoint dropP)
 {
-
-	if (getKeyDown(keyboard_attack))
-	{
-		if (att == false)
-			melee->attackSpeed = 0.0f;
-		att = true;
-		
-	}
-
-	if (att == true)
-	{
-		attackMelee(melee, dt, drop, dropP);
-		//return;
-	}
-
-
 	Texture* tex = melee->img->tex;
 
 	if (drop == false)
 	{
 		weaponPosition(melee,dt, melee->combatPosition);
 		iPoint p = melee->combatPosition;
-#if 0
-		drawImage(tex, p.x, p.y, 0, 0,
-			tex->width, tex->height,
-			vertical | horizon, 1.0f, 1.0f, 2, angle, REVERSE_NONE);
-#else
+
 		drawImage(tex, p.x, p.y, 0, 0,
 			tex->width, tex->height,
 			VCENTER | HCENTER, 1.0f, 1.0f, 2, angle, REVERSE_NONE);
-#endif
-		melee->hitBox = drawHitBox(tex, p.x, p.y, 0, 0,
+
+		melee->hitBox = getHitBoxRect(tex, p.x, p.y, 0, 0,
 			tex->width, tex->height,
 			VCENTER | HCENTER, 1.0f, 1.0f, 2, angle);
 		setRGBA(0, 1, 0, 1);
 		drawRect(melee->hitBox);
-
 		setRGBA(1, 1, 1, 1);
 	}
 	else
@@ -170,12 +218,11 @@ void draw(meleeWeapon* melee, float dt, bool drop, iPoint dropP)
 			0, 0, tex->width, tex->height,
 			VCENTER | HCENTER, 1.5f, 1.5f, 2, 0, REVERSE_NONE);
 
-		melee->hitBox = drawHitBox(tex, p.x, p.y, 0, 0,
+		melee->hitBox = getHitBoxRect(tex, p.x, p.y, 0, 0,
 			tex->width, tex->height,
 			VCENTER | HCENTER, 1.5f, 1.5f, 2, 0);
 		setRGBA(0, 1, 0, 1);
 		drawRect(melee->hitBox);
-
 		setRGBA(1, 1, 1, 1);
 	}
 }
@@ -185,7 +232,6 @@ void draw(meleeWeapon* melee, float dt, bool drop, iPoint dropP)
 void meleeWeapon::init(
 	iImage* iImg,
 	bool isMelee,
-	char iName,
 	float iAttackDmg,
 	float iAttackSpeed,
 	float _iAttackSpeed,
@@ -195,7 +241,6 @@ void meleeWeapon::init(
 {
 	img = iImg;
 	melee = isMelee;
-	name[64] = iName;
 
 	 attackDmg = iAttackDmg;
 	 attackSpeed = iAttackSpeed;
@@ -212,10 +257,9 @@ void meleeWeapon::init()
 {
 	img = new iImage();
 	melee = true;
-	strcpy(name, "검");
 	attackDmg = 10.0f;
-	attackSpeed = 0.5f;
-	_attackSpeed = 0.5f;
+	attackSpeed = 0.0f;
+	_attackSpeed = 1.0f;
 	reach = 10.0f;
 
 	combatPosition = iPointZero;
@@ -226,7 +270,6 @@ void meleeWeapon::init()
 	iSize size = iSizeMake(20, 50);
 	g->init(size);
 
-
 	setRGBA(1, 0, 0, 1);
 	g->fillRect(0, 0, size.width, size.height);
 	setRGBA(1, 1, 1, 1);
@@ -234,7 +277,7 @@ void meleeWeapon::init()
 	setStringSize(10);
 	setStringRGBA(0, 0, 0, 1);
 	setStringBorder(0);
-	g->drawString(size.width / 2, size.height / 2, VCENTER | HCENTER, "%s", name);
+	g->drawString(size.width / 2, size.height / 2, VCENTER | HCENTER, "검");
 
 	Texture* tex = g->getTexture();
 	img->addObject(tex);
@@ -244,14 +287,45 @@ void meleeWeapon::init()
 }
 /////////////////////////////////////////////////////////////////////////////////
 
-void nomalSwordMethod(float dt,bool drop, iPoint dropP)
+void nomalSwordMethod(float dt, bool drop, iPoint dropP)
 {
-	draw(nomalSword, dt, drop, dropP);
+	meleeWeapon* mw = nomalSword;
+	weaponVector(mw, dt);
+
+	if (getKeyDown(keyboard_attack)  && mw->attackSpeed == 0)
+	{
+		att = true;
+		mw->attackSpeed -= mw->_attackSpeed;
+	}
+
+	mw->attackSpeed += dt;
+	if (mw->attackSpeed > 0.0f)
+		mw->attackSpeed =(int)0;
+
+	if (attackMelee(mw, dt, att, drop, dropP))
+		return;
+
+	draw(mw, dt, drop, dropP);
 
 }
 
 void nomalSpearMethod(float dt, bool drop, iPoint dropP)
 {
-	draw(nomalSpear, dt, drop, dropP);
+	meleeWeapon* mw = nomalSpear;
+	weaponVector(mw, dt);
 
+	if (getKeyDown(keyboard_attack)&& mw->attackSpeed == 0 )
+	{
+		att = true;
+		mw->attackSpeed -= mw->_attackSpeed;
+	}
+
+	mw->attackSpeed += dt;
+	if (mw->attackSpeed > 0.0f)
+		mw->attackSpeed = (int)0;
+
+	if (attackMelee(mw, dt, att, drop, dropP))
+		return;
+
+	draw(mw, dt, drop, dropP);
 }

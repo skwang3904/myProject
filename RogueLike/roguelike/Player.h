@@ -16,8 +16,10 @@
 #define EVASION_DISTANCE 500
 #define EVASION_DURATION 0.4f
 
+#define MELEE_NUM 2
+
 typedef void (*Method_Combat)(float dt, bool drop, iPoint dropP);
-extern Method_Combat _mw[2];
+extern Method_Combat _mw[MELEE_NUM];
 
 class Player
 {
@@ -35,8 +37,6 @@ public:
 	void combatDraw(float dt);
 	void rootCombat(bool key);
 	void dropCombat(float dt ,bool key);
-
-	void attackCombat(Method_Combat* mw);
 
 	void movePlayer(float dt);
 	bool evasionPlayer(float dt);

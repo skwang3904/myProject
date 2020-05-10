@@ -13,7 +13,7 @@ Texture** texsHead;
 Texture** texsFall;
 Texture** texsEvasion;
 
-Method_Combat _mw[2] = { nomalSwordMethod, nomalSpearMethod };
+Method_Combat _mw[MELEE_NUM] = { nomalSwordMethod, nomalSpearMethod };
 
 
 static bool evasion = false;
@@ -191,22 +191,26 @@ void Player::rootCombat(bool key)
 	if (key == false || evasion == true || falling == true)
 		return;
 
-	for (int i = 0; i < meleeNum; i++)
+	int num = meleeNum;
+	for (int i = 0; i < num; i++)
 	{
 		if (mw == _mw[i])
 		{
 			weapon->wDropPos[i] = iPointMake(playerPosition.x + HALF_OF_TEX_WIDTH,
-				playerPosition.y + HALF_OF_TEX_HEIGHT);
+				playerPosition.y + HALF_OF_TEX_HEIGHT);	
 		}
 	}
 
-	int num = meleeNum;	
 	for (int i = 0; i < num; i++)
 	{
-		if(containRect(touchPlayer, _meleeWP[i]->hitBox))
+		if (mw != _mw[i])
 		{
-			//drop weapon				
-			mw = _mw[i];
+			if (containRect(touchPlayer, _meleeWP[i]->hitBox))
+			{
+				//drop weapon				
+				mw = _mw[i];
+				break;
+			}
 		}
 	}
 }
@@ -216,10 +220,11 @@ void Player::dropCombat(float dt,bool key)
 	if (key == false || evasion == true || falling == true)
 		return;
 	
+	int num = meleeNum;
 	if (mw)
 	{
 		//임시
-		for (int i = 0; i < meleeNum; i++)
+		for (int i = 0; i < num; i++)
 		{
 			if (mw == _mw[i])
 			{
@@ -232,12 +237,6 @@ void Player::dropCombat(float dt,bool key)
 	}
 	
 }
-
-void Player::attackCombat(Method_Combat* mw)
-{
-
-}
-
 
 void Player::movePlayer(float dt)
 {
@@ -329,16 +328,8 @@ bool Player::evasionPlayer(float dt)
 		}
 	}
 
-	static float delta = 0.0f;
-	delta += dt;
-
-	if (delta > EVASION_DURATION)
-		delta -= EVASION_DURATION;
-
 	if (img[9]->animation == true)
-	{
-		float dis = linear(delta / EVASION_DURATION, 0, EVASION_DISTANCE);
-		
+	{	
 		iPoint v = iPointZero;
 		if (weaponVector != iPointZero)
 			v = weaponVector / iPointLength(weaponVector);

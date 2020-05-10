@@ -1,21 +1,46 @@
-﻿  WMelee.cpp
+﻿  Player.cpp
 C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(16,17): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(18,25): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(184,19): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(184,7): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(183,24): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(183,19): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(189,38): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(188,19): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(188,7): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(187,41): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(187,36): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(199,25): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(199,13): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(198,24): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(198,19): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(291,43): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(290,21): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(299,42): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  RgProc.cpp
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(298,21): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(16,17): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  WMelee.cpp
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(18,25): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(16,17): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(18,25): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(175,18): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(175,6): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(174,25): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(174,19): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(180,37): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(179,18): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(179,6): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(178,42): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(178,36): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(204,19): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(204,7): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(203,24): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(203,19): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(203,7): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(202,41): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(202,36): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(209,38): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(208,19): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(208,7): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(207,44): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(207,39): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(218,25): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(218,13): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(217,24): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(217,19): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(222,19): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(222,7): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(221,44): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Weapon.cpp
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(221,39): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(16,17): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(18,25): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\Weapon.cpp(17,50): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  코드를 생성하고 있습니다...
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\Weapon.cpp(17,32): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   RogueLike.vcxproj -> C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\RogueLike.exe

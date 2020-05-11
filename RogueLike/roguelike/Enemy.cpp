@@ -5,11 +5,14 @@
 
 Enemy1** enemys;
 Enemy1* enemy1;
-void Enemy1::init()
+
+int enemysNum;
+
+void Enemy1::init(int a)
 {
 	img = new iImage();
 	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(50, 100);
+	iSize size = iSizeMake(30, 20 + 20 * a);
 	g->init(size);
 
 	setRGBA(0, 1, 1, 1);
@@ -24,8 +27,7 @@ void Enemy1::init()
 	Texture* tex = g->getTexture();
 	img->addObject(tex);
 	freeImage(tex);
-
-
+	
 	hp = _hp = 50.0f;
 	attackDmg = 0.0f;
 	_attackDmg = 0.0f;
@@ -33,9 +35,10 @@ void Enemy1::init()
 	_attackSpeed = 0.0f;
 	moveSpeed = 100.0f;
 
-	Enemy1Position = iPointMake(280,120);
+	Enemy1Position = iPointMake(200 + 40 * a,80 + 20 * a);
 
 	touchEnemy1 = iRectZero;
+	takeDmg = false;
 }
 
 void Enemy1::takeDmgEnemy(float dt, float dmg)
@@ -43,60 +46,86 @@ void Enemy1::takeDmgEnemy(float dt, float dmg)
 	// 무기로 공격이 들어오면
 	// 무기 히트박스에 몹 히트박스가 걸리면
 	// 한번 휘두를때 한번만 공격
-	static bool takeDmg = false;
 
 	if (attacking && takeDmg == false)
 	{
 		hp -= dmg;
 		takeDmg = true;
 	}
-
-	static float delta = 0.0f;
-
-	if (takeDmg)
-	{
-		setRGBA(1, 0, 0, linear(delta / 0.5f, 1.0f, 0.0f));
-		drawImage(img->tex, enemy1->Enemy1Position.x, enemy1->Enemy1Position.y, TOP | LEFT);
-		setRGBA(1, 1, 1, 1);
-	}
-
-	delta += dt;
-	if (delta > 0.5f)
-	{
-		delta = 0.0f;
-		takeDmg = false;
-	}
 }
 
 void createEnemy()
 {
-	enemys = (Enemy1**)malloc(sizeof(Enemy1*) * 1);
+	enemys = (Enemy1**)malloc(sizeof(Enemy1*) * 5);
+	for (int i = 0; i < 5; i++)
+	{
+		enemys[i] = (Enemy1*)malloc(sizeof(Enemy1) * 1);
+		enemys[i]->init(i);
+	}
 
-	enemy1 = (Enemy1*)malloc(sizeof(Enemy1) * 1);
-	enemy1->init();
 
-	enemys[0] = enemy1;
+	//enemy1 = (Enemy1*)malloc(sizeof(Enemy1) * 1);
+	//enemy1->init();
+	//enemys[0] = enemy1;
+
+
+	enemysNum = 5;
 }
 
 void freeEnemy()
 {
-	if (enemy1->img)
-		delete enemy1->img;
-	free(enemy1);
+
+	for (int i = 0; i < enemysNum; i++)
+	{
+		if (enemys[i]->img)
+			delete enemys[i]->img;
+		free(enemys[i]);
+	}
 
 	free(enemys);
 }
 
 void drawEnemy(float dt)
 {
-	enemy1->img->paint(dt, enemy1->Enemy1Position, REVERSE_NONE);
+	int num = enemysNum;
+	static float moveDelta = 0.0f;
+	moveDelta += dt;
+	if (moveDelta > 2.0f)
+		moveDelta = 0.0f;
 
-	enemy1->touchEnemy1 = iRectMake(enemy1->Enemy1Position.x
-		, enemy1->Enemy1Position.y ,
-		enemy1->img->tex->width, enemy1->img->tex->height);
+	float moveDis = 2.5f - fabs(linear(moveDelta / 2.0f, -5.0f, 5.0f));
 
-	setRGBA(0, 0, 0, 1);
-	drawRect(enemy1->touchEnemy1);
-	setRGBA(1, 1, 1, 1);
+	for (int i = 0; i < num; i++) //monNum
+	{
+		Enemy1* enm = enemys[i];	
+		enm->Enemy1Position.x += moveDis;
+		enm->img->paint(dt, enm->Enemy1Position, REVERSE_NONE);
+		enm->touchEnemy1 = iRectMake(enm->Enemy1Position.x
+			, enm->Enemy1Position.y,
+			enm->img->tex->width, enm->img->tex->height);
+
+		setRGBA(0, 0, 0, 1);
+		drawRect(enm->touchEnemy1);
+		setRGBA(1, 1, 1, 1);
+	}
+
+	static float takeDmgDelta = 0.0f;
+	for (int i = 0; i < num; i++) //monNum
+	{
+		Enemy1* enm = enemys[i];
+		if (enm->takeDmg)
+		{
+			setRGBA(0, 0, 0, linear(takeDmgDelta / TAKE_DMG_TIME, 1.0f, 0.0f));
+			drawImage(enm->img->tex, enm->Enemy1Position.x, enm->Enemy1Position.y, TOP | LEFT);
+			setRGBA(1, 1, 1, 1);
+
+			takeDmgDelta += dt;
+			if (takeDmgDelta > TAKE_DMG_TIME)
+			{
+				takeDmgDelta = 0.0f;
+				enm->takeDmg = false;
+			}
+		}
+	}
 }
 

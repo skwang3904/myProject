@@ -38,6 +38,7 @@ struct meleeWeapon {
 
 	iPoint combatPosition;
 	iRect hitBox;
+	bool attackEnemy;
 
 	void init(); // 임시
 	void init(
@@ -49,7 +50,8 @@ struct meleeWeapon {
 		float iReach,
 		float holdAngle,
 		iPoint iCombatPosition,
-		iRect iHitBox);
+		iRect iHitBox,
+		bool iAttackEnemy);
 
 };
 

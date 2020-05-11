@@ -10,6 +10,8 @@
 - 보스 
 */
 
+#define TAKE_DMG_TIME 1.0f
+extern int enemysNum;
 struct Enemy1{
 	iImage* img;
 
@@ -23,8 +25,9 @@ struct Enemy1{
 	iPoint Enemy1Position;
 
 	iRect touchEnemy1;
+	bool takeDmg;
 
-	void init();
+	void init(int a);
 	void takeDmgEnemy(float dt, float dmg);
 
 };

@@ -24,7 +24,6 @@ extern Method_Combat _mw[MELEE_NUM];
 extern bool evasion;
 extern bool falling;
 extern bool attacking;
-
 bool actionCheck(bool key);
 
 class Player
@@ -38,7 +37,6 @@ public:
 
 	void initPlayerStat();
 	void createPlayerImage();
-
 
 	void combatDraw(float dt);
 	void rootCombat(bool key);

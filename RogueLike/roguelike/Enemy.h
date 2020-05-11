@@ -11,7 +11,7 @@
 */
 
 struct Enemy1{
-	iImage** img;
+	iImage* img;
 
 	float hp, _hp;
 	float attackDmg;
@@ -23,15 +23,16 @@ struct Enemy1{
 	iPoint Enemy1Position;
 
 	iRect touchEnemy1;
-};
 
-class Monster
-{
-public:
-	Monster();
-	~Monster();
-
-public:
+	void init();
+	void takeDmgEnemy(float dt, float dmg);
 
 };
+
+extern Enemy1** enemys;
+
+void createEnemy();
+void freeEnemy();
+void drawEnemy(float dt);
+
 

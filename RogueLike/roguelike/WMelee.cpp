@@ -1,6 +1,7 @@
 #include "WMelee.h"
 
 #include "Player.h"
+#include "Enemy.h"
 #include "RgTile.h"
 
 meleeWeapon** _meleeWP;
@@ -146,13 +147,16 @@ bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 
 	weaponPosition(mw, dt, mw->combatPosition);
 
+	
+	//takeDmgEnemy(mw, dt, enemys[]);
+
 	static float delta = 0.0f;
 
 	float range = iRange;	
-	float rangeRate = linear(delta / attTime, 0, range);
+	float rangeRate = easeInOut(delta / attTime, 0, range);
 
 	float attAngle = iAngle;		
-	float attAngleRate = linear(delta / attTime, 0, attAngle);
+	float attAngleRate = easeInOut(delta / attTime, 0, attAngle);
 
 	float ratio = iRatio;
 	float ratioRate = linear(delta / attTime, 1.0f, ratio);
@@ -165,6 +169,10 @@ bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 	iPoint wcp = mw->combatPosition;
 	iPoint centerP = wcp;
 
+	iPoint rtPoint = iPointZero;
+	iSize size = iSizeMake(HALF_OF_TEX_WIDTH * 2.0f, HALF_OF_TEX_HEIGHT * 2.0f);
+	iRect rt = iRectMake(rtPoint.x, rtPoint.y, size.width, size.height);
+
 	Texture* tex = mw->img->tex;
 	if (mv.x < 0)
 	{
@@ -172,6 +180,9 @@ bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 		hcen = RIGHT;
 
 		centerP.x = wcp.x - tex->height  / 2;
+
+		rt.origin.x = pc->playerPosition.x - size.width;
+		rt.origin.y = pc->playerPosition.y;
 	}
 	else if (mv.x > 0)
 	{
@@ -179,6 +190,9 @@ bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 		hcen = LEFT;
 
 		centerP.x = wcp.x + tex->height / 2;
+
+		rt.origin.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH *2.0f ;
+		rt.origin.y = pc->playerPosition.y;
 	}
 	if (mv.y <0)
 	{ 
@@ -187,6 +201,9 @@ bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 
 		centerP.x = wcp.x;
 		centerP.y = wcp.y - tex->height / 2;
+
+		rt.origin.x = pc->playerPosition.x;
+		rt.origin.y = pc->playerPosition.y - size.height;
 	}
 	else if (mv.y >0)
 	{
@@ -195,12 +212,29 @@ bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 
 		centerP.x = wcp.x;
 		centerP.y = wcp.y +tex->height / 2;
+
+		rt.origin.x = pc->playerPosition.x;
+		rt.origin.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT * 2.0f;
 	}
 
+	setRGBA(0, 1, 0, 1);
+	mw->hitBox = rt;
+	fillRect(rt);
+
+	setRGBA(1, 1, 1, 1);
 	wcp = iPointRotate(centerP, wcp, attAngleRate);
 	drawImage(tex,wcp.x, wcp.y, 0, 0,
 		tex->width, tex->height,
 		VCENTER | HCENTER, ratioRate, ratioRate, 2, attAngleRate + angle + mw->holdAngle, REVERSE_NONE);
+
+	for (int i = 0; i < 1; i++) // enemyNum
+	{
+		if (containRect(mw->hitBox, enemys[i]->touchEnemy1))
+		{
+			enemys[i]->takeDmgEnemy(dt, mw->attackDmg);
+		}
+	}
+	
 
 	delta += dt;
 	if (delta > attTime)
@@ -213,12 +247,6 @@ bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 	}
 	return true;
 }
-
-//void attackMelee(meleeWeapon* wMelee, 'data...');
-
-// 히트박스
-// 이미지가 히트박스에 곂치면
-
 
 void draw(meleeWeapon* melee, float dt, float holdAngle, bool drop, iPoint dropP)
 {

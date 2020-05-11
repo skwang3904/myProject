@@ -1216,9 +1216,10 @@ iPoint easeOut(float r, iPoint a, iPoint b)
 
 float easeInOut(float r, float a, float b)
 {
-    if (r < 0.5f)
-        easeIn(r * 2.0f, a, a + (b - a) / 2);
-    return easeOut((r - 0.5f) * 2.0f, a + (b - a) / 2, b);
+    if (r > 0.5f)
+        return  easeIn(r * 2.0f, a, a + (b - a) / 2.0f);
+    else
+        return easeOut((r - 0.5f) * 2.0f, a + (b - a) / 2.0f, b);
 }
 
 iPoint easeInOut(float r, iPoint a, iPoint b)

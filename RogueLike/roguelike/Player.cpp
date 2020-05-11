@@ -200,12 +200,18 @@ void Player::rootCombat(bool key)
 		return;
 
 	int num = meleeNum;
-	for (int i = 0; i < num; i++)
+	if (mw)
 	{
-		if (mw == _mw[i])
+		for (int i = 0; i < num; i++)
 		{
-			weapon->wDropPos[i] = iPointMake(playerPosition.x + HALF_OF_TEX_WIDTH,
-				playerPosition.y + HALF_OF_TEX_HEIGHT);	
+			if (mw == _mw[i])
+			{
+				weapon->wDropPos[i] = iPointMake(playerPosition.x + HALF_OF_TEX_WIDTH,
+					playerPosition.y + HALF_OF_TEX_HEIGHT);
+
+				mw = NULL;
+				break;
+			}
 		}
 	}
 
@@ -217,6 +223,7 @@ void Player::rootCombat(bool key)
 			{
 				//drop weapon				
 				mw = _mw[i];
+				weapon->wDropPos[i] = iPointZero;
 				break;
 			}
 		}

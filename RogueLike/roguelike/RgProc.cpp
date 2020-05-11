@@ -1,6 +1,7 @@
 #include "RgProc.h"
 
 #include "Player.h"
+#include "Enemy.h"
 #include "Room.h"
 #include "Weapon.h"
 #include "WMelee.h"
@@ -14,12 +15,16 @@ void loadRgProc()
 	pc->initPlayerStat();
 
 	weapon = Weapon::instance();
+
+	createEnemy();
 }
 
 void freeRgProc()
 {
 	delete pc;
 	delete weapon;
+
+	freeEnemy();
 }
 
 void drawRgProc(float dt)
@@ -31,12 +36,13 @@ void drawRgProc(float dt)
 	
 	// 몬스터 draw
 	//weapon->drawWeapon(dt);
+	drawEnemy(dt);
 
 
-	//계속
+
 	//떨어진 무기 줍기
 	// 특정위치에서 (ex 상자) 등장
-	// 손에서 버릴때 현재위치에 등장
+	// 손에서 버릴때 현재위치에 버림
 
 	
 	for (int i = 0; i < meleeNum; i++)

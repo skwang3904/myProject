@@ -47,8 +47,8 @@ void drawRgProc(float dt)
 	}
 	
 
-	pc->movePlayer(dt);
 	pc->combatDraw(dt);
+	pc->movePlayer(dt);
 	pc->rootCombat(getKeyDown(keyboard_pickup));
 	pc->dropCombat(dt,getKeyDown(keyboard_drop));
 }

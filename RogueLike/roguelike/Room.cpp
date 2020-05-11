@@ -1,7 +1,7 @@
 #include "Room.h"
+
 #include "RgTile.h"
 #include "Player.h"
-
 #include <math.h>
 
 
@@ -32,8 +32,9 @@ float findMoveTile(Player* pc, int x, int y)
 	if (RgTile[RGTILE_X * y + x] != MOVETILE)
 		return min; 
 
-	float distance = fabs(iPointLength(iPointMake(RGTILE_Width* x + RGTILE_Width/2, 
-		RGTILE_Height * y+ RGTILE_Height/2) - pc->playerPosition));
+	float distance = fabs(iPointLength(
+		iPointMake(RGTILE_Width* x + RGTILE_Width/2,RGTILE_Height * y + RGTILE_Height / 2)
+		- pc->playerPosition - iPointMake(HALF_OF_TEX_WIDTH/2, HALF_OF_TEX_HEIGHT/2)));
 
 	if(min > distance)
 		return distance;
@@ -121,8 +122,8 @@ void findMoveTile(Player* pc)
 			break;
 	}
 
-	pc->playerPosition = iPointMake(RGTILE_Width * pcX + HALF_OF_TEX_WIDTH,
-		RGTILE_Height * pcY + HALF_OF_TEX_HEIGHT);
+	pc->playerPosition = iPointMake(RGTILE_Width * pcX + HALF_OF_TEX_WIDTH /2,
+		RGTILE_Height * pcY + HALF_OF_TEX_HEIGHT / 2);
 }
 
 

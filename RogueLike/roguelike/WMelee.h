@@ -34,6 +34,8 @@ struct meleeWeapon {
 	float _attackSpeed;
 	float reach;
 
+	float holdAngle;
+
 	iPoint combatPosition;
 	iRect hitBox;
 
@@ -45,6 +47,7 @@ struct meleeWeapon {
 		float iAttackSpeed,
 		float _iAttackSpeed,
 		float iReach,
+		float holdAngle,
 		iPoint iCombatPosition,
 		iRect iHitBox);
 
@@ -54,10 +57,13 @@ void createMeleeWeapon();
 void freeMeleeWeapon();
 void weaponPosition(meleeWeapon* mw, float dt, iPoint& wp);
 void weaponVector(meleeWeapon* mw, float dt);
-bool attackMelee(meleeWeapon* mw, float dt, bool attacking, bool drop, iPoint dropP);
+// 사거리, 각도, 크기배율 
+bool attackMelee(meleeWeapon* mw, float dt, bool att, float attTime,
+	float iRange, float iAngle, float iRatio);
+
 //void attackMelee(meleeWeapon* wMelee, 'data...');
 
-void draw(meleeWeapon* melee, float dt, bool drop, iPoint dropP);
+void draw(meleeWeapon* melee, float dt, float holdAngle, bool drop, iPoint dropP);
 
 extern meleeWeapon** _meleeWP;
 

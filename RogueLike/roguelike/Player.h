@@ -21,6 +21,12 @@
 typedef void (*Method_Combat)(float dt, bool drop, iPoint dropP);
 extern Method_Combat _mw[MELEE_NUM];
 
+extern bool evasion;
+extern bool falling;
+extern bool attacking;
+
+bool actionCheck(bool key);
+
 class Player
 {
 private:
@@ -42,7 +48,7 @@ public:
 	bool evasionPlayer(float dt);
 
 public:
-	iImage** img;// [2] 좌우/위아래 => [4]
+	iImage** img;
 
 	float hp, _hp;
 	float attackDmg;

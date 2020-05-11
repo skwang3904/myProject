@@ -16,8 +16,16 @@ Texture** texsEvasion;
 Method_Combat _mw[MELEE_NUM] = { nomalSwordMethod, nomalSpearMethod };
 
 
-static bool evasion = false;
-static bool falling = false;
+bool evasion = false;
+bool falling = false;
+bool attacking = false;
+
+bool actionCheck(bool key)
+{
+	if (key == false || evasion == true || falling == true || attacking == true)
+		return true;
+	return false;
+}
 
 Player::Player()
 {
@@ -188,7 +196,7 @@ void Player::combatDraw(float dt)
 
 void Player::rootCombat(bool key)
 {
-	if (key == false || evasion == true || falling == true)
+	if (actionCheck(key))
 		return;
 
 	int num = meleeNum;
@@ -217,7 +225,7 @@ void Player::rootCombat(bool key)
 
 void Player::dropCombat(float dt,bool key)
 {
-	if (key == false || evasion == true || falling == true)
+	if (actionCheck(key))
 		return;
 	
 	int num = meleeNum;
@@ -359,3 +367,4 @@ bool Player::evasionPlayer(float dt)
 	
 	return false;
 }
+

@@ -287,7 +287,7 @@ void draw(meleeWeapon* melee, float dt, float holdAngle, bool drop, iPoint dropP
 		iPoint p = dropP;
 		drawImage(tex, p.x, p.y,
 			0, 0, tex->width, tex->height,
-			VCENTER | HCENTER, 1.5f, 1.5f, 2, 90, REVERSE_NONE);
+			VCENTER | HCENTER, 1.2f, 1.2f, 2, 90, REVERSE_NONE);
 
 		melee->hitBox = getHitBoxRect(tex, p.x, p.y, 0, 0,
 			tex->width, tex->height,
@@ -366,7 +366,7 @@ void nomalSwordMethod(float dt, bool drop, iPoint dropP)
 	meleeWeapon* mw = nomalSword;
 	weaponVector(mw, dt);
 
-	if (getKeyDown(keyboard_attack)  && mw->attackSpeed == 0 && pc->mw && 
+	if (getKeyStat(keyboard_attack)  && mw->attackSpeed == 0 && pc->mw && 
 		evasion == false && falling == false)
 	{
 		attacking = true;

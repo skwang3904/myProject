@@ -40,6 +40,8 @@ public:
 	void initPlayerStat();
 	void createPlayerImage();
 
+	void drawPlayer(float dt);
+
 	void combatDraw(float dt);
 	void rootCombat(bool key);
 	void dropCombat(float dt ,bool key);

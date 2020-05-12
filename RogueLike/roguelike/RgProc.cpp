@@ -17,6 +17,7 @@ void loadRgProc()
 	weapon = Weapon::instance();
 
 	createEnemy();
+	createTileSet();
 }
 
 void freeRgProc()
@@ -25,6 +26,7 @@ void freeRgProc()
 	delete weapon;
 
 	freeEnemy();
+	freeTileSet();
 }
 
 void drawRgProc(float dt)
@@ -36,14 +38,12 @@ void drawRgProc(float dt)
 	
 	// 몬스터 draw
 
+	if (pc->hp <= 0.0f)
+		return;
+
 	drawEnemy(dt);
 
-
-
-
-	//떨어진 무기 줍기
 	// 특정위치에서 (ex 상자) 등장
-	// 손에서 버릴때 현재위치에 버림
 	for (int i = 0; i < meleeNum; i++)
 	{
 		if(pc->method == _method[i])
@@ -51,10 +51,8 @@ void drawRgProc(float dt)
 		_method[i](dt, true, weapon->wDropPos[i]);
 	}
 	
-	pc->combatDraw(dt);
-	pc->movePlayer(dt);
-	pc->rootCombat(getKeyDown(keyboard_pickup));
-	pc->dropCombat(dt,getKeyDown(keyboard_drop));
+	pc->drawPlayer(dt);
+	printf("%.2f\n", pc->hp);
 }
 
 void keyRgProc(iKeyState stat, iPoint point)

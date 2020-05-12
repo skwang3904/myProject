@@ -105,7 +105,6 @@ void weaponPosition(meleeWeapon* mw, float dt, iPoint& wp)
 	}
 
 	wp = p;
-
 }
 
 
@@ -148,10 +147,10 @@ bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 	static float delta = 0.0f;
 
 	float range = iRange;	
-	float rangeRate = easeInOut(delta / attTime, 0, range);
+	float rangeRate = easeIn(delta / attTime, 0, range);
 
 	float attAngle = iAngle;		
-	float attAngleRate = easeInOut(delta / attTime, 0, attAngle);
+	float attAngleRate = easeIn(delta / attTime, 0, attAngle);
 
 	float ratio = iRatio;
 	float ratioRate = linear(delta / attTime, 1.0f, ratio);

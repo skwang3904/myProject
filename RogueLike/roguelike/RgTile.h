@@ -19,7 +19,21 @@
 #define FF FALLTILE
 
 #define MOVETILE_RGBA	1, 1, 1, 1
-#define WALLTILE_RGBA	1, 1, 0, 1
+#define WALLTILE_RGBA	0.5, 1, 0, 1
 #define FALLTILE_RGBA	0, 0, 0.5, 1
 
+#define RGTILE1X	RGTILE_X * RGTILE_Width
+
+#define RGTILE2Y	RGTILE_Y * RGTILE_Height
+
+#define RGTILE3X	RGTILE_X * RGTILE_Width
+#define RGTILE3Y	RGTILE_Y * RGTILE_Height
+
+extern int** allTile;
 extern int RgTile[RGTILE_X * RGTILE_Y];
+extern int RgRoomTile1[RGTILE_X * RGTILE_Y];
+extern int RgRoomTile2[RGTILE_X * RGTILE_Y];
+extern int RgRoomTile3[RGTILE_X * RGTILE_Y];
+
+void createTileSet();
+void freeTileSet();

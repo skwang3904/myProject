@@ -148,6 +148,11 @@ void Player::createPlayerImage()
 
 	imgChar[9] = imgEvasion;
 
+	for (int i = 0; i < 10; i++)
+	{
+		if (imgChar[i] == NULL)
+			printf("player imgChar[%d] error", i);
+	}
 	// 생성 
 	//----------------------------
 	// 설정
@@ -187,6 +192,20 @@ void Player::createPlayerImage()
 
 	freeImage(imgRight->tex);
 	freeImage(imgDown->tex);
+}
+
+void Player::drawPlayer(float dt)
+{
+	if (hp <= 0.0f)
+	{
+		//gameover
+		printf("dead\n");
+	}
+
+	pc->combatDraw(dt);
+	pc->movePlayer(dt);
+	pc->rootCombat(getKeyDown(keyboard_pickup));
+	pc->dropCombat(dt, getKeyDown(keyboard_drop));
 }
 
 void Player::combatDraw(float dt)
@@ -299,8 +318,8 @@ void Player::movePlayer(float dt)
 	if (evasionPlayer(dt))
 		return;
 
+	img[ch]->setTexAtIndex(attacking);
 
-	//방향에 따라 캐릭터 애니메이션
 	if (v.x)
 	{
 		img[2 * ani + 0]->paint(dt, playerPosition, v.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);
@@ -346,26 +365,29 @@ bool Player::evasionPlayer(float dt)
 		}
 	}
 
+	if (evasion == false)
+		return false;
+
 	if (img[9]->animation == true)
 	{	
 		iPoint v = iPointZero;
 		if (weaponVector != iPointZero)
 			v = weaponVector / iPointLength(weaponVector);
 
-		if (playerPosition.x < 0.0f)
-			playerPosition.x = 0.0f;
-		else if (playerPosition.x > RGTILE_X* RGTILE_Width - HALF_OF_TEX_WIDTH * 2.0f)
-				 playerPosition.x = RGTILE_X * RGTILE_Width - HALF_OF_TEX_WIDTH * 2.0f;
-		if (playerPosition.y < 0.0f)
-			playerPosition.y = 0.0f;
-		else if (playerPosition.y > RGTILE_Y* RGTILE_Height - HALF_OF_TEX_HEIGHT * 2.0f)
-				 playerPosition.y = RGTILE_Y * RGTILE_Height - HALF_OF_TEX_HEIGHT * 2.0f;
+		//if (playerPosition.x < 0.0f)
+		//	playerPosition.x = 0.0f;
+		//else if (playerPosition.x > RGTILE_X* RGTILE_Width - HALF_OF_TEX_WIDTH * 2.0f)
+		//		 playerPosition.x = RGTILE_X * RGTILE_Width - HALF_OF_TEX_WIDTH * 2.0f;
+		//if (playerPosition.y < 0.0f)
+		//	playerPosition.y = 0.0f;
+		//else if (playerPosition.y > RGTILE_Y* RGTILE_Height - HALF_OF_TEX_HEIGHT * 2.0f)
+		//		 playerPosition.y = RGTILE_Y * RGTILE_Height - HALF_OF_TEX_HEIGHT * 2.0f;
 
 		iPoint p = iPointMake(	playerPosition.x - HALF_OF_TEX_WIDTH,
 								playerPosition.y - HALF_OF_TEX_HEIGHT - 30);
 
 		img[9]->paint(dt, p, REVERSE_NONE);
-
+		
 		return true;
 	}
 

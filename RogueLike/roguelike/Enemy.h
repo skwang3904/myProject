@@ -21,6 +21,7 @@ struct Enemy1{
 	float attackSpeed;
 	float _attackSpeed;
 	float moveSpeed;
+	float reach;
 
 	iPoint Enemy1Position;
 
@@ -31,9 +32,13 @@ struct Enemy1{
 	bool giveDmg;
 	float giveDmgTime;
 
+	bool hit;
+
 	void init(int a);
 	void takeDmgEnemy(float dt, float dmg);
+	bool enemysAttack(float dt);
 
+	//move func pointer
 };
 
 extern Enemy1** enemys;
@@ -42,6 +47,6 @@ void createEnemy();
 void freeEnemy();
 void drawEnemy(float dt);
 
-bool enemysAttack(Enemy1* enm, float dt);
+
 
 void moveEnemyType1(Enemy1* enm,float dt);

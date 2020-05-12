@@ -20,17 +20,9 @@ public:
 
 	static Weapon* instance();
 
-	//void drawWeapon(float dt);
-	//void attactWeapon(Player* pc);
-
 public:
 
 	iPoint wDropPos[4];
-
-	//int meleeNum;
-	//int rangeNum;
-	//int totalWeaponNum;
-
 };
 
 extern Weapon* weapon;

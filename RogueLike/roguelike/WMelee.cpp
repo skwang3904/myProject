@@ -1,6 +1,5 @@
 #include "WMelee.h"
 
-#include "Player.h"
 #include "Enemy.h"
 #include "RgTile.h"
 
@@ -375,7 +374,7 @@ void nomalSwordMethod(float dt, bool drop, iPoint dropP)
 	meleeWeapon* mw = nomalSword;
 	weaponVector(mw, dt);
 
-	if (getKeyStat(keyboard_attack)  && mw->attackSpeed == 0 && pc->mw == nomalSwordMethod &&
+	if (getKeyStat(keyboard_attack)  && mw->attackSpeed == 0 && pc->mw == mw &&
 		evasion == false && falling == false)
 	{
 		attacking = true;
@@ -399,7 +398,7 @@ void nomalSpearMethod(float dt, bool drop, iPoint dropP)
 	meleeWeapon* mw = nomalSpear;
 	weaponVector(mw, dt);
 
-	if (getKeyStat(keyboard_attack) && mw->attackSpeed == 0 && pc->mw == nomalSpearMethod &&
+	if (getKeyStat(keyboard_attack) && mw->attackSpeed == 0 && pc->mw == mw &&
 		evasion == false && falling == false)
 	{
 		attacking = true;

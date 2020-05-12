@@ -11,6 +11,8 @@
 
 #include "../roguelike//RgProc.h"
 #include "../roguelike/Player.h"
+#include "../roguelike/Enemy.h"
+
 
 /////////////////////////////////////////////////////////////////////////////////
 

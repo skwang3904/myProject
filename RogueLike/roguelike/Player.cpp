@@ -13,7 +13,7 @@ Texture** texsHead;
 Texture** texsFall;
 Texture** texsEvasion;
 
-Method_Combat _mw[MELEE_NUM] = { nomalSwordMethod, nomalSpearMethod };
+Method_Combat _method[MELEE_NUM] = { nomalSwordMethod, nomalSpearMethod };
 
 
 bool evasion = false;
@@ -88,6 +88,7 @@ void Player::initPlayerStat()
 	touchPlayer = iRectZero;
 
 	mw = NULL;
+	method = NULL;
 
 }
 
@@ -190,8 +191,8 @@ void Player::createPlayerImage()
 
 void Player::combatDraw(float dt)
 {
-	if(mw)
-		mw(dt, false, iPointZero);
+	if(mw && method)
+		method(dt, false, iPointZero);
 }
 
 void Player::rootCombat(bool key)
@@ -204,12 +205,13 @@ void Player::rootCombat(bool key)
 	{
 		for (int i = 0; i < num; i++)
 		{
-			if (mw == _mw[i])
+			if (mw == _meleeWP[i])
 			{
 				weapon->wDropPos[i] = iPointMake(playerPosition.x + HALF_OF_TEX_WIDTH,
 					playerPosition.y + HALF_OF_TEX_HEIGHT);
 
 				mw = NULL;
+				method = NULL;
 				break;
 			}
 		}
@@ -217,12 +219,13 @@ void Player::rootCombat(bool key)
 
 	for (int i = 0; i < num; i++)
 	{
-		if (mw != _mw[i])
+		if (mw != _meleeWP[i])
 		{
 			if (containRect(touchPlayer, _meleeWP[i]->hitBox))
 			{
 				//drop weapon				
-				mw = _mw[i];
+				mw = _meleeWP[i];
+				method = _method[i];
 				weapon->wDropPos[i] = iPointZero;
 				break;
 			}
@@ -241,14 +244,14 @@ void Player::dropCombat(float dt,bool key)
 		//임시
 		for (int i = 0; i < num; i++)
 		{
-			if (mw == _mw[i])
+			if (mw == _meleeWP[i])
 			{
 				weapon->wDropPos[i] = iPointMake(playerPosition.x + HALF_OF_TEX_WIDTH,
 					playerPosition.y + HALF_OF_TEX_HEIGHT);
 			}
 		}
-
 		mw = NULL;
+		method = NULL;
 	}
 	
 }
@@ -292,7 +295,7 @@ void Player::movePlayer(float dt)
 		if (falling = fallCheck(pc, dt))
 			return;
 
-	wallCheck(pc, mp);
+	wallCheck(false, pc->playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
 	if (evasionPlayer(dt))
 		return;
 

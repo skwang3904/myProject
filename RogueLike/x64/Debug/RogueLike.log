@@ -1,45 +1,9 @@
-﻿  WMelee.cpp
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(16,17): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(18,25): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(234,18): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(234,6): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(233,27): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(233,20): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(290,19): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(290,7): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(289,24): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(289,19): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(297,25): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(297,13): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(296,24): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(296,19): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(301,19): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(301,7): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(300,44): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(300,39): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-useitem.obj : warning LNK4099: 'vc142.pdb' PDB를 'useitem.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Stage.obj : warning LNK4099: 'vc142.pdb' PDB를 'Stage.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Room.obj : warning LNK4099: 'vc142.pdb' PDB를 'Room.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-RgTile.obj : warning LNK4099: 'vc142.pdb' PDB를 'RgTile.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-RgMenu.obj : warning LNK4099: 'vc142.pdb' PDB를 'RgMenu.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-RgIntro.obj : warning LNK4099: 'vc142.pdb' PDB를 'RgIntro.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-RgGame.obj : warning LNK4099: 'vc142.pdb' PDB를 'RgGame.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-glew.obj : warning LNK4099: 'vc142.pdb' PDB를 'glew.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-AppRogueLike.obj : warning LNK4099: 'vc142.pdb' PDB를 'AppRogueLike.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iStrTex.obj : warning LNK4099: 'vc142.pdb' PDB를 'iStrTex.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iString.obj : warning LNK4099: 'vc142.pdb' PDB를 'iString.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iStd.obj : warning LNK4099: 'vc142.pdb' PDB를 'iStd.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iSort.obj : warning LNK4099: 'vc142.pdb' PDB를 'iSort.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iSize.obj : warning LNK4099: 'vc142.pdb' PDB를 'iSize.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iShortestPath.obj : warning LNK4099: 'vc142.pdb' PDB를 'iShortestPath.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iRect.obj : warning LNK4099: 'vc142.pdb' PDB를 'iRect.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iPopup.obj : warning LNK4099: 'vc142.pdb' PDB를 'iPopup.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iPoint.obj : warning LNK4099: 'vc142.pdb' PDB를 'iPoint.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iOpenGL.obj : warning LNK4099: 'vc142.pdb' PDB를 'iOpenGL.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iOpenAL.obj : warning LNK4099: 'vc142.pdb' PDB를 'iOpenAL.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iImage.obj : warning LNK4099: 'vc142.pdb' PDB를 'iImage.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iGraphics.obj : warning LNK4099: 'vc142.pdb' PDB를 'iGraphics.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iFPS.obj : warning LNK4099: 'vc142.pdb' PDB를 'iFPS.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iColor.obj : warning LNK4099: 'vc142.pdb' PDB를 'iColor.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iArray.obj : warning LNK4099: 'vc142.pdb' PDB를 'iArray.obj' 또는 'C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-  RogueLike.vcxproj -> C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\RogueLike.exe
+﻿  Enemy.cpp
+C:\Users\user\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(16,17): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(18,25): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\Enemy.cpp(15,32): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\Enemy.cpp(38,46): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\Enemy.cpp(38,34): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\Enemy.cpp(114,72): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\Enemy.cpp(114,49): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  RogueLike.vcxproj -> C:\Users\user\Documents\GitHub\myProject\x64\Debug\RogueLike.exe

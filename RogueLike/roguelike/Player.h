@@ -19,12 +19,14 @@
 #define MELEE_NUM 2
 
 typedef void (*Method_Combat)(float dt, bool drop, iPoint dropP);
-extern Method_Combat _mw[MELEE_NUM];
+extern Method_Combat _method[MELEE_NUM];
 
 extern bool evasion;
 extern bool falling;
 extern bool attacking;
 bool actionCheck(bool key);
+
+struct meleeWeapon;
 
 class Player
 {
@@ -60,7 +62,8 @@ public:
 
 	iRect touchPlayer;
 
-	Method_Combat mw;
+	Method_Combat method;
+	meleeWeapon* mw;
 };
 
 extern Player* pc;

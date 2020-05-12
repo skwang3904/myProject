@@ -46,9 +46,9 @@ void drawRgProc(float dt)
 	// 손에서 버릴때 현재위치에 버림
 	for (int i = 0; i < meleeNum; i++)
 	{
-		if(pc->mw == _mw[i])
+		if(pc->method == _method[i])
 			continue;
-		_mw[i](dt, true, weapon->wDropPos[i]);
+		_method[i](dt, true, weapon->wDropPos[i]);
 	}
 	
 	pc->combatDraw(dt);

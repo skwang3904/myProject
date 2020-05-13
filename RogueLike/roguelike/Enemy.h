@@ -36,6 +36,7 @@ struct Enemy1{
 
 	void init(int a);
 	void takeDmgEnemy(float dt, float dmg);
+	void takeDmgEffect(float dt);
 	bool enemysAttack(float dt);
 
 	//move func pointer

@@ -34,7 +34,7 @@ void Enemy1::init(int a)
 	attackSpeed = 2.0f;
 	_attackSpeed = 2.0f;
 	moveSpeed = 100.0f;
-	reach = 50.0f;
+	reach = 100.0f;
 
 	Enemy1Position = iPointMake(200 + 40 * a,80 + 20 * a);
 
@@ -44,7 +44,7 @@ void Enemy1::init(int a)
 	takeDmgTime = 0.0f;
 
 	giveDmg = false;
-	giveDmgTime = -1.0f * _attackSpeed;
+	giveDmgTime = 0.0f - _attackSpeed;
 
 	hit = false;
 }
@@ -62,6 +62,20 @@ void Enemy1::takeDmgEnemy(float dt, float dmg)
 	}
 }
 
+void Enemy1::takeDmgEffect(float dt)
+{
+	setRGBA(0, 0, 0, linear(takeDmgTime / TAKE_DMG_TIME, 1.0f, 0.0f));
+	drawImage(img->tex, Enemy1Position.x, Enemy1Position.y, TOP | LEFT);
+	setRGBA(1, 1, 1, 1);
+
+	takeDmgTime += dt;
+	if (takeDmgTime > TAKE_DMG_TIME)
+	{
+		takeDmgTime = 0.0f;
+		takeDmg = false;
+	}
+}
+
 bool Enemy1::enemysAttack(float dt)
 {
 	iPoint v = pc->playerPosition + iPointMake(HALF_OF_TEX_WIDTH,HALF_OF_TEX_HEIGHT) - Enemy1Position;
@@ -69,7 +83,7 @@ bool Enemy1::enemysAttack(float dt)
 	if (iPointLength(v) > reach -10 && giveDmg == false)
 		return false;
 
-	static iPoint ATV = pc->playerPosition;
+	static iPoint ATV = v + Enemy1Position;
 
 	if (giveDmg == false && giveDmgTime == 0.0f)
 	{
@@ -77,7 +91,7 @@ bool Enemy1::enemysAttack(float dt)
 		giveDmgTime -= _attackSpeed;
 
 		ATV = v;
-		float range = 50;
+		float range = reach;
 		ATV /= iPointLength(ATV);
 		ATV = Enemy1Position + ATV * range;
 	}
@@ -90,7 +104,7 @@ bool Enemy1::enemysAttack(float dt)
 		hit = false;
 	}
 
-	if (giveDmg == true && giveDmgTime < 0.0f - _attackSpeed * 0.33f)
+	if (giveDmg == true && giveDmgTime > 0.0f - _attackSpeed * 0.5f)
 	{
 		setLineWidth(10);
 		setRGBA(1, 0, 0, 1);
@@ -100,7 +114,17 @@ bool Enemy1::enemysAttack(float dt)
 
 		if (hit == false)
 		{
-			if (containPoint(ATV, pc->touchPlayer))
+			iPoint n = ATV - Enemy1Position;
+			float len = iPointLength(n);
+			n /= iPointLength(n);
+			iPoint p = pc->playerPosition + iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT)
+				- Enemy1Position;
+
+			float dot = min(max(p.x * n.x + p.y * n.y, 0),len);
+			iPoint proj = n * dot;
+			float hitDis = iPointLength(p - proj);
+
+			if (hitDis < 5.0f) 
 			{
 				pc->hp -= attackDmg;
 				hit = true;
@@ -108,7 +132,7 @@ bool Enemy1::enemysAttack(float dt)
 		}
 	}
 
-	if (iPointLength(v) > reach && giveDmgTime > 0.0f - _attackSpeed * 0.33f)
+	if (iPointLength(v) > reach +50 && giveDmgTime > 0.0f - _attackSpeed * 0.33f)
 	{
 		giveDmg = false;
 		giveDmgTime = 0.0f;
@@ -163,23 +187,12 @@ void drawEnemy(float dt)
 
 			if (enm->takeDmg)
 			{
-				setRGBA(0, 0, 0, linear(enm->takeDmgTime / TAKE_DMG_TIME, 1.0f, 0.0f));
-				drawImage(enm->img->tex, enm->Enemy1Position.x, enm->Enemy1Position.y, TOP | LEFT);
-				setRGBA(1, 1, 1, 1);
-
-				enm->takeDmgTime += dt;
-				if (enm->takeDmgTime > TAKE_DMG_TIME)
-				{
-					enm->takeDmgTime = 0.0f;
-					enm->takeDmg = false;
-				}
+				enm->takeDmgEffect(dt);
 			}
 
-			// 가까우면 공격
 			if (enm->enemysAttack(dt) == false)
 				moveEnemyType1(enemys[i], dt);
 		}
-
 		else
 		{
 			enm->Enemy1Position = iPointZero;

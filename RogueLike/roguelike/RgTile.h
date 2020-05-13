@@ -22,18 +22,22 @@
 #define WALLTILE_RGBA	0.5, 1, 0, 1
 #define FALLTILE_RGBA	0, 0, 0.5, 1
 
-#define RGTILE1X	RGTILE_X * RGTILE_Width
+#define MAPTILE_NUM 6
 
-#define RGTILE2Y	RGTILE_Y * RGTILE_Height
+struct MapTile {
+	int* rgTile;
+	iPoint tileOff;
+};
+extern iPoint* tileOffSet;
+extern MapTile** mapTiles;
 
-#define RGTILE3X	RGTILE_X * RGTILE_Width
-#define RGTILE3Y	RGTILE_Y * RGTILE_Height
+void createTileSet();
+void freeTileSet();
 
-extern int** allTile;
+
 extern int RgTile[RGTILE_X * RGTILE_Y];
 extern int RgRoomTile1[RGTILE_X * RGTILE_Y];
 extern int RgRoomTile2[RGTILE_X * RGTILE_Y];
 extern int RgRoomTile3[RGTILE_X * RGTILE_Y];
-
-void createTileSet();
-void freeTileSet();
+extern int RgRoomTile4[RGTILE_X * RGTILE_Y];
+extern int RgRoomTile5[RGTILE_X * RGTILE_Y];

@@ -12,6 +12,7 @@
 
 #define TAKE_DMG_TIME 0.3f
 extern int enemysNum;
+
 struct Enemy1{
 	iImage* img;
 

@@ -76,14 +76,12 @@ void weaponPosition(meleeWeapon* mw, float dt, iPoint& wp)
 
 	if (pc->weaponVector.x < 0)
 	{
-		//p.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH - mw->img->tex->height/2;
 		p.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH;
 		p.y = pc->playerPosition.y;
 		angle = 90.0f;
 	}
 	else if (pc->weaponVector.x > 0)
 	{
-		//p.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH + mw->img->tex->height / 2;
 		p.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH;
 		p.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT * 2.0f ;
 		angle = 270.0f;
@@ -92,14 +90,12 @@ void weaponPosition(meleeWeapon* mw, float dt, iPoint& wp)
 	if (pc->weaponVector.y < 0)
 	{
 		p.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH * 2.0f;
-		//p.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT - mw->img->tex->height / 2;
 		p.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT;
 		angle = 0.0f;
 	}
 	else if (pc->weaponVector.y > 0)
 	{
 		p.x = pc->playerPosition.x;
-		//p.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT +mw->img->tex->height / 2;
 		p.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT; 
 		angle = 180.0f;
 	}
@@ -167,7 +163,7 @@ bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 
 	iRect rt = iRectZero;
 	iSize size = iSizeMake(tex->width, mw->reach);
-	iPoint pcPos = pc->playerPosition;
+	iPoint pcPos = pc->playerPosition + pc->camPosition;
 
 	if (mv.x < 0)
 	{
@@ -227,19 +223,20 @@ bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 
 	setRGBA(1, 1, 1, 1);
 	wcp = iPointRotate(centerP, wcp, attAngleRate);
+	wcp += pc->camPosition;
 
 	drawImage(tex, wcp.x, wcp.y, 0, 0,
 		tex->width, tex->height, VCENTER | HCENTER, 
 		ratioRate, ratioRate, 2, attAngleRate + angle + mw->holdAngle,	REVERSE_NONE);
 
-	for (int i = 0; i < enemysNum; i++) // enemyNum
+
+	for (int i = 0; i < enemysNum; i++) //enemy
 	{
 		if (containRect(mw->hitBox, enemys[i]->touchEnemy1))
 		{
 			enemys[i]->takeDmgEnemy(dt, mw->attackDmg);
 		}
 	}
-	
 
 	delta += dt;
 	if (delta > attTime)
@@ -284,19 +281,19 @@ void draw(meleeWeapon* melee, float dt, float holdAngle, bool drop, iPoint dropP
 			p.y = melee->combatPosition.y + tex->height / 2;
 		}
 
-		drawImage(tex, p.x, p.y, 0, 0,
-			tex->width, tex->height,
+		drawImage(tex, pc->camPosition.x+ p.x, pc->camPosition.y + p.y,
+			0, 0,	tex->width, tex->height,
 			VCENTER | HCENTER, 1.0f, 1.0f, 2, angle + holdAngle, REVERSE_NONE);
 	}
 	else
 	{
 		iPoint p = dropP;
-		drawImage(tex, p.x, p.y,
+		drawImage(tex, pc->camPosition.x + p.x, pc->camPosition.y + p.y,
 			0, 0, tex->width, tex->height,
 			VCENTER | HCENTER, 1.2f, 1.2f, 2, 90, REVERSE_NONE);
 
-		melee->hitBox = getHitBoxRect(tex, p.x, p.y, 0, 0,
-			tex->width, tex->height,
+		melee->hitBox = getHitBoxRect(tex, pc->camPosition.x + p.x, pc->camPosition.y + p.y,
+			0, 0,	tex->width, tex->height,
 			VCENTER | HCENTER, 1.5f, 1.5f, 2, 90);
 		setRGBA(0, 1, 0, 1);
 		drawRect(melee->hitBox);

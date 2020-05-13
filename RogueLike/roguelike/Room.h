@@ -7,10 +7,13 @@
 */
 
 void loadRoomTile();
+void freeRoomTile();
 void drawRoomTile(float dt);
 
-void wallCheck(bool checkFall, iPoint& pos,iPoint mp, float halfOfTexW, float halfOfTexH);
-bool fallCheck(Player* pc, float dt);
+struct MapTile;
+void wallCheck(bool checkFall, MapTile* tile, iPoint& pos,iPoint mp, float halfOfTexW, float halfOfTexH);
+//void wallCheck(bool checkFall, iPoint& pos,iPoint mp, float halfOfTexW, float halfOfTexH);
+bool fallCheck(Player* pc, MapTile* tile, float dt);
 
 /*
 void wallCheck2(bool checkFall, iPoint& pos, iPoint mp, float halfOfTexW, float halfOfTexH)

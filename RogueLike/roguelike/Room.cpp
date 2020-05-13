@@ -5,185 +5,105 @@
 
 #include <math.h>
 
+MapTile** maps;
 
+bool* mapCheck;
 void loadRoomTile()
 {
-	
-}
+	mapCheck = (bool*)malloc(sizeof(bool) * MAPTILE_NUM);
+	for (int i = 0; i < MAPTILE_NUM; i++)
+		mapCheck[i] = false;
 
-void drawRoomTile(float dt)
-{
-	int i,j, num = RGTILE_X * RGTILE_Y;
-	for (i = 0; i < num; i++)
+	maps = (MapTile**)malloc(sizeof(MapTile*) * MAPTILE_NUM);
+
+	int m[MAPTILE_NUM];
+	memset(m, -1, sizeof(int) * MAPTILE_NUM);
+
+	for (int i = 0; i < MAPTILE_NUM; i++)
 	{
-		if (RgTile[i] == MOVETILE) setRGBA(MOVETILE_RGBA);
-		else if (RgTile[i] == WALLTILE)setRGBA(WALLTILE_RGBA);
-		else if (RgTile[i] == FALLTILE)setRGBA(FALLTILE_RGBA);
-		fillRect(RGTILE_Width * (i % RGTILE_X),
-			RGTILE_Height * (i / RGTILE_X),
-			RGTILE_Width, RGTILE_Height);
-
-		//if (RgRoomTile1[i] == MOVETILE) setRGBA(MOVETILE_RGBA);
-		//else if (RgRoomTile1[i] == WALLTILE)setRGBA(WALLTILE_RGBA);
-		//else if (RgRoomTile1[i] == FALLTILE)setRGBA(FALLTILE_RGBA);
-		//fillRect(RGTILE1X + RGTILE_Width * (i % RGTILE_X), 
-		//	RGTILE_Height * (i / RGTILE_X),
-		//	RGTILE_Width, RGTILE_Height);
-
-		//if (RgRoomTile2[i] == MOVETILE) setRGBA(MOVETILE_RGBA);
-		//else if (RgRoomTile2[i] == WALLTILE)setRGBA(WALLTILE_RGBA);
-		//else if (RgRoomTile2[i] == FALLTILE)setRGBA(FALLTILE_RGBA);
-		//fillRect(RGTILE_Width * (i % RGTILE_X),
-		//	RGTILE2Y + RGTILE_Height * (i / RGTILE_X),
-		//	RGTILE_Width, RGTILE_Height);
-
-
-		//if (RgRoomTile3[i] == MOVETILE) setRGBA(MOVETILE_RGBA);
-		//else if (RgRoomTile3[i] == WALLTILE)setRGBA(WALLTILE_RGBA);
-		//else if (RgRoomTile3[i] == FALLTILE)setRGBA(FALLTILE_RGBA);
-		//fillRect(RGTILE3X + RGTILE_Width * (i % RGTILE_X), 
-		//	RGTILE3Y + RGTILE_Height * (i / RGTILE_X),
-		//	RGTILE_Width, RGTILE_Height);
-
-
-
-
-
-	}
-		setRGBA(1, 1, 1, 1);
-}
-
-float findMoveTile(Player* pc, int x, int y)
-{
-	float min = 0xffff;
-	if (RgTile[RGTILE_X * y + x] != MOVETILE)
-		return min; 
-
-	float distance = fabs(iPointLength(
-		iPointMake(RGTILE_Width* x + RGTILE_Width/2,RGTILE_Height * y + RGTILE_Height / 2)
-		- pc->playerPosition - iPointMake(HALF_OF_TEX_WIDTH/2, HALF_OF_TEX_HEIGHT/2)));
-
-	if(min > distance)
-		return distance;
-	return min;
-}
-
-void findMoveTile(Player* pc)
-{
-	int x = (int)(pc->playerPosition.x + HALF_OF_TEX_WIDTH) / RGTILE_Width;
-	int y = (int)(pc->playerPosition.y + HALF_OF_TEX_HEIGHT) / RGTILE_Height;
-	
-	float minD= 0xffff;
-	float dis;
-
-	int pcX = x;
-	int pcY = y;
-
-	for (int i = 0; ; i++)
-	{
-		// x-1, y-1,	x, y-1,		x+1, y-1
-		// x-1, y					x+1, y
-		// x-1, y+1		x, y+1		x+1, y+1
-
-		dis = findMoveTile(pc, x - i, y - i);
-		if (dis < minD)
-		{
-			minD = dis;
-			pcX = x - i;
-			pcY = y - i;
-		}
-		dis = findMoveTile(pc, x - i, y);
-		if (dis < minD)
-		{
-			minD = dis;
-			pcX = x - i;
-			pcY = y;
-		}
-		dis = findMoveTile(pc, x - i, y + i);
-		if (dis < minD)
-		{
-			minD = dis;
-			pcX = x - i;
-			pcY = y + i;
-		}
-
-		dis = findMoveTile(pc, x, y - i);
-		if (dis < minD)
-		{
-			minD = dis;
-			pcX = x;
-			pcY = y - i;
-		}
-		dis = findMoveTile(pc, x, y + i);
-		if (dis < minD)
-		{
-			minD = dis;
-			pcX = x;
-			pcY = y + i;
-		}
-
-		dis = findMoveTile(pc, x + i, y - i);
-		if (dis < minD)
-		{
-			minD = dis;
-			pcX = x + i;
-			pcY = y - i;
-		}
-		dis = findMoveTile(pc, x + i, y);
-		if (dis < minD)
-		{
-			minD = dis;
-			pcX = x + i;
-			pcY = y;
-		}
-
-		dis = findMoveTile(pc, x + i, y + i);
-		if (dis < minD)
-		{
-			minD = dis;
-			pcX = x + i;
-			pcY = y + i;
-		}
-
-		if (minD != 0xffff)
-			break;
+		if (m[i] == -1 || mapCheck[m[i]] == true)
+			m[i] = random() % MAPTILE_NUM;
+		
+		if (mapCheck[m[i]] == false)
+			mapCheck[m[i]] = true;
+		else
+			i--;
 	}
 
-	pc->playerPosition = iPointMake(RGTILE_Width * pcX + HALF_OF_TEX_WIDTH /2,
-		RGTILE_Height * pcY + HALF_OF_TEX_HEIGHT / 2);
+	for (int i = 0; i < MAPTILE_NUM; i++)
+	{
+		maps[i] = mapTiles[i];
+		maps[i]->tileOff = tileOffSet[m[i]];
+	}
+
+	for (int i = 0; i < MAPTILE_NUM; i++)
+	{
+		printf("%d\n", m[i]);
+		mapCheck[i] = false;
+	}
 }
 
+void freeRoomTile()
+{
+	free(mapCheck);
+	free(maps);
+}
 
-void wallCheck2(bool checkFall, iPoint& pos, iPoint mp, float halfOfTexW, float halfOfTexH)
+void drawRoomTile(float dt) 
+{//수정
+	int num = RGTILE_X * RGTILE_Y;
+
+	for (int i = 0; i < MAPTILE_NUM; i++)
+	{
+		for (int j = 0; j < num; j++)
+		{
+			if (maps[i]->rgTile[j] == MOVETILE) setRGBA(MOVETILE_RGBA);
+			else if (maps[i]->rgTile[j] == WALLTILE)setRGBA(WALLTILE_RGBA);
+			else if (maps[i]->rgTile[j] == FALLTILE)setRGBA(FALLTILE_RGBA);
+			fillRect(pc->camPosition.x + maps[i]->tileOff.x + RGTILE_Width * (j % RGTILE_X),
+				pc->camPosition.y + maps[i]->tileOff.y + RGTILE_Height * (j / RGTILE_X),
+				RGTILE_Width, RGTILE_Height);
+		}
+	}
+	setRGBA(1, 1, 1, 1);
+}
+
+void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float halfOfTexW, float halfOfTexH)
 {
 	// 이동시 벽 감지
 	// 계속
 	int i, j;
+	MapTile* t = tile;
+	t->tileOff.x = floor(t->tileOff.x);
+	t->tileOff.y = floor(t->tileOff.y);
 
+	int hTexW = halfOfTexW;
+	int hTexH = halfOfTexH;
 	if (mp.x < 0)
 	{
-		int LX = pos.x;							LX /= RGTILE_Width;
-		int TLY = pos.y;						TLY /= RGTILE_Height;
-		int BLY = pos.y + halfOfTexH * 2.0f;	BLY /= RGTILE_Height;
-		int min = 0;
+		int LX = pos.x - t->tileOff.x;							LX /= RGTILE_Width;
+		int TLY = pos.y - t->tileOff.y;							TLY /= RGTILE_Height;
+		int BLY = pos.y + halfOfTexH * 2.0f - t->tileOff.y;		BLY /= RGTILE_Height;
+		int min = t->tileOff.x - 50;
+		//int min = t->tileOff.x;
 		for (i = LX - 1; i > -1; i--)
 		{
 			bool stop = false;
 			for (j = TLY; j < BLY + 1; j++)
 			{
-				if (RgTile[RGTILE_X * j + i] == WALLTILE)
+				if (t->rgTile[RGTILE_X * j + i] == WALLTILE)
 				{
 					stop = true;
-					min = RGTILE_Width * (i + 1);
+					min = t->tileOff.x + RGTILE_Width * (i + 1);
 					break;
 				}
 
 				if (checkFall)
 				{
-					if (RgTile[RGTILE_X * j + i] == FALLTILE)
+					if (t->rgTile[RGTILE_X * j + i] == FALLTILE)
 					{
 						stop = true;
-						min = RGTILE_Width * (i + 1);
+						min = t->tileOff.x + RGTILE_Width * (i + 1);
 						break;
 					}
 				}
@@ -192,33 +112,34 @@ void wallCheck2(bool checkFall, iPoint& pos, iPoint mp, float halfOfTexW, float 
 				break;
 		}
 		pos.x += mp.x;
-		if (pos.x < min)
-			pos.x = min;
+		if (pos.x < min+0.01f)
+			pos.x = min+0.01f;
 	}
 	else if (mp.x > 0)
 	{
-		int RX = pos.x + halfOfTexW * 2.0f;		RX /= RGTILE_Width;
-		int TRY = pos.y;						TRY /= RGTILE_Height;
-		int BRY = pos.y + halfOfTexH * 2.0f; 	BRY /= RGTILE_Height;
-		int max = RGTILE_X * RGTILE_Width * 2;
-		for (i = RX + 1; i < RGTILE_X*2; i++)
+		int RX = pos.x + halfOfTexW * 2.0f - t->tileOff.x;		RX /= RGTILE_Width;
+		int TRY = pos.y - t->tileOff.y;							TRY /= RGTILE_Height;
+		int BRY = pos.y + halfOfTexH * 2.0f - t->tileOff.y;		BRY /= RGTILE_Height;
+		int max = t->tileOff.x + RGTILE_X * RGTILE_Width + 50;
+		//int max = t->tileOff.x + RGTILE_X * RGTILE_Width - 1;
+		for (i = RX + 1; i < RGTILE_X; i++)
 		{
 			bool stop = false;
 			for (j = TRY; j < BRY + 1; j++)
 			{
-					if (RgTile[RGTILE_X * j + i] == WALLTILE)
+					if (t->rgTile[RGTILE_X * j + i] == WALLTILE)
 					{
 						stop = true;
-						max = RGTILE_Width * i - 1;
+						max = t->tileOff.x + RGTILE_Width * i - 1;
 						break;
 					}
 
 					if (checkFall)
 					{
-						if (RgTile[RGTILE_X * j + i] == FALLTILE)
+						if (t->rgTile[RGTILE_X * j + i] == FALLTILE)
 						{
 							stop = true;
-							max = RGTILE_Width * i - 1;
+							max = t->tileOff.x + RGTILE_Width * i - 1;
 							break;
 						}
 					}
@@ -234,28 +155,29 @@ void wallCheck2(bool checkFall, iPoint& pos, iPoint mp, float halfOfTexW, float 
 
 	if (mp.y < 0)
 	{
-		int TY = pos.y;							TY /= RGTILE_Height;
-		int TLX = pos.x;						TLX /= RGTILE_Width;
-		int TRX = pos.x + halfOfTexW * 2.0f;	TRX /= RGTILE_Width;
-		int min = 0;
+		int TY = pos.y - t->tileOff.y;							TY /= RGTILE_Height;
+		int TLX = pos.x - t->tileOff.x;							TLX /= RGTILE_Width;
+		int TRX = pos.x + halfOfTexW * 2.0f - t->tileOff.x;		TRX /= RGTILE_Width;
+		int min = t->tileOff.y - 50;
+		//int min = t->tileOff.y;
 		for (j = TY - 1; j > -1; j--)
 		{
 			bool stop = false;
 			for (i = TLX; i < TRX + 1; i++)
 			{
-				if (RgTile[RGTILE_X * j + i] == WALLTILE)
+				if (t->rgTile[RGTILE_X * j + i] == WALLTILE)
 				{
 					stop = true;
-					min = RGTILE_Height * (j + 1);
+					min = t->tileOff.y + RGTILE_Height * (j + 1);
 					break;
 				}
 
 				if (checkFall)
 				{
-					if (RgTile[RGTILE_X * j + i] == FALLTILE)
+					if (t->rgTile[RGTILE_X * j + i] == FALLTILE)
 					{
 						stop = true;
-						min = RGTILE_Height * (j + 1);
+						min = t->tileOff.y + RGTILE_Height * (j + 1);
 						break;
 					}
 				}
@@ -264,34 +186,35 @@ void wallCheck2(bool checkFall, iPoint& pos, iPoint mp, float halfOfTexW, float 
 				break;
 		}
 		pos.y += mp.y;
-		if (pos.y < min)
-			pos.y = min;
+		if (pos.y < min+0.01f)
+			pos.y = min+0.01f;
 	}
 	else if (mp.y > 0)
 	{
-		int BY =  pos.y + halfOfTexH * 2.0f;	BY /= RGTILE_Height;
-		int BLX = pos.x;						BLX /= RGTILE_Width;
-		int BRX = pos.x + halfOfTexW * 2.0f;	BRX /= RGTILE_Width;
-		int max = RGTILE_Y * RGTILE_Height * 2;
+		int BY =  pos.y + halfOfTexH * 2 - t->tileOff.y;		BY /= RGTILE_Height;
+		int BLX = pos.x - t->tileOff.x;							BLX /= RGTILE_Width;
+		int BRX = pos.x + halfOfTexW * 2 - t->tileOff.x;		BRX /= RGTILE_Width;
+		int max = t->tileOff.y + RGTILE_Y * RGTILE_Height +50;
+		//int max = t->tileOff.y + RGTILE_Y * RGTILE_Height - 1;
 
-		for (j = BY + 1; j < RGTILE_Y*2; j++)
+		for (j = BY + 1; j < RGTILE_Y; j++)
 		{
 			bool stop = false;
 			for (i = BLX; i < BRX + 1; i++)
 			{
-				if (RgTile[RGTILE_X * j + i] == WALLTILE)
+				if (t->rgTile[RGTILE_X * j + i] == WALLTILE)
 				{
 					stop = true;
-					max = RGTILE_Height * j - 1;
+					max = t->tileOff.y + RGTILE_Height * j - 1;
 					break;
 				}
 
 				if (checkFall)
 				{
-					if (RgTile[RGTILE_X * j + i] == FALLTILE)
+					if (t->rgTile[RGTILE_X * j + i] == FALLTILE)
 					{
 						stop = true;
-						max = RGTILE_Height * j - 1;
+						max = t->tileOff.y + RGTILE_Height * j - 1;
 						break;
 					}
 				}
@@ -301,28 +224,30 @@ void wallCheck2(bool checkFall, iPoint& pos, iPoint mp, float halfOfTexW, float 
 		}
 
 		pos.y += mp.y;
-		if (pos.y > max - halfOfTexH * 2.0f)
-			pos.y = max - halfOfTexH * 2.0f;
+		if (pos.y > max - halfOfTexH * 2)
+			pos.y = max - halfOfTexH * 2;
 	}
 }
 
-void wallCheck(bool checkFall, iPoint& pos, iPoint mp, float halfOfTexW, float halfOfTexH)
+void wallCheck(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float halfOfTexW, float halfOfTexH)
 {
-	wallCheck2(checkFall, pos, mp, halfOfTexW, halfOfTexH);
+	wallCheck2(checkFall, tile, pos, mp, halfOfTexW, halfOfTexH);
 }
 
-bool fallCheck(Player* pc, float dt)
+void findMoveTile(Player* pc, MapTile* tile);
+bool fallCheck(Player* pc, MapTile* tile, float dt)
 {
 	// 임시 - 낭떨어지에 진입시 가장 가까이있는 타일로 이동  - 어색함
 	// 라이프 감소
 	// 잠시 무적
+	MapTile* t = tile;
 
-	int x = (pc->playerPosition.x + HALF_OF_TEX_WIDTH) / RGTILE_Width;
-	int y = (pc->playerPosition.y + HALF_OF_TEX_HEIGHT) / RGTILE_Height;
+	int x = (int)(pc->playerPosition.x - t->tileOff.x + HALF_OF_TEX_WIDTH) / RGTILE_Width;
+	int y = (int)(pc->playerPosition.y - t->tileOff.y + HALF_OF_TEX_HEIGHT) / RGTILE_Height;
 	
 	static bool falling = false;
 
-	if (RgTile[RGTILE_X * y + x] == FALLTILE)
+	if (t->rgTile[RGTILE_X * y + x] == FALLTILE)
 	{
 		if (falling == false)
 			pc->img[8]->startAnimation();
@@ -332,13 +257,13 @@ bool fallCheck(Player* pc, float dt)
 		{
 			falling = false;
 			//이동
-			findMoveTile(pc);
+			findMoveTile(pc,tile);
 			return false;
 		}
 
 		falling = true;
-		iPoint p = iPointMake(	pc->playerPosition.x - HALF_OF_TEX_WIDTH,
-								pc->playerPosition.y - HALF_OF_TEX_HEIGHT);
+		iPoint p = iPointMake( pc->playerPosition.x- t->tileOff.x - HALF_OF_TEX_WIDTH,
+			pc->playerPosition.y - t->tileOff.y - HALF_OF_TEX_HEIGHT);
 
 		pc->img[8]->paint(dt, p, REVERSE_NONE);
 
@@ -349,8 +274,107 @@ bool fallCheck(Player* pc, float dt)
 		falling = false;
 		return false;
 	}
-
-
-	
 }
 
+float findMoveTile(Player* pc, MapTile* tile, int x, int y)
+{
+	float min = 0xffff;
+	MapTile* t = tile;
+	if (t->rgTile[RGTILE_X * y + x] != MOVETILE)
+		return min;
+
+	float distance = fabs(iPointLength(
+		iPointMake(t->tileOff.x + RGTILE_Width * x + RGTILE_Width / 2, 
+				t->tileOff.y + RGTILE_Height * y + RGTILE_Height / 2)
+		- pc->playerPosition - iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT)));
+
+	if (min > distance)
+		return distance;
+	return min;
+}
+
+void findMoveTile(Player* pc, MapTile* tile)
+{
+	MapTile* t = tile;
+	int x = (int)(pc->playerPosition.x - t->tileOff.x + HALF_OF_TEX_WIDTH) / RGTILE_Width;
+	int y = (int)(pc->playerPosition.y - t->tileOff.y + HALF_OF_TEX_HEIGHT) / RGTILE_Height;
+
+	float minD = 0xffff;
+	float dis;
+
+	int pcX = x;
+	int pcY = y;
+
+	for (int i = 0; ; i++)
+	{
+		// x-1, y-1,	x, y-1,		x+1, y-1
+		// x-1, y					x+1, y
+		// x-1, y+1		x, y+1		x+1, y+1
+
+		dis = findMoveTile(pc,tile, x - i, y - i);
+		if (dis < minD)
+		{
+			minD = dis;
+			pcX = x - i;
+			pcY = y - i;
+		}
+		dis = findMoveTile(pc, tile, x - i, y);
+		if (dis < minD)
+		{
+			minD = dis;
+			pcX = x - i;
+			pcY = y;
+		}
+		dis = findMoveTile(pc, tile, x - i, y + i);
+		if (dis < minD)
+		{
+			minD = dis;
+			pcX = x - i;
+			pcY = y + i;
+		}
+
+		dis = findMoveTile(pc, tile, x, y - i);
+		if (dis < minD)
+		{
+			minD = dis;
+			pcX = x;
+			pcY = y - i;
+		}
+		dis = findMoveTile(pc, tile, x, y + i);
+		if (dis < minD)
+		{
+			minD = dis;
+			pcX = x;
+			pcY = y + i;
+		}
+
+		dis = findMoveTile(pc, tile, x + i, y - i);
+		if (dis < minD)
+		{
+			minD = dis;
+			pcX = x + i;
+			pcY = y - i;
+		}
+		dis = findMoveTile(pc,tile, x + i, y);
+		if (dis < minD)
+		{
+			minD = dis;
+			pcX = x + i;
+			pcY = y;
+		}
+
+		dis = findMoveTile(pc, tile, x + i, y + i);
+		if (dis < minD)
+		{
+			minD = dis;
+			pcX = x + i;
+			pcY = y + i;
+		}
+
+		if (minD != 0xffff)
+			break;
+	}
+
+	pc->playerPosition = iPointMake(t->tileOff.x + RGTILE_Width * pcX + HALF_OF_TEX_WIDTH / 2,
+		t->tileOff.y + RGTILE_Height * pcY + HALF_OF_TEX_HEIGHT / 2);
+}

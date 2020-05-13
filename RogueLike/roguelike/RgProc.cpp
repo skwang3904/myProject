@@ -9,6 +9,11 @@
 
 void loadRgProc()
 {
+	createTileSet();
+	loadRoomTile();
+
+	createEnemy();
+
 	pc = Player::instance();
 
 	pc->createPlayerImage();
@@ -16,8 +21,6 @@ void loadRgProc()
 
 	weapon = Weapon::instance();
 
-	createEnemy();
-	createTileSet();
 }
 
 void freeRgProc()
@@ -27,6 +30,7 @@ void freeRgProc()
 
 	freeEnemy();
 	freeTileSet();
+	freeRoomTile();
 }
 
 void drawRgProc(float dt)
@@ -52,7 +56,7 @@ void drawRgProc(float dt)
 	}
 	
 	pc->drawPlayer(dt);
-	printf("%.2f\n", pc->hp);
+	//printf("%.2f\n", pc->hp);
 }
 
 void keyRgProc(iKeyState stat, iPoint point)

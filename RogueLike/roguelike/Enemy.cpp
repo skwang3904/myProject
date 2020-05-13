@@ -2,6 +2,7 @@
 
 #include "WMelee.h"
 #include "Room.h"
+#include "RgTile.h"
 
 Enemy1** enemys;
 Enemy1* enemy1;
@@ -171,7 +172,7 @@ void drawEnemy(float dt)
 
 	static float dmgTime = 0.0f;
 
-	for (int i = 0; i < num; i++) //monNum
+	for (int i = 0; i < 0; i++) //monNum
 	{
 		Enemy1* enm = enemys[i];
 		if (enm->hp > 0.0f)
@@ -212,9 +213,21 @@ void moveEnemyType1(Enemy1* enm, float dt)
 		return;
 
 	v /= iPointLength(v);
-	
 	iPoint mp = v * enm->moveSpeed * dt;
-	wallCheck(true, enm->Enemy1Position, mp, enm->img->tex->width / 2, enm->img->tex->height / 2);
+
+	MapTile* tile = mapTiles[0];
+	for (int i = 0; i < MAPTILE_NUM; i++)
+	{
+		if (enm->Enemy1Position.x > mapTiles[i]->tileOff.x&&
+			enm->Enemy1Position.y > mapTiles[i]->tileOff.y)
+		{
+			if (iPointLength(enm->Enemy1Position - mapTiles[i]->tileOff)
+				< iPointLength(enm->Enemy1Position - tile->tileOff))
+			tile = mapTiles[i];
+		}
+	}
+
+	wallCheck(true, tile,enm->Enemy1Position, mp, enm->img->tex->width / 2, enm->img->tex->height / 2);
 	
 }
 

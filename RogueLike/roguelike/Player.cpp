@@ -80,9 +80,11 @@ void Player::initPlayerStat()
 	attackSpeed =
 	_attackSpeed = 0.5f;
 
-	moveSpeed = 200.0f;
+	moveSpeed = 400.0f;
 
-	playerPosition = iPointMake(RGTILE_X * RGTILE_Width /2, RGTILE_Y * RGTILE_Height/2);
+	playerPosition =  iPointMake(RGTILE_X * RGTILE_Width /2, RGTILE_Y * RGTILE_Height/2);
+	camPosition = mapTiles[0]->tileOff;
+
 	weaponVector = iPointMake(0, 1);
 
 	touchPlayer = iRectZero;
@@ -301,20 +303,39 @@ void Player::movePlayer(float dt)
 		v.y = 1;
 		ch = 7;
 	}
+
 	weaponV = v;
 	weaponVector = weaponV;
+
+	if (getKeyStat(keyboard_attack)) //타일 넘어가기 테스트
+	{
+		playerPosition += weaponVector * 50;
+	}
 
 	bool ani = (v != iPointZero);
 	if(ani)
 		v /= iPointLength(v);
 	iPoint mp = v * (moveSpeed * dt);
 
+	MapTile* tile = mapTiles[0];
+	for (int i = 0; i < MAPTILE_NUM; i++)
+	{
+		if (playerPosition.x > mapTiles[i]->tileOff.x &&
+			playerPosition.y > mapTiles[i]->tileOff.y)
+		{
+			if (iPointLength(playerPosition - mapTiles[i]->tileOff) <
+				iPointLength(playerPosition - tile->tileOff))
+				tile = mapTiles[i];
+		}
+	}
+	camPosition = tile->tileOff * -1.0f;
 
 	if (evasion == false)
-		if (falling = fallCheck(pc, dt))
+		if (falling = fallCheck(pc,tile, dt))
 			return;
 
-	wallCheck(false, pc->playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
+	wallCheck(false, tile, pc->playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
+
 	if (evasionPlayer(dt))
 		return;
 
@@ -322,22 +343,23 @@ void Player::movePlayer(float dt)
 
 	if (v.x)
 	{
-		img[2 * ani + 0]->paint(dt, playerPosition, v.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);
+		img[2 * ani + 0]->paint(dt, playerPosition - tile->tileOff, v.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);
 		drawImage(img[ch]->tex , 
-			playerPosition.x + HALF_OF_TEX_WIDTH,
-			playerPosition.y  + HALF_OF_TEX_HEIGHT - 12,
+			playerPosition.x - tile->tileOff.x + HALF_OF_TEX_WIDTH,
+			playerPosition.y - tile->tileOff.y + HALF_OF_TEX_HEIGHT - 12,
 			VCENTER | HCENTER);
 	}
 	else
 	{
-		img[2 * ani + 1]->paint(dt, playerPosition, REVERSE_NONE);
+		img[2 * ani + 1]->paint(dt, playerPosition - tile->tileOff, REVERSE_NONE);
 		drawImage(img[ch]->tex, 
-			playerPosition.x + HALF_OF_TEX_WIDTH,
-			playerPosition.y + HALF_OF_TEX_HEIGHT - 12,
+			playerPosition.x - tile->tileOff.x + HALF_OF_TEX_WIDTH,
+			playerPosition.y - tile->tileOff.y + HALF_OF_TEX_HEIGHT - 12,
 			VCENTER | HCENTER);
 	}
 
-	iRect rt = iRectMake(playerPosition.x, playerPosition.y,
+	iRect rt = iRectMake(playerPosition.x - tile->tileOff.x,
+		playerPosition.y - tile->tileOff.y,
 		HALF_OF_TEX_WIDTH *2.0f,
 		HALF_OF_TEX_HEIGHT * 2.0f);
 
@@ -374,17 +396,8 @@ bool Player::evasionPlayer(float dt)
 		if (weaponVector != iPointZero)
 			v = weaponVector / iPointLength(weaponVector);
 
-		//if (playerPosition.x < 0.0f)
-		//	playerPosition.x = 0.0f;
-		//else if (playerPosition.x > RGTILE_X* RGTILE_Width - HALF_OF_TEX_WIDTH * 2.0f)
-		//		 playerPosition.x = RGTILE_X * RGTILE_Width - HALF_OF_TEX_WIDTH * 2.0f;
-		//if (playerPosition.y < 0.0f)
-		//	playerPosition.y = 0.0f;
-		//else if (playerPosition.y > RGTILE_Y* RGTILE_Height - HALF_OF_TEX_HEIGHT * 2.0f)
-		//		 playerPosition.y = RGTILE_Y * RGTILE_Height - HALF_OF_TEX_HEIGHT * 2.0f;
-
-		iPoint p = iPointMake(	playerPosition.x - HALF_OF_TEX_WIDTH,
-								playerPosition.y - HALF_OF_TEX_HEIGHT - 30);
+		iPoint p = iPointMake(	camPosition.x + playerPosition.x - HALF_OF_TEX_WIDTH,
+			camPosition.y + playerPosition.y - HALF_OF_TEX_HEIGHT - 20);
 
 		img[9]->paint(dt, p, REVERSE_NONE);
 		

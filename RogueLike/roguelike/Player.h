@@ -60,6 +60,8 @@ public:
 	float moveSpeed;
 
 	iPoint playerPosition;
+	iPoint camPosition;
+
 	iPoint weaponVector;
 
 	iRect touchPlayer;

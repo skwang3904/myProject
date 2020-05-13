@@ -187,7 +187,10 @@ void iGraphics::drawImage(igImage* img, float x, float y, float rx, float ry, in
 		anc, rx, ry, 2, 0, REVERSE_NONE);
 }
 
-void iGraphics::drawImage(igImage* img, int x, int y, int ix, int iy, int iw, int ih, int anc, float ratX, float ratY, int xyz, float degree, int reverse)
+void iGraphics::drawImage(igImage* img, int x, int y, 
+    int ix, int iy, int iw, int ih, 
+    int anc, float ratX, float ratY, 
+    int xyz, float degree, int reverse)
 {
     int width = img->GetWidth() * ratX;
     int height = img->GetHeight() * ratY;

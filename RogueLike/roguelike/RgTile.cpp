@@ -1,18 +1,44 @@
 #include "RgTile.h"
 
-int** allTile;
+iPoint* tileOffSet;
+MapTile** mapTiles;
 void createTileSet()
 {
-	allTile = (int**)malloc(sizeof(int*) * 4);
-	allTile[0] = RgTile;
-	allTile[1] = RgRoomTile1;
-	allTile[2] = RgRoomTile2;
-	allTile[3] = RgRoomTile3;
+	tileOffSet = (iPoint*)malloc(sizeof(iPoint) * 9);
+	for (int i = 0; i < 9; i++)
+	{
+		tileOffSet[i] = iPointMake(RGTILE_X * RGTILE_Width * (i % 3), 
+			RGTILE_Y * RGTILE_Height * (i / 3));
+	}
+
+	mapTiles = (MapTile**)malloc(sizeof(MapTile*) * MAPTILE_NUM);
+
+	for (int i = 0; i < MAPTILE_NUM; i++)
+		mapTiles[i] = (MapTile*)malloc(sizeof(MapTile) * 1);
+
+	mapTiles[5]->rgTile = RgTile;
+	mapTiles[1]->rgTile = RgRoomTile1;
+	mapTiles[2]->rgTile = RgRoomTile2;
+	mapTiles[3]->rgTile = RgRoomTile3;
+	mapTiles[4]->rgTile = RgRoomTile4;
+	mapTiles[0]->rgTile = RgRoomTile5;
+
+	//for (int i = 0; i < MAPTILE_NUM; i++)
+	//{
+	//	mapTiles[i]->tileOff = tileOffSet[i];
+	//}
 }
 
 void freeTileSet()
 {
-	free(allTile);
+	free(tileOffSet);
+
+	for (int i = 0; i < MAPTILE_NUM; i++)
+	{
+		if (mapTiles[i])
+			free(mapTiles[i]);
+	}
+	free(mapTiles);
 }
 
 int RgTile[RGTILE_X * RGTILE_Y] = {
@@ -74,3 +100,34 @@ int RgRoomTile3[RGTILE_X * RGTILE_Y] = {
 	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
 	WW, WW, WW, WW, WW, WW, 01, 01, 01, 01, WW, WW, WW, WW, WW, WW,
 };
+
+int RgRoomTile4[RGTILE_X * RGTILE_Y] = {
+	WW, WW, WW, WW, WW, WW, 01, 01, 01, 01, WW, WW, WW, WW, WW, WW,
+	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
+	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
+	WW, 01, 01, 01, 01, 01, WW, 01, WW, 01, 01, 01, 01, 01, 01, WW,
+	01, 01, 01, 01, 01, 01, WW, 01, WW, 01, 01, 01, 01, 01, 01, 01,
+	01, 01, 01, 01, 01, 01, WW, 01, WW, 01, 01, 01, 01, 01, 01, 01,
+	01, 01, 01, 01, 01, 01, WW, WW, WW, 01, 01, 01, 01, 01, 01, 01,
+	01, 01, 01, 01, 01, 01, 01, 01, WW, 01, 01, 01, 01, 01, 01, 01,
+	WW, 01, 01, 01, 01, 01, 01, 01, WW, 01, 01, 01, 01, 01, 01, WW,
+	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
+	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
+	WW, WW, WW, WW, WW, WW, 01, 01, 01, 01, WW, WW, WW, WW, WW, WW,
+};
+
+int RgRoomTile5[RGTILE_X * RGTILE_Y] = {
+	WW, WW, WW, WW, WW, WW, 01, 01, 01, 01, WW, WW, WW, WW, WW, WW,
+	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
+	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
+	WW, 01, 01, 01, 01, 01, WW, WW, WW, 01, 01, 01, 01, 01, 01, WW,
+	01, 01, 01, 01, 01, 01, WW, 01, 01, 01, 01, 01, 01, 01, 01, 01,
+	01, 01, 01, 01, 01, 01, WW, WW, WW, 01, 01, 01, 01, 01, 01, 01,
+	01, 01, 01, 01, 01, 01, 01, 01, WW, 01, 01, 01, 01, 01, 01, 01,
+	01, 01, 01, 01, 01, 01, WW, WW, WW, 01, 01, 01, 01, 01, 01, 01,
+	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
+	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
+	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
+	WW, WW, WW, WW, WW, WW, 01, 01, 01, 01, WW, WW, WW, WW, WW, WW,
+};
+

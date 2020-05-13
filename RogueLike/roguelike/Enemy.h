@@ -25,6 +25,7 @@ struct Enemy1{
 	float reach;
 
 	iPoint Enemy1Position;
+	iPoint drawEnemyPos;
 
 	iRect touchEnemy1;
 	bool takeDmg;

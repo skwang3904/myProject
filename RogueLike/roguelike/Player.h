@@ -44,7 +44,7 @@ public:
 
 	void combatDraw(float dt);
 	void rootCombat(bool key);
-	void dropCombat(float dt ,bool key);
+	void dropCombat(bool key);
 
 	void movePlayer(float dt);
 	bool evasionPlayer(float dt);
@@ -59,8 +59,9 @@ public:
 	float _attackSpeed;
 	float moveSpeed;
 
-	iPoint playerPosition;
 	iPoint camPosition;
+	iPoint playerPosition;
+	iPoint drawPos;
 
 	iPoint weaponVector;
 
@@ -69,9 +70,7 @@ public:
 	Method_Combat method;
 	meleeWeapon* mw;
 };
-
 extern Player* pc;
-
 
 /*
 	// 0, 1 몸 정지모션

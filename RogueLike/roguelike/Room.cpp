@@ -33,13 +33,8 @@ void loadRoomTile()
 	for (int i = 0; i < MAPTILE_NUM; i++)
 	{
 		maps[i] = mapTiles[i];
-		maps[i]->tileOff = tileOffSet[m[i]];
-	}
-
-	for (int i = 0; i < MAPTILE_NUM; i++)
-	{
-		printf("%d\n", m[i]);
-		mapCheck[i] = false;
+		//maps[i]->tileOff = tileOffSet[m[i]];
+		maps[i]->tileOff = tileOffSet[i];
 	}
 }
 
@@ -60,8 +55,8 @@ void drawRoomTile(float dt)
 			if (maps[i]->rgTile[j] == MOVETILE) setRGBA(MOVETILE_RGBA);
 			else if (maps[i]->rgTile[j] == WALLTILE)setRGBA(WALLTILE_RGBA);
 			else if (maps[i]->rgTile[j] == FALLTILE)setRGBA(FALLTILE_RGBA);
-			fillRect(maps[i]->tileOff.x + pc->camPosition.x + + RGTILE_Width * (j % RGTILE_X),
-				maps[i]->tileOff.y + pc->camPosition.y + RGTILE_Height * (j / RGTILE_X),
+			fillRect(maps[i]->tileOff.x + pc->camPosition.x + setPos.x + RGTILE_Width * (j % RGTILE_X),
+				maps[i]->tileOff.y + pc->camPosition.y + setPos.y + RGTILE_Height * (j / RGTILE_X),
 				RGTILE_Width, RGTILE_Height);
 		}
 	}
@@ -74,11 +69,7 @@ void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float hal
 	// 계속
 	int i, j;
 	MapTile* t = tile;
-	//t->tileOff.x = floor(t->tileOff.x);
-	//t->tileOff.y = floor(t->tileOff.y);
 
-	//int hTexW = halfOfTexW;
-	//int hTexH = halfOfTexH;
 	if (mp.x < 0)
 	{
 		int LX = pos.x - t->tileOff.x;							LX /= RGTILE_Width;
@@ -262,8 +253,8 @@ bool fallCheck(Player* pc, MapTile* tile, float dt)
 		}
 
 		falling = true;
-		iPoint p = iPointMake( pc->playerPosition.x- t->tileOff.x - HALF_OF_TEX_WIDTH,
-			pc->playerPosition.y - t->tileOff.y - HALF_OF_TEX_HEIGHT);
+		iPoint p = iPointMake( pc->playerPosition.x - t->tileOff.x + setPos.x- HALF_OF_TEX_WIDTH,
+			pc->playerPosition.y - t->tileOff.y + setPos.y - HALF_OF_TEX_HEIGHT);
 
 		pc->img[8]->paint(dt, p, REVERSE_NONE);
 

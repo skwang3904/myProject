@@ -30,6 +30,7 @@ struct MapTile {
 };
 extern iPoint* tileOffSet;
 extern MapTile** mapTiles;
+extern iPoint setPos;
 
 void createTileSet();
 void freeTileSet();

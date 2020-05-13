@@ -78,8 +78,10 @@ void Player::initPlayerStat()
 
 	moveSpeed = 400.0f;
 
-	camPosition = iPointZero - mapTiles[0]->tileOff;
-	playerPosition = mapTiles[0]->tileOff + iPointMake(RGTILE_X * RGTILE_Width /2, RGTILE_Y * RGTILE_Height/2);
+	camPosition = iPointZero - mapTiles[0]->tileOff ;
+	playerPosition = mapTiles[0]->tileOff + iPointMake(RGTILE_X * RGTILE_Width / 2, RGTILE_Y * RGTILE_Height / 2);
+	drawPos = playerPosition + setPos;
+
 
 	weaponVector = iPointMake(0, 1);
 
@@ -204,7 +206,7 @@ void Player::drawPlayer(float dt)
 	pc->combatDraw(dt);
 	pc->movePlayer(dt);
 	pc->rootCombat(getKeyDown(keyboard_pickup));
-	pc->dropCombat(dt, getKeyDown(keyboard_drop));
+	pc->dropCombat(getKeyDown(keyboard_drop));
 }
 
 void Player::combatDraw(float dt)
@@ -227,7 +229,7 @@ void Player::rootCombat(bool key)
 			{
 				weapon->wDropPos[i] = iPointMake(playerPosition.x + HALF_OF_TEX_WIDTH,
 					playerPosition.y + HALF_OF_TEX_HEIGHT);
-
+				//drop weapon	
 				mw = NULL;
 				method = NULL;
 				break;
@@ -241,7 +243,6 @@ void Player::rootCombat(bool key)
 		{
 			if (containRect(touchPlayer, _meleeWP[i]->hitBox))
 			{
-				//drop weapon				
 				mw = _meleeWP[i];
 				method = _method[i];
 				weapon->wDropPos[i] = iPointZero;
@@ -251,7 +252,7 @@ void Player::rootCombat(bool key)
 	}
 }
 
-void Player::dropCombat(float dt,bool key)
+void Player::dropCombat(bool key)
 {
 	if (actionCheck(key))
 		return;
@@ -259,7 +260,6 @@ void Player::dropCombat(float dt,bool key)
 	int num = meleeNum;
 	if (mw)
 	{
-		//임시
 		for (int i = 0; i < num; i++)
 		{
 			if (mw == _meleeWP[i])
@@ -273,10 +273,29 @@ void Player::dropCombat(float dt,bool key)
 	}	
 }
 
+MapTile* playerTileOffSet(MapTile* tile)
+{
+	MapTile* t = tile;
+	float min = 0xffffff;
 
+	for (int i = 0; i < MAPTILE_NUM; i++)
+	{
+		if (pc->playerPosition.x > mapTiles[i]->tileOff.x &&
+			pc->playerPosition.y > mapTiles[i]->tileOff.y)
+		{
+			if (iPointLength(pc->playerPosition - mapTiles[i]->tileOff) < min)
+			{
+				min = iPointLength(pc->playerPosition - mapTiles[i]->tileOff);
+				t = mapTiles[i];
+			}
+		}
+	}
+	return t;
+}
 
 void Player::movePlayer(float dt)
 {
+	drawPos = playerPosition + setPos;
 	iPoint v = iPointZero;
 	static iPoint weaponV = iPointMake(0,1);
 	static int ch= 7;
@@ -304,8 +323,7 @@ void Player::movePlayer(float dt)
 
 	weaponV = v;
 	weaponVector = weaponV;
-
-	if (getKeyStat(keyboard_attack)) //타일 넘어가기 테스트
+	if (getKeyStat(keyboard_attack)) //타일 넘어가기 용
 	{
 		playerPosition += weaponVector * 30;
 	}
@@ -315,31 +333,16 @@ void Player::movePlayer(float dt)
 		v /= iPointLength(v);
 	iPoint mp = v * (moveSpeed * dt);
 
-	MapTile* tile = mapTiles[0];
-	MapTile* t = tile;
-	float min = 0xffffff;
+	static MapTile* tile = mapTiles[0];
 
 	if (playerPosition.x < tile->tileOff.x || playerPosition.y < tile->tileOff.y ||
 		playerPosition.x > tile->tileOff.x + RGTILE_X * RGTILE_Width - 1 ||
 		playerPosition.y > tile->tileOff.y + RGTILE_Y * RGTILE_Height - 1)
 	{
-		for (int i = 0; i < MAPTILE_NUM; i++)
-		{
-			if (t == NULL)
-				t = mapTiles[i];
-			if (playerPosition.x > mapTiles[i]->tileOff.x&&
-				playerPosition.y > mapTiles[i]->tileOff.y)
-			{
-				if (iPointLength(playerPosition - mapTiles[i]->tileOff) < min)
-				{
-					min = iPointLength(playerPosition - mapTiles[i]->tileOff);
-					t = mapTiles[i];
-				}
-			}
-		}
+		tile = playerTileOffSet(tile);
+		camPosition = iPointZero - tile->tileOff;
 	}
-	tile = t;
-	camPosition = iPointZero - tile->tileOff;
+
 
 	if (evasion == false)
 		if (falling = fallCheck(pc,tile, dt))
@@ -354,23 +357,23 @@ void Player::movePlayer(float dt)
 
 	if (v.x)
 	{
-		img[2 * ani + 0]->paint(dt, playerPosition + camPosition, v.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);
+		img[2 * ani + 0]->paint(dt, drawPos + camPosition, v.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);
 		drawImage(img[ch]->tex , 
-			playerPosition.x + camPosition.x + HALF_OF_TEX_WIDTH,
-			playerPosition.y + camPosition.y + HALF_OF_TEX_HEIGHT - 12,
+			drawPos.x + camPosition.x + HALF_OF_TEX_WIDTH,
+			drawPos.y + camPosition.y + HALF_OF_TEX_HEIGHT - 12,
 			VCENTER | HCENTER);
 	}
 	else
 	{
-		img[2 * ani + 1]->paint(dt, playerPosition + camPosition, REVERSE_NONE);
+		img[2 * ani + 1]->paint(dt, drawPos + camPosition, REVERSE_NONE);
 		drawImage(img[ch]->tex, 
-			playerPosition.x + camPosition.x + HALF_OF_TEX_WIDTH,
-			playerPosition.y + camPosition.y + HALF_OF_TEX_HEIGHT - 12,
+			drawPos.x + camPosition.x + HALF_OF_TEX_WIDTH,
+			drawPos.y + camPosition.y + HALF_OF_TEX_HEIGHT - 12,
 			VCENTER | HCENTER);
 	}
 
-	iRect rt = iRectMake(playerPosition.x + camPosition.x,
-		playerPosition.y + camPosition.y,
+	iRect rt = iRectMake(drawPos.x + camPosition.x,
+		drawPos.y + camPosition.y,
 		HALF_OF_TEX_WIDTH *2.0f,
 		HALF_OF_TEX_HEIGHT * 2.0f);
 
@@ -406,8 +409,8 @@ bool Player::evasionPlayer(float dt)
 		if (weaponVector != iPointZero)
 			v = weaponVector / iPointLength(weaponVector);
 
-		iPoint p = iPointMake(	camPosition.x + playerPosition.x - HALF_OF_TEX_WIDTH,
-			camPosition.y + playerPosition.y - HALF_OF_TEX_HEIGHT - 20);
+		iPoint p = iPointMake(drawPos.x + camPosition.x - HALF_OF_TEX_WIDTH,
+			drawPos.y + camPosition.y - HALF_OF_TEX_HEIGHT - 20);
 
 		img[9]->paint(dt, p, REVERSE_NONE);
 		

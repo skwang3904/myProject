@@ -37,7 +37,8 @@ void Enemy1::init(int a)
 	moveSpeed = 100.0f;
 	reach = 100.0f;
 
-	Enemy1Position = iPointMake(200 + 40 * a,80 + 20 * a);
+	Enemy1Position =  iPointMake(200 + 40 * a,80 + 20 * a);
+	drawEnemyPos = Enemy1Position + pc->camPosition + setPos;
 
 	touchEnemy1 = iRectZero;
 
@@ -66,7 +67,7 @@ void Enemy1::takeDmgEnemy(float dt, float dmg)
 void Enemy1::takeDmgEffect(float dt)
 {
 	setRGBA(0, 0, 0, linear(takeDmgTime / TAKE_DMG_TIME, 1.0f, 0.0f));
-	drawImage(img->tex, Enemy1Position.x, Enemy1Position.y, TOP | LEFT);
+	drawImage(img->tex, drawEnemyPos.x, Enemy1Position.y + setPos.y, TOP | LEFT);
 	setRGBA(1, 1, 1, 1);
 
 	takeDmgTime += dt;
@@ -79,7 +80,8 @@ void Enemy1::takeDmgEffect(float dt)
 
 bool Enemy1::enemysAttack(float dt)
 {
-	iPoint v = pc->playerPosition + iPointMake(HALF_OF_TEX_WIDTH,HALF_OF_TEX_HEIGHT) - Enemy1Position;
+	iPoint v = pc->playerPosition + iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT)
+		- Enemy1Position;
 
 	if (iPointLength(v) > reach -10 && giveDmg == false)
 		return false;
@@ -109,7 +111,7 @@ bool Enemy1::enemysAttack(float dt)
 	{
 		setLineWidth(10);
 		setRGBA(1, 0, 0, 1);
-		drawLine(Enemy1Position, ATV);
+		drawLine(drawEnemyPos, ATV + setPos);
 		setLineWidth(1);
 		setRGBA(1, 1, 1, 1);
 
@@ -172,14 +174,15 @@ void drawEnemy(float dt)
 
 	static float dmgTime = 0.0f;
 
-	for (int i = 0; i < 0; i++) //monNum
+	for (int i = 0; i < 2; i++) //monNum
 	{
 		Enemy1* enm = enemys[i];
+		enm->drawEnemyPos = enm->Enemy1Position + pc->camPosition + setPos;
 		if (enm->hp > 0.0f)
 		{
-			enm->img->paint(dt, enm->Enemy1Position, REVERSE_NONE);
-			enm->touchEnemy1 = iRectMake(enm->Enemy1Position.x
-				, enm->Enemy1Position.y,
+			enm->img->paint(dt, enm->drawEnemyPos, REVERSE_NONE);
+			enm->touchEnemy1 = iRectMake(enm->drawEnemyPos.x
+				, enm->drawEnemyPos.y,
 				enm->img->tex->width, enm->img->tex->height);
 
 			setRGBA(0, 0, 0, 1);

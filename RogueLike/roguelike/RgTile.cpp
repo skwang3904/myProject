@@ -2,12 +2,15 @@
 
 iPoint* tileOffSet;
 MapTile** mapTiles;
+iPoint setPos;
 void createTileSet()
 {
+	setPos = iPointMake(RGTILE_X * RGTILE_Width, 0);
+
 	tileOffSet = (iPoint*)malloc(sizeof(iPoint) * 9);
 	for (int i = 0; i < 9; i++)
 	{
-		tileOffSet[i] = iPointMake(1.0f * RGTILE_X * RGTILE_Width * (i % 3), 
+		tileOffSet[i] = iPointMake( RGTILE_X * RGTILE_Width * (i % 3),
 			1.0f * RGTILE_Y * RGTILE_Height * (i / 3));
 		printf(" i = %d, x = %f, y = %f\n",i,tileOffSet[i].x, tileOffSet[i].y);
 	}

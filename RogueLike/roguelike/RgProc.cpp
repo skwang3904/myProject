@@ -12,8 +12,6 @@ void loadRgProc()
 	createTileSet();
 	loadRoomTile();
 
-	createEnemy();
-
 	pc = Player::instance();
 
 	pc->createPlayerImage();
@@ -21,6 +19,7 @@ void loadRgProc()
 
 	weapon = Weapon::instance();
 
+	createEnemy();
 }
 
 void freeRgProc()

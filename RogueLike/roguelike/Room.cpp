@@ -60,8 +60,8 @@ void drawRoomTile(float dt)
 			if (maps[i]->rgTile[j] == MOVETILE) setRGBA(MOVETILE_RGBA);
 			else if (maps[i]->rgTile[j] == WALLTILE)setRGBA(WALLTILE_RGBA);
 			else if (maps[i]->rgTile[j] == FALLTILE)setRGBA(FALLTILE_RGBA);
-			fillRect(pc->camPosition.x + maps[i]->tileOff.x + RGTILE_Width * (j % RGTILE_X),
-				pc->camPosition.y + maps[i]->tileOff.y + RGTILE_Height * (j / RGTILE_X),
+			fillRect(maps[i]->tileOff.x + pc->camPosition.x + + RGTILE_Width * (j % RGTILE_X),
+				maps[i]->tileOff.y + pc->camPosition.y + RGTILE_Height * (j / RGTILE_X),
 				RGTILE_Width, RGTILE_Height);
 		}
 	}
@@ -74,17 +74,17 @@ void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float hal
 	// 계속
 	int i, j;
 	MapTile* t = tile;
-	t->tileOff.x = floor(t->tileOff.x);
-	t->tileOff.y = floor(t->tileOff.y);
+	//t->tileOff.x = floor(t->tileOff.x);
+	//t->tileOff.y = floor(t->tileOff.y);
 
-	int hTexW = halfOfTexW;
-	int hTexH = halfOfTexH;
+	//int hTexW = halfOfTexW;
+	//int hTexH = halfOfTexH;
 	if (mp.x < 0)
 	{
 		int LX = pos.x - t->tileOff.x;							LX /= RGTILE_Width;
 		int TLY = pos.y - t->tileOff.y;							TLY /= RGTILE_Height;
 		int BLY = pos.y + halfOfTexH * 2.0f - t->tileOff.y;		BLY /= RGTILE_Height;
-		int min = t->tileOff.x - 50;
+		int min = t->tileOff.x;
 		//int min = t->tileOff.x;
 		for (i = LX - 1; i > -1; i--)
 		{
@@ -112,15 +112,15 @@ void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float hal
 				break;
 		}
 		pos.x += mp.x;
-		if (pos.x < min+0.01f)
-			pos.x = min+0.01f;
+		if (pos.x < min + 1)
+			pos.x = min + 1;
 	}
 	else if (mp.x > 0)
 	{
 		int RX = pos.x + halfOfTexW * 2.0f - t->tileOff.x;		RX /= RGTILE_Width;
 		int TRY = pos.y - t->tileOff.y;							TRY /= RGTILE_Height;
 		int BRY = pos.y + halfOfTexH * 2.0f - t->tileOff.y;		BRY /= RGTILE_Height;
-		int max = t->tileOff.x + RGTILE_X * RGTILE_Width + 50;
+		int max = t->tileOff.x + RGTILE_X * RGTILE_Width - 1;
 		//int max = t->tileOff.x + RGTILE_X * RGTILE_Width - 1;
 		for (i = RX + 1; i < RGTILE_X; i++)
 		{
@@ -149,8 +149,8 @@ void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float hal
 		}
 
 		pos.x += mp.x;
-		if (pos.x > max - halfOfTexW * 2.0f)
-			pos.x = max - halfOfTexW * 2.0f;
+		if (pos.x > max - halfOfTexW * 2.0f - 1)
+			pos.x = max - halfOfTexW * 2.0f - 1;
 	}
 
 	if (mp.y < 0)
@@ -158,7 +158,7 @@ void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float hal
 		int TY = pos.y - t->tileOff.y;							TY /= RGTILE_Height;
 		int TLX = pos.x - t->tileOff.x;							TLX /= RGTILE_Width;
 		int TRX = pos.x + halfOfTexW * 2.0f - t->tileOff.x;		TRX /= RGTILE_Width;
-		int min = t->tileOff.y - 50;
+		int min = t->tileOff.y;
 		//int min = t->tileOff.y;
 		for (j = TY - 1; j > -1; j--)
 		{
@@ -186,15 +186,15 @@ void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float hal
 				break;
 		}
 		pos.y += mp.y;
-		if (pos.y < min+0.01f)
-			pos.y = min+0.01f;
+		if (pos.y < min + 1)
+			pos.y = min + 1;
 	}
 	else if (mp.y > 0)
 	{
-		int BY =  pos.y + halfOfTexH * 2 - t->tileOff.y;		BY /= RGTILE_Height;
+		int BY =  pos.y + halfOfTexH * 2.0f - t->tileOff.y;		BY /= RGTILE_Height;
 		int BLX = pos.x - t->tileOff.x;							BLX /= RGTILE_Width;
-		int BRX = pos.x + halfOfTexW * 2 - t->tileOff.x;		BRX /= RGTILE_Width;
-		int max = t->tileOff.y + RGTILE_Y * RGTILE_Height +50;
+		int BRX = pos.x + halfOfTexW * 2.0f - t->tileOff.x;		BRX /= RGTILE_Width;
+		int max = t->tileOff.y + RGTILE_Y * RGTILE_Height - 1;
 		//int max = t->tileOff.y + RGTILE_Y * RGTILE_Height - 1;
 
 		for (j = BY + 1; j < RGTILE_Y; j++)
@@ -224,8 +224,8 @@ void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float hal
 		}
 
 		pos.y += mp.y;
-		if (pos.y > max - halfOfTexH * 2)
-			pos.y = max - halfOfTexH * 2;
+		if (pos.y > max - halfOfTexH * 2.0f - 1)
+			pos.y = max - halfOfTexH * 2.0f - 1;
 	}
 }
 

@@ -54,11 +54,7 @@ Player::~Player()
 		free(texsEvasion[i]);
 	free(texsEvasion);
 
-	for (int i = 0; i < 10; i++)
-	{
-		if (img[i])
-			delete img[i];
-	}
+
 	free(img);
 }
 
@@ -82,8 +78,8 @@ void Player::initPlayerStat()
 
 	moveSpeed = 400.0f;
 
-	playerPosition =  iPointMake(RGTILE_X * RGTILE_Width /2, RGTILE_Y * RGTILE_Height/2);
-	camPosition = mapTiles[0]->tileOff;
+	camPosition = iPointZero - mapTiles[0]->tileOff;
+	playerPosition = mapTiles[0]->tileOff + iPointMake(RGTILE_X * RGTILE_Width /2, RGTILE_Y * RGTILE_Height/2);
 
 	weaponVector = iPointMake(0, 1);
 
@@ -192,8 +188,9 @@ void Player::createPlayerImage()
 	for (int i = 0; i < 4; i++)
 		freeImage(texsEvasion[i]);
 
-	freeImage(imgRight->tex);
-	freeImage(imgDown->tex);
+	freeImage(imgChar[0]->tex);
+	freeImage(imgChar[1]->tex);
+
 }
 
 void Player::drawPlayer(float dt)
@@ -273,9 +270,10 @@ void Player::dropCombat(float dt,bool key)
 		}
 		mw = NULL;
 		method = NULL;
-	}
-	
+	}	
 }
+
+
 
 void Player::movePlayer(float dt)
 {
@@ -309,7 +307,7 @@ void Player::movePlayer(float dt)
 
 	if (getKeyStat(keyboard_attack)) //타일 넘어가기 테스트
 	{
-		playerPosition += weaponVector * 50;
+		playerPosition += weaponVector * 30;
 	}
 
 	bool ani = (v != iPointZero);
@@ -318,17 +316,30 @@ void Player::movePlayer(float dt)
 	iPoint mp = v * (moveSpeed * dt);
 
 	MapTile* tile = mapTiles[0];
-	for (int i = 0; i < MAPTILE_NUM; i++)
+	MapTile* t = tile;
+	float min = 0xffffff;
+
+	if (playerPosition.x < tile->tileOff.x || playerPosition.y < tile->tileOff.y ||
+		playerPosition.x > tile->tileOff.x + RGTILE_X * RGTILE_Width - 1 ||
+		playerPosition.y > tile->tileOff.y + RGTILE_Y * RGTILE_Height - 1)
 	{
-		if (playerPosition.x > mapTiles[i]->tileOff.x &&
-			playerPosition.y > mapTiles[i]->tileOff.y)
+		for (int i = 0; i < MAPTILE_NUM; i++)
 		{
-			if (iPointLength(playerPosition - mapTiles[i]->tileOff) <
-				iPointLength(playerPosition - tile->tileOff))
-				tile = mapTiles[i];
+			if (t == NULL)
+				t = mapTiles[i];
+			if (playerPosition.x > mapTiles[i]->tileOff.x&&
+				playerPosition.y > mapTiles[i]->tileOff.y)
+			{
+				if (iPointLength(playerPosition - mapTiles[i]->tileOff) < min)
+				{
+					min = iPointLength(playerPosition - mapTiles[i]->tileOff);
+					t = mapTiles[i];
+				}
+			}
 		}
 	}
-	camPosition = tile->tileOff * -1.0f;
+	tile = t;
+	camPosition = iPointZero - tile->tileOff;
 
 	if (evasion == false)
 		if (falling = fallCheck(pc,tile, dt))
@@ -343,23 +354,23 @@ void Player::movePlayer(float dt)
 
 	if (v.x)
 	{
-		img[2 * ani + 0]->paint(dt, playerPosition - tile->tileOff, v.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);
+		img[2 * ani + 0]->paint(dt, playerPosition + camPosition, v.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);
 		drawImage(img[ch]->tex , 
-			playerPosition.x - tile->tileOff.x + HALF_OF_TEX_WIDTH,
-			playerPosition.y - tile->tileOff.y + HALF_OF_TEX_HEIGHT - 12,
+			playerPosition.x + camPosition.x + HALF_OF_TEX_WIDTH,
+			playerPosition.y + camPosition.y + HALF_OF_TEX_HEIGHT - 12,
 			VCENTER | HCENTER);
 	}
 	else
 	{
-		img[2 * ani + 1]->paint(dt, playerPosition - tile->tileOff, REVERSE_NONE);
+		img[2 * ani + 1]->paint(dt, playerPosition + camPosition, REVERSE_NONE);
 		drawImage(img[ch]->tex, 
-			playerPosition.x - tile->tileOff.x + HALF_OF_TEX_WIDTH,
-			playerPosition.y - tile->tileOff.y + HALF_OF_TEX_HEIGHT - 12,
+			playerPosition.x + camPosition.x + HALF_OF_TEX_WIDTH,
+			playerPosition.y + camPosition.y + HALF_OF_TEX_HEIGHT - 12,
 			VCENTER | HCENTER);
 	}
 
-	iRect rt = iRectMake(playerPosition.x - tile->tileOff.x,
-		playerPosition.y - tile->tileOff.y,
+	iRect rt = iRectMake(playerPosition.x + camPosition.x,
+		playerPosition.y + camPosition.y,
 		HALF_OF_TEX_WIDTH *2.0f,
 		HALF_OF_TEX_HEIGHT * 2.0f);
 
@@ -369,7 +380,6 @@ void Player::movePlayer(float dt)
 	setRGBA(1, 1, 1, 1);
 
 	touchPlayer = rt;
-
 }
 
 bool Player::evasionPlayer(float dt)

@@ -7,8 +7,9 @@ void createTileSet()
 	tileOffSet = (iPoint*)malloc(sizeof(iPoint) * 9);
 	for (int i = 0; i < 9; i++)
 	{
-		tileOffSet[i] = iPointMake(RGTILE_X * RGTILE_Width * (i % 3), 
-			RGTILE_Y * RGTILE_Height * (i / 3));
+		tileOffSet[i] = iPointMake(1.0f * RGTILE_X * RGTILE_Width * (i % 3), 
+			1.0f * RGTILE_Y * RGTILE_Height * (i / 3));
+		printf(" i = %d, x = %f, y = %f\n",i,tileOffSet[i].x, tileOffSet[i].y);
 	}
 
 	mapTiles = (MapTile**)malloc(sizeof(MapTile*) * MAPTILE_NUM);
@@ -16,17 +17,17 @@ void createTileSet()
 	for (int i = 0; i < MAPTILE_NUM; i++)
 		mapTiles[i] = (MapTile*)malloc(sizeof(MapTile) * 1);
 
-	mapTiles[5]->rgTile = RgTile;
+	mapTiles[0]->rgTile = RgTile;
 	mapTiles[1]->rgTile = RgRoomTile1;
 	mapTiles[2]->rgTile = RgRoomTile2;
 	mapTiles[3]->rgTile = RgRoomTile3;
 	mapTiles[4]->rgTile = RgRoomTile4;
-	mapTiles[0]->rgTile = RgRoomTile5;
+	mapTiles[5]->rgTile = RgRoomTile5;
 
-	//for (int i = 0; i < MAPTILE_NUM; i++)
-	//{
-	//	mapTiles[i]->tileOff = tileOffSet[i];
-	//}
+	for (int i = 0; i < MAPTILE_NUM; i++)
+	{
+		mapTiles[i]->tileOff = iPointZero;
+	}
 }
 
 void freeTileSet()
@@ -92,10 +93,10 @@ int RgRoomTile3[RGTILE_X * RGTILE_Y] = {
 	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
 	WW, 01, 01, 01, 01, 01, WW, WW, WW, 01, 01, 01, 01, 01, 01, WW,
 	01, 01, 01, 01, 01, 01, 01, 01, WW, 01, 01, 01, 01, 01, 01, 01,
-	01, 01, 01, 01, 01, 01, WW, WW, WW, 01, 01, 01, 01, 01, 01, 01,
 	01, 01, 01, 01, 01, 01, 01, 01, WW, 01, 01, 01, 01, 01, 01, 01,
 	01, 01, 01, 01, 01, 01, WW, WW, WW, 01, 01, 01, 01, 01, 01, 01,
-	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
+	01, 01, 01, 01, 01, 01, 01, 01, WW, 01, 01, 01, 01, 01, 01, 01,
+	WW, 01, 01, 01, 01, 01, WW, WW, WW, 01, 01, 01, 01, 01, 01, WW,
 	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
 	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
 	WW, WW, WW, WW, WW, WW, 01, 01, 01, 01, WW, WW, WW, WW, WW, WW,

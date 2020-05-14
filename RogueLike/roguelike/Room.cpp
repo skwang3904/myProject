@@ -154,9 +154,10 @@ void drawRoomTile(float dt)
 			continue;
 			for (int j = 0; j < num; j++)
 			{
-				if (maps[i]->rgTile[j] == MOVETILE) setRGBA(MOVETILE_RGBA);
-				else if (maps[i]->rgTile[j] == WALLTILE)setRGBA(WALLTILE_RGBA);
-				else if (maps[i]->rgTile[j] == FALLTILE)setRGBA(FALLTILE_RGBA);
+				setRGBA(1, 1, 1, 1);
+				//if (maps[i]->rgTile[j] == MOVETILE) setRGBA(MOVETILE_RGBA);
+				//else if (maps[i]->rgTile[j] == WALLTILE)setRGBA(WALLTILE_RGBA);
+				//else if (maps[i]->rgTile[j] == FALLTILE)setRGBA(FALLTILE_RGBA);
 				fillRect(maps[i]->tileOff.x + pc->camPosition.x + setPos.x + RGTILE_Width * (j % RGTILE_X),
 					maps[i]->tileOff.y + pc->camPosition.y + setPos.y + RGTILE_Height * (j / RGTILE_X),
 					RGTILE_Width, RGTILE_Height);

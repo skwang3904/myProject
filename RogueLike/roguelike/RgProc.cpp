@@ -58,7 +58,7 @@ void drawRgProc(float dt)
 		}
 	}
 
-	if (delta > 2.0f)
+	if (delta > 1.0f)
 	{
 		stagetest = false;
 		delta = 0.0f;
@@ -90,6 +90,7 @@ void drawRgProc(float dt)
 	
 	pc->drawPlayer(dt);
 	//printf("%.2f\n", pc->hp);
+	//printf("x = %.2f, y = %.2f\n", pc->playerPosition.x, pc->playerPosition.y);
 }
 
 void keyRgProc(iKeyState stat, iPoint point)

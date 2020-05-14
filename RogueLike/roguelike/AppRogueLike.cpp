@@ -68,7 +68,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInst,
             drawCursor(0.0f);
             SwapBuffers(hDC);
         }
-    }
+}
 
     freeLib();
     freeRgGame();

@@ -5,53 +5,19 @@ MapTile** mapTiles;
 iPoint setPos;
 void createTileSet()
 {
-	setPos = iPointMake(RGTILE_X * RGTILE_Width*2, RGTILE_Y * RGTILE_Height*2);
+	setPos = iPointMake(RGTILE_X * RGTILE_Width*2, RGTILE_Y * RGTILE_Height);
 
 	tileOffSet = (iPoint*)malloc(sizeof(iPoint) * TILEOFF_NUM);
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
-		tileOffSet[i] = iPointMake(RGTILE_X * RGTILE_Width * (i % TILEOFF_SQRT),
+		tileOffSet[i] = iPointMake(RGTILE_X * RGTILE_Width * (i % TILEOFF_SQRT) ,
 			RGTILE_Y * RGTILE_Height * (i / TILEOFF_SQRT));
 	}
-
-	mapTiles = (MapTile**)malloc(sizeof(MapTile*) * MAPTILE_NUM);
-
-	for (int i = 0; i < MAPTILE_NUM; i++)
-	{
-		mapTiles[i] = (MapTile*)malloc(sizeof(MapTile) * 1);
-
-		mapTiles[i]->rgTile = NULL;
-		mapTiles[i]->tileOff = iPointMake(-1,-1);
-	}
-
-
-	mapTiles[0]->rgTile = Tile4way1;
-
-	mapTiles[1]->rgTile = Tile3way1;
-	mapTiles[2]->rgTile = Tile3way2;
-	mapTiles[3]->rgTile = Tile3way3;
-	mapTiles[4]->rgTile = Tile3way4;
-
-	mapTiles[5]->rgTile = Tile2way1;
-	mapTiles[6]->rgTile = Tile2way2;
-	mapTiles[7]->rgTile = Tile2way3;
-	mapTiles[8]->rgTile = Tile2way4;
-	mapTiles[9]->rgTile = Tile2way5;
-	mapTiles[10]->rgTile = Tile2way6;
-
-	mapTiles[11]->rgTile = Tile1way1;
-	mapTiles[12]->rgTile = Tile1way2;
-	mapTiles[13]->rgTile = Tile1way3;
-	mapTiles[14]->rgTile = Tile1way4;
 }
 
 void freeTileSet()
 {
 	free(tileOffSet);
-
-	for (int i = 0; i < MAPTILE_NUM; i++)
-			free(mapTiles[i]);
-	free(mapTiles);
 }
 
 int Tile4way1[RGTILE_X * RGTILE_Y] = {
@@ -59,10 +25,10 @@ int Tile4way1[RGTILE_X * RGTILE_Y] = {
 	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
 	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
 	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
-	01, 01, 01, FF, FF, FF, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01,
-	01, 01, 01, FF, FF, FF, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01,
-	01, 01, 01, FF, FF, FF, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01,
-	01, 01, 01, FF, FF, FF, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01,
+	01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01,
+	01, 01, 01, FF, FF, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01,
+	01, 01, 01, FF, FF, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01,
+	01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01,
 	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
 	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
 	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,

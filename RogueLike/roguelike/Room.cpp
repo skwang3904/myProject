@@ -17,7 +17,7 @@ struct ConnectTile {
 };
 ConnectTile ct[TILEOFF_NUM];
 
-bool connectCheck(ConnectTile* ct);
+void connectCheck(ConnectTile* ct);
 int conectCount = 0;
 
 MapTile** maps;
@@ -28,7 +28,7 @@ void loadRoomTile()
 	maps = (MapTile**)malloc(sizeof(MapTile*) * TILEOFF_NUM);
 
 	for (int i = 0; i < TILEOFF_NUM; i++)
-		maps[i] = (MapTile*)calloc(sizeof(MapTile),1);
+		maps[i] = (MapTile*)malloc(sizeof(MapTile) * 1);
 
 	conectCount = 0;
 	while (conectCount < MAPTILE_NUM)
@@ -81,7 +81,7 @@ void loadRoomTile()
 
 			if (exist == true)
 			{
-				maps[m[k]]->rgTile = mapTiles[0]->rgTile;
+				maps[m[k]]->rgTile = Tile4way1;
 				//maps[m[k]]->tileOff = tileOffSet[m[k]];
 			}
 		}
@@ -105,14 +105,76 @@ void loadRoomTile()
 			conectCount = 0;
 		}
 	}
+
+	//for (int i = 0; i < TILEOFF_NUM; i++)
+	//{
+	//	ConnectTile* c = &ct[i];
+	//	bool l = c->left;
+	//	bool r = c->right;
+	//	bool u = c->up;
+	//	bool d = c->down;
+	//	printf("left = %d\nright = %d\nup = %d\ndown = %d\n",l,r,u,d );
+	//	//int pathNum = l + r + u + d;
+	//	//switch (pathNum) {
+	//	//case 4: maps[i]->rgTile = Tile4way1; break;
+	//	//case 3:
+	//	//{
+	//	//	if (r && u && d)  maps[i]->rgTile = Tile3way1;
+	//	//	else if (l && u && d) maps[i]->rgTile = Tile3way2;
+	//	//	else if (l && r && d) maps[i]->rgTile = Tile3way3;
+	//	//	else if (l && r && u) maps[i]->rgTile = Tile3way4;
+	//	//	break;
+	//	//}
+	//	//case 2:
+	//	//{
+	//	//	if (l && r)  maps[i]->rgTile = Tile2way1;
+	//	//	else if (u && d) maps[i]->rgTile = Tile2way2;
+	//	//	else if (l && u) maps[i]->rgTile = Tile2way3;
+	//	//	else if (r && u) maps[i]->rgTile = Tile2way4;
+	//	//	else if (l && d) maps[i]->rgTile = Tile2way5;
+	//	//	else if (r && d) maps[i]->rgTile = Tile2way6;
+	//	//	break;
+	//	//}
+	//	//case 1:
+	//	//{
+	//	//	if (l )  maps[i]->rgTile = Tile1way1;
+	//	//	else if (r) maps[i]->rgTile = Tile1way2;
+	//	//	else if (u) maps[i]->rgTile = Tile1way3;
+	//	//	else if (d) maps[i]->rgTile = Tile1way4;
+	//	//	break;
+	//	//}
+
+	//	//}
+
+	//	if(l && r && u && d) 		maps[i]->rgTile = Tile4way1;
+
+	//	if (r && u && d)  maps[i]->rgTile = Tile3way1;
+	//	else if (l && u && d) maps[i]->rgTile = Tile3way2;
+	//	else if (l && r && d) maps[i]->rgTile = Tile3way3;
+	//	else if (l && r && u) maps[i]->rgTile = Tile3way4;
+	//	
+
+	//	else if (l && r)  maps[i]->rgTile = Tile2way1;
+	//	else if (u && d) maps[i]->rgTile = Tile2way2;
+	//	else if (l && u) maps[i]->rgTile = Tile2way3;
+	//	else if (r && u) maps[i]->rgTile = Tile2way4;
+	//	else if (l && d) maps[i]->rgTile = Tile2way5;
+	//	else if (r && d) maps[i]->rgTile = Tile2way6;
+
+	//	else if (l)  maps[i]->rgTile = Tile1way1;
+	//	else if (r) maps[i]->rgTile = Tile1way2;
+	//	else if (u) maps[i]->rgTile = Tile1way3;
+	//	else if (d) maps[i]->rgTile = Tile1way4;
+
+
+
+	//}
 }
 
-bool connectCheck(ConnectTile* c)
+void connectCheck(ConnectTile* c)
 {
-	if (c->value == -1)
-		return false;
-	if (c->visit == true )
-		return true;
+	if (c->visit == true || c->value == -1)
+		return ;
 
 	c->visit = true;
 	conectCount++;
@@ -120,12 +182,10 @@ bool connectCheck(ConnectTile* c)
 	int index = c->index;
 	int x = c->index % TILEOFF_SQRT;
 	int y = c->index / TILEOFF_SQRT;
-	if (x > 0)					c->left =	connectCheck(&ct[index - 1]);
-	if (x < TILEOFF_SQRT - 1)	c->right =	connectCheck(&ct[index + 1]);
-	if (y > 0)					c->up =		connectCheck(&ct[index - TILEOFF_SQRT]);
-	if (y < TILEOFF_SQRT - 1)	c->down =	connectCheck(&ct[index + TILEOFF_SQRT]);
-
-	return false;
+	if (x > 0)					connectCheck(&ct[index - 1]);
+	if (x < TILEOFF_SQRT - 1)	connectCheck(&ct[index + 1]);
+	if (y > 0)					connectCheck(&ct[index - TILEOFF_SQRT]);
+	if (y < TILEOFF_SQRT - 1)	connectCheck(&ct[index + TILEOFF_SQRT]);
 }
 
 void freeRoomTile()
@@ -173,7 +233,7 @@ void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float hal
 		int LX = pos.x - t->tileOff.x ;							LX /= RGTILE_Width;
 		int TLY = pos.y - t->tileOff.y ;						TLY /= RGTILE_Height;
 		int BLY = pos.y + halfOfTexH * 2.0f - t->tileOff.y ;	BLY /= RGTILE_Height;
-		int min =0;
+		int min = t->tileOff.x- 100;
 		//int min = t->tileOff.x;
 		for (i = LX - 1; i > -1; i--)
 		{
@@ -209,7 +269,7 @@ void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float hal
 		int RX = pos.x + halfOfTexW * 2.0f - t->tileOff.x;		RX /= RGTILE_Width;
 		int TRY = pos.y - t->tileOff.y;							TRY /= RGTILE_Height;
 		int BRY = pos.y + halfOfTexH * 2.0f - t->tileOff.y;		BRY /= RGTILE_Height;
-		int max = t->tileOff.x + RGTILE_X * RGTILE_Width * TILEOFF_SQRT - 1;
+		int max = t->tileOff.x + RGTILE_X * RGTILE_Width * TILEOFF_SQRT  - 1;
 		//int max = t->tileOff.x + RGTILE_X * RGTILE_Width - 1;
 		for (i = RX + 1; i < RGTILE_X; i++)
 		{
@@ -247,7 +307,7 @@ void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float hal
 		int TY = pos.y - t->tileOff.y;							TY /= RGTILE_Height;
 		int TLX = pos.x - t->tileOff.x;							TLX /= RGTILE_Width;
 		int TRX = pos.x + halfOfTexW * 2.0f - t->tileOff.x;		TRX /= RGTILE_Width;
-		int min = 0;
+		int min = t->tileOff.y-100;
 		//int min = t->tileOff.y;
 		for (j = TY - 1; j > -1; j--)
 		{

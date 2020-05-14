@@ -23,21 +23,20 @@
 #define FALLTILE_RGBA	0, 0, 0.5, 1
 
 #define MAPTILE_NUM 15
-#define TILEOFF_NUM 16 // 제곱수
-#define TILEOFF_SQRT 4
+#define TILEOFF_NUM 25 // 제곱수
+#define TILEOFF_SQRT 5
 
 struct MapTile {
 	int* rgTile;
 	iPoint tileOff;
 };
 extern iPoint* tileOffSet;
-extern MapTile** mapTiles;
 extern iPoint setPos;
 
 void createTileSet();
 void freeTileSet();
 
-extern int Tile4way1[RGTILE_X * RGTILE_Y]; //4way
+extern int Tile4way1[RGTILE_X * RGTILE_Y]; // 4way
 
 extern int Tile3way1[RGTILE_X * RGTILE_Y]; // R UD
 extern int Tile3way2[RGTILE_X * RGTILE_Y]; // L UD

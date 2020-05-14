@@ -285,7 +285,7 @@ MapTile* playerTileOffSet(MapTile* tile)
 	MapTile* t = tile;
 	float min = 0xffffff;
 
-	for (int i = 0; i < MAPTILE_NUM; i++)
+	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
 		if (pc->playerPosition.x > maps[i]->tileOff.x &&
 			pc->playerPosition.y > maps[i]->tileOff.y)

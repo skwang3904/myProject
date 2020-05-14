@@ -69,7 +69,7 @@ void Enemy1::takeDmgEnemy(float dt, float dmg)
 void Enemy1::takeDmgEffect(float dt)
 {
 	setRGBA(0, 0, 0, linear(takeDmgTime / TAKE_DMG_TIME, 1.0f, 0.0f));
-	drawImage(img->tex, drawEnemyPos.x, Enemy1Position.y + setPos.y, TOP | LEFT);
+	drawImage(img->tex, drawEnemyPos.x, drawEnemyPos.y, TOP | LEFT);
 	setRGBA(1, 1, 1, 1);
 
 	takeDmgTime += dt;

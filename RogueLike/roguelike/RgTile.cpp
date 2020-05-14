@@ -5,7 +5,7 @@ MapTile** mapTiles;
 iPoint setPos;
 void createTileSet()
 {
-	setPos = iPointMake(RGTILE_X * RGTILE_Width, RGTILE_Y * RGTILE_Height);
+	setPos = iPointMake(RGTILE_X * RGTILE_Width*2, RGTILE_Y * RGTILE_Height*2);
 
 	tileOffSet = (iPoint*)malloc(sizeof(iPoint) * TILEOFF_NUM);
 	for (int i = 0; i < TILEOFF_NUM; i++)
@@ -50,10 +50,7 @@ void freeTileSet()
 	free(tileOffSet);
 
 	for (int i = 0; i < MAPTILE_NUM; i++)
-	{
-		if (mapTiles[i])
 			free(mapTiles[i]);
-	}
 	free(mapTiles);
 }
 

@@ -23,8 +23,8 @@
 #define FALLTILE_RGBA	0, 0, 0.5, 1
 
 #define MAPTILE_NUM 15
-#define TILEOFF_NUM 25 // 제곱수
-#define TILEOFF_SQRT 5
+#define TILEOFF_NUM 16 // 제곱수
+#define TILEOFF_SQRT 4
 
 struct MapTile {
 	int* rgTile;

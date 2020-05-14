@@ -79,8 +79,8 @@ void Player::initPlayerStat()
 	moveSpeed = 400.0f;
 
 	camPosition = iPointZero - maps[12]->tileOff ;
-	playerPosition = maps[12]->tileOff + iPointMake(RGTILE_X * RGTILE_Width / 2, RGTILE_Y * RGTILE_Height / 2);
-	drawPos = playerPosition + setPos;
+	playerPosition = iPointMake(RGTILE_X * RGTILE_Width / 2, RGTILE_Y * RGTILE_Height / 2);
+	drawPos = maps[12]->tileOff + playerPosition + setPos ;
 
 	weaponVector = iPointMake(0, 1);
 
@@ -294,7 +294,6 @@ MapTile* playerTileOffSet(MapTile* tile)
 
 void Player::movePlayer(float dt)
 {
-	drawPos = playerPosition + setPos;
 	iPoint v = iPointZero;
 	static iPoint weaponV = iPointMake(0,1);
 	static int ch= 7;
@@ -353,7 +352,7 @@ void Player::movePlayer(float dt)
 		return;
 
 	img[ch]->setTexAtIndex(attacking);
-
+	drawPos = playerPosition + setPos;
 	if (v.x)
 	{
 		img[2 * ani + 0]->paint(dt, drawPos + camPosition, v.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);

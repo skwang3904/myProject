@@ -39,15 +39,8 @@ void drawRgProc(float dt)
 {
 	setRGBA(0, 0, 0, 1);
 	fillRect(0, 0, devSize.width, devSize.height);
-
-	drawRoomTile(dt);
-	
-	// 몬스터 draw
-
-	if (pc->hp < 0.1f)
-		return;
-
-	drawEnemy(dt);
+	static float delta = 0.0f;
+	static bool stagetest = false;
 
 	int test = 0;
 	for (int i = 0; i < ENEMY_NUM; i++)
@@ -60,8 +53,32 @@ void drawRgProc(float dt)
 			freePrevStage();
 			stage++;
 			createStage(stage);
-		}		
+
+			stagetest = true;
+		}
 	}
+
+	if (delta > 2.0f)
+	{
+		stagetest = false;
+		delta = 0.0f;
+	}
+
+	if (stagetest)
+	{
+		delta += dt;
+		return;
+	}
+	drawRoomTile(dt);
+	
+	// 몬스터 draw
+
+	if (pc->hp < 0.1f)
+		return;
+
+	drawEnemy(dt);
+
+
 
 	// 특정위치에서 (ex 상자) 등장
 	for (int i = 0; i < meleeNum; i++)

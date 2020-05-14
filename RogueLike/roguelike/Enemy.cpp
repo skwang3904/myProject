@@ -3,17 +3,17 @@
 #include "WMelee.h"
 #include "Room.h"
 #include "RgTile.h"
+#include "Stage.h"
 
 Enemy1** enemys;
 Enemy1* enemy1;
 
-int enemysNum;
 
-void Enemy1::init(int a)
+void Enemy1::createEnemyImg()
 {
 	img = new iImage();
 	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(30, 20 + 20 * a);
+	iSize size = iSizeMake(30, 20 + 20 * (stage - 1));
 	g->init(size);
 
 	setRGBA(0, 1, 1, 1);
@@ -28,17 +28,18 @@ void Enemy1::init(int a)
 	Texture* tex = g->getTexture();
 	img->addObject(tex);
 	freeImage(tex);
-	
-	hp = _hp = 50.0f;
-	attackDmg = 5.0f;
-	_attackDmg = 5.0f;
-	attackSpeed = 2.0f;
-	_attackSpeed = 2.0f;
-	moveSpeed = 100.0f;
-	reach = 100.0f;
+}
 
-	Enemy1Position =  iPointMake(200 + 40 * a,80 + 20 * a);
-	drawEnemyPos = Enemy1Position + pc->camPosition + setPos;
+void Enemy1::init(int stage)
+{
+	hp = _hp = 50.0f + ((stage - 1) * 20);
+	attackDmg = _attackDmg = 5.0f + ((stage - 1) * 5);
+	attackSpeed = _attackSpeed = 0.5f - ((stage - 1) * 1);
+	moveSpeed = 200.0f + ((stage - 1) * 100);
+	reach = 50.0f;
+
+	Enemy1Position = iPointZero;
+	drawEnemyPos = iPointZero;
 
 	touchEnemy1 = iRectZero;
 
@@ -85,7 +86,6 @@ bool Enemy1::enemysAttack(float dt)
 
 	if (iPointLength(v) > reach -10 && giveDmg == false)
 		return false;
-
 	static iPoint ATV = v + Enemy1Position;
 
 	if (giveDmg == false && giveDmgTime == 0.0f)
@@ -111,7 +111,7 @@ bool Enemy1::enemysAttack(float dt)
 	{
 		setLineWidth(10);
 		setRGBA(1, 0, 0, 1);
-		drawLine(drawEnemyPos, ATV + setPos);
+		drawLine(drawEnemyPos, ATV + pc->camPosition + setPos);
 		setLineWidth(1);
 		setRGBA(1, 1, 1, 1);
 
@@ -147,19 +147,22 @@ bool Enemy1::enemysAttack(float dt)
 
 void createEnemy()
 {
-	enemysNum = 5;
-	enemys = (Enemy1**)malloc(sizeof(Enemy1*) * enemysNum);
+	enemys = (Enemy1**)malloc(sizeof(Enemy1*) * ENEMY_NUM);
 
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < ENEMY_NUM; i++)
 	{
 		enemys[i] = (Enemy1*)malloc(sizeof(Enemy1) * 1);
-		enemys[i]->init(i);
+		enemys[i]->createEnemyImg();
+		enemys[i]->init(stage);
+		enemys[i]->Enemy1Position = mapTiles[1]->tileOff + iPointMake(RGTILE_Width * 3 + RGTILE_Width * i,
+			RGTILE_Height * 2 + RGTILE_Height * i);
+		enemys[i]->drawEnemyPos = enemys[i]->Enemy1Position + pc->camPosition + setPos;
 	}
 }
 
 void freeEnemy()
 {
-	for (int i = 0; i < enemysNum; i++)
+	for (int i = 0; i < ENEMY_NUM; i++)
 	{
 		if (enemys[i]->img)
 			delete enemys[i]->img;
@@ -170,11 +173,9 @@ void freeEnemy()
 
 void drawEnemy(float dt)
 {
-	int num = enemysNum;
-
 	static float dmgTime = 0.0f;
 
-	for (int i = 0; i < 2; i++) //monNum
+	for (int i = 0; i < ENEMY_NUM; i++) //monNum
 	{
 		Enemy1* enm = enemys[i];
 		enm->drawEnemyPos = enm->Enemy1Position + pc->camPosition + setPos;

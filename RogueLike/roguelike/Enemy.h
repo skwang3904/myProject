@@ -11,7 +11,8 @@
 */
 
 #define TAKE_DMG_TIME 0.3f
-extern int enemysNum;
+
+#define ENEMY_NUM 5
 
 struct Enemy1{
 	iImage* img;
@@ -35,21 +36,18 @@ struct Enemy1{
 	float giveDmgTime;
 
 	bool hit;
-
-	void init(int a);
+	void createEnemyImg();
+	void init(int stage);
 	void takeDmgEnemy(float dt, float dmg);
 	void takeDmgEffect(float dt);
 	bool enemysAttack(float dt);
 
 	//move func pointer
 };
-
 extern Enemy1** enemys;
 
 void createEnemy();
 void freeEnemy();
 void drawEnemy(float dt);
-
-
 
 void moveEnemyType1(Enemy1* enm,float dt);

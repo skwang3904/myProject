@@ -1,14 +1,17 @@
 #include "RgProc.h"
 
-#include "Player.h"
-#include "Enemy.h"
 #include "Room.h"
+#include "RgTile.h"
+#include "Stage.h"
+
 #include "Weapon.h"
 #include "WMelee.h"
-#include "RgTile.h"
+
+
 
 void loadRgProc()
 {
+	stage++;
 	createTileSet();
 	loadRoomTile();
 
@@ -41,10 +44,24 @@ void drawRgProc(float dt)
 	
 	// 몬스터 draw
 
-	if (pc->hp <= 0.0f)
+	if (pc->hp < 0.1f)
 		return;
 
 	drawEnemy(dt);
+
+	int test = 0;
+	for (int i = 0; i < ENEMY_NUM; i++)
+	{
+		if (enemys[i]->hp < 0.1f)
+			test++;
+		if (i == ENEMY_NUM - 1 && test == ENEMY_NUM)
+		{
+			// stage animation
+			freePrevStage();
+			stage++;
+			createStage(stage);
+		}		
+	}
 
 	// 특정위치에서 (ex 상자) 등장
 	for (int i = 0; i < meleeNum; i++)

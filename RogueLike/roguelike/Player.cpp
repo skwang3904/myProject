@@ -82,7 +82,6 @@ void Player::initPlayerStat()
 	playerPosition = mapTiles[0]->tileOff + iPointMake(RGTILE_X * RGTILE_Width / 2, RGTILE_Y * RGTILE_Height / 2);
 	drawPos = playerPosition + setPos;
 
-
 	weaponVector = iPointMake(0, 1);
 
 	touchPlayer = iRectZero;

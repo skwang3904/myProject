@@ -18,7 +18,7 @@ void createMeleeWeapon()
 {
 	meleeNum = 0;
 
-	_meleeWP = (meleeWeapon**)malloc(sizeof(meleeWeapon*) * 1);
+	_meleeWP = (meleeWeapon**)malloc(sizeof(meleeWeapon*) * 2);
 
 	nomalSword = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
 	nomalSword->init();
@@ -63,8 +63,6 @@ void freeMeleeWeapon()
 		free(_meleeWP[i]);
 	}
 	free(_meleeWP);
-
-	meleeNum = 0;
 }
 
 
@@ -233,7 +231,7 @@ bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 		2, attAngleRate + angle + mw->holdAngle, REVERSE_NONE);
 
 
-	for (int i = 0; i < enemysNum; i++) //enemy
+	for (int i = 0; i < ENEMY_NUM; i++) //enemy
 	{
 		if (containRect(mw->hitBox, enemys[i]->touchEnemy1))
 		{

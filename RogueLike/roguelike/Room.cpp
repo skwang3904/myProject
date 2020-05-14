@@ -1,63 +1,106 @@
 #include "Room.h"
 
 #include "RgTile.h"
-#include "Player.h"
 
 #include <math.h>
 
 MapTile** maps;
+bool* randomOffCheck;
 
-bool* mapCheck;
+void connectCheck(MapTile* tile)
+{
+	
+}
+
 void loadRoomTile()
 {
-	mapCheck = (bool*)malloc(sizeof(bool) * MAPTILE_NUM);
-	for (int i = 0; i < MAPTILE_NUM; i++)
-		mapCheck[i] = false;
+	int m[TILEOFF_NUM];
+	memset(m, -1, sizeof(int) * TILEOFF_NUM);
 
-	maps = (MapTile**)malloc(sizeof(MapTile*) * MAPTILE_NUM);
-
-	int m[MAPTILE_NUM];
-	memset(m, -1, sizeof(int) * MAPTILE_NUM);
+	randomOffCheck = (bool*)malloc(sizeof(bool) * TILEOFF_NUM);
+	for (int i = 0; i < TILEOFF_NUM; i++)
+		randomOffCheck[i] = false;
 
 	for (int i = 0; i < MAPTILE_NUM; i++)
 	{
-		if (m[i] == -1 || mapCheck[m[i]] == true)
-			m[i] = random() % MAPTILE_NUM;
+		if (m[i] == -1 || randomOffCheck[m[i]] == true)
+			m[i] = random() % TILEOFF_NUM;
 		
-		if (mapCheck[m[i]] == false)
-			mapCheck[m[i]] = true;
+		if (randomOffCheck[m[i]] == false)
+			randomOffCheck[m[i]] = true;
 		else
 			i--;
 	}
 
-	for (int i = 0; i < MAPTILE_NUM; i++)
+	maps = (MapTile**)malloc(sizeof(MapTile*) * TILEOFF_NUM);
+	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
-		maps[i] = mapTiles[i];
-		//maps[i]->tileOff = tileOffSet[m[i]];
-		maps[i]->tileOff = tileOffSet[i];
+		maps[i] = (MapTile*)malloc(sizeof(MapTile) * 1);
+
+		maps[i]->tileOff = iPointMake(-1, -1);
+	}
+
+	for (int i = 0; i < TILEOFF_NUM; i++)
+	{
+		bool exist = false;
+		for (int j = 0; j < MAPTILE_NUM; j++)
+		{
+			if (i == m[j])
+			{
+				exist = true;
+				break;
+			}
+		}
+		if (i < MAPTILE_NUM && exist == false)
+		{
+			maps[m[i]] = mapTiles[i];
+			maps[m[i]]->tileOff = tileOffSet[m[i]];
+		}
+	}
+	
+	for (int i = 0; i < MAPTILE_NUM; i++)
+		printf("m[%d] = %d\n", i,m[i]);
+
+	int visitNum = 0;
+	while (visitNum < MAPTILE_NUM)
+	{
+		for (int i = 0; i < MAPTILE_NUM; i++)
+		{
+			if(maps[i])
+				connectCheck(maps[i]);
+		}
+		break;
 	}
 }
 
 void freeRoomTile()
 {
-	free(mapCheck);
+	free(randomOffCheck);
+	for (int i = 0; i < TILEOFF_NUM; i++)
+	{
+		if (maps[i])
+			free(maps[i]);
+	}
 	free(maps);
 }
 
 void drawRoomTile(float dt) 
-{//수정
+{
 	int num = RGTILE_X * RGTILE_Y;
 
-	for (int i = 0; i < MAPTILE_NUM; i++)
+	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
 		for (int j = 0; j < num; j++)
 		{
-			if (maps[i]->rgTile[j] == MOVETILE) setRGBA(MOVETILE_RGBA);
-			else if (maps[i]->rgTile[j] == WALLTILE)setRGBA(WALLTILE_RGBA);
-			else if (maps[i]->rgTile[j] == FALLTILE)setRGBA(FALLTILE_RGBA);
-			fillRect(maps[i]->tileOff.x + pc->camPosition.x + setPos.x + RGTILE_Width * (j % RGTILE_X),
-				maps[i]->tileOff.y + pc->camPosition.y + setPos.y + RGTILE_Height * (j / RGTILE_X),
-				RGTILE_Width, RGTILE_Height);
+			if (maps[i]->tileOff != iPointMake(-1,-1))
+			{
+				if (maps[i]->rgTile[j] == MOVETILE) setRGBA(MOVETILE_RGBA);
+				else if (maps[i]->rgTile[j] == WALLTILE)setRGBA(WALLTILE_RGBA);
+				else if (maps[i]->rgTile[j] == FALLTILE)setRGBA(FALLTILE_RGBA);
+				fillRect(maps[i]->tileOff.x + pc->camPosition.x + setPos.x + RGTILE_Width * (j % RGTILE_X),
+					maps[i]->tileOff.y + pc->camPosition.y + setPos.y + RGTILE_Height * (j / RGTILE_X),
+					RGTILE_Width, RGTILE_Height);
+			}
 		}
 	}
 	setRGBA(1, 1, 1, 1);
@@ -75,7 +118,7 @@ void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float hal
 		int LX = pos.x - t->tileOff.x;							LX /= RGTILE_Width;
 		int TLY = pos.y - t->tileOff.y;							TLY /= RGTILE_Height;
 		int BLY = pos.y + halfOfTexH * 2.0f - t->tileOff.y;		BLY /= RGTILE_Height;
-		int min = t->tileOff.x;
+		int min =0;
 		//int min = t->tileOff.x;
 		for (i = LX - 1; i > -1; i--)
 		{
@@ -111,7 +154,7 @@ void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float hal
 		int RX = pos.x + halfOfTexW * 2.0f - t->tileOff.x;		RX /= RGTILE_Width;
 		int TRY = pos.y - t->tileOff.y;							TRY /= RGTILE_Height;
 		int BRY = pos.y + halfOfTexH * 2.0f - t->tileOff.y;		BRY /= RGTILE_Height;
-		int max = t->tileOff.x + RGTILE_X * RGTILE_Width - 1;
+		int max = t->tileOff.x + RGTILE_X * RGTILE_Width * 2 - 1;
 		//int max = t->tileOff.x + RGTILE_X * RGTILE_Width - 1;
 		for (i = RX + 1; i < RGTILE_X; i++)
 		{
@@ -149,7 +192,7 @@ void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float hal
 		int TY = pos.y - t->tileOff.y;							TY /= RGTILE_Height;
 		int TLX = pos.x - t->tileOff.x;							TLX /= RGTILE_Width;
 		int TRX = pos.x + halfOfTexW * 2.0f - t->tileOff.x;		TRX /= RGTILE_Width;
-		int min = t->tileOff.y;
+		int min = 0;
 		//int min = t->tileOff.y;
 		for (j = TY - 1; j > -1; j--)
 		{
@@ -185,7 +228,7 @@ void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float hal
 		int BY =  pos.y + halfOfTexH * 2.0f - t->tileOff.y;		BY /= RGTILE_Height;
 		int BLX = pos.x - t->tileOff.x;							BLX /= RGTILE_Width;
 		int BRX = pos.x + halfOfTexW * 2.0f - t->tileOff.x;		BRX /= RGTILE_Width;
-		int max = t->tileOff.y + RGTILE_Y * RGTILE_Height - 1;
+		int max = t->tileOff.y + RGTILE_Y * RGTILE_Height * 2 - 1;
 		//int max = t->tileOff.y + RGTILE_Y * RGTILE_Height - 1;
 
 		for (j = BY + 1; j < RGTILE_Y; j++)

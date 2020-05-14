@@ -8,11 +8,10 @@ void createTileSet()
 	setPos = iPointMake(RGTILE_X * RGTILE_Width, RGTILE_Y * RGTILE_Height);
 
 	tileOffSet = (iPoint*)malloc(sizeof(iPoint) * TILEOFF_NUM);
-	int sqrtTile = sqrt(TILEOFF_NUM);
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
-		tileOffSet[i] = iPointMake( RGTILE_X * RGTILE_Width * (i % sqrtTile),
-			1.0f * RGTILE_Y * RGTILE_Height * (i / sqrtTile));
+		tileOffSet[i] = iPointMake(RGTILE_X * RGTILE_Width * (i % TILEOFF_SQRT),
+			RGTILE_Y * RGTILE_Height * (i / TILEOFF_SQRT));
 	}
 
 	mapTiles = (MapTile**)malloc(sizeof(MapTile*) * MAPTILE_NUM);
@@ -20,12 +19,9 @@ void createTileSet()
 	for (int i = 0; i < MAPTILE_NUM; i++)
 	{
 		mapTiles[i] = (MapTile*)malloc(sizeof(MapTile) * 1);
-		mapTiles[i]->tileOff = iPointMake(-1, -1);
 
-		mapTiles[i]->left	= false;
-		mapTiles[i]->right	= false;
-		mapTiles[i]->up		= false;
-		mapTiles[i]->down	= false;
+		mapTiles[i]->rgTile = NULL;
+		mapTiles[i]->tileOff = iPointMake(-1,-1);
 	}
 
 

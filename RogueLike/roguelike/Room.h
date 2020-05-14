@@ -11,6 +11,7 @@ void freeRoomTile();
 void drawRoomTile(float dt);
 
 struct MapTile;
+extern MapTile** maps;
 void wallCheck(bool checkFall, MapTile* tile, iPoint& pos,iPoint mp, 
 				float halfOfTexW, float halfOfTexH);
 bool fallCheck(Player* pc, MapTile* tile, float dt);

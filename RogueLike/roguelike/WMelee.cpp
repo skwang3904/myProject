@@ -2,6 +2,7 @@
 
 #include "Enemy.h"
 #include "RgTile.h"
+#include "Room.h"
 
 meleeWeapon** _meleeWP;
 

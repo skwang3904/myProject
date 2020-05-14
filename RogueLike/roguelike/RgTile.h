@@ -24,15 +24,11 @@
 
 #define MAPTILE_NUM 15
 #define TILEOFF_NUM 25 // 제곱수
+#define TILEOFF_SQRT 5
 
 struct MapTile {
 	int* rgTile;
 	iPoint tileOff;
-
-	bool left;
-	bool right;
-	bool up;
-	bool down;
 };
 extern iPoint* tileOffSet;
 extern MapTile** mapTiles;
@@ -43,19 +39,19 @@ void freeTileSet();
 
 extern int Tile4way1[RGTILE_X * RGTILE_Y]; //4way
 
-extern int Tile3way1[RGTILE_X * RGTILE_Y]; // RUD
-extern int Tile3way2[RGTILE_X * RGTILE_Y]; // LUD
-extern int Tile3way3[RGTILE_X * RGTILE_Y]; // 
-extern int Tile3way4[RGTILE_X * RGTILE_Y]; //
+extern int Tile3way1[RGTILE_X * RGTILE_Y]; // R UD
+extern int Tile3way2[RGTILE_X * RGTILE_Y]; // L UD
+extern int Tile3way3[RGTILE_X * RGTILE_Y]; // LR D
+extern int Tile3way4[RGTILE_X * RGTILE_Y]; // LR U
 
-extern int Tile2way1[RGTILE_X * RGTILE_Y]; //
-extern int Tile2way2[RGTILE_X * RGTILE_Y]; //
-extern int Tile2way3[RGTILE_X * RGTILE_Y]; //
-extern int Tile2way4[RGTILE_X * RGTILE_Y]; //
-extern int Tile2way5[RGTILE_X * RGTILE_Y]; //
-extern int Tile2way6[RGTILE_X * RGTILE_Y]; //
+extern int Tile2way1[RGTILE_X * RGTILE_Y]; // LR
+extern int Tile2way2[RGTILE_X * RGTILE_Y]; // UD
+extern int Tile2way3[RGTILE_X * RGTILE_Y]; // LU
+extern int Tile2way4[RGTILE_X * RGTILE_Y]; // RU
+extern int Tile2way5[RGTILE_X * RGTILE_Y]; // LD
+extern int Tile2way6[RGTILE_X * RGTILE_Y]; // RD
 
-extern int Tile1way1[RGTILE_X * RGTILE_Y]; //
-extern int Tile1way2[RGTILE_X * RGTILE_Y]; //
-extern int Tile1way3[RGTILE_X * RGTILE_Y]; //
-extern int Tile1way4[RGTILE_X * RGTILE_Y]; //
+extern int Tile1way1[RGTILE_X * RGTILE_Y]; // L
+extern int Tile1way2[RGTILE_X * RGTILE_Y]; // R
+extern int Tile1way3[RGTILE_X * RGTILE_Y]; // U
+extern int Tile1way4[RGTILE_X * RGTILE_Y]; // D

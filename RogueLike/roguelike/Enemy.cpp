@@ -1,6 +1,7 @@
 #include "Enemy.h"
 
 #include "WMelee.h"
+
 #include "Room.h"
 #include "RgTile.h"
 #include "Stage.h"
@@ -35,7 +36,7 @@ void Enemy1::init(int stage)
 	hp = _hp = 50.0f + ((stage - 1) * 20);
 	attackDmg = _attackDmg = 5.0f + ((stage - 1) * 5);
 	attackSpeed = _attackSpeed = 0.5f - ((stage - 1) * 1);
-	moveSpeed = 200.0f + ((stage - 1) * 100);
+	moveSpeed = 50.0f + ((stage - 1) * 100);
 	reach = 50.0f;
 
 	Enemy1Position = iPointZero;
@@ -154,7 +155,7 @@ void createEnemy()
 		enemys[i] = (Enemy1*)malloc(sizeof(Enemy1) * 1);
 		enemys[i]->createEnemyImg();
 		enemys[i]->init(stage);
-		enemys[i]->Enemy1Position = mapTiles[1]->tileOff + iPointMake(RGTILE_Width * 3 + RGTILE_Width * i,
+		enemys[i]->Enemy1Position = maps[12]->tileOff + iPointMake(RGTILE_Width * 3 + RGTILE_Width * i,
 			RGTILE_Height * 2 + RGTILE_Height * i);
 		enemys[i]->drawEnemyPos = enemys[i]->Enemy1Position + pc->camPosition + setPos;
 	}
@@ -219,15 +220,15 @@ void moveEnemyType1(Enemy1* enm, float dt)
 	v /= iPointLength(v);
 	iPoint mp = v * enm->moveSpeed * dt;
 
-	MapTile* tile = mapTiles[0];
+	MapTile* tile = maps[12];
 	for (int i = 0; i < MAPTILE_NUM; i++)
 	{
-		if (enm->Enemy1Position.x > mapTiles[i]->tileOff.x&&
-			enm->Enemy1Position.y > mapTiles[i]->tileOff.y)
+		if (enm->Enemy1Position.x > maps[i]->tileOff.x&&
+			enm->Enemy1Position.y > maps[i]->tileOff.y)
 		{
-			if (iPointLength(enm->Enemy1Position - mapTiles[i]->tileOff)
+			if (iPointLength(enm->Enemy1Position - maps[i]->tileOff)
 				< iPointLength(enm->Enemy1Position - tile->tileOff))
-			tile = mapTiles[i];
+			tile = maps[i];
 		}
 	}
 

@@ -7,71 +7,164 @@
 MapTile** maps;
 bool* randomOffCheck;
 
-void connectCheck(MapTile* tile)
-{
-	
-}
+struct ConnectTile {
+	int index; // 타일 넘버
+	int value; // iPoint(-1,-1) => 0, else 1
+	bool visit;
 
+	bool left;
+	bool right;
+	bool up;
+	bool down;
+};
+ConnectTile ct[TILEOFF_NUM];
+
+bool connectCheck(ConnectTile* ct);
+int conectCount = 0;
 void loadRoomTile()
 {
-	int m[TILEOFF_NUM];
-	memset(m, -1, sizeof(int) * TILEOFF_NUM);
+	int m[MAPTILE_NUM];
+	//memset(m, -1, sizeof(int) * MAPTILE_NUM);
 
 	randomOffCheck = (bool*)malloc(sizeof(bool) * TILEOFF_NUM);
-	for (int i = 0; i < TILEOFF_NUM; i++)
-		randomOffCheck[i] = false;
+	//for (int i = 0; i < TILEOFF_NUM; i++)
+	//	randomOffCheck[i] = false;
 
-	for (int i = 0; i < MAPTILE_NUM; i++)
-	{
-		if (m[i] == -1 || randomOffCheck[m[i]] == true)
-			m[i] = random() % TILEOFF_NUM;
-		
-		if (randomOffCheck[m[i]] == false)
-			randomOffCheck[m[i]] = true;
-		else
-			i--;
-	}
+	//for (int i = 0; i < MAPTILE_NUM; i++)
+	//{
+	//	if (m[i] == -1 || randomOffCheck[m[i]] == true)
+	//		m[i] = random() % TILEOFF_NUM;
+
+	//	if (randomOffCheck[m[i]] == false)
+	//		randomOffCheck[m[i]] = true;
+	//	else
+	//		i--;
+	//}
 
 	maps = (MapTile**)malloc(sizeof(MapTile*) * TILEOFF_NUM);
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
 		maps[i] = (MapTile*)malloc(sizeof(MapTile) * 1);
 
-		maps[i]->tileOff = iPointMake(-1, -1);
+		//maps[i]->rgTile = NULL;
+		//maps[i]->tileOff = iPointMake(-1, -1);
+
+		//ConnectTile* c = &ct[i];
+		//c->index = i;
+		//c->value = false;
+		//c->visit = false;
+
+		//c->left = false;
+		//c->right = false;
+		//c->up = false;
+		//c->down = false;
 	}
 
-	for (int i = 0; i < TILEOFF_NUM; i++)
-	{
-		bool exist = false;
-		for (int j = 0; j < MAPTILE_NUM; j++)
-		{
-			if (i == m[j])
-			{
-				exist = true;
-				break;
-			}
-		}
-		if (i < MAPTILE_NUM && exist == false)
-		{
-			maps[m[i]] = mapTiles[i];
-			maps[m[i]]->tileOff = tileOffSet[m[i]];
-		}
-	}
-	
-	for (int i = 0; i < MAPTILE_NUM; i++)
-		printf("m[%d] = %d\n", i,m[i]);
+	//maps[12]->rgTile = mapTiles[0]->rgTile; // 기준타일
+	//maps[12]->tileOff = tileOffSet[12];
+	//m[0] = 12;
 
-	int visitNum = 0;
-	while (visitNum < MAPTILE_NUM)
+	int k = 0;
+	while (conectCount < MAPTILE_NUM)
 	{
+		for (int i = 0; i < TILEOFF_NUM; i++)
+		{
+			maps[i]->rgTile = NULL;
+			maps[i]->tileOff = iPointMake(-1, -1);
+
+			ConnectTile* c = &ct[i];
+			c->index = i;
+			c->value = -1;
+			c->visit = false;
+
+			c->left = false;
+			c->right = false;
+			c->up = false;
+			c->down = false;
+		}
+
+		for (int i = 0; i < TILEOFF_NUM; i++)
+			randomOffCheck[i] = false;
+		memset(m, -1, sizeof(int) * MAPTILE_NUM);
 		for (int i = 0; i < MAPTILE_NUM; i++)
 		{
-			if(maps[i])
-				connectCheck(maps[i]);
+			if (m[i] == -1 || randomOffCheck[m[i]] == true)
+				m[i] = random() % TILEOFF_NUM;
+
+			if (randomOffCheck[m[i]] == false)
+				randomOffCheck[m[i]] = true;
+			else
+				i--;
 		}
-		break;
+
+		maps[12]->rgTile = mapTiles[0]->rgTile; // 기준타일
+		maps[12]->tileOff = tileOffSet[12];
+		m[0] = 12;
+
+		for (int i = 0; i < TILEOFF_NUM; i++)
+		{
+			if (i == 12) continue;
+			bool exist = false;
+			for (int j = 0; j < MAPTILE_NUM; j++)
+			{
+
+				if (i == m[j])
+				{
+					k = j;
+					exist = true;
+					break;
+				}
+			}
+
+			if (exist == true)
+			{
+				maps[m[k]]->rgTile = mapTiles[0]->rgTile;
+				maps[m[k]]->tileOff = tileOffSet[m[k]];
+			}
+		}
+
+		for (int i = 0; i < TILEOFF_NUM; i++)
+		{
+			ConnectTile* c = &ct[i];
+			if (maps[i]->tileOff != iPointMake(-1, -1))
+				c->value = 5;
+		}
+
+		for (int i = 0; i < TILEOFF_NUM; i++)
+		{
+			ConnectTile* c = &ct[i];
+			if (c->value == 5)
+				connectCheck(c);
+			if (conectCount == MAPTILE_NUM)
+				break;
+			for (int j = 0; j < TILEOFF_NUM; j++)
+				c->visit = false;
+			conectCount = 0;
+		}
 	}
 }
+
+bool connectCheck(ConnectTile* c)
+{
+	if (c->value == -1)
+		return false;
+	if (c->visit == true )
+		return true;
+
+	c->visit = true;
+	conectCount++;
+
+	int index = c->index;
+	int x = c->index % TILEOFF_SQRT;
+	int y = c->index / TILEOFF_SQRT;
+	if (x > 0)					c->left =	connectCheck(&ct[index - 1]);
+	if (x < TILEOFF_SQRT - 1)	c->right =	connectCheck(&ct[index + 1]);
+	if (y > 0)					c->up =		connectCheck(&ct[index - TILEOFF_SQRT]);
+	if (y < TILEOFF_SQRT - 1)	c->down =	connectCheck(&ct[index + TILEOFF_SQRT]);
+
+	return false;
+}
+
 
 void freeRoomTile()
 {
@@ -90,9 +183,9 @@ void drawRoomTile(float dt)
 
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
-		for (int j = 0; j < num; j++)
+		if (maps[i]->tileOff != iPointMake(-1, -1))
 		{
-			if (maps[i]->tileOff != iPointMake(-1,-1))
+			for (int j = 0; j < num; j++)
 			{
 				if (maps[i]->rgTile[j] == MOVETILE) setRGBA(MOVETILE_RGBA);
 				else if (maps[i]->rgTile[j] == WALLTILE)setRGBA(WALLTILE_RGBA);
@@ -154,7 +247,7 @@ void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float hal
 		int RX = pos.x + halfOfTexW * 2.0f - t->tileOff.x;		RX /= RGTILE_Width;
 		int TRY = pos.y - t->tileOff.y;							TRY /= RGTILE_Height;
 		int BRY = pos.y + halfOfTexH * 2.0f - t->tileOff.y;		BRY /= RGTILE_Height;
-		int max = t->tileOff.x + RGTILE_X * RGTILE_Width * 2 - 1;
+		int max = t->tileOff.x + RGTILE_X * RGTILE_Width * TILEOFF_SQRT - 1;
 		//int max = t->tileOff.x + RGTILE_X * RGTILE_Width - 1;
 		for (i = RX + 1; i < RGTILE_X; i++)
 		{
@@ -228,7 +321,7 @@ void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float hal
 		int BY =  pos.y + halfOfTexH * 2.0f - t->tileOff.y;		BY /= RGTILE_Height;
 		int BLX = pos.x - t->tileOff.x;							BLX /= RGTILE_Width;
 		int BRX = pos.x + halfOfTexW * 2.0f - t->tileOff.x;		BRX /= RGTILE_Width;
-		int max = t->tileOff.y + RGTILE_Y * RGTILE_Height * 2 - 1;
+		int max = t->tileOff.y + RGTILE_Y * RGTILE_Height * TILEOFF_SQRT - 1;
 		//int max = t->tileOff.y + RGTILE_Y * RGTILE_Height - 1;
 
 		for (j = BY + 1; j < RGTILE_Y; j++)
@@ -274,6 +367,9 @@ bool fallCheck(Player* pc, MapTile* tile, float dt)
 	// 임시 - 낭떨어지에 진입시 가장 가까이있는 타일로 이동  - 어색함
 	// 라이프 감소
 	// 잠시 무적
+	if (tile->rgTile == NULL)
+		return false;
+
 	MapTile* t = tile;
 
 	int x = (int)(pc->playerPosition.x - t->tileOff.x + HALF_OF_TEX_WIDTH) / RGTILE_Width;
@@ -285,7 +381,6 @@ bool fallCheck(Player* pc, MapTile* tile, float dt)
 	{
 		if (falling == false)
 			pc->img[8]->startAnimation();
-
 
 		if (pc->img[8]->animation == false)
 		{

@@ -78,8 +78,8 @@ void Player::initPlayerStat()
 
 	moveSpeed = 400.0f;
 
-	camPosition = iPointZero - mapTiles[0]->tileOff ;
-	playerPosition = mapTiles[0]->tileOff + iPointMake(RGTILE_X * RGTILE_Width / 2, RGTILE_Y * RGTILE_Height / 2);
+	camPosition = iPointZero - maps[12]->tileOff ;
+	playerPosition = maps[12]->tileOff + iPointMake(RGTILE_X * RGTILE_Width / 2, RGTILE_Y * RGTILE_Height / 2);
 	drawPos = playerPosition + setPos;
 
 	weaponVector = iPointMake(0, 1);
@@ -279,13 +279,13 @@ MapTile* playerTileOffSet(MapTile* tile)
 
 	for (int i = 0; i < MAPTILE_NUM; i++)
 	{
-		if (pc->playerPosition.x > mapTiles[i]->tileOff.x &&
-			pc->playerPosition.y > mapTiles[i]->tileOff.y)
+		if (pc->playerPosition.x > maps[i]->tileOff.x &&
+			pc->playerPosition.y > maps[i]->tileOff.y)
 		{
-			if (iPointLength(pc->playerPosition - mapTiles[i]->tileOff) < min)
+			if (iPointLength(pc->playerPosition - maps[i]->tileOff) < min)
 			{
-				min = iPointLength(pc->playerPosition - mapTiles[i]->tileOff);
-				t = mapTiles[i];
+				min = iPointLength(pc->playerPosition - maps[i]->tileOff);
+				t = maps[i];
 			}
 		}
 	}
@@ -332,7 +332,7 @@ void Player::movePlayer(float dt)
 		v /= iPointLength(v);
 	iPoint mp = v * (moveSpeed * dt);
 
-	static MapTile* tile = mapTiles[0];
+	static MapTile* tile = maps[12];
 
 	if (playerPosition.x < tile->tileOff.x || playerPosition.y < tile->tileOff.y ||
 		playerPosition.x > tile->tileOff.x + RGTILE_X * RGTILE_Width - 1 ||

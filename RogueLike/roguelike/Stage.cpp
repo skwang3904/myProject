@@ -11,14 +11,26 @@ void createStage(int stage)
 
 	loadRoomTile();
 
-	pc->playerPosition =
-		iPointMake(RGTILE_X * RGTILE_Width / 2, RGTILE_Y * RGTILE_Height / 2);
+
+	for (int i = 0; i < TILEOFF_NUM; i++)
+	{
+		if (maps[i]->rgTile)
+		{
+			pc->playerPosition = maps[i]->tileOff +
+			iPointMake(RGTILE_X * RGTILE_Width / 2, RGTILE_Y * RGTILE_Height / 2);
+			pc->camPosition = iPointZero - maps[i]->tileOff;
+			break;
+		}
+	}
+
+	//pc->playerPosition =
+	//	iPointMake(RGTILE_X * RGTILE_Width / 2, RGTILE_Y * RGTILE_Height / 2);
 
 	// monster init
 	for (int i = 0; i < ENEMY_NUM; i++)
 	{
 		enemys[i]->init(stage);
-		enemys[i]->Enemy1Position = maps[12]->tileOff + iPointMake(200 + 40 * i, 80 + 20 * i);
+		enemys[i]->Enemy1Position = iPointMake(200 + 40 * i, 80 + 20 * i) - pc->camPosition;
 		enemys[i]->drawEnemyPos = enemys[i]->Enemy1Position + pc->camPosition + setPos;
 	}
 }

@@ -78,9 +78,17 @@ void Player::initPlayerStat()
 
 	moveSpeed = 400.0f;
 
-	camPosition = iPointZero - maps[12]->tileOff ;
-	playerPosition = iPointMake(RGTILE_X * RGTILE_Width / 2, RGTILE_Y * RGTILE_Height / 2);
-	drawPos = maps[12]->tileOff + playerPosition + setPos ;
+	for (int i = 0; i < TILEOFF_NUM; i++)
+	{
+		if (maps[i]->rgTile)
+		{
+			playerPosition = maps[i]->tileOff +
+				iPointMake(RGTILE_X * RGTILE_Width / 2, RGTILE_Y * RGTILE_Height / 2);
+			camPosition = iPointZero - maps[i]->tileOff;
+			drawPos = maps[i]->tileOff + playerPosition + setPos;
+			break;
+		}
+	}
 
 	weaponVector = iPointMake(0, 1);
 

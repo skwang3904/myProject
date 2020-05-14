@@ -28,9 +28,9 @@ void loadRoomTile()
 	maps = (MapTile**)malloc(sizeof(MapTile*) * TILEOFF_NUM);
 
 	for (int i = 0; i < TILEOFF_NUM; i++)
-		maps[i] = (MapTile*)malloc(sizeof(MapTile) * 1);
+		maps[i] = (MapTile*)calloc(sizeof(MapTile),1);
 
-
+	conectCount = 0;
 	while (conectCount < MAPTILE_NUM)
 	{
 		for (int i = 0; i < TILEOFF_NUM; i++)
@@ -64,14 +64,9 @@ void loadRoomTile()
 				i--;
 		}
 
-		//maps[12]->rgTile = mapTiles[0]->rgTile; // 기준타일
-		//maps[12]->tileOff = tileOffSet[12];
-		//m[0] = 12;
-
 		int k = 0;
 		for (int i = 0; i < TILEOFF_NUM; i++)
 		{
-			//if (i == 12) continue;
 			bool exist = false;
 			for (int j = 0; j < MAPTILE_NUM; j++)
 			{
@@ -87,7 +82,7 @@ void loadRoomTile()
 			if (exist == true)
 			{
 				maps[m[k]]->rgTile = mapTiles[0]->rgTile;
-				maps[m[k]]->tileOff = tileOffSet[m[k]];
+				//maps[m[k]]->tileOff = tileOffSet[m[k]];
 			}
 		}
 
@@ -95,13 +90,13 @@ void loadRoomTile()
 		{
 			ConnectTile* c = &ct[i];
 			if (maps[i]->rgTile != NULL)
-				c->value = 5;
+				c->value = 1;
 		}
 
 		for (int i = 0; i < TILEOFF_NUM; i++)
 		{
 			ConnectTile* c = &ct[i];
-			if (c->value == 5)
+			if (c->value == 1)
 				connectCheck(c);
 			if (conectCount == MAPTILE_NUM)
 				break;
@@ -133,13 +128,11 @@ bool connectCheck(ConnectTile* c)
 	return false;
 }
 
-
 void freeRoomTile()
 {
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
-		if (maps[i])
-			free(maps[i]);
+		free(maps[i]);
 	}
 	free(maps);
 }
@@ -154,10 +147,9 @@ void drawRoomTile(float dt)
 			continue;
 			for (int j = 0; j < num; j++)
 			{
-				setRGBA(1, 1, 1, 1);
-				//if (maps[i]->rgTile[j] == MOVETILE) setRGBA(MOVETILE_RGBA);
-				//else if (maps[i]->rgTile[j] == WALLTILE)setRGBA(WALLTILE_RGBA);
-				//else if (maps[i]->rgTile[j] == FALLTILE)setRGBA(FALLTILE_RGBA);
+				if (maps[i]->rgTile[j] == MOVETILE) setRGBA(MOVETILE_RGBA);
+				else if (maps[i]->rgTile[j] == WALLTILE)setRGBA(WALLTILE_RGBA);
+				else if (maps[i]->rgTile[j] == FALLTILE)setRGBA(FALLTILE_RGBA);
 				fillRect(maps[i]->tileOff.x + pc->camPosition.x + setPos.x + RGTILE_Width * (j % RGTILE_X),
 					maps[i]->tileOff.y + pc->camPosition.y + setPos.y + RGTILE_Height * (j / RGTILE_X),
 					RGTILE_Width, RGTILE_Height);
@@ -382,10 +374,10 @@ float findMoveTile(Player* pc, MapTile* tile, int x, int y)
 	if (t->rgTile[RGTILE_X * y + x] != MOVETILE)
 		return min;
 
-	float distance = fabs(iPointLength(
-		iPointMake(t->tileOff.x + RGTILE_Width * x + RGTILE_Width / 2, 
-				t->tileOff.y + RGTILE_Height * y + RGTILE_Height / 2)
-		- pc->playerPosition - iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT)));
+	float distance = iPointLength(
+		pc->playerPosition + iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT)
+		- iPointMake(t->tileOff.x + RGTILE_Width * x + RGTILE_Width / 2,
+				t->tileOff.y + RGTILE_Height * y + RGTILE_Height / 2));
 
 	if (min > distance)
 		return distance;
@@ -474,6 +466,13 @@ void findMoveTile(Player* pc, MapTile* tile)
 			break;
 	}
 
-	pc->playerPosition = iPointMake(t->tileOff.x + RGTILE_Width * pcX + HALF_OF_TEX_WIDTH / 2,
-		t->tileOff.y + RGTILE_Height * pcY + HALF_OF_TEX_HEIGHT / 2);
+	iPoint p = iPointMake(t->tileOff.x + RGTILE_Width * pcX,
+		t->tileOff.y + RGTILE_Height * pcY);
+
+	if (p.x < pc->playerPosition.x)	p -= iPointMake(HALF_OF_TEX_WIDTH, 0);
+	else							p += iPointMake(HALF_OF_TEX_WIDTH, 0);
+	if (p.y < pc->playerPosition.y)	p -= iPointMake(0, HALF_OF_TEX_HEIGHT);
+	else							p += iPointMake(0, HALF_OF_TEX_HEIGHT);
+	
+	pc->playerPosition = p;
 }

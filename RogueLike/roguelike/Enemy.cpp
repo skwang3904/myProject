@@ -225,11 +225,14 @@ void drawEnemy(float dt)
 			if (enm->showHp)
 				enm->drawShowHp(dt);
 
-			if (enm->enemysAttack(dt) == false || //수정
-				((iPointZero - pc->camPosition).x + setPos.x < enm->drawEnemyPos.x &&
-				(iPointZero - pc->camPosition).x + RGTILE_X * RGTILE_Width -1 + setPos.x > enm->drawEnemyPos.x &&
-				(iPointZero - pc->camPosition).y + setPos.y > enm->drawEnemyPos.y &&
-				(iPointZero - pc->camPosition).y + RGTILE_Y * RGTILE_Height- 1 + setPos.y < enm->drawEnemyPos.y))
+			//if (enm->enemysAttack(dt) == false)
+			//	moveEnemyType1(enemys[i], dt);
+
+			if (enm->enemysAttack(dt) == false && //수정
+				((iPointZero - pc->camPosition).x  < enm->Enemy1Position.x &&
+				(iPointZero - pc->camPosition).x + RGTILE_X * RGTILE_Width - 1 > enm->Enemy1Position.x + enm->img->tex->width &&
+					(iPointZero - pc->camPosition).y < enm->Enemy1Position.y &&
+					(iPointZero - pc->camPosition).y + RGTILE_Y * RGTILE_Height - 1 > enm->Enemy1Position.y + enm->img->tex->height ))
 				moveEnemyType1(enemys[i], dt);
 		}
 		else
@@ -253,15 +256,18 @@ void moveEnemyType1(Enemy1* enm, float dt)
 	v /= iPointLength(v);
 	iPoint mp = v * enm->moveSpeed * dt;
 
-	MapTile* tile = maps[12];
-	for (int i = 0; i < MAPTILE_NUM; i++)
+	MapTile* tile = maps[0];
+	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
-		if (enm->Enemy1Position.x > maps[i]->tileOff.x&&
-			enm->Enemy1Position.y > maps[i]->tileOff.y)
+		if (maps[i]->rgTile != NULL)
 		{
-			if (iPointLength(enm->Enemy1Position - maps[i]->tileOff)
-				< iPointLength(enm->Enemy1Position - tile->tileOff))
-			tile = maps[i];
+			if (enm->Enemy1Position.x > maps[i]->tileOff.x&&
+				enm->Enemy1Position.y > maps[i]->tileOff.y)
+			{
+				if (iPointLength(enm->Enemy1Position - maps[i]->tileOff)
+					< iPointLength(enm->Enemy1Position - tile->tileOff))
+					tile = maps[i];
+			}
 		}
 	}
 

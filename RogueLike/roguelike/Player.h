@@ -25,6 +25,12 @@ extern bool evasion;
 extern bool falling;
 extern bool attacking;
 bool actionCheck(bool key);
+//enum playerStat {
+//	idle = 0,
+//	attacking,
+//	falling,
+//	evasion
+//};
 
 struct meleeWeapon;
 

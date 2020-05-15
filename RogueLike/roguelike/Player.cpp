@@ -332,10 +332,6 @@ void Player::movePlayer(float dt)
 
 	weaponV = v;
 	weaponVector = weaponV;
-	if (getKeyStat(keyboard_attack)) //타일 넘어가기 용
-	{
-		playerPosition += weaponVector * 30;
-	}
 
 	bool ani = (v != iPointZero);
 	if(ani)

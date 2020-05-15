@@ -36,6 +36,7 @@ extern iPoint setPos;
 void createTileSet();
 void freeTileSet();
 
+extern int Tile0way1[RGTILE_X * RGTILE_Y]; // 0way
 extern int Tile4way1[RGTILE_X * RGTILE_Y]; // 4way
 
 extern int Tile3way1[RGTILE_X * RGTILE_Y]; // R UD

@@ -5,7 +5,7 @@ MapTile** mapTiles;
 iPoint setPos;
 void createTileSet()
 {
-	setPos = iPointMake(RGTILE_X * RGTILE_Width*2, RGTILE_Y * RGTILE_Height);
+	setPos = iPointMake(RGTILE_X * RGTILE_Width*2, 0);
 
 	tileOffSet = (iPoint*)malloc(sizeof(iPoint) * TILEOFF_NUM);
 	for (int i = 0; i < TILEOFF_NUM; i++)
@@ -19,6 +19,21 @@ void freeTileSet()
 {
 	free(tileOffSet);
 }
+
+int Tile0way1[RGTILE_X * RGTILE_Y] = {
+	WW, WW, WW, WW, WW, WW, WW, WW, WW, WW, WW, WW, WW, WW, WW, WW,
+	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
+	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
+	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
+	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
+	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
+	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
+	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
+	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
+	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
+	WW, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, WW,
+	WW, WW, WW, WW, WW, WW, WW, WW, WW, WW, WW, WW, WW, WW, WW, WW,
+};
 
 int Tile4way1[RGTILE_X * RGTILE_Y] = {
 	WW, WW, WW, WW, WW, WW, 01, 01, 01, 01, WW, WW, WW, WW, WW, WW,

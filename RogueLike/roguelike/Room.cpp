@@ -7,28 +7,32 @@
 
 struct ConnectTile {
 	int index; // 타일 넘버
-	int value; // iPoint(-1,-1) => 0, else 1
+	bool value; //
 	bool visit;
-
-	bool left;
-	bool right;
-	bool up;
-	bool down;
 };
 ConnectTile ct[TILEOFF_NUM];
 
-void connectCheck(ConnectTile* ct);
+void connectCheck(ConnectTile* c);
+void pathTileCheck(ConnectTile* c);
 int conectCount = 0;
 
 MapTile** maps;
 bool randomOffCheck[TILEOFF_NUM];
+
 void loadRoomTile()
 {
 	int m[MAPTILE_NUM];
 	maps = (MapTile**)malloc(sizeof(MapTile*) * TILEOFF_NUM);
 
 	for (int i = 0; i < TILEOFF_NUM; i++)
+	{
 		maps[i] = (MapTile*)malloc(sizeof(MapTile) * 1);
+
+		ConnectTile* c = &ct[i];
+		c->index = i;
+		c->value = false;
+		c->visit = false;
+	}
 
 	conectCount = 0;
 	while (conectCount < MAPTILE_NUM)
@@ -37,16 +41,6 @@ void loadRoomTile()
 		{
 			maps[i]->rgTile = NULL;
 			maps[i]->tileOff = tileOffSet[i];
-
-			ConnectTile* c = &ct[i];
-			c->index = i;
-			c->value = -1;
-			c->visit = false;
-
-			c->left = false;
-			c->right = false;
-			c->up = false;
-			c->down = false;
 		}
 
 		for (int i = 0; i < TILEOFF_NUM; i++)
@@ -67,10 +61,10 @@ void loadRoomTile()
 		int k = 0;
 		for (int i = 0; i < TILEOFF_NUM; i++)
 		{
+			// test
 			bool exist = false;
 			for (int j = 0; j < MAPTILE_NUM; j++)
 			{
-
 				if (i == m[j])
 				{
 					k = j;
@@ -78,33 +72,42 @@ void loadRoomTile()
 					break;
 				}
 			}
-
 			if (exist == true)
-			{
 				maps[m[k]]->rgTile = Tile4way1;
-				//maps[m[k]]->tileOff = tileOffSet[m[k]];
-			}
 		}
+		//for (int i = 0; i < MAPTILE_NUM; i++)
+		//	maps[i]->rgTile = Tile0way1; //test
 
 		for (int i = 0; i < TILEOFF_NUM; i++)
 		{
 			ConnectTile* c = &ct[i];
 			if (maps[i]->rgTile != NULL)
-				c->value = 1;
+				c->value = true;
 		}
 
 		for (int i = 0; i < TILEOFF_NUM; i++)
 		{
 			ConnectTile* c = &ct[i];
-			if (c->value == 1)
+			if (c->value == true)
 				connectCheck(c);
+
 			if (conectCount == MAPTILE_NUM)
 				break;
+			else if (conectCount > MAPTILE_NUM)
+				printf("conectCount error\n");
+
 			for (int j = 0; j < TILEOFF_NUM; j++)
 				c->visit = false;
 			conectCount = 0;
 		}
 	}
+
+	for (int i = 0; i < TILEOFF_NUM; i++)
+	{
+		//ConnectTile* c = &ct[i];
+		pathTileCheck(&ct[i]);
+	}
+
 
 	//for (int i = 0; i < TILEOFF_NUM; i++)
 	//{
@@ -173,7 +176,7 @@ void loadRoomTile()
 
 void connectCheck(ConnectTile* c)
 {
-	if (c->visit == true || c->value == -1)
+	if (c->visit == true || c->value == false)
 		return ;
 
 	c->visit = true;
@@ -187,6 +190,88 @@ void connectCheck(ConnectTile* c)
 	if (y > 0)					connectCheck(&ct[index - TILEOFF_SQRT]);
 	if (y < TILEOFF_SQRT - 1)	connectCheck(&ct[index + TILEOFF_SQRT]);
 }
+
+bool path(ConnectTile* c)
+{
+	if (c->value == true)
+		return true;
+	else
+		return false;
+}
+void pathTileCheck(ConnectTile* c)
+{
+	if (c->value == false)
+		return;
+
+	int index = c->index;
+	int x = c->index % TILEOFF_SQRT;
+	int y = c->index / TILEOFF_SQRT;
+
+	bool l = false;
+	bool r = false;
+	bool u = false;
+	bool d = false;
+
+	if (x > 0)					l = path(&ct[c->index - 1]);
+	if (x < TILEOFF_SQRT - 1)	r = path(&ct[c->index + 1]);
+	if (y > 0)					u = path(&ct[c->index - TILEOFF_SQRT]);
+	if (y < TILEOFF_SQRT - 1)	d = path(&ct[c->index + TILEOFF_SQRT]);
+
+	int pathNum = l + r + u + d;
+	switch (pathNum) {
+	case 4: maps[index]->rgTile = Tile4way1; break;
+	case 3:
+	{
+		if (r && u && d) maps[index]->rgTile = Tile3way1;
+		else if (l && u && d) maps[index]->rgTile = Tile3way2;
+		else if (l && r && d) maps[index]->rgTile = Tile3way3;
+		else if (l && r && u) maps[index]->rgTile = Tile3way4;
+		break;
+	}
+	case 2:
+	{
+		if (l && r) maps[index]->rgTile = Tile2way1;
+		else if (u && d) maps[index]->rgTile = Tile2way2;
+		else if (l && u) maps[index]->rgTile = Tile2way3;
+		else if (r && u) maps[index]->rgTile = Tile2way4;
+		else if (l && d) maps[index]->rgTile = Tile2way5;
+		else if (r && d) maps[index]->rgTile = Tile2way6;
+		break;
+	}
+	case 1:
+	{
+		if (l) maps[index]->rgTile = Tile1way1;
+		else if (r) maps[index]->rgTile = Tile1way2;
+		else if (u) maps[index]->rgTile = Tile1way3;
+		else if (d) maps[index]->rgTile = Tile1way4;
+		break;
+	}
+	default:
+		maps[index]->rgTile = Tile0way1;
+	}
+	//if (l && r && u && d) 		maps[index]->rgTile = Tile4way1;
+
+	//else if (r && u && d)  maps[index]->rgTile = Tile3way1;
+	//else if (l && u && d) maps[index]->rgTile = Tile3way2;
+	//else if (l && r && d) maps[index]->rgTile = Tile3way3;
+	//else if (l && r && u) maps[index]->rgTile = Tile3way4;
+
+
+	//else if (l && r)  maps[index]->rgTile = Tile2way1;
+	//else if (u && d) maps[index]->rgTile = Tile2way2;
+	//else if (l && u) maps[index]->rgTile = Tile2way3;
+	//else if (r && u) maps[index]->rgTile = Tile2way4;
+	//else if (l && d) maps[index]->rgTile = Tile2way5;
+	//else if (r && d) maps[index]->rgTile = Tile2way6;
+
+	//else if (l)  maps[index]->rgTile = Tile1way1;
+	//else if (r) maps[index]->rgTile = Tile1way2;
+	//else if (u) maps[index]->rgTile = Tile1way3;
+	//else if (d) maps[index]->rgTile = Tile1way4;
+
+	//else maps[index]->rgTile = Tile0way1;
+}
+
 
 void freeRoomTile()
 {

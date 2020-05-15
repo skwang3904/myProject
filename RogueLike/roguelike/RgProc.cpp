@@ -91,7 +91,7 @@ void drawRgProc(float dt)
 	}
 	
 	pc->drawPlayer(dt);
-	//printf("%.2f\n", pc->hp);
+	printf("%.2f\n", pc->hp);
 	//printf("x = %.2f, y = %.2f\n", pc->playerPosition.x, pc->playerPosition.y);
 }
 

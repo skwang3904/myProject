@@ -343,7 +343,7 @@ void meleeWeapon::init()
 	melee = true;
 	attackDmg = 10.0f;
 	attackSpeed = 0.0f;
-	_attackSpeed = 0.3f;
+	_attackSpeed = 0.2f;
 	reach = 40.0f;
 	holdAngle = -10.0f;
 
@@ -394,7 +394,6 @@ void nomalSwordMethod(float dt, bool drop, iPoint dropP)
 		return;
 
 	draw(mw, dt, mw->holdAngle, drop, dropP);
-
 }
 
 void nomalSpearMethod(float dt, bool drop, iPoint dropP)

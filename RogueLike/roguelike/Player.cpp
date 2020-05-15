@@ -339,7 +339,8 @@ void Player::movePlayer(float dt)
 	if(ani)
 		v /= iPointLength(v);
 	iPoint mp = v * (moveSpeed * dt);
-
+	if (attacking == true)
+		mp /= 10.0f;
 	static MapTile* tile = maps[12];
 
 	if (playerPosition.x < tile->tileOff.x || playerPosition.y < tile->tileOff.y ||
@@ -355,6 +356,7 @@ void Player::movePlayer(float dt)
 	if (evasion == false)
 		if (falling = fallCheck(pc,tile, dt))
 			return;
+
 
 	wallCheck(false, tile, pc->playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
 
@@ -453,9 +455,9 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 	{
 		evasion = false;
 		v = iPointZero;
+
 		return false;
 	}
 	
 	return false;
 }
-

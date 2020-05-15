@@ -147,7 +147,7 @@ bool Enemy1::enemysAttack(float dt)
 		setLineWidth(1);
 		setRGBA(1, 1, 1, 1);
 
-		if (hit == false)
+		if (hit == false && evasion == false)
 		{
 			iPoint n = ATV - Enemy1Position;
 			float len = iPointLength(n);

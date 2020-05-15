@@ -34,6 +34,10 @@ public:
 	float selectedDt, _selectedDt;
 	float selectedScale;
 
+	int location;
+	bool reverseRotate;
+	float angle;
+
 	bool animation;
 	float aniDt, _aniDt;
 	int frame;

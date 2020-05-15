@@ -77,9 +77,9 @@ void Enemy1::drawShowHp(float dt)
 	}
 
 	setRGBA(0, 0, 0, 1);
-	fillRect(drawEnemyPos.x, drawEnemyPos.y - 10, img->tex->width, 10);
+	fillRect(drawEnemyPos.x, drawEnemyPos.y - 20, img->tex->width, 5);
 	setRGBA(0, 1, 0, 1);
-	fillRect(drawEnemyPos.x, drawEnemyPos.y - 10, img->tex->width * hp / _hp, 10);
+	fillRect(drawEnemyPos.x, drawEnemyPos.y - 20, img->tex->width * hp / _hp, 5);
 	setRGBA(1, 1, 1, 1);
 }
 

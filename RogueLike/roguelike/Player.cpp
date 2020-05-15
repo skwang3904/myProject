@@ -174,12 +174,14 @@ void Player::createPlayerImage()
 	
 	imgFall->_aniDt = 0.15f; // img 4개
 	imgFall->_repeatNum = 1;
-	imgFall->_selectedDt = imgFall->_aniDt * 4;
+	imgFall->_selectedDt = imgFall->_aniDt * 4.0f;
 	imgFall->selectedScale = 0.5f;
 
 
 	imgEvasion->_aniDt = 0.1f;
 	imgEvasion->_repeatNum = 1;
+	imgEvasion->_selectedDt = imgEvasion->_aniDt * 4.0f;
+	imgEvasion->angle = 360.0f;
 
 	this->img = imgChar;
 
@@ -347,15 +349,14 @@ void Player::movePlayer(float dt)
 		tile = playerTileOffSet(tile);
 	}
 
+	if (evasionPlayer(tile, dt))
+		return;
 
 	if (evasion == false)
 		if (falling = fallCheck(pc,tile, dt))
 			return;
 
 	wallCheck(false, tile, pc->playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
-
-	if (evasionPlayer(dt))
-		return;
 
 	img[ch]->setTexAtIndex(attacking);
 	drawPos = playerPosition + camPosition + setPos;
@@ -389,11 +390,11 @@ void Player::movePlayer(float dt)
 	camPosition = iPointZero - tile->tileOff;
 }
 
-bool Player::evasionPlayer(float dt)
+bool Player::evasionPlayer(MapTile* tile, float dt)
 {
 	// 회피
-	// 전방 이동 
 	// 회피중 무적
+
 	if (getKeyDown(keyboard_space))
 	{
 		if (weaponVector != iPointZero)
@@ -407,16 +408,42 @@ bool Player::evasionPlayer(float dt)
 	if (evasion == false)
 		return false;
 
+	static iPoint v = iPointZero;
+
 	if (img[9]->animation == true)
 	{	
-		iPoint v = iPointZero;
-		if (weaponVector != iPointZero)
+		if (weaponVector != iPointZero && v == iPointZero)
 			v = weaponVector / iPointLength(weaponVector);
+
+		iPoint mp = v * (moveSpeed / 2.0f * dt);
+		wallCheck(false, tile, playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
 
 		drawPos = playerPosition + camPosition + setPos;
 		iPoint p = iPointMake(drawPos.x - HALF_OF_TEX_WIDTH,
 			drawPos.y - HALF_OF_TEX_HEIGHT - 20);
+		
+		if (v.x < 0)
+		{
+			img[9]->reverseRotate = false;
+			img[9]->location = 2;
+		}
+		else if (v.x > 0)
+		{
+			img[9]->reverseRotate = true;
+			img[9]->location = 2;
+		}
+		if (v.y < 0)
+		{
+			img[9]->reverseRotate = false;
+			img[9]->location = 1;
+		}
+		else if (v.y > 0)
+		{
+			img[9]->reverseRotate = true;
+			img[9]->location = 1;
+		}
 
+		img[9]->selected = true;
 		img[9]->paint(dt, p, REVERSE_NONE);
 		
 		return true;
@@ -425,6 +452,7 @@ bool Player::evasionPlayer(float dt)
 	else if (img[9]->animation == false)
 	{
 		evasion = false;
+		v = iPointZero;
 		return false;
 	}
 	

@@ -25,14 +25,9 @@ extern bool evasion;
 extern bool falling;
 extern bool attacking;
 bool actionCheck(bool key);
-//enum playerStat {
-//	idle = 0,
-//	attacking,
-//	falling,
-//	evasion
-//};
 
 struct meleeWeapon;
+struct MapTile;
 
 class Player
 {
@@ -53,7 +48,7 @@ public:
 	void dropCombat(bool key);
 
 	void movePlayer(float dt);
-	bool evasionPlayer(float dt);
+	bool evasionPlayer(MapTile* tile, float dt);
 
 public:
 	iImage** img;

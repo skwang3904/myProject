@@ -113,7 +113,7 @@ void iImage::paint(float dt, iPoint off,int reverse)
 		}
 	}
 
-	if (selected)
+	if (selected && selectedDt < _selectedDt)
 	{
 		selectedDt += dt;
 		if (selectedDt > _selectedDt)
@@ -121,13 +121,12 @@ void iImage::paint(float dt, iPoint off,int reverse)
 	}
 	else
 	{
-		selectedDt -= dt;
-		if (selectedDt < 0.0f)
-			selectedDt = 0.0f;
+		selected = false;
+		selectedDt = 0.0f;
 	}
 
 	iPoint p = position + off;
-	float s = 1.0f + linear(selectedDt / _selectedDt, 0.0f, selectedScale);
+	float s = 1.0f - linear(selectedDt / _selectedDt, 0.0f, selectedScale);
 	if (s == 0.0f)
 	{
 		drawImage(tex, p.x, p.y, VCENTER | HCENTER);

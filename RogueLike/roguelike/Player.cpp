@@ -172,8 +172,11 @@ void Player::createPlayerImage()
 	imgDown->_aniDt = 0.05f;
 	imgDown->_repeatNum = 0;
 	
-	imgFall->_aniDt = 0.15f;
+	imgFall->_aniDt = 0.15f; // img 4개
 	imgFall->_repeatNum = 1;
+	imgFall->_selectedDt = imgFall->_aniDt * 4;
+	imgFall->selectedScale = 0.5f;
+
 
 	imgEvasion->_aniDt = 0.1f;
 	imgEvasion->_repeatNum = 1;

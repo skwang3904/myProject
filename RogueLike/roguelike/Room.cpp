@@ -444,7 +444,7 @@ bool fallCheck(Player* pc, MapTile* tile, float dt)
 		if (pc->img[8]->animation == false)
 		{
 			falling = false;
-			//이동
+			
 			findMoveTile(pc,tile);
 			return false;
 		}
@@ -453,6 +453,7 @@ bool fallCheck(Player* pc, MapTile* tile, float dt)
 		iPoint p = iPointMake( pc->playerPosition.x - t->tileOff.x + setPos.x- HALF_OF_TEX_WIDTH,
 			pc->playerPosition.y - t->tileOff.y + setPos.y - HALF_OF_TEX_HEIGHT);
 
+		pc->img[8]->selected = true;
 		pc->img[8]->paint(dt, p, REVERSE_NONE);
 
 		return true;

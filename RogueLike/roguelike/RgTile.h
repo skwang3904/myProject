@@ -7,10 +7,10 @@
 // 타일 정보--------
 #define RGTILE_X		16
 #define RGTILE_Y		12
-#define RGTILE_Width	20
-#define RGTILE_Height	20
-#define RGTILE_CENTER iPointMake(RGTILE_X * RGTILE_Width / 2, \
-								RGTILE_Y * RGTILE_Height / 2)
+#define RGTILE_Width	40
+#define RGTILE_Height	40
+#define RGTILE_CENTER iPointMake( RGTILE_X * RGTILE_Width / 2, \
+								  RGTILE_Y * RGTILE_Height / 2)
 
 // 타일 기믹--------
 #define MOVETILE	1
@@ -24,8 +24,8 @@
 #define WALLTILE_RGBA	0.5, 0.5, 0.5, 1
 #define FALLTILE_RGBA	0, 0, 0.3, 1
 
-#define SETPOS_POSITION iPointMake(RGTILE_X * RGTILE_Width /2 ,\
-								RGTILE_Y *RGTILE_Height /2 )
+#define SETPOS_POSITION iPointMake( devSize.width/ 2 - RGTILE_X * RGTILE_Width / 2,\
+						 devSize.height / 2 - RGTILE_Y * RGTILE_Height / 2)
 
 #define MAPTILE_NUM 10
 #define TILEOFF_NUM 36 // 제곱수

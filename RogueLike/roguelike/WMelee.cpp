@@ -161,7 +161,7 @@ bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 	iPoint centerP = wcp;
 
 	iRect rt = iRectZero;
-	iSize size = iSizeMake(tex->width, mw->reach);
+	iSize size = iSizeMake(pc->img[0]->tex->width/2, mw->reach);
 	iPoint pcPos = pc->playerPosition + pc->camPosition + setPos;
 
 	if (mv.x < 0)
@@ -184,7 +184,7 @@ bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 		centerP.x = wcp.x + tex->height / 2;
 
 		rt.origin.x = pcPos.x + HALF_OF_TEX_WIDTH;
-		rt.origin.y = pcPos.y;
+		rt.origin.y = pcPos.y + HALF_OF_TEX_HEIGHT * 2 - size.width;
 		rt.size.width = size.height;
 		rt.size.height = size.width;
 	}
@@ -197,7 +197,7 @@ bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 		centerP.x = wcp.x;
 		centerP.y = wcp.y - tex->height / 2;
 
-		rt.origin.x = pcPos.x;
+		rt.origin.x = pcPos.x + HALF_OF_TEX_WIDTH * 2 - size.width;
 		rt.origin.y = pcPos.y + HALF_OF_TEX_HEIGHT - size.height;
 		rt.size.width = size.width;
 		rt.size.height = size.height;
@@ -344,7 +344,7 @@ void meleeWeapon::init()
 	attackDmg = 10.0f;
 	attackSpeed = 0.0f;
 	_attackSpeed = 0.2f;
-	reach = 40.0f;
+	reach = 50.0f;
 	holdAngle = -10.0f;
 
 	combatPosition = iPointZero;

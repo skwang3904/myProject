@@ -367,7 +367,7 @@ void Player::movePlayer(float dt)
 		img[2 * ani + 0]->paint(dt, drawPos, v.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);
 		drawImage(img[ch]->tex , 
 			drawPos.x  + HALF_OF_TEX_WIDTH,
-			drawPos.y  + HALF_OF_TEX_HEIGHT - 12,
+			drawPos.y ,
 			VCENTER | HCENTER);
 	}
 	else
@@ -375,7 +375,7 @@ void Player::movePlayer(float dt)
 		img[2 * ani + 1]->paint(dt, drawPos , REVERSE_NONE);
 		drawImage(img[ch]->tex, 
 			drawPos.x + HALF_OF_TEX_WIDTH,
-			drawPos.y  + HALF_OF_TEX_HEIGHT - 12,
+			drawPos.y,
 			VCENTER | HCENTER);
 	}
 

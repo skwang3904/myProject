@@ -21,6 +21,7 @@ public:
 	static Weapon* instance();
 
 public:
+	iArray* weaponArray;
 
 	iPoint wDropPos[10];
 };

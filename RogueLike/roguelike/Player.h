@@ -51,6 +51,7 @@ public:
 	bool evasionPlayer(MapTile* tile, float dt);
 
 public:
+	//iArray* weaponArray; 무기 인벤토리
 	iImage** img;
 
 	float hp, _hp;

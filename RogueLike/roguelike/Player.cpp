@@ -362,28 +362,26 @@ void Player::movePlayer(float dt)
 		return;
 
 	img[ch]->setTexAtIndex(attacking);
-	drawPos = playerPosition + setPos;
+	drawPos = playerPosition + camPosition + setPos;
 	if (v.x)
 	{
-		img[2 * ani + 0]->paint(dt, drawPos + camPosition, v.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);
+		img[2 * ani + 0]->paint(dt, drawPos, v.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);
 		drawImage(img[ch]->tex , 
-			drawPos.x + camPosition.x + HALF_OF_TEX_WIDTH,
-			drawPos.y + camPosition.y + HALF_OF_TEX_HEIGHT - 12,
+			drawPos.x  + HALF_OF_TEX_WIDTH,
+			drawPos.y  + HALF_OF_TEX_HEIGHT - 12,
 			VCENTER | HCENTER);
 	}
 	else
 	{
-		img[2 * ani + 1]->paint(dt, drawPos + camPosition, REVERSE_NONE);
+		img[2 * ani + 1]->paint(dt, drawPos , REVERSE_NONE);
 		drawImage(img[ch]->tex, 
-			drawPos.x + camPosition.x + HALF_OF_TEX_WIDTH,
-			drawPos.y + camPosition.y + HALF_OF_TEX_HEIGHT - 12,
+			drawPos.x + HALF_OF_TEX_WIDTH,
+			drawPos.y  + HALF_OF_TEX_HEIGHT - 12,
 			VCENTER | HCENTER);
 	}
 
-	iRect rt = iRectMake(drawPos.x + camPosition.x,
-		drawPos.y + camPosition.y,
-		HALF_OF_TEX_WIDTH *2.0f,
-		HALF_OF_TEX_HEIGHT * 2.0f);
+	iRect rt = iRectMake(drawPos.x, drawPos.y,
+		HALF_OF_TEX_WIDTH * 2.0f, HALF_OF_TEX_HEIGHT * 2.0f);
 
 	//히트박스 표시-------------------------------
 	setRGBA(0, 1, 0, 0.3f);

@@ -39,20 +39,17 @@ void Enemy1::init(int stage)
 	moveSpeed = 50.0f + ((stage - 1) * 50);
 	reach = 50.0f;
 
-	for (int j = 0; j < ENEMY_NUM; j++)
+	for (int i = k; i > -1; i--)
 	{
-		for (int i = k; i > -1; i--)
+		if (maps[i]->rgTile != NULL)
 		{
-			if (maps[i]->rgTile != NULL)
-			{
-				Enemy1Position = maps[i]->tileOff + iPointMake(RGTILE_Width * 2 ,
-					RGTILE_Height * 2);
-				drawEnemyPos = Enemy1Position + pc->camPosition + setPos;
-				k = i -1;
-				if (k < 5)
-					k = TILEOFF_NUM - 1;
-				break;
-			}
+			Enemy1Position = maps[i]->tileOff + iPointMake(RGTILE_Width * 2,
+				RGTILE_Height * 2);
+			drawEnemyPos = Enemy1Position + pc->camPosition + setPos;
+			k = i - 1;
+			if (k < 5)
+				k = TILEOFF_NUM - 1;
+			break;
 		}
 	}
 
@@ -83,6 +80,7 @@ void Enemy1::drawShowHp(float dt)
 	fillRect(drawEnemyPos.x, drawEnemyPos.y - 10, img->tex->width, 10);
 	setRGBA(0, 1, 0, 1);
 	fillRect(drawEnemyPos.x, drawEnemyPos.y - 10, img->tex->width * hp / _hp, 10);
+	setRGBA(1, 1, 1, 1);
 }
 
 void Enemy1::takeDmgEnemy(float dt, float dmg)
@@ -227,8 +225,11 @@ void drawEnemy(float dt)
 			if (enm->showHp)
 				enm->drawShowHp(dt);
 
-			if (enm->enemysAttack(dt) == false ||
-				(iPointZero - pc->camPosition).x  > enm->Enemy1Position.x)
+			if (enm->enemysAttack(dt) == false || //수정
+				((iPointZero - pc->camPosition).x + setPos.x < enm->drawEnemyPos.x &&
+				(iPointZero - pc->camPosition).x + RGTILE_X * RGTILE_Width -1 + setPos.x > enm->drawEnemyPos.x &&
+				(iPointZero - pc->camPosition).y + setPos.y > enm->drawEnemyPos.y &&
+				(iPointZero - pc->camPosition).y + RGTILE_Y * RGTILE_Height- 1 + setPos.y < enm->drawEnemyPos.y))
 				moveEnemyType1(enemys[i], dt);
 		}
 		else
@@ -264,7 +265,8 @@ void moveEnemyType1(Enemy1* enm, float dt)
 		}
 	}
 
-	wallCheck(true, tile,enm->Enemy1Position, mp, enm->img->tex->width / 2, enm->img->tex->height / 2);
+	wallCheck(true, tile, enm->Enemy1Position, mp, 
+		enm->img->tex->width / 2, enm->img->tex->height / 2);
 	
 }
 

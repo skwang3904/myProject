@@ -9,6 +9,8 @@
 #define RGTILE_Y		12
 #define RGTILE_Width	20
 #define RGTILE_Height	20
+#define RGTILE_CENTER iPointMake(RGTILE_X * RGTILE_Width / 2, \
+								RGTILE_Y * RGTILE_Height / 2)
 
 // 타일 기믹--------
 #define MOVETILE	1
@@ -19,12 +21,15 @@
 #define FF FALLTILE
 
 #define MOVETILE_RGBA	1, 1, 1, 1
-#define WALLTILE_RGBA	0.5, 1, 0, 1
-#define FALLTILE_RGBA	0, 0, 0.5, 1
+#define WALLTILE_RGBA	0.5, 0.5, 0.5, 1
+#define FALLTILE_RGBA	0, 0, 0.3, 1
 
-#define MAPTILE_NUM 15
-#define TILEOFF_NUM 25 // 제곱수
-#define TILEOFF_SQRT 5
+#define SETPOS_POSITION iPointMake(RGTILE_X * RGTILE_Width *2 ,\
+								RGTILE_Y *RGTILE_Height *2 )
+
+#define MAPTILE_NUM 10
+#define TILEOFF_NUM 36 // 제곱수
+#define TILEOFF_SQRT 6
 
 struct MapTile {
 	int* rgTile;

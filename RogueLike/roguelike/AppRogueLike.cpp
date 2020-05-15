@@ -159,15 +159,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_LBUTTONDOWN:
         cursor = convertCoordinate(LOWORD(lParam), HIWORD(lParam));
-        //keyGame(iKeyStateBegan, cursor);
+        //keyRgGame(iKeyStateBegan, cursor);
         break;
     case WM_MOUSEMOVE:
         cursor = convertCoordinate(LOWORD(lParam), HIWORD(lParam));
-        //keyGame(iKeyStateMoved, cursor);
+        //keyRgGame(iKeyStateMoved, cursor);
         break;
     case WM_LBUTTONUP:
         cursor = convertCoordinate(LOWORD(lParam), HIWORD(lParam));
-        //keyGame(iKeyStateEnded, cursor);
+        //keyRgGame(iKeyStateEnded, cursor);
         break;
     case WM_SETCURSOR:
         if (updateCursor(LOWORD(lParam) == HTCLIENT))

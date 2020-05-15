@@ -94,8 +94,8 @@ void Player::initPlayerStat()
 
 	touchPlayer = iRectZero;
 
-	mw = NULL;
-	method = NULL;
+	mw = _meleeWP[0];
+	method = _method[0];
 
 }
 
@@ -346,7 +346,6 @@ void Player::movePlayer(float dt)
 		playerPosition.y > tile->tileOff.y + RGTILE_Y * RGTILE_Height - 1)
 	{
 		tile = playerTileOffSet(tile);
-		camPosition = iPointZero - tile->tileOff;
 	}
 
 
@@ -389,6 +388,8 @@ void Player::movePlayer(float dt)
 	setRGBA(1, 1, 1, 1);
 
 	touchPlayer = rt;
+
+	camPosition = iPointZero - tile->tileOff;
 }
 
 bool Player::evasionPlayer(float dt)
@@ -415,8 +416,9 @@ bool Player::evasionPlayer(float dt)
 		if (weaponVector != iPointZero)
 			v = weaponVector / iPointLength(weaponVector);
 
-		iPoint p = iPointMake(drawPos.x + camPosition.x - HALF_OF_TEX_WIDTH,
-			drawPos.y + camPosition.y - HALF_OF_TEX_HEIGHT - 20);
+		drawPos = playerPosition + camPosition + setPos;
+		iPoint p = iPointMake(drawPos.x - HALF_OF_TEX_WIDTH,
+			drawPos.y - HALF_OF_TEX_HEIGHT - 20);
 
 		img[9]->paint(dt, p, REVERSE_NONE);
 		

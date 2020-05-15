@@ -22,7 +22,7 @@ public:
 
 public:
 
-	iPoint wDropPos[4];
+	iPoint wDropPos[10];
 };
 
 extern Weapon* weapon;

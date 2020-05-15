@@ -222,6 +222,40 @@ void drawRoomTile(float dt)
 	setRGBA(1, 1, 1, 1);
 }
 
+static iPoint prevCamOff = iPointMake(-1, -1);
+bool passAni = false;
+float passAniDt = _passAniDt;
+static iPoint sp = iPointZero;
+static iPoint ep = iPointZero;
+void passTileAnimation(float dt)
+{
+	if (prevCamOff == iPointMake(-1, -1))
+		prevCamOff = pc->camPosition;
+
+	if (prevCamOff == pc->camPosition && passAniDt == _passAniDt)
+		return;
+
+	if (passAni == false)
+	{
+		sp = prevCamOff;
+		ep = pc->camPosition;
+		passAniDt = 0.0f;
+		passAni = true;
+	}
+
+	pc->camPosition = sp + (ep - sp) * passAniDt / _passAniDt;
+
+	passAniDt += dt;
+	if (passAniDt > _passAniDt)
+	{
+		passAni = false;
+		passAniDt = _passAniDt;
+		prevCamOff = ep;
+		pc->camPosition = ep;
+		return;
+	}
+}
+
 void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float halfOfTexW, float halfOfTexH)
 {
 	// 이동시 벽 감지

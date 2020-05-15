@@ -5,7 +5,7 @@ MapTile** mapTiles;
 iPoint setPos;
 void createTileSet()
 {
-	setPos = iPointMake(RGTILE_X * RGTILE_Width*2, 0);
+	setPos = SETPOS_POSITION;
 
 	tileOffSet = (iPoint*)malloc(sizeof(iPoint) * TILEOFF_NUM);
 	for (int i = 0; i < TILEOFF_NUM; i++)

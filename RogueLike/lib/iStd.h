@@ -45,6 +45,7 @@ bool getKeyDown(uint32 key);
 uint32 getKeyStat();
 bool getKeyStat(uint32 key);
 void resizeLib(int width, int height);
+void zoomLib(iPoint point, float rate);
 
 class iFBO
 {

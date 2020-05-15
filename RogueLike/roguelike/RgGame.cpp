@@ -45,6 +45,9 @@ void drawRgGame(float dt)
 
 void keyRgGame(iKeyState stat, iPoint point)
 {
+	if (stat == iKeyStateBegan)
+		zoomLib(point, 2.0f);
+
 	switch (gamestat) {
 	case gs_intro:	keyRgIntro(stat, point);	break;
 	case gs_menu:	keyRgMenu(stat, point);		break;

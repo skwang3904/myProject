@@ -9,12 +9,11 @@
 Enemy1** enemys;
 Enemy1* enemy1;
 
-
 void Enemy1::createEnemyImg()
 {
 	img = new iImage();
 	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(30, 20 + 20 * (stage - 1));
+	iSize size = iSizeMake(30, 30);
 	g->init(size);
 
 	setRGBA(0, 1, 1, 1);
@@ -31,6 +30,7 @@ void Enemy1::createEnemyImg()
 	freeImage(tex);
 }
 
+int k = TILEOFF_NUM - 1;
 void Enemy1::init(int stage)
 {
 	hp = _hp = 50.0f + ((stage - 1) * 20);
@@ -39,10 +39,27 @@ void Enemy1::init(int stage)
 	moveSpeed = 50.0f + ((stage - 1) * 50);
 	reach = 50.0f;
 
-	Enemy1Position = iPointZero;
-	drawEnemyPos = iPointZero;
+	for (int j = 0; j < ENEMY_NUM; j++)
+	{
+		for (int i = k; i > -1; i--)
+		{
+			if (maps[i]->rgTile != NULL)
+			{
+				Enemy1Position = maps[i]->tileOff + iPointMake(RGTILE_Width * 2 ,
+					RGTILE_Height * 2);
+				drawEnemyPos = Enemy1Position + pc->camPosition + setPos;
+				k = i -1;
+				if (k < 5)
+					k = TILEOFF_NUM - 1;
+				break;
+			}
+		}
+	}
 
 	touchEnemy1 = iRectZero;
+
+	showHp = false;
+	showHpTime = 0.0f;
 
 	takeDmg = false;
 	takeDmgTime = 0.0f;
@@ -51,6 +68,21 @@ void Enemy1::init(int stage)
 	giveDmgTime = 0.0f - _attackSpeed;
 
 	hit = false;
+}
+
+void Enemy1::drawShowHp(float dt)
+{
+	showHpTime += dt;
+	if (showHpTime > SHOW_HP_TIME)
+	{
+		showHp = false;
+		showHpTime = 0.0f;
+	}
+
+	setRGBA(0, 0, 0, 1);
+	fillRect(drawEnemyPos.x, drawEnemyPos.y - 10, img->tex->width, 10);
+	setRGBA(0, 1, 0, 1);
+	fillRect(drawEnemyPos.x, drawEnemyPos.y - 10, img->tex->width * hp / _hp, 10);
 }
 
 void Enemy1::takeDmgEnemy(float dt, float dmg)
@@ -63,6 +95,7 @@ void Enemy1::takeDmgEnemy(float dt, float dmg)
 	{
 		hp -= dmg;
 		takeDmg = true;
+		showHp = true;
 	}
 }
 
@@ -155,9 +188,6 @@ void createEnemy()
 		enemys[i] = (Enemy1*)malloc(sizeof(Enemy1) * 1);
 		enemys[i]->createEnemyImg();
 		enemys[i]->init(stage);
-		enemys[i]->Enemy1Position = maps[12]->tileOff + iPointMake(RGTILE_Width * 3 + RGTILE_Width * i,
-			RGTILE_Height * 2 + RGTILE_Height * i);
-		enemys[i]->drawEnemyPos = enemys[i]->Enemy1Position + pc->camPosition + setPos;
 	}
 }
 
@@ -192,11 +222,13 @@ void drawEnemy(float dt)
 			setRGBA(1, 1, 1, 1);
 
 			if (enm->takeDmg)
-			{
 				enm->takeDmgEffect(dt);
-			}
 
-			if (enm->enemysAttack(dt) == false)
+			if (enm->showHp)
+				enm->drawShowHp(dt);
+
+			if (enm->enemysAttack(dt) == false ||
+				(iPointZero - pc->camPosition).x  > enm->Enemy1Position.x)
 				moveEnemyType1(enemys[i], dt);
 		}
 		else

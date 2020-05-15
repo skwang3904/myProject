@@ -10,8 +10,6 @@
 - 보스 
 */
 
-#define TAKE_DMG_TIME 0.3f
-
 #define ENEMY_NUM 5
 
 struct Enemy1{
@@ -29,6 +27,9 @@ struct Enemy1{
 	iPoint drawEnemyPos;
 
 	iRect touchEnemy1;
+	bool showHp;
+	float showHpTime;
+
 	bool takeDmg;
 	float takeDmgTime;
 
@@ -38,6 +39,7 @@ struct Enemy1{
 	bool hit;
 	void createEnemyImg();
 	void init(int stage);
+	void drawShowHp(float dt);
 	void takeDmgEnemy(float dt, float dmg);
 	void takeDmgEffect(float dt);
 	bool enemysAttack(float dt);
@@ -45,6 +47,8 @@ struct Enemy1{
 	//move func pointer
 };
 extern Enemy1** enemys;
+#define TAKE_DMG_TIME 0.3f
+#define SHOW_HP_TIME 1.0f
 
 void createEnemy();
 void freeEnemy();

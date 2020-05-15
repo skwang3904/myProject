@@ -70,6 +70,12 @@ void freeLib()
     free(keys);
 }
 
+iPoint zoomPosition;
+float zoomRate;
+#define _zoomDt 0.5f
+float zoomDt = _zoomDt;
+
+
 void drawLib(Method_Paint method)
 {
     DWORD d = GetTickCount();
@@ -94,10 +100,27 @@ void drawLib(Method_Paint method)
     //setRGBA(1, 1, 1, 1);
 
     Texture* tex = fbo->getTexture();
+    if (zoomDt < _zoomDt)
+    {
+        float r = 1.0f + (zoomRate - 1.0f) * _sin(180 * zoomDt / _zoomDt);
+        zoomDt += delta;
+        iPoint c = iPointMake(devSize.width / 2, devSize.height / 2);
+        iPoint dp = zoomPosition - c;
+        iPoint rp = dp * r;
+        c -= rp - dp;
 
-    drawImage(tex, 0, 0,
-        0, 0, tex->width, tex->height, TOP | LEFT,
-        1.0f, 1.0f, 2, 0, REVERSE_HEIGHT);
+        drawImage(tex, c.x, c.y,
+            0, 0, tex->width, tex->height, VCENTER | HCENTER,
+            r, r, 2, 0, REVERSE_HEIGHT);
+    }
+    else
+    {
+        //drawImage(tex, 0, 0, TOP | LEFT);
+        drawImage(tex, 0, 0,
+            0, 0, tex->width, tex->height, TOP | LEFT,
+            1.0f, 1.0f, 2, 0, REVERSE_HEIGHT);
+    }
+
 
 #if 0// minimap
     drawImage(tex, devSize.width - 50, devSize.height - 50,
@@ -174,6 +197,13 @@ void keyLib(iKeyState stat, int c)
 void resizeLib(int width, int height)
 {
     reshapeOpenGL(width, height);
+}
+
+void zoomLib(iPoint point, float rate)
+{
+    zoomPosition = point;
+    zoomRate = rate;
+    zoomDt = 0.0f;
 }
 
 iFBO::iFBO(int width, int height)

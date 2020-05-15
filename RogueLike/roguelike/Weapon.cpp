@@ -11,10 +11,17 @@ Weapon::Weapon()
 {
 	createMeleeWeapon();
 	
-	for (int i = 0; i < 4; i++) // 초기 드랍좌표
-		//wDropPos[i] = iPointMake(120 + 240 * i % 2, 80 + 320 * i / 2);
-		wDropPos[i] = maps[12]->tileOff + iPointMake(120 + 240 * i / 2, 80 + 320 * i % 2);
-	//wDropPos[0] = iPointMake(360, 240);
+	for (int i = 0; i < 10; i++) // 총 좌표수
+	{
+		for (int j = 5; j < TILEOFF_NUM; j++)
+		{
+			if(maps[j]->rgTile != NULL)
+				wDropPos[i] = maps[j]->tileOff + RGTILE_CENTER;
+			
+			if (j > TILEOFF_NUM - 1)
+				j = 6;
+		}
+	}
 }
 
 Weapon::~Weapon()

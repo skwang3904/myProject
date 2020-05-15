@@ -15,12 +15,11 @@ void loadRgProc()
 	createTileSet();
 	loadRoomTile();
 
-	pc = Player::instance();
+	weapon = Weapon::instance();
 
+	pc = Player::instance();
 	pc->createPlayerImage();
 	pc->initPlayerStat();
-
-	weapon = Weapon::instance();
 
 	createEnemy();
 }
@@ -56,34 +55,32 @@ void drawRgProc(float dt)
 			stagetest = true;
 		}
 	}
-	if (getKeyStat(keyboard_attack))
+
+	if (delta > 1.0f)
 	{
 		stage++;
 		createStage(stage);
-
-		stagetest = true;
-	}
-	if (delta > 1.0f)
-	{
 		stagetest = false;
 		delta = 0.0f;
 	}
 
+	passTileAnimation(dt);
+	drawRoomTile(dt);
+
+	if (passAni)
+		return;
+	
 	if (stagetest)
 	{
 		delta += dt;
 		return;
 	}
-	drawRoomTile(dt);
-	
 	// 몬스터 draw
 
 	if (pc->hp < 0.1f)
 		return;
 
 	drawEnemy(dt);
-
-
 
 	// 특정위치에서 (ex 상자) 등장
 	for (int i = 0; i < meleeNum; i++)

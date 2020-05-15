@@ -50,14 +50,19 @@ void drawRgProc(float dt)
 		if (i == ENEMY_NUM - 1 && test == ENEMY_NUM)
 		{
 			// stage animation
-			freePrevStage();
 			stage++;
 			createStage(stage);
 
 			stagetest = true;
 		}
 	}
+	if (getKeyStat(keyboard_attack))
+	{
+		stage++;
+		createStage(stage);
 
+		stagetest = true;
+	}
 	if (delta > 1.0f)
 	{
 		stagetest = false;

@@ -35,8 +35,8 @@ void Enemy1::init(int stage)
 {
 	hp = _hp = 50.0f + ((stage - 1) * 20);
 	attackDmg = _attackDmg = 5.0f + ((stage - 1) * 5);
-	attackSpeed = _attackSpeed = 0.5f - ((stage - 1) * 1);
-	moveSpeed = 50.0f + ((stage - 1) * 100);
+	attackSpeed = _attackSpeed = 0.5f - ((stage - 1) * 0.1f);
+	moveSpeed = 50.0f + ((stage - 1) * 50);
 	reach = 50.0f;
 
 	Enemy1Position = iPointZero;

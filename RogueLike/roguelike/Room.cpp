@@ -18,18 +18,23 @@ int conectCount = 0;
 
 MapTile** maps;
 bool randomOffCheck[TILEOFF_NUM];
-
+static bool nextStage = false;
 void loadRoomTile()
 {
+	
 	int m[MAPTILE_NUM];
-	maps = (MapTile**)malloc(sizeof(MapTile*) * TILEOFF_NUM);
+	if (nextStage == false)
+	{
+		maps = (MapTile**)malloc(sizeof(MapTile*) * TILEOFF_NUM);
 
-	for (int i = 0; i < TILEOFF_NUM; i++)
-		maps[i] = (MapTile*)malloc(sizeof(MapTile) * 1);
+		for (int i = 0; i < TILEOFF_NUM; i++)
+			maps[i] = (MapTile*)malloc(sizeof(MapTile) * 1);
+	}
 
+	conectCount = 0;
 	while (conectCount < MAPTILE_NUM)
 	{
-		conectCount = 0;
+
 		for (int i = 0; i < TILEOFF_NUM; i++)
 		{
 			maps[i]->rgTile = NULL;
@@ -104,6 +109,8 @@ void loadRoomTile()
 		ConnectTile* c = &ct[i];
 		pathTileCheck(c);
 	}
+
+	nextStage = true;
 }
 
 void connectCheck(ConnectTile* c)
@@ -193,14 +200,14 @@ void freeRoomTile()
 	free(maps);
 }
 
-void drawRoomTile(float dt) 
+void drawRoomTile(float dt)
 {
 	int num = RGTILE_X * RGTILE_Y;
 
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
-		if (maps[i]->rgTile == NULL)
-			continue;
+		if (maps[i]->rgTile != NULL)
+		{
 			for (int j = 0; j < num; j++)
 			{
 				if (maps[i]->rgTile[j] == MOVETILE) setRGBA(MOVETILE_RGBA);
@@ -210,7 +217,7 @@ void drawRoomTile(float dt)
 					maps[i]->tileOff.y + pc->camPosition.y + setPos.y + RGTILE_Height * (j / RGTILE_X),
 					RGTILE_Width, RGTILE_Height);
 			}
-		
+		}
 	}
 	setRGBA(1, 1, 1, 1);
 }

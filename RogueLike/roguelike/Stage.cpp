@@ -7,11 +7,9 @@ int stage = 0;
 
 void createStage(int stage)
 {
-	createTileSet();
-
 	loadRoomTile();
 
-
+	pc->hp = pc->_hp;
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
 		if (maps[i]->rgTile)
@@ -22,9 +20,6 @@ void createStage(int stage)
 			break;
 		}
 	}
-
-	//pc->playerPosition =
-	//	iPointMake(RGTILE_X * RGTILE_Width / 2, RGTILE_Y * RGTILE_Height / 2);
 
 	// monster init
 	for (int i = 0; i < ENEMY_NUM; i++)

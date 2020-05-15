@@ -25,22 +25,20 @@ void loadRoomTile()
 	maps = (MapTile**)malloc(sizeof(MapTile*) * TILEOFF_NUM);
 
 	for (int i = 0; i < TILEOFF_NUM; i++)
-	{
 		maps[i] = (MapTile*)malloc(sizeof(MapTile) * 1);
 
-		ConnectTile* c = &ct[i];
-		c->index = i;
-		c->value = false;
-		c->visit = false;
-	}
-
-	conectCount = 0;
 	while (conectCount < MAPTILE_NUM)
 	{
+		conectCount = 0;
 		for (int i = 0; i < TILEOFF_NUM; i++)
 		{
 			maps[i]->rgTile = NULL;
 			maps[i]->tileOff = tileOffSet[i];
+
+			ConnectTile* c = &ct[i];
+			c->index = i;
+			c->value = false;
+			c->visit = false;
 		}
 
 		for (int i = 0; i < TILEOFF_NUM; i++)
@@ -58,7 +56,7 @@ void loadRoomTile()
 				i--;
 		}
 
-		int k = 0;
+		int k = -1;
 		for (int i = 0; i < TILEOFF_NUM; i++)
 		{
 			// test
@@ -75,8 +73,6 @@ void loadRoomTile()
 			if (exist == true)
 				maps[m[k]]->rgTile = Tile4way1;
 		}
-		//for (int i = 0; i < MAPTILE_NUM; i++)
-		//	maps[i]->rgTile = Tile0way1; //test
 
 		for (int i = 0; i < TILEOFF_NUM; i++)
 		{
@@ -88,7 +84,6 @@ void loadRoomTile()
 		for (int i = 0; i < TILEOFF_NUM; i++)
 		{
 			ConnectTile* c = &ct[i];
-			if (c->value == true)
 				connectCheck(c);
 
 			if (conectCount == MAPTILE_NUM)
@@ -98,86 +93,23 @@ void loadRoomTile()
 
 			for (int j = 0; j < TILEOFF_NUM; j++)
 				c->visit = false;
+
+			//printf("conectCount %d\n", conectCount);
 			conectCount = 0;
 		}
 	}
 
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
-		//ConnectTile* c = &ct[i];
-		pathTileCheck(&ct[i]);
+		ConnectTile* c = &ct[i];
+		pathTileCheck(c);
 	}
-
-
-	//for (int i = 0; i < TILEOFF_NUM; i++)
-	//{
-	//	ConnectTile* c = &ct[i];
-	//	bool l = c->left;
-	//	bool r = c->right;
-	//	bool u = c->up;
-	//	bool d = c->down;
-	//	printf("left = %d\nright = %d\nup = %d\ndown = %d\n",l,r,u,d );
-	//	//int pathNum = l + r + u + d;
-	//	//switch (pathNum) {
-	//	//case 4: maps[i]->rgTile = Tile4way1; break;
-	//	//case 3:
-	//	//{
-	//	//	if (r && u && d)  maps[i]->rgTile = Tile3way1;
-	//	//	else if (l && u && d) maps[i]->rgTile = Tile3way2;
-	//	//	else if (l && r && d) maps[i]->rgTile = Tile3way3;
-	//	//	else if (l && r && u) maps[i]->rgTile = Tile3way4;
-	//	//	break;
-	//	//}
-	//	//case 2:
-	//	//{
-	//	//	if (l && r)  maps[i]->rgTile = Tile2way1;
-	//	//	else if (u && d) maps[i]->rgTile = Tile2way2;
-	//	//	else if (l && u) maps[i]->rgTile = Tile2way3;
-	//	//	else if (r && u) maps[i]->rgTile = Tile2way4;
-	//	//	else if (l && d) maps[i]->rgTile = Tile2way5;
-	//	//	else if (r && d) maps[i]->rgTile = Tile2way6;
-	//	//	break;
-	//	//}
-	//	//case 1:
-	//	//{
-	//	//	if (l )  maps[i]->rgTile = Tile1way1;
-	//	//	else if (r) maps[i]->rgTile = Tile1way2;
-	//	//	else if (u) maps[i]->rgTile = Tile1way3;
-	//	//	else if (d) maps[i]->rgTile = Tile1way4;
-	//	//	break;
-	//	//}
-
-	//	//}
-
-	//	if(l && r && u && d) 		maps[i]->rgTile = Tile4way1;
-
-	//	if (r && u && d)  maps[i]->rgTile = Tile3way1;
-	//	else if (l && u && d) maps[i]->rgTile = Tile3way2;
-	//	else if (l && r && d) maps[i]->rgTile = Tile3way3;
-	//	else if (l && r && u) maps[i]->rgTile = Tile3way4;
-	//	
-
-	//	else if (l && r)  maps[i]->rgTile = Tile2way1;
-	//	else if (u && d) maps[i]->rgTile = Tile2way2;
-	//	else if (l && u) maps[i]->rgTile = Tile2way3;
-	//	else if (r && u) maps[i]->rgTile = Tile2way4;
-	//	else if (l && d) maps[i]->rgTile = Tile2way5;
-	//	else if (r && d) maps[i]->rgTile = Tile2way6;
-
-	//	else if (l)  maps[i]->rgTile = Tile1way1;
-	//	else if (r) maps[i]->rgTile = Tile1way2;
-	//	else if (u) maps[i]->rgTile = Tile1way3;
-	//	else if (d) maps[i]->rgTile = Tile1way4;
-
-
-
-	//}
 }
 
 void connectCheck(ConnectTile* c)
 {
 	if (c->visit == true || c->value == false)
-		return ;
+		return;
 
 	c->visit = true;
 	conectCount++;
@@ -185,10 +117,10 @@ void connectCheck(ConnectTile* c)
 	int index = c->index;
 	int x = c->index % TILEOFF_SQRT;
 	int y = c->index / TILEOFF_SQRT;
-	if (x > 0)					connectCheck(&ct[index - 1]);
-	if (x < TILEOFF_SQRT - 1)	connectCheck(&ct[index + 1]);
-	if (y > 0)					connectCheck(&ct[index - TILEOFF_SQRT]);
-	if (y < TILEOFF_SQRT - 1)	connectCheck(&ct[index + TILEOFF_SQRT]);
+	if (x > 0)					connectCheck(&ct[c->index- 1]);
+	if (x < TILEOFF_SQRT - 1)	connectCheck(&ct[c->index+ 1]);
+	if (y > 0)					connectCheck(&ct[c->index- TILEOFF_SQRT]);
+	if (y < TILEOFF_SQRT - 1)	connectCheck(&ct[c->index+ TILEOFF_SQRT]);
 }
 
 bool path(ConnectTile* c)
@@ -249,27 +181,6 @@ void pathTileCheck(ConnectTile* c)
 	default:
 		maps[index]->rgTile = Tile0way1;
 	}
-	//if (l && r && u && d) 		maps[index]->rgTile = Tile4way1;
-
-	//else if (r && u && d)  maps[index]->rgTile = Tile3way1;
-	//else if (l && u && d) maps[index]->rgTile = Tile3way2;
-	//else if (l && r && d) maps[index]->rgTile = Tile3way3;
-	//else if (l && r && u) maps[index]->rgTile = Tile3way4;
-
-
-	//else if (l && r)  maps[index]->rgTile = Tile2way1;
-	//else if (u && d) maps[index]->rgTile = Tile2way2;
-	//else if (l && u) maps[index]->rgTile = Tile2way3;
-	//else if (r && u) maps[index]->rgTile = Tile2way4;
-	//else if (l && d) maps[index]->rgTile = Tile2way5;
-	//else if (r && d) maps[index]->rgTile = Tile2way6;
-
-	//else if (l)  maps[index]->rgTile = Tile1way1;
-	//else if (r) maps[index]->rgTile = Tile1way2;
-	//else if (u) maps[index]->rgTile = Tile1way3;
-	//else if (d) maps[index]->rgTile = Tile1way4;
-
-	//else maps[index]->rgTile = Tile0way1;
 }
 
 

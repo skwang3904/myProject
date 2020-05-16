@@ -11,15 +11,16 @@ bool nextStage = false;
 void createStage(int stage)
 {
 	loadRoomTile();
-
-	pc->hp = pc->_hp;
+	int pcTile;
 	for (int i = TILEOFF_NUM/2 + 3; i < TILEOFF_NUM; i++)
 	{
 		if (maps[i]->rgTile)
 		{
 			pc->playerPosition = maps[i]->tileOff +
 			iPointMake(RGTILE_X * RGTILE_Width / 2, RGTILE_Y * RGTILE_Height / 2);
-			pc->camPosition = iPointZero - maps[i]->tileOff;
+			pc->camPosition = iPointZero - pc->playerPosition ;
+			pc->drawPos = pc->camPosition + setPos;
+			pcTile = i;
 			break;
 		}
 	}
@@ -32,7 +33,7 @@ void createStage(int stage)
 		//enemys[i]->drawEnemyPos = enemys[i]->EnemyPosition + pc->camPosition + setPos;
 	}
 
-	setEnemyPosition();
+	setEnemyPosition(pcTile);
 
 	int i, j, num = 0;
 	int activeTile[MAPTILE_NUM];

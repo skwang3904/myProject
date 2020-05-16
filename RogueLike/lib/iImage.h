@@ -34,6 +34,8 @@ public:
 	float selectedDt, _selectedDt;
 	float selectedScale;
 
+	float imgRatioX;
+	float imgRatioY;
 	int location;
 	bool reverseRotate;
 	float angle;

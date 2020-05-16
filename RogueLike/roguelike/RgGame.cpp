@@ -20,6 +20,13 @@ void loadRgGame()
 	void testCreateTile();
 	testCreateTile();
 #endif
+
+	iOpenAL* al = new iOpenAL(2);
+
+	al->initBuffer(0, "assets/snd/swinging.wav");
+	al->initBuffer(1, "assets/snd/sword.wav");
+
+	
 }
 
 void freeRgGame()

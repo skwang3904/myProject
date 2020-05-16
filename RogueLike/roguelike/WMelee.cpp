@@ -66,33 +66,33 @@ void freeMeleeWeapon()
 	free(_meleeWP);
 }
 
-
+static iPoint mv = iPointZero;
 void weaponPosition(meleeWeapon* mw, float dt, iPoint& wp)
 {
 	//임시
 	static iPoint p = iPointMake(pc->playerPosition.x + HALF_OF_TEX_WIDTH * 2.0f,
 		pc->playerPosition.y + HALF_OF_TEX_HEIGHT);
 
-	if (pc->weaponVector.x < 0)
+	if (mv.x < 0)
 	{
 		p.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH;
 		p.y = pc->playerPosition.y;
 		angle = 90.0f;
 	}
-	else if (pc->weaponVector.x > 0)
+	else if (mv.x > 0)
 	{
 		p.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH;
 		p.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT * 2.0f ;
 		angle = 270.0f;
 	}
 
-	if (pc->weaponVector.y < 0)
+	if (mv.y < 0)
 	{
 		p.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH * 2.0f;
 		p.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT;
 		angle = 0.0f;
 	}
-	else if (pc->weaponVector.y > 0)
+	else if (mv.y > 0)
 	{
 		p.x = pc->playerPosition.x;
 		p.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT; 
@@ -102,8 +102,6 @@ void weaponPosition(meleeWeapon* mw, float dt, iPoint& wp)
 	wp = p;
 }
 
-
-static iPoint mv = iPointZero;
 void weaponVector(meleeWeapon* mw, float dt)
 {
 	if (getKeyStat(keyboard_left)) // 무기방향
@@ -231,7 +229,6 @@ bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 		VCENTER | HCENTER, ratioRate, ratioRate, 
 		2, attAngleRate + angle + mw->holdAngle, REVERSE_NONE);
 
-
 	for (int i = 0; i < ENEMY_NUM; i++) //enemy
 	{
 		if (containRect(mw->hitBox, enemys[i]->touchEnemyNomal))
@@ -247,13 +244,14 @@ bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 		pc->act = idle;
 		mw->attackEnemy = false;
 
-		draw(mw, dt,mw->holdAngle, false, iPointZero);
+		draw(mw, dt, false, iPointZero);
 		return false;
 	}
+
 	return true;
 }
 
-void draw(meleeWeapon* melee, float dt, float holdAngle, bool drop, iPoint dropP)
+void draw(meleeWeapon* melee, float dt, bool drop, iPoint dropP)
 {
 	Texture* tex = melee->img->tex;
 
@@ -287,7 +285,7 @@ void draw(meleeWeapon* melee, float dt, float holdAngle, bool drop, iPoint dropP
 			pc->camPosition.x + setPos.x + p.x ,
 			pc->camPosition.y + setPos.y + p.y ,
 			0, 0,	tex->width, tex->height,
-			VCENTER | HCENTER, 1.0f, 1.0f, 2, angle + holdAngle, REVERSE_NONE);
+			VCENTER | HCENTER, 1.0f, 1.0f, 2, angle + melee->holdAngle, REVERSE_NONE);
 	}
 	else
 	{
@@ -375,6 +373,9 @@ void meleeWeapon::init()
 
 void nomalSwordMethod(float dt, bool drop, iPoint dropP)
 {
+	if (pc->act == evasion || pc->act == falling)
+		return;
+
 	meleeWeapon* mw = nomalSword;
 	weaponVector(mw, dt);
 
@@ -393,11 +394,14 @@ void nomalSwordMethod(float dt, bool drop, iPoint dropP)
 	if (attackMelee(mw, dt, mw->attackEnemy, 0.2f, 0.0f, 90.0f, 1.0f))
 		return;
 
-	draw(mw, dt, mw->holdAngle, drop, dropP);
+	draw(mw, dt, drop, dropP);
 }
 
 void nomalSpearMethod(float dt, bool drop, iPoint dropP)
 {
+	if (pc->act == evasion || pc->act == falling)
+		return;
+
 	meleeWeapon* mw = nomalSpear;
 	weaponVector(mw, dt);
 
@@ -413,8 +417,9 @@ void nomalSpearMethod(float dt, bool drop, iPoint dropP)
 	if (mw->attackSpeed > 0.0f)
 		mw->attackSpeed = (int)0;
 
+
 	if (attackMelee(mw, dt, mw->attackEnemy, 0.1f, 50.0f, 0.0f, 1.0f))
 		return;
 
-	draw(mw, dt, mw->holdAngle, drop, dropP);
+	draw(mw, dt, drop, dropP);
 }

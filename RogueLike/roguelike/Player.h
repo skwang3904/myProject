@@ -72,7 +72,7 @@ public:
 	iPoint playerPosition;
 	iPoint drawPos;
 
-	iPoint weaponVector;
+	iPoint viewVector;
 
 	iRect touchPlayer;
 

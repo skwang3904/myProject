@@ -10,7 +10,7 @@
 #include "EnemyComposition.h"
 #include "Stage.h"
 
-
+#include "PlayerUI.h"
 
 void loadRgProc()
 {
@@ -25,8 +25,21 @@ void loadRgProc()
 	pc->initPlayerStat();
 
 	createEnemy();
+
 	createStage(stage);
-	//setEnemyPosition();
+
+	/////////////////////////////////////////////////////////
+	// pop
+	loadPlayerUI();
+
+	AudioInfo ai[2] = {
+		{"assets/snd/0.wav", true, 1.0f},
+		{"assets/snd/sword.wav", false, 1.0f},
+	};
+
+	loadAudio(ai, 2);
+
+	audioPlay(0);
 }
 
 void freeRgProc()
@@ -37,6 +50,12 @@ void freeRgProc()
 	freeEnemy();
 	freeTileSet();
 	freeRoomTile();
+
+	/////////////////////////////////////////////////////////
+	// pop
+	freePlayerUI();
+
+	freeAudio();
 }
 
 void drawRgProc(float dt)
@@ -62,7 +81,10 @@ void drawRgProc(float dt)
 	}
 
 	if (nextStage)
+	{
 		stagetest = true;
+		popHP->show(false);
+	}
 
 	if (delta > 1.0f)
 	{
@@ -71,6 +93,8 @@ void drawRgProc(float dt)
 		stagetest = false;
 		delta = 0.0f;
 		nextStage = false;
+
+		popHP->show(true);
 	}
 
 	drawRoomTile(dt);
@@ -102,14 +126,23 @@ void drawRgProc(float dt)
 	}
 	
 	pc->drawPlayer(dt);
-	printf("%.2f\n", pc->hp);
+	//printf("%.2f\n", pc->hp);
 	//printf("x = %.2f, y = %.2f\n", pc->playerPosition.x, pc->playerPosition.y);
 
 	drawNextDoor(dt);
+
+
+	/////////////////////////////////////////////////////////
+	// pop
+	drawPlayerUI(dt);
 }
 
 void keyRgProc(iKeyState stat, iPoint point)
 {
+	if (keyPlayerUI(stat, point))
+		return;
+
+
 	switch (stat)
 	{
 	case iKeyStateBegan:

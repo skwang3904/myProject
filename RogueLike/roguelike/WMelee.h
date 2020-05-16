@@ -66,7 +66,7 @@ bool attackMelee(meleeWeapon* mw, float dt, bool att, float attTime,
 
 //void attackMelee(meleeWeapon* wMelee, 'data...');
 
-void draw(meleeWeapon* melee, float dt, float holdAngle, bool drop, iPoint dropP);
+void draw(meleeWeapon* melee, float dt, bool drop, iPoint dropP);
 
 extern meleeWeapon** _meleeWP;
 

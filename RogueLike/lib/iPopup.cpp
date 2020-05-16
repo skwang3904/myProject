@@ -111,6 +111,7 @@ void iPopup::paint(float dt)
 		else if (style == iPopupStyleMove)
 			p = pp;
 	}
+
 	else if (style == iPopupStyleZoom)
 	{
 		if (stat == iPopupStatOpen)
@@ -162,7 +163,7 @@ void iPopup::paint(float dt)
 	for (i = 0; i < num; i++)
 	{
 		iImage* img = (iImage*)arrayImg->objectAtIndex(i);
-		img->paint(dt, p,REVERSE_NONE);
+		img->paint(dt, p, REVERSE_NONE);
 	}
 
 	if (methodDrawAfter)

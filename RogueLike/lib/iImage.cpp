@@ -13,11 +13,12 @@ iImage::iImage()
 	_selectedDt = default_selectedDt;
 	selectedScale = default_selectedScale;
 
+	imgRatioX = 1.0f;
+	imgRatioY = 1.0f;
 	location = 2; // 0.x 1.y 2.z
 	reverseRotate = false;
 	angle = 0.0f;
 	
-
 	animation = false;
 	aniDt = 0.0f;
 	_aniDt = 0.08f;
@@ -143,10 +144,10 @@ void iImage::paint(float dt, iPoint off,int reverse)
 	}
 	else
 	{
-		p.x += tex->width / 2;
-		p.y += tex->height / 2;
-		drawImage(tex, p.x, p.y, 0, 0, tex->width, tex->height,
-			VCENTER | HCENTER, s, s, location, a, reverse);
+		p.x += tex->width / 2 * imgRatioX;
+		p.y += tex->height / 2 * imgRatioY;
+		drawImage(tex, p.x , p.y, 0, 0, tex->width * imgRatioX, tex->height * imgRatioY,
+			VCENTER | HCENTER, s * imgRatioX, s * imgRatioY, location, a, reverse);
 	}
 }
 

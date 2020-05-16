@@ -5,12 +5,22 @@
 void loadPlayerUI();
 void freePlayerUI();
 void drawPlayerUI(float dt);
-void keyPlayerUI(iKeyState stat, iPoint point);
+bool keyPlayerUI(iKeyState stat, iPoint point);
 
 /////////////////////////////////////////////////////////
 
-void createPopUI();
-void freePopUI();
-void showPopUI(bool show);
-void drawPopUI(float dt);
-bool keyPopUI(iKeyState stat, iPoint point);
+extern iPopup* popHP;
+
+void createPopHP();
+void freePopHP();
+void showPopHP(bool show);
+void drawPopHP(float dt);
+bool keyPopHP(iKeyState stat, iPoint point);
+
+/////////////////////////////////////////////////////////
+
+void createPopCombat();
+void freePopCombat();
+void showPopCombat(bool show);
+void drawPopCombat(float dt);
+bool keyPopCombat(iKeyState stat, iPoint point);

@@ -69,19 +69,23 @@ void Player::initPlayerStat()
 	moveSpeed = 700.0f;
 
 	act = idle;
-	for (int i = TILEOFF_NUM/2 + 3; i < TILEOFF_NUM; i++)
-	{
-		if (maps[i]->rgTile)
-		{
-			playerPosition = maps[i]->tileOff +
-				iPointMake(RGTILE_X * RGTILE_Width / 2, RGTILE_Y * RGTILE_Height / 2);
-			camPosition = iPointZero - maps[i]->tileOff;
-			drawPos = maps[i]->tileOff + playerPosition + setPos;
-			break;
-		}
-	}
+	//for (int i = TILEOFF_NUM/2 + 3; i < TILEOFF_NUM; i++)
+	//{
+	//	if (maps[i]->rgTile)
+	//	{
+	//		playerPosition = maps[i]->tileOff +
+	//			iPointMake(RGTILE_X * RGTILE_Width / 2, RGTILE_Y * RGTILE_Height / 2);
+	//		camPosition = iPointZero - maps[i]->tileOff;
+	//		drawPos = maps[i]->tileOff + playerPosition + setPos;
+	//		break;
+	//	}
+	//}
+	playerPosition = iPointZero;
+	camPosition = iPointZero;
+	drawPos = iPointZero;
 
-	weaponVector = iPointMake(0, 1);
+
+	viewVector = iPointMake(0, 1);
 
 	touchPlayer = iRectZero;
 
@@ -317,7 +321,6 @@ MapTile* playerTileOffSet(MapTile* tile)
 void Player::movePlayer(float dt)
 {
 	iPoint v = iPointZero;
-	static iPoint weaponV = iPointMake(0,1);
 	static int ch= 7;
 
 	if (getKeyStat(keyboard_left)) //이동방향, 머리방향
@@ -340,9 +343,7 @@ void Player::movePlayer(float dt)
 		v.y = 1;
 		ch = 7;
 	}
-
-	weaponV = v;
-	weaponVector = weaponV;
+	viewVector = v;
 
 	bool ani = (v != iPointZero);
 	if(ani)
@@ -410,7 +411,7 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 
 	if (getKeyDown(keyboard_space))
 	{
-		if (weaponVector != iPointZero)
+		if (viewVector != iPointZero)
 		{
 			if (act != evasion)
 				img[9]->startAnimation();
@@ -425,8 +426,8 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 
 	if (img[9]->animation == true)
 	{	
-		if (weaponVector != iPointZero && v == iPointZero)
-			v = weaponVector / iPointLength(weaponVector);
+		if (viewVector != iPointZero && v == iPointZero)
+			v = viewVector / iPointLength(viewVector);
 
 		iPoint mp = v * (moveSpeed / 2.0f * dt);
 		wallCheck(false, tile, playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);

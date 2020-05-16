@@ -65,6 +65,8 @@ void EnemyNomal::init(int stage)
 	giveDmgTime = 0.0f - _attackSpeed;
 
 	hit = false;
+
+	dead = false;
 }
 
 void EnemyNomal::drawShowHp(float dt)
@@ -85,15 +87,13 @@ void EnemyNomal::drawShowHp(float dt)
 
 void EnemyNomal::takeDmgEnemy(float dt, float dmg)
 {
-	// 무기로 공격이 들어오면
-	// 무기 히트박스에 몹 히트박스가 걸리면
-	// 한번 휘두를때 한번만 공격
-
 	if (pc->act == attacking && takeDmg == false)
 	{
 		hp -= dmg;
 		takeDmg = true;
 		showHp = true;
+
+		audioPlay(SND_ENEMY_HIT);
 	}
 }
 
@@ -161,6 +161,8 @@ bool EnemyNomal::enemysAttack(float dt)
 
 			if (hitDis < 5.0f) 
 			{
+				if (pc->act == evasion || pc->act == falling)
+					return true;
 				pc->hp -= attackDmg;
 				hit = true;
 			}
@@ -239,6 +241,12 @@ void drawEnemy(float dt)
 		{
 			enm->EnemyNomalPosition = iPointZero;
 			enm->touchEnemyNomal = iRectZero;
+
+			if (enm->dead == false)
+			{
+				audioPlay(SND_ENEMY_DEAD);
+				enm->dead = true;
+			}
 		}
 	}
 }

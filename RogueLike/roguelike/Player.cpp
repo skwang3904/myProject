@@ -416,6 +416,8 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 			if (act != evasion)
 				img[9]->startAnimation();
 			act = evasion;
+
+			audioPlay(SND_JUMP);
 		}
 	}
 

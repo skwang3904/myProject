@@ -37,6 +37,7 @@ struct EnemyNomal{
 	float giveDmgTime;
 
 	bool hit;
+	bool dead;
 
 	void createEnemyImg();
 	void init(int stage);

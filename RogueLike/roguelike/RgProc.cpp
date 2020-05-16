@@ -32,14 +32,19 @@ void loadRgProc()
 	// pop
 	loadPlayerUI();
 
-	AudioInfo ai[2] = {
-		{"assets/snd/0.wav", true, 1.0f},
-		{"assets/snd/sword.wav", false, 1.0f},
+
+
+	/////////////////////////////////////////////////////////
+	// sound
+	AudioInfo ai[4] = {
+	{"assets/snd/swing.wav", false, 0.4f},
+	{"assets/snd/jump.wav", false, 0.2f},
+	{"assets/snd/falling.wav", false, 0.5f},
+	{"assets/snd/enemy-hit.wav", false, 0.7f},
+	{"assets/snd/killEnemy.wav", false, 0.3f},
 	};
 
-	loadAudio(ai, 2);
-
-	audioPlay(0);
+	loadAudio(ai, 4);
 }
 
 void freeRgProc()

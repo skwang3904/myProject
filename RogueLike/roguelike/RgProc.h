@@ -4,6 +4,14 @@
 
 #include "iStd.h"
 
+
+#define SND_SWING 0
+#define SND_JUMP 1
+#define SND_FALL 2
+#define SND_ENEMY_HIT 3
+#define SND_ENEMY_DEAD 4
+
+
 void loadRgProc();
 void freeRgProc();
 void drawRgProc(float dt);

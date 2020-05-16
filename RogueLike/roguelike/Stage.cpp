@@ -11,7 +11,7 @@ bool nextStage = false;
 void createStage(int stage)
 {
 	loadRoomTile();
-	int pcTile;
+	int pcTile = 0;
 	for (int i = TILEOFF_NUM/2 + 3; i < TILEOFF_NUM; i++)
 	{
 		if (maps[i]->rgTile)
@@ -77,6 +77,9 @@ void containDoor(iRect rt)
 	iRect drt = iRectMake(p.x - 25, p.y - 25, 50, 50);
 
 	if (containRect(drt, rt))
+	{
 		nextStage = true;
+		audioPlay(SND_JUMP);
+	}
 }
 

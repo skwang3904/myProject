@@ -219,7 +219,7 @@ bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 	fillRect(rt);
 
 	setRGBA(1, 1, 1, 1);
-	wcp = iPointRotate(centerP, wcp, attAngleRate);
+	wcp = iPointRotate(centerP, wcp, attAngle- attAngleRate);
 	wcp += pc->camPosition + setPos;
 
 	drawImage(tex,
@@ -227,7 +227,7 @@ bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 		wcp.y,
 		0, 0, tex->width, tex->height,
 		VCENTER | HCENTER, ratioRate, ratioRate, 
-		2, attAngleRate + angle + mw->holdAngle, REVERSE_NONE);
+		2, attAngle - attAngleRate + angle + mw->holdAngle, REVERSE_NONE);
 
 	for (int i = 0; i < ENEMY_NUM; i++) //enemy
 	{
@@ -341,7 +341,7 @@ void meleeWeapon::init()
 	melee = true;
 	attackDmg = 30.0f;
 	attackSpeed = 0.0f;
-	_attackSpeed = 0.2f;
+	_attackSpeed = 0.5f;
 	reach = 50.0f;
 	holdAngle = -10.0f;
 
@@ -384,14 +384,15 @@ void nomalSwordMethod(float dt, bool drop, iPoint dropP)
 	{
 		pc->act = attacking;
 		mw->attackEnemy = true;
-		mw->attackSpeed -= mw->_attackSpeed;
+		mw->attackSpeed -= mw->_attackSpeed;	
+		audioPlay(SND_SWING);
 	}
 
 	mw->attackSpeed += dt;
 	if (mw->attackSpeed > 0.0f)
 		mw->attackSpeed = (int)0;
 
-	if (attackMelee(mw, dt, mw->attackEnemy, 0.2f, 0.0f, 90.0f, 1.0f))
+	if (attackMelee(mw, dt, mw->attackEnemy, 0.2f, 0.0f, 80.0f, 1.0f))
 		return;
 
 	draw(mw, dt, drop, dropP);

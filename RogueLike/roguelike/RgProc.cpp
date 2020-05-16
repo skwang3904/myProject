@@ -7,6 +7,9 @@
 #include "Weapon.h"
 #include "WMelee.h"
 
+#include "EnemyComposition.h"
+#include "Stage.h"
+
 
 
 void loadRgProc()
@@ -22,6 +25,8 @@ void loadRgProc()
 	pc->initPlayerStat();
 
 	createEnemy();
+	createStage(stage);
+	//setEnemyPosition();
 }
 
 void freeRgProc()
@@ -56,25 +61,31 @@ void drawRgProc(float dt)
 		}
 	}
 
+	if (nextStage)
+		stagetest = true;
+
 	if (delta > 1.0f)
 	{
 		stage++;
 		createStage(stage);
 		stagetest = false;
 		delta = 0.0f;
+		nextStage = false;
 	}
 
-	passTileAnimation(dt);
 	drawRoomTile(dt);
+	passTileAnimation(dt);
 
-	if (passAni)
-		return;
-	
 	if (stagetest)
 	{
 		delta += dt;
 		return;
 	}
+
+	if (passAni)
+		return;
+	
+
 	// 몬스터 draw
 
 	if (pc->hp < 0.1f)
@@ -91,9 +102,10 @@ void drawRgProc(float dt)
 	}
 	
 	pc->drawPlayer(dt);
-	//printf("%.2f\n", pc->hp);
-	printf("%f\n", dt);
+	printf("%.2f\n", pc->hp);
 	//printf("x = %.2f, y = %.2f\n", pc->playerPosition.x, pc->playerPosition.y);
+
+	drawNextDoor(dt);
 }
 
 void keyRgProc(iKeyState stat, iPoint point)

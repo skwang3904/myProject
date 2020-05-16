@@ -10,7 +10,7 @@
 - 보스 
 */
 
-#define ENEMY_NUM 5
+#define ENEMY_NUM 50
 
 struct EnemyNomal{
 	iImage* img;
@@ -48,7 +48,7 @@ struct EnemyNomal{
 	//move func pointer
 };
 extern EnemyNomal** enemys;
-#define TAKE_DMG_TIME 0.3f
+#define TAKE_DMG_TIME 0.0f
 #define SHOW_HP_TIME 1.0f
 
 void createEnemy();

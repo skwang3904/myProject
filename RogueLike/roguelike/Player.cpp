@@ -6,6 +6,8 @@
 #include "Weapon.h"
 #include "WMelee.h"
 
+#include "Stage.h"
+
 Player* pc;
 Texture** texsRight;
 Texture** texsDown;
@@ -64,10 +66,10 @@ void Player::initPlayerStat()
 	attackSpeed =
 	_attackSpeed = 0.5f;
 
-	moveSpeed = 400.0f;
+	moveSpeed = 700.0f;
 
 	act = idle;
-	for (int i = 0; i < TILEOFF_NUM; i++)
+	for (int i = TILEOFF_NUM/2 + 3; i < TILEOFF_NUM; i++)
 	{
 		if (maps[i]->rgTile)
 		{
@@ -170,7 +172,7 @@ void Player::createPlayerImage()
 	imgEvasion->_aniDt = 0.1f;
 	imgEvasion->_repeatNum = 1;
 	imgEvasion->_selectedDt = imgEvasion->_aniDt * 4.0f;
-	imgEvasion->angle = 360.0f;
+	imgEvasion->angle = 720.0f;
 
 	this->img = imgChar;
 
@@ -211,10 +213,20 @@ void Player::drawPlayer(float dt)
 		printf("dead\n");
 	}
 
-	pc->combatDraw(dt);
-	pc->movePlayer(dt);
-	pc->rootCombat(getKeyDown(keyboard_pickup));
-	pc->dropCombat(getKeyDown(keyboard_drop));
+	combatDraw(dt);
+	movePlayer(dt);
+	rootCombat(getKeyDown(keyboard_pickup));
+	dropCombat(getKeyDown(keyboard_drop));
+	showHpBar(dt);
+}
+
+void Player::showHpBar(float dt) // 임시
+{
+	setRGBA(0, 0, 0, 1);
+	fillRect(drawPos.x, drawPos.y - 30, HALF_OF_TEX_WIDTH * 2, 15);
+	setRGBA(0, 1, 0, 1);
+	fillRect(drawPos.x, drawPos.y - 30, HALF_OF_TEX_WIDTH * 2 * hp / _hp, 15);
+	setRGBA(1, 1, 1, 1);
 }
 
 
@@ -336,24 +348,25 @@ void Player::movePlayer(float dt)
 	if(ani)
 		v /= iPointLength(v);
 	iPoint mp = v * (moveSpeed * dt);
+
 	if (pc->act == attacking)
 		mp /= 10.0f;
 	static MapTile* tile = maps[12];
 
-	if (playerPosition.x < tile->tileOff.x || playerPosition.y < tile->tileOff.y ||
+	if (playerPosition.x + HALF_OF_TEX_WIDTH * 2 < tile->tileOff.x ||
 		playerPosition.x > tile->tileOff.x + RGTILE_X * RGTILE_Width - 1 ||
+		playerPosition.y + HALF_OF_TEX_HEIGHT * 2 < tile->tileOff.y ||
 		playerPosition.y > tile->tileOff.y + RGTILE_Y * RGTILE_Height - 1)
 	{
 		tile = playerTileOffSet(tile);
 	}
 
-	if (evasionPlayer(tile, dt))
-		return;
-
 	if (act != evasion)
 		if (falling == fallCheck(pc, tile, dt))
 			return;
 
+	if (evasionPlayer(tile, dt))
+		return;
 
 	wallCheck(false, tile, pc->playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
 
@@ -385,6 +398,7 @@ void Player::movePlayer(float dt)
 	setRGBA(1, 1, 1, 1);
 
 	touchPlayer = rt;
+	containDoor(rt);
 
 	camPosition = iPointZero - tile->tileOff;
 }
@@ -419,7 +433,7 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 
 		drawPos = playerPosition + camPosition + setPos;
 		iPoint p = iPointMake(drawPos.x - HALF_OF_TEX_WIDTH,
-			drawPos.y - HALF_OF_TEX_HEIGHT - 20);
+			drawPos.y - HALF_OF_TEX_HEIGHT);
 		
 		if (v.x < 0)
 		{
@@ -445,6 +459,7 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 		img[9]->selected = true;
 		img[9]->paint(dt, p, REVERSE_NONE);
 		
+
 		return true;
 	}
 

@@ -11,7 +11,7 @@ void freeRoomTile();
 void drawRoomTile(float dt);
 
 extern bool passAni;
-#define _passAniDt 0.5f
+#define _passAniDt 0.2f
 void passTileAnimation(float dt);
 
 struct MapTile;

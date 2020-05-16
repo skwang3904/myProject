@@ -25,7 +25,7 @@ void keyPlayerUI(iKeyState stat, iPoint point)
 
 /////////////////////////////////////////////////////////
 
-iPopup* popUI;
+iPopup* popHP;
 
 void createPopUI()
 {
@@ -42,7 +42,7 @@ void freePopUI()
 
 void showPopUI(bool show)
 {
-	popUI->show(show);
+	popHP->show(show);
 }
 
 void drawPopUI(float dt)
@@ -51,9 +51,9 @@ void drawPopUI(float dt)
 
 bool keyPopUI(iKeyState stat, iPoint point)
 {
-	if (popUI->bShow == false)
+	if (popHP->bShow == false)
 		return false;
 
-	if (popUI->stat != iPopupStatProc)
+	if (popHP->stat != iPopupStatProc)
 		return true;
 }

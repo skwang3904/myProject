@@ -13,6 +13,9 @@
 */
 
 extern int stage;
+extern bool nextStage;
 
 void createStage(int stage);
-void freePrevStage();
+
+void drawNextDoor(float dt);
+void containDoor(iRect rt);

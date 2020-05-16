@@ -115,10 +115,12 @@ void drawLib(Method_Paint method)
     }
     else
     {
-        //drawImage(tex, 0, 0, TOP | LEFT);
-        drawImage(tex, devSize.width / 2, devSize.height / 2,
-            0, 0, tex->width, tex->height, VCENTER | HCENTER,
-            2.0f, 2.0f, 2, 0, REVERSE_HEIGHT);
+        //drawImage(tex, devSize.width / 2, devSize.height / 2,
+        //    0, 0, tex->width, tex->height, VCENTER | HCENTER,
+        //    2.0f, 2.0f, 2, 0, REVERSE_HEIGHT);
+		drawImage(tex, devSize.width / 2, devSize.height / 2,
+			0, 0, tex->width, tex->height, VCENTER | HCENTER,
+			1.0f, 1.0f, 2, 0, REVERSE_HEIGHT);
     }
 
 

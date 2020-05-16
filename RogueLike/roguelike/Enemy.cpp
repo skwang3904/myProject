@@ -39,19 +39,19 @@ void EnemyNomal::init(int stage)
 	moveSpeed = 50.0f + ((stage - 1) * 50);
 	reach = 50.0f;
 
-	for (int i = k; i > -1; i--)
-	{
-		if (maps[i]->rgTile != NULL)
-		{
-			EnemyNomalPosition = maps[i]->tileOff + iPointMake(RGTILE_Width * 2,
-				RGTILE_Height * 2);
-			drawEnemyPos = EnemyNomalPosition + pc->camPosition + setPos;
-			k = i - 1;
-			if (k < 5)
-				k = TILEOFF_NUM - 1;
-			break;
-		}
-	}
+	//for (int i = k; i > -1; i--)
+	//{
+	//	if (maps[i]->rgTile != NULL)
+	//	{
+	//		EnemyNomalPosition = maps[i]->tileOff + iPointMake(RGTILE_Width * 2,
+	//			RGTILE_Height * 2);
+	//		drawEnemyPos = EnemyNomalPosition + pc->camPosition + setPos;
+	//		k = i - 1;
+	//		if (k < 5)
+	//			k = TILEOFF_NUM - 1;
+	//		break;
+	//	}
+	//}
 
 	touchEnemyNomal = iRectZero;
 
@@ -147,7 +147,7 @@ bool EnemyNomal::enemysAttack(float dt)
 		setLineWidth(1);
 		setRGBA(1, 1, 1, 1);
 
-		if (hit == false && evasion == false)
+		if (hit == false && pc->act != evasion)
 		{
 			iPoint n = ATV - EnemyNomalPosition;
 			float len = iPointLength(n);

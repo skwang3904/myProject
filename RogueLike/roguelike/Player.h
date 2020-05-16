@@ -46,6 +46,8 @@ public:
 	bool actionCheck(bool key);
 	void drawPlayer(float dt);
 
+	void showHpBar(float dt);
+
 	void combatDraw(float dt);
 	void rootCombat(bool key);
 	void dropCombat(bool key);

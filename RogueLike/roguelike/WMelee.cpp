@@ -47,7 +47,7 @@ void createMeleeWeapon()
 	freeImage(tex);
 	//-----------------------------------------------------------
 
-	nomalSpear->init(imgSpear, true, 10, 0.3f, 0.3f, 70.0f, 0.0f,iPointZero, iRectZero,false);
+	nomalSpear->init(imgSpear, true, 40, 0.3f, 0.3f, 70.0f, 0.0f,iPointZero, iRectZero,false);
 	meleeNum++;
 
 	_meleeWP[0] = nomalSword;
@@ -341,7 +341,7 @@ void meleeWeapon::init()
 {
 	img = new iImage();
 	melee = true;
-	attackDmg = 10.0f;
+	attackDmg = 30.0f;
 	attackSpeed = 0.0f;
 	_attackSpeed = 0.2f;
 	reach = 50.0f;
@@ -390,7 +390,7 @@ void nomalSwordMethod(float dt, bool drop, iPoint dropP)
 	if (mw->attackSpeed > 0.0f)
 		mw->attackSpeed = (int)0;
 
-	if (attackMelee(mw, dt, mw->attackEnemy, 0.5f, 0.0f, 90.0f, 1.0f))
+	if (attackMelee(mw, dt, mw->attackEnemy, 0.2f, 0.0f, 90.0f, 1.0f))
 		return;
 
 	draw(mw, dt, mw->holdAngle, drop, dropP);

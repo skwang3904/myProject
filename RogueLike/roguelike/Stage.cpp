@@ -25,8 +25,8 @@ void createStage(int stage)
 	for (int i = 0; i < ENEMY_NUM; i++)
 	{
 		enemys[i]->init(stage);
-		//enemys[i]->Enemy1Position = iPointMake(200 + 40 * i, 80 + 20 * i) - pc->camPosition;
-		//enemys[i]->drawEnemyPos = enemys[i]->Enemy1Position + pc->camPosition + setPos;
+		//enemys[i]->EnemyPosition = iPointMake(200 + 40 * i, 80 + 20 * i) - pc->camPosition;
+		//enemys[i]->drawEnemyPos = enemys[i]->EnemyPosition + pc->camPosition + setPos;
 	}
 }
 

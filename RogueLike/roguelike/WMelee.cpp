@@ -234,7 +234,7 @@ bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 
 	for (int i = 0; i < ENEMY_NUM; i++) //enemy
 	{
-		if (containRect(mw->hitBox, enemys[i]->touchEnemy1))
+		if (containRect(mw->hitBox, enemys[i]->touchEnemyNomal))
 		{
 			enemys[i]->takeDmgEnemy(dt, mw->attackDmg);
 		}

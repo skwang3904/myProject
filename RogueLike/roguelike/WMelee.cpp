@@ -134,7 +134,7 @@ void weaponVector(meleeWeapon* mw, float dt)
 bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 	float iRange, float iAngle, float iRatio)
 {
-	if (mw->attackEnemy == false || attacking == false)
+	if (mw->attackEnemy == false && pc->act != attacking)
 		return false;
 
 	weaponPosition(mw, dt, mw->combatPosition);
@@ -244,7 +244,7 @@ bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 	if (delta > attTime)
 	{
 		delta = 0.0f;
-		attacking = false;
+		pc->act = idle;
 		mw->attackEnemy = false;
 
 		draw(mw, dt,mw->holdAngle, false, iPointZero);
@@ -379,9 +379,9 @@ void nomalSwordMethod(float dt, bool drop, iPoint dropP)
 	weaponVector(mw, dt);
 
 	if (getKeyStat(keyboard_attack)  && mw->attackSpeed == 0 && pc->mw == mw &&
-		evasion == false && falling == false)
+		pc->act == idle)
 	{
-		attacking = true;
+		pc->act = attacking;
 		mw->attackEnemy = true;
 		mw->attackSpeed -= mw->_attackSpeed;
 	}
@@ -390,7 +390,7 @@ void nomalSwordMethod(float dt, bool drop, iPoint dropP)
 	if (mw->attackSpeed > 0.0f)
 		mw->attackSpeed = (int)0;
 
-	if (attackMelee(mw, dt, mw->attackEnemy, 0.1f, 0.0f, 90.0f, 1.0f))
+	if (attackMelee(mw, dt, mw->attackEnemy, 0.5f, 0.0f, 90.0f, 1.0f))
 		return;
 
 	draw(mw, dt, mw->holdAngle, drop, dropP);
@@ -402,9 +402,9 @@ void nomalSpearMethod(float dt, bool drop, iPoint dropP)
 	weaponVector(mw, dt);
 
 	if (getKeyStat(keyboard_attack) && mw->attackSpeed == 0 && pc->mw == mw &&
-		evasion == false && falling == false)
+		pc->act == idle)
 	{
-		attacking = true;
+		pc->act = attacking;
 		mw->attackEnemy = true;
 		mw->attackSpeed -= mw->_attackSpeed;
 	}

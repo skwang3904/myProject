@@ -15,18 +15,6 @@ Texture** texsEvasion;
 
 Method_Combat _method[MELEE_NUM] = { nomalSwordMethod, nomalSpearMethod };
 
-
-bool evasion = false;
-bool falling = false;
-bool attacking = false;
-
-bool actionCheck(bool key)
-{
-	if (key == false || evasion == true || falling == true || attacking == true)
-		return true;
-	return false;
-}
-
 Player::Player()
 {
 	initPlayerStat();
@@ -78,6 +66,7 @@ void Player::initPlayerStat()
 
 	moveSpeed = 400.0f;
 
+	act = idle;
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
 		if (maps[i]->rgTile)
@@ -207,6 +196,13 @@ void Player::createPlayerImage()
 
 }
 
+bool Player::actionCheck(bool key)
+{
+	if (key == false || pc->act != idle)
+		return true;
+	return false;
+}
+
 void Player::drawPlayer(float dt)
 {
 	if (hp <= 0.0f)
@@ -220,6 +216,7 @@ void Player::drawPlayer(float dt)
 	pc->rootCombat(getKeyDown(keyboard_pickup));
 	pc->dropCombat(getKeyDown(keyboard_drop));
 }
+
 
 void Player::combatDraw(float dt)
 {
@@ -339,7 +336,7 @@ void Player::movePlayer(float dt)
 	if(ani)
 		v /= iPointLength(v);
 	iPoint mp = v * (moveSpeed * dt);
-	if (attacking == true)
+	if (pc->act == attacking)
 		mp /= 10.0f;
 	static MapTile* tile = maps[12];
 
@@ -353,14 +350,14 @@ void Player::movePlayer(float dt)
 	if (evasionPlayer(tile, dt))
 		return;
 
-	if (evasion == false)
-		if (falling = fallCheck(pc,tile, dt))
+	if (act != evasion)
+		if (falling == fallCheck(pc, tile, dt))
 			return;
 
 
 	wallCheck(false, tile, pc->playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
 
-	img[ch]->setTexAtIndex(attacking);
+	img[ch]->setTexAtIndex(pc->act == attacking ? true : false);
 	drawPos = playerPosition + camPosition + setPos;
 	if (v.x)
 	{
@@ -401,13 +398,13 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 	{
 		if (weaponVector != iPointZero)
 		{
-			if (evasion == false)
+			if (act != evasion)
 				img[9]->startAnimation();
-			evasion = true;
+			act = evasion;
 		}
 	}
 
-	if (evasion == false)
+	if (act != evasion)
 		return false;
 
 	static iPoint v = iPointZero;
@@ -453,7 +450,7 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 
 	else if (img[9]->animation == false)
 	{
-		evasion = false;
+		act = idle;
 		v = iPointZero;
 
 		return false;

@@ -421,47 +421,46 @@ void wallCheck(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float half
 }
 
 void findMoveTile(Player* pc, MapTile* tile);
-bool fallCheck(Player* pc, MapTile* tile, float dt)
+PlayerAction fallCheck(Player* pc, MapTile* tile, float dt)
 {
 	// 임시 - 낭떨어지에 진입시 가장 가까이있는 타일로 이동  - 어색함
 	// 라이프 감소
 	// 잠시 무적
 	if (tile->rgTile == NULL)
-		return false;
+		return idle;
 
 	MapTile* t = tile;
 
 	int x = (int)(pc->playerPosition.x - t->tileOff.x + HALF_OF_TEX_WIDTH) / RGTILE_Width;
 	int y = (int)(pc->playerPosition.y - t->tileOff.y + HALF_OF_TEX_HEIGHT) / RGTILE_Height;
 
-	static bool falling = false;
-
 	if (t->rgTile[RGTILE_X * y + x] == FALLTILE)
 	{
-		if (falling == false)
+		if (pc->act != falling)
 			pc->img[8]->startAnimation();
 
 		if (pc->img[8]->animation == false)
 		{
-			falling = false;
+			pc->act = idle;
 			
 			findMoveTile(pc,tile);
-			return false;
+
+			return idle;
 		}
 
-		falling = true;
+		pc->act = falling;
 		iPoint p = iPointMake( pc->playerPosition.x - t->tileOff.x + setPos.x- HALF_OF_TEX_WIDTH,
 			pc->playerPosition.y - t->tileOff.y + setPos.y - HALF_OF_TEX_HEIGHT);
 
 		pc->img[8]->selected = true;
 		pc->img[8]->paint(dt, p, REVERSE_NONE);
 
-		return true;
+		return falling;
 	}
 	else
 	{
-		falling = false;
-		return false;
+		pc->act = idle;
+		return idle;
 	}
 }
 

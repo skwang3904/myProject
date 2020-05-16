@@ -21,10 +21,12 @@
 typedef void (*Method_Combat)(float dt, bool drop, iPoint dropP);
 extern Method_Combat _method[MELEE_NUM];
 
-extern bool evasion;
-extern bool falling;
-extern bool attacking;
-bool actionCheck(bool key);
+enum PlayerAction {
+	idle = 0,
+	attacking,
+	falling,
+	evasion
+};
 
 struct meleeWeapon;
 struct MapTile;
@@ -41,6 +43,7 @@ public:
 	void initPlayerStat();
 	void createPlayerImage();
 
+	bool actionCheck(bool key);
 	void drawPlayer(float dt);
 
 	void combatDraw(float dt);
@@ -60,6 +63,8 @@ public:
 	float attackSpeed;
 	float _attackSpeed;
 	float moveSpeed;
+
+	PlayerAction act;
 
 	iPoint camPosition;
 	iPoint playerPosition;

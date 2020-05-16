@@ -89,7 +89,7 @@ void Enemy1::takeDmgEnemy(float dt, float dmg)
 	// 무기 히트박스에 몹 히트박스가 걸리면
 	// 한번 휘두를때 한번만 공격
 
-	if (attacking && takeDmg == false)
+	if (pc->act == attacking && takeDmg == false)
 	{
 		hp -= dmg;
 		takeDmg = true;

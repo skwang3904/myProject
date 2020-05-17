@@ -120,7 +120,7 @@ void drawLib(Method_Paint method)
         //    2.0f, 2.0f, 2, 0, REVERSE_HEIGHT);
 		drawImage(tex, devSize.width / 2, devSize.height / 2,
 			0, 0, tex->width, tex->height, VCENTER | HCENTER,
-			2.0f, 2.0f, 2, 0, REVERSE_HEIGHT);
+			1.0f, 1.0f, 2, 0, REVERSE_HEIGHT);
     }
 
 

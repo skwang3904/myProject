@@ -6,8 +6,6 @@
 
 int gamestat;
 
-#define myTest 0
-
 void loadRgGame()
 {
 #if 1
@@ -18,15 +16,18 @@ void loadRgGame()
 
 	//--------------------------------------------------------
 	// sound
-	AudioInfo ai[5] = {
+	AudioInfo ai[6] = {
 	{"assets/snd/swing.wav", false, 0.4f},
 	{"assets/snd/jump.wav", false, 0.2f},
-	{"assets/snd/falling.wav", false, 0.5f},
-	{"assets/snd/enemy-hit.wav", false, 0.7f},
+	{"assets/snd/0.wav", false, 0.3f},
+	{"assets/snd/enemy-hit.wav", false, 1.0f},
 	{"assets/snd/killEnemy.wav", false, 0.3f},
+	{"assets/snd/3.wav", true, 0.1f},
 	};
 
-	loadAudio(ai, 5);
+	loadAudio(ai, 6);
+
+	audioPlay(5);
 }
 
 void freeRgGame()

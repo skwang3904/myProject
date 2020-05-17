@@ -217,10 +217,10 @@ void drawRoomTile(float dt)
 					maps[i]->tileOff.y + pc->camPosition.y + setPos.y + RGTILE_Height * (j / RGTILE_X),
 					RGTILE_Width, RGTILE_Height);
 
-				setRGBA(1, 0, 0, 1);
-				drawRect(maps[i]->tileOff.x + pc->camPosition.x + setPos.x + RGTILE_Width * (j % RGTILE_X) + 2,
-					maps[i]->tileOff.y + pc->camPosition.y + setPos.y + RGTILE_Height * (j / RGTILE_X) + 2,
-					RGTILE_Width - 4, RGTILE_Height - 4);
+				//setRGBA(1, 0, 0, 1);
+				//drawRect(maps[i]->tileOff.x + pc->camPosition.x + setPos.x + RGTILE_Width * (j % RGTILE_X) + 2,
+				//	maps[i]->tileOff.y + pc->camPosition.y + setPos.y + RGTILE_Height * (j / RGTILE_X) + 2,
+				//	RGTILE_Width - 4, RGTILE_Height - 4);
 			}
 		}
 	}
@@ -442,7 +442,10 @@ bool fallCheck(MapTile* tile, float dt)
 	if (t->rgTile[RGTILE_X * y + x] == FALLTILE)
 	{
 		if (pc->act != falling)
+		{
 			pc->img[8]->startAnimation();
+			audioPlay(SND_FALL);
+		}
 
 		if (pc->img[8]->animation == false)
 		{
@@ -457,7 +460,6 @@ bool fallCheck(MapTile* tile, float dt)
 		iPoint p = pc->playerPosition - t->tileOff + setPos
 			- iPointMake(HALF_OF_TEX_WIDTH/2, HALF_OF_TEX_HEIGHT/2);
 			
-
 		pc->img[8]->selected = true;
 		pc->img[8]->paint(dt, p, REVERSE_NONE);
 

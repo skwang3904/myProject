@@ -112,6 +112,7 @@ void iOpenAL::initBuffer(int idx, const char* szFormat, ...)
 
 	char* data = &buf[sizeof(WaveHeader0) + (head0->fmtSize - 16) + sizeof(WaveHeader1)];
 	int dataLength = head1->dataSize;
+	printf("%d, %d \n",idx, dataLength );
 
 	alBufferData(gBuffer[idx], format, data, dataLength, samplesPerSec);
 

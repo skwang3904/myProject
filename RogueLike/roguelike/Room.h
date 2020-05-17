@@ -18,4 +18,4 @@ struct MapTile;
 extern MapTile** maps;
 void wallCheck(bool checkFall, MapTile* tile, iPoint& pos,iPoint mp, 
 				float halfOfTexW, float halfOfTexH);
-PlayerAction fallCheck(Player* pc, MapTile* tile, float dt);
+bool fallCheck(MapTile* tile, float dt);

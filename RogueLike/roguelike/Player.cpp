@@ -363,7 +363,7 @@ void Player::movePlayer(float dt)
 	}
 
 	if (act != evasion)
-		if (falling == fallCheck(pc, tile, dt))
+		if (fallCheck(tile, dt))
 			return;
 
 	if (evasionPlayer(tile, dt))

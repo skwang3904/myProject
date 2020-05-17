@@ -34,3 +34,13 @@ Weapon* Weapon::instance()
 	static Weapon* wp = new Weapon();
 	return wp;
 }
+
+void Weapon::drawWeapon(float dt)
+{
+	for (int i = 0; i < meleeNum; i++)
+	{
+		if (pc->method == _method[i])
+			continue;
+		_method[i](dt, true, weapon->wDropPos[i]);
+	}
+}

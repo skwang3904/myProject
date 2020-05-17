@@ -420,14 +420,14 @@ void wallCheck(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float half
 	wallCheck2(checkFall, tile, pos, mp, halfOfTexW, halfOfTexH);
 }
 
-void findMoveTile(Player* pc, MapTile* tile);
-PlayerAction fallCheck(Player* pc, MapTile* tile, float dt)
+void findMoveTile(MapTile* tile);
+bool fallCheck(MapTile* tile, float dt)
 {
 	// 임시 - 낭떨어지에 진입시 가장 가까이있는 타일로 이동  - 어색함
 	// 라이프 감소
 	// 잠시 무적
 	if (tile->rgTile == NULL)
-		return idle;
+		return false;
 
 	MapTile* t = tile;
 
@@ -443,28 +443,29 @@ PlayerAction fallCheck(Player* pc, MapTile* tile, float dt)
 		{
 			pc->act = idle;
 			
-			findMoveTile(pc,tile);
+			findMoveTile(tile);
 
-			return idle;
+			return false;
 		}
 
 		pc->act = falling;
-		iPoint p = iPointMake( pc->playerPosition.x - t->tileOff.x + setPos.x- HALF_OF_TEX_WIDTH,
-			pc->playerPosition.y - t->tileOff.y + setPos.y - HALF_OF_TEX_HEIGHT);
+		iPoint p = pc->playerPosition - t->tileOff + setPos
+			- iPointMake(HALF_OF_TEX_WIDTH/2, HALF_OF_TEX_HEIGHT/2);
+			
 
 		pc->img[8]->selected = true;
 		pc->img[8]->paint(dt, p, REVERSE_NONE);
 
-		return falling;
+		return true;
 	}
 	else
 	{
 		pc->act = idle;
-		return idle;
+		return false;
 	}
 }
 
-float findMoveTile(Player* pc, MapTile* tile, int x, int y)
+float findMoveTile(MapTile* tile, int x, int y)
 {
 	float min = 0xffff;
 	MapTile* t = tile;
@@ -481,7 +482,7 @@ float findMoveTile(Player* pc, MapTile* tile, int x, int y)
 	return min;
 }
 
-void findMoveTile(Player* pc, MapTile* tile)
+void findMoveTile(MapTile* tile)
 {
 	MapTile* t = tile;
 	int x = (int)(pc->playerPosition.x - t->tileOff.x + HALF_OF_TEX_WIDTH) / RGTILE_Width;
@@ -499,21 +500,21 @@ void findMoveTile(Player* pc, MapTile* tile)
 		// x-1, y					x+1, y
 		// x-1, y+1		x, y+1		x+1, y+1
 
-		dis = findMoveTile(pc,tile, x - i, y - i);
+		dis = findMoveTile(tile, x - i, y - i);
 		if (dis < minD)
 		{
 			minD = dis;
 			pcX = x - i;
 			pcY = y - i;
 		}
-		dis = findMoveTile(pc, tile, x - i, y);
+		dis = findMoveTile(tile, x - i, y);
 		if (dis < minD)
 		{
 			minD = dis;
 			pcX = x - i;
 			pcY = y;
 		}
-		dis = findMoveTile(pc, tile, x - i, y + i);
+		dis = findMoveTile(tile, x - i, y + i);
 		if (dis < minD)
 		{
 			minD = dis;
@@ -521,14 +522,14 @@ void findMoveTile(Player* pc, MapTile* tile)
 			pcY = y + i;
 		}
 
-		dis = findMoveTile(pc, tile, x, y - i);
+		dis = findMoveTile(tile, x, y - i);
 		if (dis < minD)
 		{
 			minD = dis;
 			pcX = x;
 			pcY = y - i;
 		}
-		dis = findMoveTile(pc, tile, x, y + i);
+		dis = findMoveTile(tile, x, y + i);
 		if (dis < minD)
 		{
 			minD = dis;
@@ -536,14 +537,14 @@ void findMoveTile(Player* pc, MapTile* tile)
 			pcY = y + i;
 		}
 
-		dis = findMoveTile(pc, tile, x + i, y - i);
+		dis = findMoveTile(tile, x + i, y - i);
 		if (dis < minD)
 		{
 			minD = dis;
 			pcX = x + i;
 			pcY = y - i;
 		}
-		dis = findMoveTile(pc,tile, x + i, y);
+		dis = findMoveTile(tile, x + i, y);
 		if (dis < minD)
 		{
 			minD = dis;
@@ -551,7 +552,7 @@ void findMoveTile(Player* pc, MapTile* tile)
 			pcY = y;
 		}
 
-		dis = findMoveTile(pc, tile, x + i, y + i);
+		dis = findMoveTile(tile, x + i, y + i);
 		if (dis < minD)
 		{
 			minD = dis;
@@ -563,13 +564,36 @@ void findMoveTile(Player* pc, MapTile* tile)
 			break;
 	}
 
-	iPoint p = iPointMake(t->tileOff.x + RGTILE_Width * pcX,
-		t->tileOff.y + RGTILE_Height * pcY);
-
-	if (p.x < pc->playerPosition.x)	p -= iPointMake(HALF_OF_TEX_WIDTH, 0);
-	else							p += iPointMake(HALF_OF_TEX_WIDTH, 0);
-	if (p.y < pc->playerPosition.y)	p -= iPointMake(0, HALF_OF_TEX_HEIGHT);
-	else							p += iPointMake(0, HALF_OF_TEX_HEIGHT);
+	iPoint p = iPointMake(t->tileOff.x + RGTILE_Width * pcX + RGTILE_Width/2,
+		t->tileOff.y + RGTILE_Height * pcY + RGTILE_Height/2);
+	iPoint pcp = pc->playerPosition + iPointMake(HALF_OF_TEX_WIDTH,HALF_OF_TEX_HEIGHT);
 	
+	//if (p.x < pc->playerPosition.x)	p += iPointMake(HALF_OF_TEX_WIDTH * 2, 0);
+	//else							p -= iPointMake(HALF_OF_TEX_WIDTH* 2, 0);
+	//if (p.y < pc->playerPosition.y)	p += iPointMake(0, HALF_OF_TEX_HEIGHT*2);
+	//else							p -= iPointMake(0, HALF_OF_TEX_HEIGHT*2);
+
+	if (p.x > pcp.x&& p.y < pcp.y) // l d 
+	{
+		if (fabs(p.x - pcp.x) > fabs(p.y - pcp.y))
+		{
+			;
+		}
+			
+	}
+	else if (p.x < pcp.x && p.y < pcp.y) // r d 
+		;
+	if (p.x > pcp.x && p.y > pcp.y) // l u
+		;
+	else if (p.x < pcp.x&& p.y > pcp.y) // r u
+		;
+	if (p.x == pcp.x)
+		;
+	else if (p.y == pcp.y)
+		;
+
+	printf("px = %f, py = %f\n", p.x, p.y);
+	printf("pc = %f, pc = %f\n", pc->playerPosition.x, pc->playerPosition.y );
+	printf("-------------------------------\n");
 	pc->playerPosition = p;
 }

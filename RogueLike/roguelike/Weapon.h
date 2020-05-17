@@ -20,6 +20,8 @@ public:
 
 	static Weapon* instance();
 
+	void drawWeapon(float dt);
+
 public:
 	iArray* weaponArray;
 

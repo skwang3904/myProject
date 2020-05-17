@@ -28,23 +28,10 @@ void loadRgProc()
 
 	createStage(stage);
 
-	/////////////////////////////////////////////////////////
+	//--------------------------------------------------------
 	// pop
 	loadPlayerUI();
 
-
-
-	/////////////////////////////////////////////////////////
-	// sound
-	AudioInfo ai[4] = {
-	{"assets/snd/swing.wav", false, 0.4f},
-	{"assets/snd/jump.wav", false, 0.2f},
-	{"assets/snd/falling.wav", false, 0.5f},
-	{"assets/snd/enemy-hit.wav", false, 0.7f},
-	{"assets/snd/killEnemy.wav", false, 0.3f},
-	};
-
-	loadAudio(ai, 4);
 }
 
 void freeRgProc()
@@ -56,11 +43,10 @@ void freeRgProc()
 	freeTileSet();
 	freeRoomTile();
 
-	/////////////////////////////////////////////////////////
+	//--------------------------------------------------------
 	// pop
 	freePlayerUI();
 
-	freeAudio();
 }
 
 void drawRgProc(float dt)
@@ -70,20 +56,31 @@ void drawRgProc(float dt)
 	static float delta = 0.0f;
 	static bool stagetest = false;
 
-	int test = 0;
-	for (int i = 0; i < ENEMY_NUM; i++)
-	{
-		if (enemys[i]->hp < 0.1f)
-			test++;
-		if (i == ENEMY_NUM - 1 && test == ENEMY_NUM)
-		{
-			// stage animation
-			stage++;
-			createStage(stage);
 
-			stagetest = true;
-		}
+	if (delta > 1.0f)
+	{
+		stage++;
+		createStage(stage);
+
+		popHP->show(true);
+
+		stagetest = false;
+		delta = 0.0f;
+		nextStage = false;
 	}
+
+	// 맵 로딩 화면
+	if (stagetest)
+	{
+		delta += dt;
+		return;
+	}
+
+	drawRoomTile(dt);
+	passTileAnimation(dt);
+	drawNextDoor(dt);
+	if (passAni)
+		return;
 
 	if (nextStage)
 	{
@@ -91,53 +88,28 @@ void drawRgProc(float dt)
 		popHP->show(false);
 	}
 
-	if (delta > 1.0f)
-	{
-		stage++;
-		createStage(stage);
-		stagetest = false;
-		delta = 0.0f;
-		nextStage = false;
-
-		popHP->show(true);
-	}
-
-	drawRoomTile(dt);
-	passTileAnimation(dt);
-
-	if (stagetest)
-	{
-		delta += dt;
-		return;
-	}
-
-	if (passAni)
-		return;
 	
+	if (pc->hp < 0.1f)
+	{
+		// pc dead ani
+		return;
+	}
 
 	// 몬스터 draw
 
-	if (pc->hp < 0.1f)
-		return;
-
 	drawEnemy(dt);
 
-	// 특정위치에서 (ex 상자) 등장
-	for (int i = 0; i < meleeNum; i++)
-	{
-		if(pc->method == _method[i])
-			continue;
-		_method[i](dt, true, weapon->wDropPos[i]);
-	}
+	// 무기 생성위치
+	weapon->drawWeapon(dt);
 	
 	pc->drawPlayer(dt);
 	//printf("%.2f\n", pc->hp);
 	//printf("x = %.2f, y = %.2f\n", pc->playerPosition.x, pc->playerPosition.y);
 
-	drawNextDoor(dt);
 
 
-	/////////////////////////////////////////////////////////
+
+	//--------------------------------------------------------
 	// pop
 	drawPlayerUI(dt);
 }

@@ -14,6 +14,7 @@ struct iPoint
 	iPoint operator - (const iPoint& p);
 	iPoint& operator -= (const iPoint& p);
 
+	iPoint operator * (const iPoint& p);
 	iPoint& operator *= (const iPoint& p);
 	iPoint operator * (const float f);
 	iPoint& operator *= (const float f);

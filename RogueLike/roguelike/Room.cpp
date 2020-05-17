@@ -216,6 +216,11 @@ void drawRoomTile(float dt)
 				fillRect(maps[i]->tileOff.x + pc->camPosition.x + setPos.x + RGTILE_Width * (j % RGTILE_X),
 					maps[i]->tileOff.y + pc->camPosition.y + setPos.y + RGTILE_Height * (j / RGTILE_X),
 					RGTILE_Width, RGTILE_Height);
+
+				setRGBA(1, 0, 0, 1);
+				drawRect(maps[i]->tileOff.x + pc->camPosition.x + setPos.x + RGTILE_Width * (j % RGTILE_X) + 2,
+					maps[i]->tileOff.y + pc->camPosition.y + setPos.y + RGTILE_Height * (j / RGTILE_X) + 2,
+					RGTILE_Width - 4, RGTILE_Height - 4);
 			}
 		}
 	}
@@ -443,7 +448,7 @@ bool fallCheck(MapTile* tile, float dt)
 		{
 			pc->act = idle;
 			
-			findMoveTile(tile);
+			findMoveTile(t);
 
 			return false;
 		}
@@ -473,9 +478,9 @@ float findMoveTile(MapTile* tile, int x, int y)
 		return min;
 
 	float distance = iPointLength(
-		pc->playerPosition + iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT)
-		- iPointMake(t->tileOff.x + RGTILE_Width * x + RGTILE_Width / 2,
-				t->tileOff.y + RGTILE_Height * y + RGTILE_Height / 2));
+		(pc->playerPosition + iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT))
+		- t->tileOff + iPointMake(RGTILE_Width * x + RGTILE_Width / 2,
+			RGTILE_Height * y + RGTILE_Height / 2));
 
 	if (min > distance)
 		return distance;
@@ -564,36 +569,17 @@ void findMoveTile(MapTile* tile)
 			break;
 	}
 
-	iPoint p = iPointMake(t->tileOff.x + RGTILE_Width * pcX + RGTILE_Width/2,
-		t->tileOff.y + RGTILE_Height * pcY + RGTILE_Height/2);
-	iPoint pcp = pc->playerPosition + iPointMake(HALF_OF_TEX_WIDTH,HALF_OF_TEX_HEIGHT);
-	
-	//if (p.x < pc->playerPosition.x)	p += iPointMake(HALF_OF_TEX_WIDTH * 2, 0);
-	//else							p -= iPointMake(HALF_OF_TEX_WIDTH* 2, 0);
-	//if (p.y < pc->playerPosition.y)	p += iPointMake(0, HALF_OF_TEX_HEIGHT*2);
-	//else							p -= iPointMake(0, HALF_OF_TEX_HEIGHT*2);
+	iPoint p = iPointMake(t->tileOff.x + RGTILE_Width * pcX ,
+		t->tileOff.y + RGTILE_Height * pcY);
 
-	if (p.x > pcp.x&& p.y < pcp.y) // l d 
-	{
-		if (fabs(p.x - pcp.x) > fabs(p.y - pcp.y))
-		{
-			;
-		}
-			
-	}
-	else if (p.x < pcp.x && p.y < pcp.y) // r d 
-		;
-	if (p.x > pcp.x && p.y > pcp.y) // l u
-		;
-	else if (p.x < pcp.x&& p.y > pcp.y) // r u
-		;
-	if (p.x == pcp.x)
-		;
-	else if (p.y == pcp.y)
-		;
+	if (p.x < pc->playerPosition.x )
+		p -= iPointMake(HALF_OF_TEX_WIDTH, 0);
+	else
+		p += iPointMake(0, 0);
+	if (p.y < pc->playerPosition.y + HALF_OF_TEX_HEIGHT)
+		p -= iPointMake(0, HALF_OF_TEX_HEIGHT);
+	else
+		p += iPointMake(0, 0);
 
-	printf("px = %f, py = %f\n", p.x, p.y);
-	printf("pc = %f, pc = %f\n", pc->playerPosition.x, pc->playerPosition.y );
-	printf("-------------------------------\n");
 	pc->playerPosition = p;
 }

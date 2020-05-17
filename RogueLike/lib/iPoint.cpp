@@ -50,6 +50,14 @@ iPoint& iPoint::operator -= (const iPoint& p)
 	return *this;
 }
 
+iPoint iPoint::operator*(const iPoint& p)
+{
+	iPoint r;
+	r.x = x * p.x;
+	r.y = y * p.y;
+	return r;
+}
+
 iPoint& iPoint::operator *= (const iPoint& p)
 {
 	x *= p.x;

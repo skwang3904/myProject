@@ -66,7 +66,7 @@ void Player::initPlayerStat()
 	attackSpeed =
 	_attackSpeed = 0.5f;
 
-	moveSpeed = 700.0f;
+	moveSpeed = 300.0f;
 
 	act = idle;
 	//for (int i = TILEOFF_NUM/2 + 3; i < TILEOFF_NUM; i++)

@@ -467,7 +467,6 @@ bool fallCheck(MapTile* tile, float dt)
 	}
 	else
 	{
-		pc->act = idle;
 		return false;
 	}
 }

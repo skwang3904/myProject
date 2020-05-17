@@ -132,7 +132,7 @@ void weaponVector(meleeWeapon* mw, float dt)
 bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 	float iRange, float iAngle, float iRatio)
 {
-	if (mw->attackEnemy == false && pc->act != attacking)
+	if (pc->mw !=  mw || mw->attackEnemy == false && pc->act != attacking)
 		return false;
 
 	weaponPosition(mw, dt, mw->combatPosition);
@@ -219,7 +219,7 @@ bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 	fillRect(rt);
 
 	setRGBA(1, 1, 1, 1);
-	wcp = iPointRotate(centerP, wcp, attAngle- attAngleRate);
+	wcp = iPointRotate(centerP, wcp, -50 + attAngle * floor(delta));
 	wcp += pc->camPosition + setPos;
 
 	drawImage(tex,
@@ -227,7 +227,7 @@ bool attackMelee(meleeWeapon* mw ,float dt, bool att, float attTime,
 		wcp.y,
 		0, 0, tex->width, tex->height,
 		VCENTER | HCENTER, ratioRate, ratioRate, 
-		2, attAngle - attAngleRate + angle + mw->holdAngle, REVERSE_NONE);
+		2,  -50 + attAngleRate*2 + angle + mw->holdAngle, REVERSE_NONE);
 
 	for (int i = 0; i < ENEMY_NUM; i++) //enemy
 	{
@@ -340,7 +340,7 @@ void meleeWeapon::init()
 	img = new iImage();
 	melee = true;
 	attackDmg = 30.0f;
-	attackSpeed = 0.0f;
+	attackSpeed = 0.5f;
 	_attackSpeed = 0.5f;
 	reach = 50.0f;
 	holdAngle = -10.0f;
@@ -379,8 +379,7 @@ void nomalSwordMethod(float dt, bool drop, iPoint dropP)
 	meleeWeapon* mw = nomalSword;
 	weaponVector(mw, dt);
 
-	if (getKeyStat(keyboard_attack)  && mw->attackSpeed == 0 && pc->mw == mw &&
-		pc->act == idle)
+	if (getKeyStat(keyboard_attack) && mw->attackSpeed == 0 && pc->act == idle)
 	{
 		pc->act = attacking;
 		mw->attackEnemy = true;
@@ -392,10 +391,134 @@ void nomalSwordMethod(float dt, bool drop, iPoint dropP)
 	if (mw->attackSpeed > 0.0f)
 		mw->attackSpeed = (int)0;
 
-	if (attackMelee(mw, dt, mw->attackEnemy, 0.2f, 0.0f, 80.0f, 1.0f))
+	if (attackMelee(mw, dt, mw->attackEnemy, 0.3f, 0.0f, 80.0f, 1.0f))
 		return;
 
 	draw(mw, dt, drop, dropP);
+}
+
+// 무기 공격패턴 만들것
+bool nomalSworadAttack(meleeWeapon* mw, float dt, bool att, float attTime,
+	float iRange, float iAngle, float iRatio)
+{
+	if (mw->attackEnemy == false && pc->act != attacking)
+		return false;
+
+	weaponPosition(mw, dt, mw->combatPosition);
+
+	static float delta = 0.0f;
+
+	float range = iRange;
+	float rangeRate = easeIn(delta / attTime, 0, range);
+
+	float attAngle = iAngle;
+	float attAngleRate = easeIn(delta / attTime, 0, attAngle);
+
+	float ratio = iRatio;
+	float ratioRate = linear(delta / attTime, 1.0f, ratio);
+
+	mw->combatPosition += mv * rangeRate;
+
+	int vcen = VCENTER;
+	int hcen = HCENTER;
+
+	Texture* tex = mw->img->tex;
+
+	iPoint wcp = mw->combatPosition;
+	iPoint centerP = wcp;
+
+	iRect rt = iRectZero;
+	iSize size = iSizeMake(HALF_OF_TEX_WIDTH, mw->reach);
+	iPoint pcPos = pc->playerPosition + pc->camPosition + setPos;
+
+	if (mv.x < 0)
+	{
+		vcen = VCENTER;
+		hcen = RIGHT;
+
+		centerP.x = wcp.x - tex->height / 2;
+
+		rt.origin.x = pcPos.x + HALF_OF_TEX_WIDTH - size.height;
+		rt.origin.y = pcPos.y;
+		rt.size.width = size.height;
+		rt.size.height = size.width;
+	}
+	else if (mv.x > 0)
+	{
+		vcen = VCENTER;
+		hcen = LEFT;
+
+		centerP.x = wcp.x + tex->height / 2;
+
+		rt.origin.x = pcPos.x + HALF_OF_TEX_WIDTH;
+		rt.origin.y = pcPos.y + HALF_OF_TEX_HEIGHT * 2 - size.width;
+		rt.size.width = size.height;
+		rt.size.height = size.width;
+	}
+
+	if (mv.y < 0)
+	{
+		vcen = BOTTOM;
+		hcen = HCENTER;
+
+		centerP.x = wcp.x;
+		centerP.y = wcp.y - tex->height / 2;
+
+		rt.origin.x = pcPos.x + HALF_OF_TEX_WIDTH * 2 - size.width;
+		rt.origin.y = pcPos.y + HALF_OF_TEX_HEIGHT - size.height;
+		rt.size.width = size.width;
+		rt.size.height = size.height;
+	}
+	else if (mv.y > 0)
+	{
+		vcen = TOP;
+		hcen = HCENTER;
+
+		centerP.x = wcp.x;
+		centerP.y = wcp.y + tex->height / 2;
+
+		rt.origin.x = pcPos.x;
+		rt.origin.y = pcPos.y + HALF_OF_TEX_HEIGHT;
+		rt.size.width = size.width;
+		rt.size.height = size.height;
+	}
+
+	setRGBA(0, 1, 0, 1);
+	mw->hitBox = rt;
+	fillRect(rt);
+
+	setRGBA(1, 1, 1, 1);
+	wcp = iPointRotate(centerP, wcp, -50 + attAngle * floor(delta));
+	wcp += pc->camPosition + setPos;
+
+	drawImage(tex,
+		wcp.x,
+		wcp.y,
+		0, 0, tex->width, tex->height,
+		VCENTER | HCENTER, ratioRate, ratioRate,
+		2, -50 + attAngleRate * 2 + angle + mw->holdAngle, REVERSE_NONE);
+
+	for (int i = 0; i < ENEMY_NUM; i++) //enemy
+	{
+		if (containRect(mw->hitBox, enemys[i]->touchEnemyNomal))
+		{
+			enemys[i]->takeDmgEnemy(dt, mw->attackDmg);
+		}
+	}
+
+	delta += dt;
+	if (delta > attTime)
+	{
+		delta = 0.0f;
+		pc->act = idle;
+		mw->attackEnemy = false;
+
+		draw(mw, dt, false, iPointZero);
+		return false;
+	}
+
+	return true;
+
 }
 
 void nomalSpearMethod(float dt, bool drop, iPoint dropP)
@@ -406,8 +529,7 @@ void nomalSpearMethod(float dt, bool drop, iPoint dropP)
 	meleeWeapon* mw = nomalSpear;
 	weaponVector(mw, dt);
 
-	if (getKeyStat(keyboard_attack) && mw->attackSpeed == 0 && pc->mw == mw &&
-		pc->act == idle)
+	if (getKeyStat(keyboard_attack) && mw->attackSpeed == 0 && pc->act == idle)
 	{
 		pc->act = attacking;
 		mw->attackEnemy = true;
@@ -419,7 +541,7 @@ void nomalSpearMethod(float dt, bool drop, iPoint dropP)
 		mw->attackSpeed = (int)0;
 
 
-	if (attackMelee(mw, dt, mw->attackEnemy, 0.1f, 50.0f, 0.0f, 1.0f))
+	if (attackMelee(mw, dt, mw->attackEnemy, 0.2f, 50.0f, 0.0f, 1.0f))
 		return;
 
 	draw(mw, dt, drop, dropP);

@@ -107,8 +107,6 @@ void drawRgProc(float dt)
 	//printf("x = %.2f, y = %.2f\n", pc->playerPosition.x, pc->playerPosition.y);
 
 
-
-
 	//--------------------------------------------------------
 	// pop
 	drawPlayerUI(dt);

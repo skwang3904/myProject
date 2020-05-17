@@ -14,10 +14,10 @@ void createStage(int stage)
 	int pcTile = 0;
 	for (int i = TILEOFF_NUM/2 + 3; i < TILEOFF_NUM; i++)
 	{
-		if (maps[i]->rgTile)
+		if (maps[i]->rgTile != NULL)
 		{
-			pc->playerPosition = maps[i]->tileOff +
-			iPointMake(RGTILE_X * RGTILE_Width / 2, RGTILE_Y * RGTILE_Height / 2);
+			pc->playerPosition = maps[i]->tileOff + RGTILE_CENTER;
+			
 			pc->camPosition = iPointZero - pc->playerPosition ;
 			pc->drawPos = pc->camPosition + setPos;
 			pcTile = i;
@@ -65,7 +65,8 @@ void drawNextDoor(float dt)
 	setRGBA(0, 0.5, 1, 1);
 	fillRect(p.x, p.y, 50, 50);
 	setRGBA(1, 1, 1, 1);
-	
+
+	containDoor(pc->touchPlayer);
 }
 
 void containDoor(iRect rt)

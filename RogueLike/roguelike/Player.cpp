@@ -320,6 +320,7 @@ MapTile* playerTileOffSet(MapTile* tile)
 
 void Player::movePlayer(float dt)
 {
+	static iPoint vvv = iPointMake(0,1);
 	iPoint v = iPointZero;
 	static int ch= 7;
 
@@ -327,21 +328,33 @@ void Player::movePlayer(float dt)
 	{
 		v.x = -1;
 		ch = 4;
+
+		vvv.x = -1;
+		vvv.y = 0;
 	}
 	else if (getKeyStat(keyboard_right))
 	{
 		v.x = 1;
 		ch = 5;
+
+		vvv.x = 1;
+		vvv.y = 0;
 	}
 	if (getKeyStat(keyboard_up)) 
 	{ 
 		v.y = -1;
 		ch = 6;
+
+		vvv.x = 0;
+		vvv.y = -1;
 	}
 	else if (getKeyStat(keyboard_down))
 	{
 		v.y = 1;
 		ch = 7;
+
+		vvv.x = 0;
+		vvv.y = 1;
 	}
 	viewVector = v;
 
@@ -368,20 +381,22 @@ void Player::movePlayer(float dt)
 
 	if (evasionPlayer(tile, dt))
 		return;
+	printf("act = %d\n", pc->act);
 
 	wallCheck(false, tile, pc->playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
 
 	img[ch]->setTexAtIndex(pc->act == attacking ? true : false);
 	drawPos = playerPosition + camPosition + setPos;
-	if (v.x)
+
+	if (vvv.x)
 	{
-		img[2 * ani + 0]->paint(dt, drawPos, v.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);
+		img[2 * ani + 0]->paint(dt, drawPos, vvv.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);
 		drawImage(img[ch]->tex , 
 			drawPos.x  + HALF_OF_TEX_WIDTH,
 			drawPos.y ,
 			VCENTER | HCENTER);
 	}
-	else
+	else if (vvv.y)
 	{
 		img[2 * ani + 1]->paint(dt, drawPos , REVERSE_NONE);
 		drawImage(img[ch]->tex, 
@@ -399,7 +414,6 @@ void Player::movePlayer(float dt)
 	setRGBA(1, 1, 1, 1);
 
 	touchPlayer = rt;
-	containDoor(rt);
 
 	camPosition = iPointZero - tile->tileOff;
 }

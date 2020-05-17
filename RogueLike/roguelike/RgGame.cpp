@@ -19,10 +19,10 @@ void loadRgGame()
 	AudioInfo ai[6] = {
 	{"assets/snd/swing.wav", false, 0.4f},
 	{"assets/snd/jump.wav", false, 0.2f},
-	{"assets/snd/0.wav", false, 0.3f},
+	{"assets/snd/falling.wav", false, 0.3f},
 	{"assets/snd/enemy-hit.wav", false, 1.0f},
 	{"assets/snd/killEnemy.wav", false, 0.3f},
-	{"assets/snd/3.wav", true, 0.1f},
+	{"assets/snd/legacy-loop.wav", true, 0.1f},
 	};
 
 	loadAudio(ai, 6);

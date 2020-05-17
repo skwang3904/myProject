@@ -221,7 +221,7 @@ void Player::drawPlayer(float dt)
 	movePlayer(dt);
 	rootCombat(getKeyDown(keyboard_pickup));
 	dropCombat(getKeyDown(keyboard_drop));
-	showHpBar(dt);
+	//showHpBar(dt);
 }
 
 void Player::showHpBar(float dt) // 임시
@@ -395,7 +395,7 @@ void Player::movePlayer(float dt)
 
 	//히트박스 표시-------------------------------
 	setRGBA(0, 1, 0, 0.3f);
-	fillRect(rt);
+	//fillRect(rt);
 	setRGBA(1, 1, 1, 1);
 
 	touchPlayer = rt;
@@ -435,7 +435,7 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 		wallCheck(false, tile, playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
 
 		drawPos = playerPosition + camPosition + setPos;
-		iPoint p = iPointMake(drawPos.x - HALF_OF_TEX_WIDTH,
+		iPoint p = iPointMake(drawPos.x - HALF_OF_TEX_WIDTH/2,
 			drawPos.y - HALF_OF_TEX_HEIGHT);
 		
 		if (v.x < 0)

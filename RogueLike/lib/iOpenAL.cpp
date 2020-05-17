@@ -85,6 +85,23 @@ typedef struct _WaveHeader1 {
 	unsigned int dataSize;
 } WaveHeader1;
 
+void printfAL(WaveHeader0* head, WaveHeader1* head1)
+{
+	printf("riffSize = %d\n", head->riffSize);
+	printf("fmtSize = %d\n", head->fmtSize);
+	printf("format = %d\n", head->format);
+	printf("channels = %d\n", head->channels);
+	printf("samplesPerSec = %d\n", head->samplesPerSec);
+	printf("bytesPerSec = %d\n", head->bytesPerSec);
+	printf("blockAlign = %d\n", head->blockAlign);
+	printf("bitsPerSample = %d\n", head->bitsPerSample);
+
+	printf("dataSize = %d\n", head1->dataSize);
+
+	printf("\n");
+	//(﻿BitsPerSample / 8) * NumChannels * 실제 샘플수
+}
+
 void iOpenAL::initBuffer(int idx, const char* szFormat, ...)
 {
 	va_list args;
@@ -111,8 +128,20 @@ void iOpenAL::initBuffer(int idx, const char* szFormat, ...)
 	ALsizei samplesPerSec = head0->samplesPerSec;
 
 	char* data = &buf[sizeof(WaveHeader0) + (head0->fmtSize - 16) + sizeof(WaveHeader1)];
+
+	if (idx == 2 )
+	{
+		head1->dataSize = 84000;
+	}
+	if (idx == 5)
+	{
+		head1->dataSize = 700000;
+	}
 	int dataLength = head1->dataSize;
-	printf("%d, %d \n",idx, dataLength );
+
+	printf("%d번째------------------- \n",idx );
+	printfAL(head0, head1);
+
 
 	alBufferData(gBuffer[idx], format, data, dataLength, samplesPerSec);
 

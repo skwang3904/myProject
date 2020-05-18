@@ -388,21 +388,10 @@ void Player::movePlayer(float dt)
 	drawPos = playerPosition + camPosition + setPos;
 
 	if (vvv.x)
-	{
 		img[2 * ani + 0]->paint(dt, drawPos, vvv.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);
-		//drawImage(img[ch]->tex , 
-		//	drawPos.x  + HALF_OF_TEX_WIDTH,
-		//	drawPos.y ,
-		//	VCENTER | HCENTER);
-	}
 	else if (vvv.y)
-	{
 		img[2 * ani + 1]->paint(dt, drawPos , REVERSE_NONE);
-		//drawImage(img[ch]->tex, 
-		//	drawPos.x + HALF_OF_TEX_WIDTH,
-		//	drawPos.y,
-		//	VCENTER | HCENTER);
-	}
+
 	drawImage(img[ch]->tex, drawPos.x + HALF_OF_TEX_WIDTH, drawPos.y,
 		0, 0, img[ch]->tex->width, img[ch]->tex->height,
 		VCENTER | HCENTER, 1.0f, 1.0f,

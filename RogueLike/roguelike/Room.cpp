@@ -227,13 +227,14 @@ void drawRoomTile(float dt)
 	setRGBA(1, 1, 1, 1);
 }
 
-static iPoint prevCamOff = iPointMake(-1, -1);
 bool passAni = false;
-float passAniDt = _passAniDt;
-static iPoint sp = iPointZero;
-static iPoint ep = iPointZero;
 void passTileAnimation(float dt)
 {
+	static iPoint prevCamOff = iPointMake(-1, -1);
+	static float passAniDt = _passAniDt;
+	static iPoint sp = iPointZero;
+	static iPoint ep = iPointZero;
+
 	if (prevCamOff == iPointMake(-1, -1))
 		prevCamOff = pc->camPosition;
 

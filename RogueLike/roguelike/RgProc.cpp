@@ -1,7 +1,6 @@
 #include "RgProc.h"
 
 #include "Room.h"
-#include "RgTile.h"
 #include "Stage.h"
 
 #include "Weapon.h"
@@ -30,8 +29,9 @@ void loadRgProc()
 
 	//--------------------------------------------------------
 	// pop
-	loadPlayerUI();
+	loadRgLoading();
 
+	loadPlayerUI();
 }
 
 void freeRgProc()
@@ -45,8 +45,10 @@ void freeRgProc()
 
 	//--------------------------------------------------------
 	// pop
-	freePlayerUI();
 
+	freeRgLoading();
+
+	freePlayerUI();
 }
 
 void drawRgProc(float dt)
@@ -56,39 +58,47 @@ void drawRgProc(float dt)
 	static float delta = 0.0f;
 	static bool stagetest = false;
 
-
-	if (delta > 1.0f)
+	if (getKeyDown(keyboard_attack))
 	{
-		stage++;
-		createStage(stage);
+		stagetest = true;
+		showRgLoading(true, NextStage);
+	}
 
+	static bool test = false;
+	if (delta > _nextStageloadingTime/2)
+	{
+		if (test == false)
+		{
+			stage++;
+			createStage(stage);
+			test = true;
+		}
+	}
+
+	if (delta > _nextStageloadingTime)
+	{
 		popHP->show(true);
-
+		showRgLoading(false, NextStage);
 		stagetest = false;
 		delta = 0.0f;
 		nextStage = false;
 	}
 
 	// 맵 로딩 화면
-	if (stagetest)
-	{
-		delta += dt;
-		return;
-	}
-
 	drawRoomTile(dt);
+
 	passTileAnimation(dt);
 	drawNextDoor(dt);
-	if (passAni)
+	if (passAni && nextStage == false)
 		return;
 
 	if (nextStage)
 	{
 		stagetest = true;
 		popHP->show(false);
+		//loding
 	}
 
-	
 	if (pc->hp < 0.1f)
 	{
 		// pc dead ani
@@ -101,7 +111,7 @@ void drawRgProc(float dt)
 
 	// 무기 생성위치
 	weapon->drawWeapon(dt);
-	
+
 	pc->drawPlayer(dt);
 	//printf("%.2f\n", pc->hp);
 	//printf("x = %.2f, y = %.2f\n", pc->playerPosition.x, pc->playerPosition.y);
@@ -110,6 +120,14 @@ void drawRgProc(float dt)
 	//--------------------------------------------------------
 	// pop
 	drawPlayerUI(dt);
+
+	if (stagetest)
+	{
+		delta += dt;
+		drawRgLoading(dt, NextStage);
+
+		return;
+	}
 }
 
 void keyRgProc(iKeyState stat, iPoint point)

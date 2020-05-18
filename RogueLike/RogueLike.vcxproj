@@ -177,6 +177,7 @@
     <ClInclude Include="roguelike\PlayerUI.h" />
     <ClInclude Include="roguelike\RgGame.h" />
     <ClInclude Include="roguelike\RgIntro.h" />
+    <ClInclude Include="roguelike\RgLoading.h" />
     <ClInclude Include="roguelike\RgMenu.h" />
     <ClInclude Include="roguelike\RgProc.h" />
     <ClInclude Include="roguelike\RgTile.h" />
@@ -211,6 +212,7 @@
     <ClCompile Include="roguelike\PlayerUI.cpp" />
     <ClCompile Include="roguelike\RgGame.cpp" />
     <ClCompile Include="roguelike\RgIntro.cpp" />
+    <ClCompile Include="roguelike\RgLoading.cpp" />
     <ClCompile Include="roguelike\RgMenu.cpp" />
     <ClCompile Include="roguelike\RgProc.cpp" />
     <ClCompile Include="roguelike\RgTile.cpp" />

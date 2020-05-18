@@ -86,7 +86,7 @@ typedef struct _WaveHeader1 {
 } WaveHeader1;
 
 void printfAL(WaveHeader0* head, WaveHeader1* head1)
-{
+{ //아이튠즈로 파일 수정
 	printf("riffSize = %d\n", head->riffSize);
 	printf("fmtSize = %d\n", head->fmtSize);
 	printf("format = %d\n", head->format);

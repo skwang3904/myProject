@@ -516,12 +516,6 @@ bool nomalCycloneAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	weaponPosition(mw, dt, mw->combatPosition);
 
 	static float delta = 0.0f;
-	//float d = 0.0f;
-
-	//if (delta / attTime < 0.5f) 		d = 0.0f;
-	//else if (delta / attTime < 0.6f)	d = 0.3f;
-	//else if (delta / attTime < 0.9f)	d = 0.6f;
-	//else								d = 1.0f;
 
 	float range = iRange;
 	float rangeRate = linear(delta / attTime, 0, range);
@@ -544,7 +538,6 @@ bool nomalCycloneAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	static iPoint cycCp = iPointZero;
 	static iPoint cycCenter = iPointZero;
 	static float cycAngle = 0.0f;
-
 
 	weaponPosAndRt(mw, wcp, centerP, rt);
 	if (cycle == false)
@@ -571,7 +564,6 @@ bool nomalCycloneAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 		0, 0, tex->width, tex->height,
 		VCENTER | HCENTER, ratioRate, ratioRate,
 		2, attAngleRate + cycAngle, REVERSE_NONE);
-
 
 	for (int i = 0; i < ENEMY_NUM; i++) //enemy
 	{
@@ -638,7 +630,7 @@ void nomalCycloneMethod(float dt, iPoint dropP)
 	if (mw->attackSpeed > 0.0f)
 		mw->attackSpeed = (int)0;
 
-	if (nomalCycloneAttack(mw, dt, mw->attackEnemy, 0.3f, 0.0f, 3, 1.0f, 1.0f))
+	if (nomalCycloneAttack(mw, dt, mw->attackEnemy, 0.5f, 0.0f, 2, 1.0f, 1.0f))
 		return;
 
 	draw(mw, dt, dropP);

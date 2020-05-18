@@ -41,6 +41,7 @@ public:
 	static Player* instance();
 
 	void initPlayerStat();
+	int initPlayerPosition();
 	void createPlayerImage();
 
 	bool actionCheck(bool key);

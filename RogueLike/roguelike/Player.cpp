@@ -1,7 +1,6 @@
 #include "Player.h"
 
 #include "Room.h"
-#include "RgTile.h"
 
 #include "Weapon.h"
 #include "WMelee.h"
@@ -66,20 +65,10 @@ void Player::initPlayerStat()
 	attackSpeed =
 	_attackSpeed = 0.5f;
 
-	moveSpeed = 300.0f;
+	moveSpeed = 500.0f;
 
 	act = idle;
-	//for (int i = TILEOFF_NUM/2 + 3; i < TILEOFF_NUM; i++)
-	//{
-	//	if (maps[i]->rgTile)
-	//	{
-	//		playerPosition = maps[i]->tileOff +
-	//			iPointMake(RGTILE_X * RGTILE_Width / 2, RGTILE_Y * RGTILE_Height / 2);
-	//		camPosition = iPointZero - maps[i]->tileOff;
-	//		drawPos = maps[i]->tileOff + playerPosition + setPos;
-	//		break;
-	//	}
-	//}
+
 	playerPosition = iPointZero;
 	camPosition = iPointZero;
 	drawPos = iPointZero;
@@ -92,6 +81,24 @@ void Player::initPlayerStat()
 	mw = _meleeWP[2];
 	method = _method[2];
 
+}
+
+int Player::initPlayerPosition()
+{
+	int pcTile = 0;
+	for (int i = TILEOFF_NUM / 2 + 3; i < TILEOFF_NUM; i++)
+	{
+		if (maps[i]->rgTile != NULL)
+		{
+			pc->playerPosition = maps[i]->tileOff + RGTILE_CENTER;
+
+			pc->camPosition = iPointZero - pc->playerPosition;
+			pc->drawPos = pc->camPosition + setPos;
+			pcTile = i;
+			break;
+		}
+	}
+	return pcTile;
 }
 
 void Player::createPlayerImage()
@@ -372,7 +379,16 @@ void Player::movePlayer(float dt)
 		playerPosition.y + HALF_OF_TEX_HEIGHT * 2 < tile->tileOff.y ||
 		playerPosition.y > tile->tileOff.y + RGTILE_Y * RGTILE_Height - 1)
 	{
-		tile = playerTileOffSet(tile);
+		if (playerPosition.x + HALF_OF_TEX_WIDTH * 2 < tile->tileOff.x)
+			playerPosition.x -= HALF_OF_TEX_WIDTH * 2;
+		else if (playerPosition.x > tile->tileOff.x + RGTILE_X * RGTILE_Width - 1)
+			playerPosition.x += HALF_OF_TEX_WIDTH;
+		else if (playerPosition.y + HALF_OF_TEX_HEIGHT * 2 < tile->tileOff.y)
+			playerPosition.y -= HALF_OF_TEX_HEIGHT * 2;
+		else if (playerPosition.y > tile->tileOff.y + RGTILE_Y * HALF_OF_TEX_HEIGHT - 1)
+			playerPosition.y += HALF_OF_TEX_HEIGHT;
+
+		tile = playerTileOffSet(tile);		
 	}
 
 	if (act != evasion)
@@ -415,12 +431,11 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 	// 회피
 	// 회피중 무적
 
-	if (getKeyDown(keyboard_space))
+	if (getKeyDown(keyboard_space) && act != evasion && act != attacking)
 	{
 		if (viewVector != iPointZero)
 		{
-			if (act != evasion)
-				img[9]->startAnimation();
+			img[9]->startAnimation();
 			act = evasion;
 
 			audioPlay(SND_JUMP);

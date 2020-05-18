@@ -7,7 +7,6 @@
 #include "WMelee.h"
 
 #include "EnemyComposition.h"
-#include "Stage.h"
 
 #include "PlayerUI.h"
 
@@ -16,17 +15,18 @@ void loadRgProc()
 	stage++;
 	createTileSet();
 	loadRoomTile();
-
-	weapon = Weapon::instance();
-
-	pc = Player::instance();
-	pc->createPlayerImage();
-	pc->initPlayerStat();
+	newRoomTile();
 
 	createEnemy();
+	//createStage(stage);
 
-	createStage(stage);
+	weapon = Weapon::instance();
+	pc = Player::instance();
+	pc->createPlayerImage();
 
+	int pcTile = pc->initPlayerPosition();
+	setNextDoor(pcTile);
+	setEnemyPosition(pcTile);
 	//--------------------------------------------------------
 	// pop
 	loadRgLoading();
@@ -55,49 +55,13 @@ void drawRgProc(float dt)
 {
 	setRGBA(0, 0, 0, 1);
 	fillRect(0, 0, devSize.width, devSize.height);
-	static float delta = 0.0f;
-	static bool stagetest = false;
-
-	if (getKeyDown(keyboard_attack))
-	{
-		stagetest = true;
-		showRgLoading(true, NextStage);
-	}
-
-	static bool test = false;
-	if (delta > _nextStageloadingTime/2)
-	{
-		if (test == false)
-		{
-			stage++;
-			createStage(stage);
-			test = true;
-		}
-	}
-
-	if (delta > _nextStageloadingTime)
-	{
-		popHP->show(true);
-		showRgLoading(false, NextStage);
-		stagetest = false;
-		delta = 0.0f;
-		nextStage = false;
-	}
 
 	// 맵 로딩 화면
 	drawRoomTile(dt);
-
 	passTileAnimation(dt);
 	drawNextDoor(dt);
 	if (passAni && nextStage == false)
 		return;
-
-	if (nextStage)
-	{
-		stagetest = true;
-		popHP->show(false);
-		//loding
-	}
 
 	if (pc->hp < 0.1f)
 	{
@@ -106,7 +70,6 @@ void drawRgProc(float dt)
 	}
 
 	// 몬스터 draw
-
 	drawEnemy(dt);
 
 	// 무기 생성위치
@@ -114,20 +77,39 @@ void drawRgProc(float dt)
 
 	pc->drawPlayer(dt);
 	//printf("%.2f\n", pc->hp);
-	//printf("x = %.2f, y = %.2f\n", pc->playerPosition.x, pc->playerPosition.y);
-
 
 	//--------------------------------------------------------
 	// pop
 	drawPlayerUI(dt);
 
-	if (stagetest)
+	static bool stagetest = false;
+	static bool test = false;
+	if (nextStage)
 	{
-		delta += dt;
+		if (test == false)
+		{
+			stage++;
+			createStage(stage);
+			popHP->show(false);
+
+			showRgLoading(true, NextStage);
+
+			stagetest = true;
+			test = true;
+		}
+
+		if (bShowRgLoading(NextStage) == false)
+		{
+			popHP->show(true);
+			stagetest = false;
+			nextStage = false;
+			test = false;
+		}
+	}
+
+	if (bShowRgLoading(NextStage))
 		drawRgLoading(dt, NextStage);
 
-		return;
-	}
 }
 
 void keyRgProc(iKeyState stat, iPoint point)

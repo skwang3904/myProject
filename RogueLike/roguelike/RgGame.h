@@ -9,8 +9,8 @@
 #define gs_proc		3
 
 
-
 void loadRgGame();
 void freeRgGame();
 void drawRgGame(float dt);
 void keyRgGame(iKeyState stat, iPoint point);
+

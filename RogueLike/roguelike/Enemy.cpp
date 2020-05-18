@@ -1,9 +1,6 @@
 #include "Enemy.h"
 
-#include "WMelee.h"
-
 #include "Room.h"
-#include "RgTile.h"
 #include "Stage.h"
 
 EnemyNomal** enemys;
@@ -38,20 +35,6 @@ void EnemyNomal::init(int stage)
 	attackSpeed = _attackSpeed = 0.5f - ((stage - 1) * 0.1f);
 	moveSpeed = 50.0f + ((stage - 1) * 50);
 	reach = 50.0f;
-
-	//for (int i = k; i > -1; i--)
-	//{
-	//	if (maps[i]->rgTile != NULL)
-	//	{
-	//		EnemyNomalPosition = maps[i]->tileOff + iPointMake(RGTILE_Width * 2,
-	//			RGTILE_Height * 2);
-	//		drawEnemyPos = EnemyNomalPosition + pc->camPosition + setPos;
-	//		k = i - 1;
-	//		if (k < 5)
-	//			k = TILEOFF_NUM - 1;
-	//		break;
-	//	}
-	//}
 
 	touchEnemyNomal = iRectZero;
 

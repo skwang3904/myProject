@@ -1,7 +1,5 @@
 #include "Room.h"
 
-#include "RgTile.h"
-
 #include <math.h>
 
 
@@ -14,23 +12,24 @@ ConnectTile ct[TILEOFF_NUM];
 
 void connectCheck(ConnectTile* c);
 void pathTileCheck(ConnectTile* c);
-int conectCount = 0;
+
 
 MapTile** maps;
-bool randomOffCheck[TILEOFF_NUM];
-static bool nextStage = false;
+
+
 void loadRoomTile()
 {
-	
+	maps = (MapTile**)malloc(sizeof(MapTile*) * TILEOFF_NUM);
+
+	for (int i = 0; i < TILEOFF_NUM; i++)
+		maps[i] = (MapTile*)malloc(sizeof(MapTile) * 1);
+}
+
+bool randomOffCheck[TILEOFF_NUM];
+int conectCount = 0;
+void newRoomTile()
+{
 	int m[MAPTILE_NUM];
-	if (nextStage == false)
-	{
-		maps = (MapTile**)malloc(sizeof(MapTile*) * TILEOFF_NUM);
-
-		for (int i = 0; i < TILEOFF_NUM; i++)
-			maps[i] = (MapTile*)malloc(sizeof(MapTile) * 1);
-	}
-
 	conectCount = 0;
 	while (conectCount < MAPTILE_NUM)
 	{
@@ -89,7 +88,7 @@ void loadRoomTile()
 		for (int i = 0; i < TILEOFF_NUM; i++)
 		{
 			ConnectTile* c = &ct[i];
-				connectCheck(c);
+			connectCheck(c);
 
 			if (conectCount == MAPTILE_NUM)
 				break;
@@ -109,9 +108,8 @@ void loadRoomTile()
 		ConnectTile* c = &ct[i];
 		pathTileCheck(c);
 	}
-
-	nextStage = true;
 }
+
 
 void connectCheck(ConnectTile* c)
 {

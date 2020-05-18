@@ -1,11 +1,14 @@
 #include "RgLoading.h"
 
+#include "Stage.h"
+
+iPopup* popNextStage;
+
 void loadRgLoading()
 {
 	createPopPlayerDead();
 	createPopNextStage();
 
-	showPopNextStage(true);
 }
 
 void freeRgLoading()
@@ -33,6 +36,28 @@ void showRgLoading(bool show, loadingType type)
 	default:
 		break;
 	}
+}
+
+bool bShowRgLoading(loadingType type)
+{
+	switch (type)
+	{
+	case PlayerDead:
+	{	
+		break;
+	}
+	case NextStage:
+	{
+		if (popNextStage->bShow)
+			return true;
+		else
+			return false;
+	}
+
+	default:
+		break;
+	}
+	return false;
 }
 
 void drawRgLoading(float dt, loadingType type)
@@ -88,9 +113,7 @@ bool keyPopPlayerDead(iKeyState stat, iPoint point)
 
 //-------------------------------------------------------------------
 
-iPopup* popNextStage;
 iImage* imgLoadingBar;
-
 float nextStageLoadingTime = 0.0f;
 void createPopNextStage()
 {
@@ -116,8 +139,8 @@ void createPopNextStage()
 	
 	pop->addObject(imgLoadingBarBG);
 	pop->addObject(imgLoadingBarFill);
-	pop->openPosition = iPointMake(200,200);
-	pop->closePosition = iPointZero;
+	pop->openPosition = setPos - iPointMake(150,50);
+	pop->closePosition = pop->openPosition;
 }
 
 void freePopNextStage()
@@ -139,11 +162,14 @@ void drawPopNextStage(float dt)
 	setRGBA(1, 1, 1, 1);
 
 	nextStageLoadingTime += dt;
-	if (nextStageLoadingTime > _nextStageloadingTime)
-		nextStageLoadingTime = _nextStageloadingTime;
-		
 	imgLoadingBar->imgRatioX = nextStageLoadingTime / _nextStageloadingTime;
+	if (imgLoadingBar->imgRatioX > 1.0f)
+		imgLoadingBar->imgRatioX = 1.0f;
+
 	popNextStage->paint(dt);
+
+	if (nextStageLoadingTime > _nextStageloadingTime + 2.0f)
+		popNextStage->show(false);
 }
 
 bool keyPopNextStage(iKeyState stat, iPoint point)

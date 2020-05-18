@@ -1,9 +1,6 @@
 #include "EnemyComposition.h"
 
-#include "RgTile.h"
 #include "Room.h"
-#include "Enemy.h"
-
 
 int activeTile[MAPTILE_NUM];
 
@@ -42,14 +39,14 @@ void setEnemyPosition(int pcTile)
 
 		check[i] = t;
 
-		for (j = 0; j < 6; j++)
+		for (j = 0; j < 10; j++)
 		{
 			if (check[i] == pcTile)
 				continue;
 			EnemyNomal* enm = enemys[6 * i +j];
 			enm->EnemyNomalPosition = maps[check[i]]->tileOff +
 				iPointMake(RGTILE_Width * 5 + RGTILE_Width * 3 * (j % 3),
-					RGTILE_Height * 3 + RGTILE_Height * 5 * (j / 3));
+					RGTILE_Height * 3 + RGTILE_Height * 2 * (j / 3));
 		}
 	}
 }

@@ -1,61 +1,52 @@
 #include "Stage.h"
 
 #include "Room.h"
-#include "RgTile.h"
 
 #include "EnemyComposition.h"
 
 int stage = 0;
 int nextDoor = -1;
 bool nextStage = false;
+
 void createStage(int stage)
 {
-	loadRoomTile();
-	int pcTile = 0;
-	for (int i = TILEOFF_NUM/2 + 3; i < TILEOFF_NUM; i++)
-	{
-		if (maps[i]->rgTile != NULL)
-		{
-			pc->playerPosition = maps[i]->tileOff + RGTILE_CENTER;
-			
-			pc->camPosition = iPointZero - pc->playerPosition ;
-			pc->drawPos = pc->camPosition + setPos;
-			pcTile = i;
-			break;
-		}
-	}
+	newRoomTile();
 
 	// monster init
 	for (int i = 0; i < ENEMY_NUM; i++)
-	{
 		enemys[i]->init(stage);
-		//enemys[i]->EnemyPosition = iPointMake(200 + 40 * i, 80 + 20 * i) - pc->camPosition;
-		//enemys[i]->drawEnemyPos = enemys[i]->EnemyPosition + pc->camPosition + setPos;
-	}
+
+	int pcTile = pc->initPlayerPosition();
 
 	setEnemyPosition(pcTile);
 
+	setNextDoor(pcTile);
+}
+
+void setNextDoor(int pcTile)
+{
 	int i, j, num = 0;
 	int activeTile[MAPTILE_NUM];
 	int check[MAPTILE_NUM];
 	for (i = 0; i < TILEOFF_NUM; i++)
 	{
-		if (maps[i]->rgTile != NULL)
+		if (maps[i]->rgTile == Tile1way1 || maps[i]->rgTile == Tile1way2 || 
+			maps[i]->rgTile == Tile1way3 || maps[i]->rgTile == Tile1way4)
 		{
 			activeTile[num] = i;
 			num++;
 		}
 	}
 
-	for (i = 0; i < MAPTILE_NUM; i++)
+	for (i = 0; ; i++)
 	{
-		if (maps[activeTile[i]]->tileOff + pc->camPosition != iPointZero)
+		if (maps[activeTile[random()%num]]->tileOff + pc->camPosition != iPointZero && 
+			activeTile[random() % num] != pcTile)
 		{
 			nextDoor = activeTile[i];
 			break;
 		}
 	}
-
 }
 
 void drawNextDoor(float dt)

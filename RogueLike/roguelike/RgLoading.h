@@ -13,6 +13,7 @@ enum loadingType {
 void loadRgLoading();
 void freeRgLoading();
 void showRgLoading(bool show, loadingType type);
+bool bShowRgLoading(loadingType type);
 void drawRgLoading(float dt, loadingType type);
 void keyRgLoading(iKeyState stat, iPoint point);
 

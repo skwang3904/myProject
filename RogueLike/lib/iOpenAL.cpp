@@ -139,8 +139,8 @@ void iOpenAL::initBuffer(int idx, const char* szFormat, ...)
 	}
 	int dataLength = head1->dataSize;
 
-	printf("%d번째------------------- \n",idx );
-	printfAL(head0, head1);
+	//printf("%d번째------------------- \n",idx );
+	//printfAL(head0, head1);
 
 
 	alBufferData(gBuffer[idx], format, data, dataLength, samplesPerSec);

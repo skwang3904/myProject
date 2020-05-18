@@ -1,4 +1,5 @@
 #include "iStd.h"
+#include "../roguelike/PlayerUI.h"
 
 uint8 float2uint8(float f)
 {
@@ -123,6 +124,10 @@ void drawLib(Method_Paint method)
 			1.0f, 1.0f, 2, 0, REVERSE_HEIGHT);
     }
 
+
+	//--------------------------------------------------------
+	// pop
+	drawPlayerUI(delta);
 
 #if 0// minimap
     drawImage(tex, devSize.width - 50, devSize.height - 50,

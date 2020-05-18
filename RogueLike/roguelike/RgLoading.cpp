@@ -117,7 +117,7 @@ iImage* imgLoadingBar;
 float nextStageLoadingTime = 0.0f;
 void createPopNextStage()
 {
-	iPopup* pop = new iPopup(iPopupStyleZoom);
+	iPopup* pop = new iPopup(iPopupStyleAlpha);
 	popNextStage = pop;
 
 	iImage* imgLoadingBarBG = new iImage();
@@ -139,8 +139,9 @@ void createPopNextStage()
 	
 	pop->addObject(imgLoadingBarBG);
 	pop->addObject(imgLoadingBarFill);
-	pop->openPosition = setPos - iPointMake(150,50);
+	pop->openPosition = iPointMake(200,50);
 	pop->closePosition = pop->openPosition;
+	pop->_showDt = 0.5f;
 }
 
 void freePopNextStage()
@@ -162,9 +163,13 @@ void drawPopNextStage(float dt)
 	setRGBA(1, 1, 1, 1);
 
 	nextStageLoadingTime += dt;
-	imgLoadingBar->imgRatioX = nextStageLoadingTime / _nextStageloadingTime;
-	if (imgLoadingBar->imgRatioX > 1.0f)
-		imgLoadingBar->imgRatioX = 1.0f;
+	float f = nextStageLoadingTime / _nextStageloadingTime;
+	if (f < 0.3f) f = 0.3f;
+	else if (f < 0.5f) f = 0.6f;
+	else if (f < 1.2f) f = 0.8f;
+	else  f = 1.0f;
+
+	imgLoadingBar->imgRatioX = f;
 
 	popNextStage->paint(dt);
 

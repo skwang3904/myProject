@@ -71,7 +71,7 @@ void Player::initPlayerStat()
 
 	playerPosition = iPointZero;
 	camPosition = iPointZero;
-	drawPos = iPointZero;
+	drawPos = setPos;
 
 
 	viewVector = iPointMake(0, 1);

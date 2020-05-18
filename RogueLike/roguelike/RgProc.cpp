@@ -60,8 +60,17 @@ void drawRgProc(float dt)
 	drawRoomTile(dt);
 	passTileAnimation(dt);
 	drawNextDoor(dt);
-	if (passAni && nextStage == false)
+
+	if (nextStage)
 		return;
+
+	if (passAni)
+		return;
+
+
+
+	// 몬스터 draw
+	drawEnemy(dt);
 
 	if (pc->hp < 0.1f)
 	{
@@ -69,46 +78,12 @@ void drawRgProc(float dt)
 		return;
 	}
 
-	// 몬스터 draw
-	drawEnemy(dt);
 
 	// 무기 생성위치
 	weapon->drawWeapon(dt);
 
 	pc->drawPlayer(dt);
 	//printf("%.2f\n", pc->hp);
-
-	//--------------------------------------------------------
-	// pop
-	drawPlayerUI(dt);
-
-	static bool stagetest = false;
-	static bool test = false;
-	if (nextStage)
-	{
-		if (test == false)
-		{
-			stage++;
-			createStage(stage);
-			popHP->show(false);
-
-			showRgLoading(true, NextStage);
-
-			stagetest = true;
-			test = true;
-		}
-
-		if (bShowRgLoading(NextStage) == false)
-		{
-			popHP->show(true);
-			stagetest = false;
-			nextStage = false;
-			test = false;
-		}
-	}
-
-	if (bShowRgLoading(NextStage))
-		drawRgLoading(dt, NextStage);
 
 }
 

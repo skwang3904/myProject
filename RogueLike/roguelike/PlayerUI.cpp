@@ -31,7 +31,7 @@ iImage* imgHPgage;
 
 void createPopHP()
 {
-	iPopup* pop = new iPopup(iPopupStyleZoom);
+	iPopup* pop = new iPopup(iPopupStyleNone);
 	popHP = pop;
 
 	iImage* imgIconBar = new iImage();
@@ -73,8 +73,6 @@ void createPopHP()
 
 	pop->openPosition = iPointMake(devSize.width / 2, devSize.height / 2);
 	pop->closePosition = iPointZero;
-	pop->_showDt = 1.0f;
-	
 
 	freeImage(texIconBar);
 	freeImage(texheart);

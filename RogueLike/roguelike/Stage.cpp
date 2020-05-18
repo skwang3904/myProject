@@ -1,8 +1,9 @@
 #include "Stage.h"
 
 #include "Room.h"
-
 #include "EnemyComposition.h"
+#include "PlayerUI.h"
+#include "RgLoading.h"
 
 int stage = 0;
 int nextDoor = -1;
@@ -49,8 +50,43 @@ void setNextDoor(int pcTile)
 	}
 }
 
+void nextStageAni(float dt)
+{
+	static bool stagetest = false;
+	static bool test = false;
+
+	if (test == false)
+	{
+		stage++;
+		createStage(stage);
+		popHP->show(false);
+
+		showRgLoading(true, NextStage);
+
+		stagetest = true;
+		test = true;
+	}
+
+	drawRgLoading(dt, NextStage);
+
+	if (bShowRgLoading(NextStage) == false)
+	{
+		popHP->show(true);
+		nextStage = false;
+		stagetest = false;
+		test = false;
+	}
+
+}
+
 void drawNextDoor(float dt)
 {
+	if (nextStage)
+	{
+		nextStageAni(dt);
+		return;
+	}
+
 	iPoint p = pc->camPosition + maps[nextDoor]->tileOff + setPos + RGTILE_CENTER;
 
 	setRGBA(0, 0.5, 1, 1);

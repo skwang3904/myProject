@@ -89,8 +89,8 @@ void Player::initPlayerStat()
 
 	touchPlayer = iRectZero;
 
-	mw = _meleeWP[0];
-	method = _method[0];
+	mw = _meleeWP[1];
+	method = _method[1];
 
 }
 
@@ -237,7 +237,7 @@ void Player::showHpBar(float dt) // 임시
 void Player::combatDraw(float dt)
 {
 	if(mw && method)
-		method(dt, false, iPointZero);
+		method(dt, iPointZero);
 }
 
 void Player::rootCombat(bool key)
@@ -381,7 +381,6 @@ void Player::movePlayer(float dt)
 
 	if (evasionPlayer(tile, dt))
 		return;
-	printf("act = %d\n", pc->act);
 
 	wallCheck(false, tile, pc->playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
 

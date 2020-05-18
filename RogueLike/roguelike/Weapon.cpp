@@ -41,6 +41,6 @@ void Weapon::drawWeapon(float dt)
 	{
 		if (pc->method == _method[i])
 			continue;
-		_method[i](dt, true, weapon->wDropPos[i]);
+		_method[i](dt, weapon->wDropPos[i]);
 	}
 }

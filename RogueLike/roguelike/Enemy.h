@@ -49,8 +49,6 @@ struct EnemyNomal{
 	//move func pointer
 };
 extern EnemyNomal** enemys;
-#define TAKE_DMG_TIME 0.0f
-#define SHOW_HP_TIME 1.0f
 
 void createEnemy();
 void freeEnemy();

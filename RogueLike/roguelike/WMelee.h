@@ -32,7 +32,8 @@ struct meleeWeapon {
 	float attackDmg;
 	float attackSpeed;
 	float _attackSpeed;
-	float reach;
+	float widthReach;
+	float heightReach;
 
 	float holdAngle;
 
@@ -47,7 +48,8 @@ struct meleeWeapon {
 		float iAttackDmg,
 		float iAttackSpeed,
 		float _iAttackSpeed,
-		float iReach,
+		float iWidthReach,
+		float iHeightReach,
 		float holdAngle,
 		iPoint iCombatPosition,
 		iRect iHitBox,
@@ -66,13 +68,13 @@ bool attackMelee(meleeWeapon* mw, float dt, bool att, float attTime,
 
 //void attackMelee(meleeWeapon* wMelee, 'data...');
 
-void draw(meleeWeapon* melee, float dt, bool drop, iPoint dropP);
+void draw(meleeWeapon* mw, float dt, iPoint dropP);
 
 extern meleeWeapon** _meleeWP;
 
 
 extern meleeWeapon* nomalSword;
-void nomalSwordMethod(float dt, bool drop, iPoint dropP);
+void nomalSwordMethod(float dt, iPoint dropP);
 
 extern meleeWeapon* nomalSpear;
-void nomalSpearMethod(float dt, bool drop, iPoint dropP);
+void nomalSpearMethod(float dt, iPoint dropP);

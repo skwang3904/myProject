@@ -69,6 +69,8 @@ void EnemyNomal::init(int stage)
 	dead = false;
 }
 
+
+#define SHOW_HP_TIME 1.0f
 void EnemyNomal::drawShowHp(float dt)
 {
 	showHpTime += dt;
@@ -97,6 +99,7 @@ void EnemyNomal::takeDmgEnemy(float dt, float dmg)
 	}
 }
 
+#define TAKE_DMG_TIME 0.5f
 void EnemyNomal::takeDmgEffect(float dt)
 {
 	setRGBA(0, 0, 0, linear(takeDmgTime / TAKE_DMG_TIME, 1.0f, 0.0f));

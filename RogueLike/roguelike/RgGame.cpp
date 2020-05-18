@@ -15,7 +15,7 @@ void loadRgGame()
 #endif
 
 	//--------------------------------------------------------
-	// sound
+	// sound // itunes로 변환해서 사용
 	AudioInfo ai[6] = {
 	{"assets/snd/swing.wav", false, 0.4f},
 	{"assets/snd/jump.wav", false, 0.2f},

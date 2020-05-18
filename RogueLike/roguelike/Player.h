@@ -18,7 +18,7 @@
 
 #define MELEE_NUM 2
 
-typedef void (*Method_Combat)(float dt, bool drop, iPoint dropP);
+typedef void (*Method_Combat)(float dt, iPoint dropP);
 extern Method_Combat _method[MELEE_NUM];
 
 enum PlayerAction {

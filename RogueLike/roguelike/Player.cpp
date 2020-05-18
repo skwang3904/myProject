@@ -15,7 +15,7 @@ Texture** texsHead;
 Texture** texsFall;
 Texture** texsEvasion;
 
-Method_Combat _method[MELEE_NUM] = { nomalSwordMethod, nomalSpearMethod };
+Method_Combat _method[MELEE_NUM] = { nomalSwordMethod, nomalSpearMethod, nomalCycloneMethod};
 
 Player::Player()
 {
@@ -89,8 +89,8 @@ void Player::initPlayerStat()
 
 	touchPlayer = iRectZero;
 
-	mw = _meleeWP[1];
-	method = _method[1];
+	mw = _meleeWP[2];
+	method = _method[2];
 
 }
 
@@ -364,9 +364,9 @@ void Player::movePlayer(float dt)
 	iPoint mp = v * (moveSpeed * dt);
 
 	if (pc->act == attacking)
-		mp /= 10.0f;
-	static MapTile* tile = maps[12];
+		mp = iPointZero;
 
+	static MapTile* tile = maps[12];
 	if (playerPosition.x + HALF_OF_TEX_WIDTH * 2 < tile->tileOff.x ||
 		playerPosition.x > tile->tileOff.x + RGTILE_X * RGTILE_Width - 1 ||
 		playerPosition.y + HALF_OF_TEX_HEIGHT * 2 < tile->tileOff.y ||
@@ -390,19 +390,23 @@ void Player::movePlayer(float dt)
 	if (vvv.x)
 	{
 		img[2 * ani + 0]->paint(dt, drawPos, vvv.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);
-		drawImage(img[ch]->tex , 
-			drawPos.x  + HALF_OF_TEX_WIDTH,
-			drawPos.y ,
-			VCENTER | HCENTER);
+		//drawImage(img[ch]->tex , 
+		//	drawPos.x  + HALF_OF_TEX_WIDTH,
+		//	drawPos.y ,
+		//	VCENTER | HCENTER);
 	}
 	else if (vvv.y)
 	{
 		img[2 * ani + 1]->paint(dt, drawPos , REVERSE_NONE);
-		drawImage(img[ch]->tex, 
-			drawPos.x + HALF_OF_TEX_WIDTH,
-			drawPos.y,
-			VCENTER | HCENTER);
+		//drawImage(img[ch]->tex, 
+		//	drawPos.x + HALF_OF_TEX_WIDTH,
+		//	drawPos.y,
+		//	VCENTER | HCENTER);
 	}
+	drawImage(img[ch]->tex, drawPos.x + HALF_OF_TEX_WIDTH, drawPos.y,
+		0, 0, img[ch]->tex->width, img[ch]->tex->height,
+		VCENTER | HCENTER, 1.0f, 1.0f,
+		img[ch]->location, img[ch]->angle, REVERSE_NONE);
 
 	iRect rt = iRectMake(drawPos.x, drawPos.y,
 		HALF_OF_TEX_WIDTH * 2.0f, HALF_OF_TEX_HEIGHT * 2.0f);

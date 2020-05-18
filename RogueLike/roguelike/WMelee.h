@@ -57,24 +57,20 @@ struct meleeWeapon {
 
 };
 
-
 void createMeleeWeapon();
 void freeMeleeWeapon();
 void weaponPosition(meleeWeapon* mw, float dt, iPoint& wp);
 void weaponVector(meleeWeapon* mw, float dt);
-// 사거리, 각도, 크기배율 
-bool attackMelee(meleeWeapon* mw, float dt, bool att, float attTime,
-	float iRange, float iAngle, float iRatio);
-
-//void attackMelee(meleeWeapon* wMelee, 'data...');
 
 void draw(meleeWeapon* mw, float dt, iPoint dropP);
 
 extern meleeWeapon** _meleeWP;
-
 
 extern meleeWeapon* nomalSword;
 void nomalSwordMethod(float dt, iPoint dropP);
 
 extern meleeWeapon* nomalSpear;
 void nomalSpearMethod(float dt, iPoint dropP);
+
+extern meleeWeapon* nomalCyclone;
+void nomalCycloneMethod(float dt, iPoint dropP);

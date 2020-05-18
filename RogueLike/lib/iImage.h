@@ -49,5 +49,5 @@ public:
 };
 
 #define default_selectedDt 0.1f
-#define default_selectedScale -0.2f
+#define default_selectedScale 0.0f
 

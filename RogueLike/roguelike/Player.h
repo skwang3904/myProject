@@ -16,7 +16,7 @@
 #define EVASION_DISTANCE 500
 #define EVASION_DURATION 0.4f
 
-#define MELEE_NUM 2
+#define MELEE_NUM 3
 
 typedef void (*Method_Combat)(float dt, iPoint dropP);
 extern Method_Combat _method[MELEE_NUM];

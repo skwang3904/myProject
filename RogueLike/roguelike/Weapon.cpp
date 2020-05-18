@@ -39,8 +39,7 @@ void Weapon::drawWeapon(float dt)
 {
 	for (int i = 0; i < meleeNum; i++)
 	{
-		if (pc->method == _method[i])
-			continue;
-		_method[i](dt, weapon->wDropPos[i]);
+		if (pc->mw != _meleeWP[i])
+			_method[i](dt, weapon->wDropPos[i]);
 	}
 }

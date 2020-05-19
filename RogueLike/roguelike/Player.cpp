@@ -14,10 +14,17 @@ Texture** texsHead;
 Texture** texsFall;
 Texture** texsEvasion;
 
-Method_Combat _method[MELEE_NUM] = { nomalSwordMethod, nomalSpearMethod, nomalCycloneMethod};
+//Method_Combat _method[MELEE_NUM] = { nomalSwordMethod, nomalSpearMethod, nomalCycloneMethod};
+
+void freeWeapon(void* data)
+{
+	PlayerMW* pmw = (PlayerMW*)data;
+	freeMeleeWeapon(pmw);
+}
 
 Player::Player()
 {
+	weaponArray = new iArray(freeWeapon);
 	initPlayerStat();
 }
 
@@ -47,13 +54,6 @@ Player::~Player()
 	free(img);
 }
 
-Player* Player::instance()
-{
-	static Player* p = new Player();
-	return p;
-}
-
-
 void Player::initPlayerStat()
 {
 	hp =
@@ -78,9 +78,8 @@ void Player::initPlayerStat()
 
 	touchPlayer = iRectZero;
 
-	mw = _meleeWP[1];
-	method = _method[1];
-
+	mw = PMW[0].mw;
+	method = PMW[0].method;
 }
 
 int Player::initPlayerPosition()
@@ -92,7 +91,7 @@ int Player::initPlayerPosition()
 		{
 			pc->playerPosition = maps[i]->tileOff + RGTILE_CENTER;
 
-			pc->camPosition = iPointZero - pc->playerPosition;
+			pc->camPosition = iPointZero - maps[i]->tileOff;
 			pc->drawPos = pc->camPosition + setPos;
 			pcTile = i;
 			break;
@@ -226,8 +225,8 @@ void Player::drawPlayer(float dt)
 
 	combatDraw(dt);
 	movePlayer(dt);
-	rootCombat(getKeyDown(keyboard_pickup));
-	dropCombat(getKeyDown(keyboard_drop));
+	rootCombat(getKeyDown(keyboard_i));
+	dropCombat(getKeyDown(keyboard_o));
 	//showHpBar(dt);
 }
 
@@ -239,7 +238,6 @@ void Player::showHpBar(float dt) // 임시
 	fillRect(drawPos.x, drawPos.y - 30, HALF_OF_TEX_WIDTH * 2 * hp / _hp, 15);
 	setRGBA(1, 1, 1, 1);
 }
-
 
 void Player::combatDraw(float dt)
 {
@@ -253,31 +251,33 @@ void Player::rootCombat(bool key)
 		return;
 
 	int num = meleeNum;
-	if (mw)
-	{
-		for (int i = 0; i < num; i++)
-		{
-			if (mw == _meleeWP[i])
-			{
-				weapon->wDropPos[i] = iPointMake(playerPosition.x + HALF_OF_TEX_WIDTH,
-					playerPosition.y + HALF_OF_TEX_HEIGHT);
-				//drop weapon	
-				mw = NULL;
-				method = NULL;
-				break;
-			}
-		}
-	}
+	//if (mw)
+	//{
+	//	for (int i = 0; i < num; i++)
+	//	{
+	//		if (mw == PMW[i].mw)
+	//		{
+	//			weapon->wDropPos[i] = iPointMake(playerPosition.x + HALF_OF_TEX_WIDTH,
+	//				playerPosition.y + HALF_OF_TEX_HEIGHT);
+	//			//drop weapon	
+	//			mw = NULL;
+	//			method = NULL;
+	//			break;
+	//		}
+	//	}
+	//}
 
 	for (int i = 0; i < num; i++)
 	{
-		if (mw != _meleeWP[i])
+		if (mw != PMW[i].mw)
 		{
-			if (containRect(touchPlayer, _meleeWP[i]->hitBox))
+			if (containRect(touchPlayer, PMW[i].mw->hitBox))
 			{
-				mw = _meleeWP[i];
-				method = _method[i];
+				weaponArray->addObject(&PMW[i]);
+				mw = PMW[i].mw;
+				method = PMW[i].method;
 				weapon->wDropPos[i] = iPointZero;
+				
 				break;
 			}
 		}
@@ -290,19 +290,22 @@ void Player::dropCombat(bool key)
 		return;
 	
 	int num = meleeNum;
-	if (mw)
-	{
-		for (int i = 0; i < num; i++)
-		{
-			if (mw == _meleeWP[i])
-			{
-				weapon->wDropPos[i] = iPointMake(playerPosition.x + HALF_OF_TEX_WIDTH,
-					playerPosition.y + HALF_OF_TEX_HEIGHT);
-			}
-		}
-		mw = NULL;
-		method = NULL;
-	}	
+	if (weaponArray->count == 1)
+		return;
+
+	weaponArray->remove(weaponArray->count - 1);
+	//if (mw)
+	//{
+	//	for (int i = 0; i < num; i++)
+	//	{
+	//		if (mw == PMW[i].mw)
+	//		{
+	//			weapon->wDropPos[i] = iPointMake(playerPosition.x + HALF_OF_TEX_WIDTH,
+	//				playerPosition.y + HALF_OF_TEX_HEIGHT);
+	//			weaponArray->remove(weaponArray->count - i);
+	//		}
+	//	}
+	//}	
 }
 
 MapTile* playerTileOffSet(MapTile* tile)

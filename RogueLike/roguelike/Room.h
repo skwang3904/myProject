@@ -15,6 +15,7 @@ struct ConnectTile {
 	int index; // 타일 넘버
 	bool value; //
 	bool visit;
+	iPoint tileOff;
 };
 extern ConnectTile ct[TILEOFF_NUM];
 

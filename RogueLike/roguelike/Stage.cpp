@@ -64,17 +64,27 @@ void setNextDoor(int pcTile)
 void nextStageAni(float dt)
 {
 	static bool stagetest = false;
-	static bool test = false;
-
-	if (test == false)
+	static bool stageAni = false;
+	if (stageAni == false)
+	{
+		pc->img[8]->startAnimation();
+		stageAni = true;
+	}
+	
+	if (pc->img[8]->animation == true)
+	{
+		iPoint p = pc->drawPos - iPointMake(HALF_OF_TEX_WIDTH / 2, HALF_OF_TEX_HEIGHT / 2);
+		pc->img[8]->paint(dt,p,REVERSE_NONE);
+		return;
+	}
+	
+	if (stagetest == false)
 	{
 		stage++;
 		createStage(stage);
 
 		showRgLoading(true, NextStage);
-
 		stagetest = true;
-		test = true;
 	}
 
 	drawRgLoading(dt, NextStage);
@@ -83,7 +93,7 @@ void nextStageAni(float dt)
 	{
 		nextStage = false;
 		stagetest = false;
-		test = false;
+		stageAni = false;
 	}
 
 }
@@ -99,21 +109,21 @@ void drawNextDoor(float dt)
 	iPoint p = pc->camPosition + maps[nextDoor]->tileOff + setPos + RGTILE_CENTER;
 
 	setRGBA(0, 0.5, 1, 1);
-	fillRect(p.x, p.y, 50, 50);
+	fillRect(p.x-25, p.y-25, 50, 50); // 문 디자인
 	setRGBA(1, 1, 1, 1);
 
-	containDoor(pc->touchPlayer);
+	containDoor(pc->playerPosition + iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT));
 }
 
-void containDoor(iRect rt)
+void containDoor(iPoint p)
 {
 	if (maps[nextDoor]->tileOff + pc->camPosition != iPointZero)
 		return;
 
-	iPoint p = pc->camPosition + maps[nextDoor]->tileOff + setPos + RGTILE_CENTER;
-	iRect drt = iRectMake(p.x - 25, p.y - 25, 50, 50);
+	iPoint dp = maps[nextDoor]->tileOff + RGTILE_CENTER;
+	iRect drt = iRectMake(dp.x - 25, dp.y - 25, 50, 50);
 
-	if (containRect(drt, rt))
+	if (containPoint(p, drt))
 	{
 		nextStage = true;
 		audioPlay(SND_JUMP);

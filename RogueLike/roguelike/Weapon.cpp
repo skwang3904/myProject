@@ -10,36 +10,46 @@ Weapon::Weapon()
 {
 	createMeleeWeapon();
 	
-	for (int i = 0; i < 10; i++) // 총 좌표수
+	int i, j = 0;
+	for ( i = 0; i < 10; i++) // 총 좌표수
 	{
-		for (int j = i+2; j < TILEOFF_NUM; j++)
+		for (; j < TILEOFF_NUM; j++)
 		{
-			if(maps[j]->rgTile != NULL)
+			if (maps[j]->rgTile != NULL)
+			{
 				wDropPos[i] = maps[j]->tileOff + RGTILE_CENTER;
+				j++;
+				break;
+			}
 			
 			if (j > TILEOFF_NUM - 1)
 				j = 6;
-			j++;
 		}
 	}
 }
 
 Weapon::~Weapon()
 {
-	freeMeleeWeapon();
+	//freeMeleeWeapon();
 }
 
-Weapon* Weapon::instance()
-{
-	static Weapon* wp = new Weapon();
-	return wp;
-}
 
 void Weapon::drawWeapon(float dt)
 {
 	for (int i = 0; i < meleeNum; i++)
 	{
-		if (pc->mw != _meleeWP[i])
-			_method[i](dt, weapon->wDropPos[i]);
+		bool exist = false;
+		for (int j = 0; j < pc->weaponArray->count; j++)
+		{
+			if (pc->weaponArray->objectAtIndex(j) == &PMW[i])
+			{
+				exist = true;
+				break;
+			}
+		}
+		if (exist)
+			continue;
+		else
+		PMW[i].method(dt, weapon->wDropPos[i]);
 	}
 }

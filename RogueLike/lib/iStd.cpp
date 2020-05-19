@@ -83,6 +83,7 @@ void drawLib(Method_Paint method)
     float delta = (d - prevTickCount)/1000.f;
     prevTickCount = d;
 
+	//setClip(devSize.width / 2 - 500, devSize.height / 2 - 500, 1000,1000 );
     // --------------------
     fbo->bind();
 
@@ -101,6 +102,7 @@ void drawLib(Method_Paint method)
     //setRGBA(1, 1, 1, 1);
 
     Texture* tex = fbo->getTexture();
+
     if (zoomDt < _zoomDt)
     {
         float r = 1.0f + (zoomRate - 1.0f) * _sin(180 * zoomDt / _zoomDt);
@@ -123,6 +125,7 @@ void drawLib(Method_Paint method)
 			0, 0, tex->width, tex->height, VCENTER | HCENTER,
 			1.0f, 1.0f, 2, 0, REVERSE_HEIGHT);
     }
+	//setClip(0,0,devSize.width,devSize.height);
 
 
 	//--------------------------------------------------------
@@ -157,9 +160,11 @@ static void keyLib(uint32& key, iKeyState stat, int c)
         case VK_SPACE:  key |= keyboard_space; break;
 
             //상호작용 조작------------------------------------
-        case 'i': case 'I': key |= keyboard_pickup; break;
-        case 'o': case 'O': key |= keyboard_drop; break;
-        case 'j': case 'J': key |= keyboard_attack; break;
+        case 'i': case 'I': key |= keyboard_i; break;
+        case 'o': case 'O': key |= keyboard_o; break;
+		case 'j': case 'J': key |= keyboard_j; break;
+		case 'r': case 'R': key |= keyboard_r; break;
+		case VK_TAB:  key |= keyboard_tab; break;
         }
     }
     else if (stat == iKeyStateEnded)
@@ -179,9 +184,11 @@ static void keyLib(uint32& key, iKeyState stat, int c)
         case VK_SPACE:  key &= ~keyboard_space; break;
 
             //상호작용 조작------------------------------------
-        case 'i': case 'I': key &= ~keyboard_pickup; break;
-        case 'o': case 'O': key &= ~keyboard_drop; break;
-        case 'j': case 'J': key &= ~keyboard_attack; break;
+        case 'i': case 'I': key &= ~keyboard_i; break;
+        case 'o': case 'O': key &= ~keyboard_o; break;
+		case 'j': case 'J': key &= ~keyboard_j; break;
+		case 'r': case 'R': key &= ~keyboard_r; break;
+		case VK_TAB: key &= ~keyboard_r; break;
         }
     }
 }

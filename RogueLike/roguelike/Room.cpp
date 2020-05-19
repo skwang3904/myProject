@@ -36,6 +36,7 @@ void newRoomTile()
 			c->index = i;
 			c->value = false;
 			c->visit = false;
+			c->tileOff = tileOffSet[i];
 		}
 
 		for (int i = 0; i < TILEOFF_NUM; i++)

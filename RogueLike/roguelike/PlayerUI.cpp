@@ -1,6 +1,7 @@
 #include "PlayerUI.h"
 
 #include "Room.h"
+#include "Stage.h"
 
 void loadPlayerUI()
 {
@@ -151,32 +152,53 @@ bool keyPopHP(iKeyState stat, iPoint point)
 /////////////////////////////////////////////////////////
 
 iPopup* popMiniMap;
+iImage* imgMiniMap;
+
+iPoint miniOff = iPointZero;
+#define MINIMAPTILE 40
+int minitile = MINIMAPTILE;
+Texture* refreshMiniMap()
+{
+	iGraphics* g = iGraphics::instance();
+	iSize size = iSizeMake(minitile * TILEOFF_SQRT, minitile * TILEOFF_SQRT);
+	g->init(size);
+
+	for (int i = 0; i < TILEOFF_NUM; i++)
+	{
+		if (ct[i].value)
+		{
+			if (ct[i].tileOff + pc->camPosition == iPointZero) setRGBA(0, 1, 0, 1);
+			else setRGBA(0.8, 0.8, 0.8, 1);
+
+			g->fillRect(miniOff.x + minitile * (i % TILEOFF_SQRT), miniOff.y + minitile * (i / TILEOFF_SQRT), minitile, minitile);
+			setRGBA(0, 0, 0, 1);
+			g->drawRect(miniOff.x + minitile * (i % TILEOFF_SQRT), miniOff.y + minitile * (i / TILEOFF_SQRT), minitile, minitile);
+
+			if (ct[i].tileOff == ct[nextDoor].tileOff)
+			{
+				setRGBA(0, 0, 1, 1);
+				g->fillRect(miniOff.x + minitile * (i % TILEOFF_SQRT) + 10, miniOff.y + minitile * (i / TILEOFF_SQRT)+10,
+					minitile - 20, minitile - 20);
+			}
+		}
+	}
+	setRGBA(1, 1, 1, 1);
+	return  g->getTexture();
+}
 
 void createPopMiniMap()
 {
 	iPopup* pop = new iPopup(iPopupStyleNone);
 	popMiniMap = pop;
 	
-	iImage* imgMiniMap = new iImage();
-	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(20 * TILEOFF_SQRT, 20 * TILEOFF_SQRT);
-	g->init(size);
+	imgMiniMap = new iImage();
 
-	for (int i = 0; i < TILEOFF_NUM; i++)
-	{
-		setRGBA(1, 0, 0, 1);
-		if (ct[i].value)
-		{// 미니맵 작업
-			g->fillRect(20 * (i % TILEOFF_SQRT), 20 * (i / TILEOFF_SQRT), 20, 20);
-		}
-	}
-	setRGBA(1, 1, 1, 1);
-	Texture* tex = g->getTexture();
+	Texture* tex = refreshMiniMap();
 	imgMiniMap->addObject(tex);
 	freeImage(tex);
 
 	pop->addObject(imgMiniMap);
-	pop->openPosition = iPointMake(500, 500);
+	pop->openPosition = iPointMake(devSize.width - minitile * TILEOFF_SQRT, 100);
 	pop->closePosition = pop->openPosition;
 }
 
@@ -192,7 +214,18 @@ void showPopMiniMap(bool show)
 
 void drawPopMiniMap(float dt)
 {
+	if (getKeyStat(keyboard_tab))
+	{
+		popMiniMap->closePosition = iPointMake(500, 100);
+		minitile = 150;
+	}
+	else
+	{
+		popMiniMap->closePosition = popMiniMap->openPosition;
+		minitile = MINIMAPTILE;
+	}
 	popMiniMap->paint(dt);
+	imgMiniMap->tex = refreshMiniMap();
 }
 
 bool keyPopMiniMap(iKeyState stat, iPoint point)

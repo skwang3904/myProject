@@ -20,8 +20,8 @@ void loadRgProc()
 	createEnemy();
 	//createStage(stage);
 
-	weapon = Weapon::instance();
-	pc = Player::instance();
+	weapon = new Weapon();
+	pc = new Player();
 	pc->createPlayerImage();
 
 	int pcTile = pc->initPlayerPosition();
@@ -57,8 +57,6 @@ void drawRgProc(float dt)
 	fillRect(0, 0, devSize.width, devSize.height);
 
 	// 타일 이동 애니
-	
-
 	drawRoomTile(dt);
 
 	drawNextDoor(dt);
@@ -69,15 +67,15 @@ void drawRgProc(float dt)
 	if (passAni)
 		return;
 
-
-	// 몬스터 draw
-	drawEnemy(dt);
-
 	if (pc->hp < 0.1f)
 	{
 		// pc dead ani
 		return;
 	}
+
+	// 몬스터 draw
+	drawEnemy(dt);
+
 
 
 	// 무기 생성위치

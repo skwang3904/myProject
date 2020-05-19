@@ -28,6 +28,39 @@ void loadRgGame()
 	loadAudio(ai, 6);
 
 	audioPlay(5);
+
+	//int a = 1;
+	//int b = 2;
+	//int c = 3;
+	//int d = 4;
+	//int e = 5;
+	//int f = 6;
+
+	//int* aa = &a;
+	//int* bb = &b;
+	//int* cc = &c;
+	//int* dd = &d;
+	//int* ee = &e;
+	//int* ff = &f;
+	//
+	//rgArray* testarray = new rgArray(NULL);
+	//testarray->addObject(aa);
+	//testarray->addObject(bb);
+	//testarray->addObject(cc);
+	//testarray->addObject(dd);
+	//testarray->addObject(ee);
+	//testarray->addObject(ff);
+	//testarray->remove(3);
+
+	//testarray->printArray();
+	//printf("%d \n", testarray->objectAtIndex(3));
+	//printf("\n");
+	//printf("%d, ", aa);
+	//printf("%d, ", bb);
+	//printf("%d, ", cc);
+	//printf("%d, ", dd);
+	//printf("%d, ", ee);
+	//printf("%d, ", ff);
 }
 
 void freeRgGame()

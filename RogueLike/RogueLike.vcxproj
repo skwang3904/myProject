@@ -169,6 +169,7 @@
     <ClInclude Include="lib\iString.h" />
     <ClInclude Include="lib\iStrTex.h" />
     <ClInclude Include="lib\iType.h" />
+    <ClInclude Include="lib\rgArray.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="roguelike\AppRogueLike.h" />
     <ClInclude Include="roguelike\Enemy.h" />
@@ -204,6 +205,7 @@
     <ClCompile Include="lib\iStd.cpp" />
     <ClCompile Include="lib\iString.cpp" />
     <ClCompile Include="lib\iStrTex.cpp" />
+    <ClCompile Include="lib\rgArray.cpp" />
     <ClCompile Include="roguelike\AppRogueLike.cpp" />
     <ClCompile Include="roguelike\Enemy.cpp" />
     <ClCompile Include="roguelike\EnemyComposition.cpp" />

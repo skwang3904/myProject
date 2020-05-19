@@ -12,18 +12,14 @@
 
 class Weapon
 {
-private:
-	Weapon();
-
 public:
+	Weapon();
 	virtual ~Weapon();
-
-	static Weapon* instance();
 
 	void drawWeapon(float dt);
 
 public:
-	iArray* weaponArray;
+	//iArray* weaponArray;
 
 	iPoint wDropPos[10];
 };

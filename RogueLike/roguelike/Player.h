@@ -19,7 +19,8 @@
 #define MELEE_NUM 3
 
 typedef void (*Method_Combat)(float dt, iPoint dropP);
-extern Method_Combat _method[MELEE_NUM];
+struct meleeWeapon;
+struct MapTile;
 
 enum PlayerAction {
 	idle = 0,
@@ -28,17 +29,11 @@ enum PlayerAction {
 	evasion
 };
 
-struct meleeWeapon;
-struct MapTile;
-
 class Player
 {
-private:
-	Player();
 public:
+	Player();
 	virtual ~Player();
-
-	static Player* instance();
 
 	void initPlayerStat();
 	int initPlayerPosition();
@@ -57,7 +52,6 @@ public:
 	bool evasionPlayer(MapTile* tile, float dt);
 
 public:
-	//iArray* weaponArray; 무기 인벤토리
 	iImage** img;
 
 	float hp, _hp;
@@ -72,13 +66,14 @@ public:
 	iPoint camPosition;
 	iPoint playerPosition;
 	iPoint drawPos;
-
 	iPoint viewVector;
 
 	iRect touchPlayer;
 
 	Method_Combat method;
 	meleeWeapon* mw;
+
+	iArray* weaponArray;
 };
 extern Player* pc;
 

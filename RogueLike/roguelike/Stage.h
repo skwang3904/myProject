@@ -13,10 +13,11 @@
 */
 
 extern int stage;
+extern int nextDoor;
 extern bool nextStage;
 
 void createStage(int stage);
 void setNextDoor(int pcTile);
 
 void drawNextDoor(float dt);
-void containDoor(iRect rt);
+void containDoor(iPoint p);

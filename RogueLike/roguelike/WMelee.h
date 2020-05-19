@@ -5,22 +5,13 @@
 - 근접무기
 */
 
-/*  Melee Weapon Info
+typedef void (*Method_Combat)(float dt, iPoint dropP);
 
--	Texture* tex;
-
-	bool melee; // 1: 근접, 2: 원거리,
--	char name[64];
--
--	float attackDmg;
--	float attackSpeed;
--	float _attackSpeed;
--	float reach;
--
--	iPoint combatPosition;
--	iRect hitBox;
-
-*/
+struct PlayerMW {
+	meleeWeapon* mw;
+	Method_Combat method;
+};
+extern PlayerMW PMW[MELEE_NUM];
 
 extern int meleeNum;
 
@@ -53,20 +44,20 @@ struct meleeWeapon {
 };
 
 void createMeleeWeapon();
-void freeMeleeWeapon();
+void freeMeleeWeapon(PlayerMW* pmw);
 void weaponPosition(meleeWeapon* mw, float dt, iPoint& wp);
 void weaponVector(meleeWeapon* mw, float dt);
 void weaponPosAndRt(meleeWeapon* mw, iPoint& wcp, iPoint& centerP, iRect& rt);
 
 void draw(meleeWeapon* mw, float dt, iPoint dropP);
 
-extern meleeWeapon** _meleeWP;
+//extern meleeWeapon** _meleeWP;
 
-extern meleeWeapon* nomalSword;
+//extern meleeWeapon* nomalSword;
 void nomalSwordMethod(float dt, iPoint dropP);
 
-extern meleeWeapon* nomalSpear;
+//extern meleeWeapon* nomalSpear;
 void nomalSpearMethod(float dt, iPoint dropP);
 
-extern meleeWeapon* nomalCyclone;
+//extern meleeWeapon* nomalCyclone;
 void nomalCycloneMethod(float dt, iPoint dropP);

@@ -19,7 +19,7 @@
 #define MELEE_NUM 3
 
 typedef void (*Method_Combat)(float dt, iPoint dropP);
-struct meleeWeapon;
+struct PlayerMW;
 struct MapTile;
 
 enum PlayerAction {
@@ -47,6 +47,7 @@ public:
 	void combatDraw(float dt);
 	void rootCombat(bool key);
 	void dropCombat(bool key);
+	void choseWeapon();
 
 	void movePlayer(float dt);
 	bool evasionPlayer(MapTile* tile, float dt);
@@ -70,10 +71,10 @@ public:
 
 	iRect touchPlayer;
 
-	Method_Combat method;
-	meleeWeapon* mw;
+	PlayerMW* pmw;
+	int pmwCount;
 
-	iArray* weaponArray;
+	rgArray* weaponArray;
 };
 extern Player* pc;
 

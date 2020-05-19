@@ -91,8 +91,18 @@ static float angle = 0.0f;
 void draw(meleeWeapon* mw, float dt, iPoint dropP)
 {
 	Texture* tex = mw->img->tex;
+	//for (int i = 0; i < meleeNum; i++)
+	//{
+	//	for (int j = 0; j < pc->weaponArray->count; j++)
+	//	{
+	//		if (pc->weaponArray->objectAtIndex(j) == &PMW[i] && pc->pmw->mw != mw)
+	//		{
+	//			return;
+	//		}
+	//	}
+	//}
 
-	if (pc->mw == mw)
+	if (pc->pmw->mw == mw)
 	{
 		static iPoint p = mw->combatPosition;
 
@@ -249,7 +259,7 @@ void weaponPosAndRt(meleeWeapon* mw, iPoint& wcp, iPoint& centerP, iRect& rt)
 bool nomalSworadAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	float iRange, float iAngle, float iRatioX, float iRatioY)
 {
-	if (pc->mw != mw)
+	if (pc->pmw->mw != mw)
 		return false;
 
 	if (mw->attackEnemy == false && pc->act != attacking)
@@ -329,7 +339,7 @@ void nomalSwordMethod(float dt, iPoint dropP)
 	meleeWeapon* mw = nomalSword;
 	weaponVector(mw, dt);
 
-	if (getKeyDown(keyboard_j) && pc->mw == mw && mw->attackSpeed == 0 && pc->act == idle)
+	if (getKeyDown(keyboard_j) && pc->pmw->mw == mw && mw->attackSpeed == 0 && pc->act == idle)
 	{
 		pc->act = attacking;
 		mw->attackEnemy = true;
@@ -351,7 +361,7 @@ void nomalSwordMethod(float dt, iPoint dropP)
 bool nomalSpearAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	float iRange, float iAngle, float iRatioX, float iRatioY)
 {
-	if (pc->mw != mw)
+	if (pc->pmw->mw != mw)
 		return false;
 
 	if (mw->attackEnemy == false && pc->act != attacking)
@@ -431,7 +441,7 @@ void nomalSpearMethod(float dt, iPoint dropP)
 	meleeWeapon* mw = nomalSpear;
 	weaponVector(mw, dt);
 
-	if (getKeyDown(keyboard_j) && pc->mw == mw && mw->attackSpeed == 0 && pc->act == idle)
+	if (getKeyDown(keyboard_j) && pc->pmw->mw == mw && mw->attackSpeed == 0 && pc->act == idle)
 	{
 		pc->act = attacking;
 		mw->attackEnemy = true;
@@ -453,7 +463,7 @@ void nomalSpearMethod(float dt, iPoint dropP)
 bool nomalCycloneAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	float iRange, int iCycleCount, float iRatioX, float iRatioY)
 {
-	if (pc->mw != mw )
+	if (pc->pmw->mw != mw )
 		return false;
 
 	if (mw->attackEnemy == false && pc->act != attacking)
@@ -564,7 +574,7 @@ void nomalCycloneMethod(float dt, iPoint dropP)
 	meleeWeapon* mw = nomalCyclone;
 	weaponVector(mw, dt);
 
-	if (getKeyDown(keyboard_j) && pc->mw == mw && mw->attackSpeed == 0 && pc->act == idle)
+	if (getKeyDown(keyboard_j) && pc->pmw->mw == mw && mw->attackSpeed == 0 && pc->act == idle)
 	{
 		pc->act = attacking;
 		mw->attackEnemy = true;

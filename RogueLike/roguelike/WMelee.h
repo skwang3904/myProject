@@ -5,14 +5,6 @@
 - 근접무기
 */
 
-typedef void (*Method_Combat)(float dt, iPoint dropP);
-
-struct PlayerMW {
-	meleeWeapon* mw;
-	Method_Combat method;
-};
-extern PlayerMW PMW[MELEE_NUM];
-
 extern int meleeNum;
 
 struct meleeWeapon {
@@ -40,8 +32,13 @@ struct meleeWeapon {
 		float iWidthReach,
 		float iHeightReach,
 		float holdAngle);
-
 };
+
+struct PlayerMW {
+	meleeWeapon* mw;
+	Method_Combat method;
+};
+extern PlayerMW PMW[MELEE_NUM];
 
 void createMeleeWeapon();
 void freeMeleeWeapon(PlayerMW* pmw);

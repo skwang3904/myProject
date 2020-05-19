@@ -24,7 +24,7 @@ void freeWeapon(void* data)
 
 Player::Player()
 {
-	weaponArray = new iArray(freeWeapon);
+	weaponArray = new rgArray(freeWeapon);
 	initPlayerStat();
 }
 
@@ -78,8 +78,10 @@ void Player::initPlayerStat()
 
 	touchPlayer = iRectZero;
 
-	mw = PMW[0].mw;
-	method = PMW[0].method;
+	weaponArray->addObject(&PMW[0]);
+	pmw = &PMW[0];
+	pmwCount = 0;
+
 }
 
 int Player::initPlayerPosition()
@@ -227,6 +229,7 @@ void Player::drawPlayer(float dt)
 	movePlayer(dt);
 	rootCombat(getKeyDown(keyboard_i));
 	dropCombat(getKeyDown(keyboard_o));
+	choseWeapon();
 	//showHpBar(dt);
 }
 
@@ -241,8 +244,9 @@ void Player::showHpBar(float dt) // 임시
 
 void Player::combatDraw(float dt)
 {
-	if(mw && method)
-		method(dt, iPointZero);
+	if(pmw)
+		pmw->method(dt, iPointZero);
+	pmw =(PlayerMW*)weaponArray->objectAtIndex(pmwCount);
 }
 
 void Player::rootCombat(bool key)
@@ -250,7 +254,6 @@ void Player::rootCombat(bool key)
 	if (actionCheck(key))
 		return;
 
-	int num = meleeNum;
 	//if (mw)
 	//{
 	//	for (int i = 0; i < num; i++)
@@ -267,17 +270,16 @@ void Player::rootCombat(bool key)
 	//	}
 	//}
 
-	for (int i = 0; i < num; i++)
+	for (int i = 0; i < meleeNum; i++)
 	{
-		if (mw != PMW[i].mw)
+		if (pmw != &PMW[i])
 		{
 			if (containRect(touchPlayer, PMW[i].mw->hitBox))
 			{
 				weaponArray->addObject(&PMW[i]);
-				mw = PMW[i].mw;
-				method = PMW[i].method;
-				weapon->wDropPos[i] = iPointZero;
-				
+				pmw = &PMW[i];
+				weapon->wDropPos[i] = iPointZero;	
+				pmwCount++;
 				break;
 			}
 		}
@@ -286,26 +288,36 @@ void Player::rootCombat(bool key)
 
 void Player::dropCombat(bool key)
 {
+	if (weaponArray->count < 2)
+		return;
 	if (actionCheck(key))
 		return;
 	
-	int num = meleeNum;
-	if (weaponArray->count == 1)
-		return;
+	for (int i = 0; i < meleeNum; i++)
+	{
 
-	weaponArray->remove(weaponArray->count - 1);
-	//if (mw)
-	//{
-	//	for (int i = 0; i < num; i++)
-	//	{
-	//		if (mw == PMW[i].mw)
-	//		{
-	//			weapon->wDropPos[i] = iPointMake(playerPosition.x + HALF_OF_TEX_WIDTH,
-	//				playerPosition.y + HALF_OF_TEX_HEIGHT);
-	//			weaponArray->remove(weaponArray->count - i);
-	//		}
-	//	}
-	//}	
+		if (pmw == weaponArray->objectAtIndex(i))
+		{
+			weapon->wDropPos[i] = iPointMake(playerPosition.x + HALF_OF_TEX_WIDTH,
+								playerPosition.y + HALF_OF_TEX_HEIGHT);
+			weaponArray->remove(i);
+			pmwCount--;
+			return;
+		}
+			
+	}
+}
+
+void Player::choseWeapon()
+{
+	if (getKeyDown(keyboard_tab))
+	{
+		pmwCount--;
+		
+		if (pmwCount < 0)
+			pmwCount = weaponArray->count - 1;
+		printf("pmwC %d\n", pmwCount);
+	}
 }
 
 MapTile* playerTileOffSet(MapTile* tile)

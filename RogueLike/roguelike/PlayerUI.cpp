@@ -156,9 +156,10 @@ iImage* imgMiniMap;
 
 iPoint miniOff = iPointZero;
 #define MINIMAPTILE 40
-int minitile = MINIMAPTILE;
+int minitile;
 Texture* refreshMiniMap()
 {
+	minitile = MINIMAPTILE;
 	iGraphics* g = iGraphics::instance();
 	iSize size = iSizeMake(minitile * TILEOFF_SQRT, minitile * TILEOFF_SQRT);
 	g->init(size);

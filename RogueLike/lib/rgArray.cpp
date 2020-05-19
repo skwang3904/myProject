@@ -11,7 +11,6 @@ rgArray::rgArray(RGARRAY_METHOD m)
 
 	count = 0;
 	method = m;
-
 }
 
 rgArray::~rgArray()
@@ -23,7 +22,6 @@ void rgArray::addObject(int index, void* data)
 {
 	rgxArray* x = (rgxArray*)malloc(sizeof(rgxArray));
 	x->data = data;
-	//x->prev = curr;
 
 	rgxArray* a;
 	if (index < count / 2)
@@ -96,9 +94,11 @@ void rgArray::addObject(void* data, bool ishead)
 
 void rgArray::remove(int index)
 {
+	if (count == 1)
+		return;
 	rgxArray* a = head->next;
 	rgxArray* b = NULL;
-	for (int i=0; ;i++)
+	for (int i=0;i<count ;i++)
 	{
 		if (i == index)
 		{
@@ -135,16 +135,19 @@ void rgArray::removeAll()
 	count = 0;
 }
 
-void* rgArray::objectAtIndex(int index, bool ishead)
+void* rgArray::objectAtIndex(int index)
 {
 	rgxArray* a;
-	if (ishead)
+	if (index < count / 2 || index == 0)
 	{
 		a = head->next;
 		for (int i = 0; ; i++)
 		{
 			if (i == index)
+			{
+				curr = a;
 				return a->data;
+			}
 			a = a->next;
 		}
 	}
@@ -154,7 +157,10 @@ void* rgArray::objectAtIndex(int index, bool ishead)
 		for (int i = 0; ; i++)
 		{
 			if (i == index)
+			{
+				curr = a;
 				return a->data;
+			}
 			a = a->prev;
 		}
 	}

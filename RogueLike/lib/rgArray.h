@@ -21,7 +21,7 @@ public:
 	void remove(int index);
 	void removeAll();
 
-	void* objectAtIndex(int index, bool ishead = true);
+	void* objectAtIndex(int index);
 	void printArray();
 public:
 	rgxArray* head;

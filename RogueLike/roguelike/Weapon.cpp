@@ -33,7 +33,6 @@ Weapon::~Weapon()
 	//freeMeleeWeapon();
 }
 
-
 void Weapon::drawWeapon(float dt)
 {
 	for (int i = 0; i < meleeNum; i++)
@@ -47,9 +46,10 @@ void Weapon::drawWeapon(float dt)
 				break;
 			}
 		}
+
 		if (exist)
 			continue;
 		else
-		PMW[i].method(dt, weapon->wDropPos[i]);
+			PMW[i].method(dt, weapon->wDropPos[i]);
 	}
 }

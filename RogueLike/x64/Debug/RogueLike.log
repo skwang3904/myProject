@@ -1,18 +1,1 @@
-﻿  RgGame.cpp
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(16,17): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(18,25): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\RgGame.cpp(56,9): warning C4477: 'printf' : 서식 문자열 '%d'에 'int' 형식의 인수가 필요하지만 variadic 인수 1의 형식이 'void *'입니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\RgGame.cpp(56,9): warning C4313: 'printf': 서식 문자열의 '%d'이(가) 인수 1('void *' 형식)과(와) 충돌합니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\RgGame.cpp(58,9): warning C4477: 'printf' : 서식 문자열 '%d'에 'int' 형식의 인수가 필요하지만 variadic 인수 1의 형식이 'int *'입니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\RgGame.cpp(58,9): warning C4313: 'printf': 서식 문자열의 '%d'이(가) 인수 1('int *' 형식)과(와) 충돌합니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\RgGame.cpp(59,9): warning C4477: 'printf' : 서식 문자열 '%d'에 'int' 형식의 인수가 필요하지만 variadic 인수 1의 형식이 'int *'입니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\RgGame.cpp(59,9): warning C4313: 'printf': 서식 문자열의 '%d'이(가) 인수 1('int *' 형식)과(와) 충돌합니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\RgGame.cpp(60,9): warning C4477: 'printf' : 서식 문자열 '%d'에 'int' 형식의 인수가 필요하지만 variadic 인수 1의 형식이 'int *'입니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\RgGame.cpp(60,9): warning C4313: 'printf': 서식 문자열의 '%d'이(가) 인수 1('int *' 형식)과(와) 충돌합니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\RgGame.cpp(61,9): warning C4477: 'printf' : 서식 문자열 '%d'에 'int' 형식의 인수가 필요하지만 variadic 인수 1의 형식이 'int *'입니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\RgGame.cpp(61,9): warning C4313: 'printf': 서식 문자열의 '%d'이(가) 인수 1('int *' 형식)과(와) 충돌합니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\RgGame.cpp(62,9): warning C4477: 'printf' : 서식 문자열 '%d'에 'int' 형식의 인수가 필요하지만 variadic 인수 1의 형식이 'int *'입니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\RgGame.cpp(62,9): warning C4313: 'printf': 서식 문자열의 '%d'이(가) 인수 1('int *' 형식)과(와) 충돌합니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\RgGame.cpp(63,9): warning C4477: 'printf' : 서식 문자열 '%d'에 'int' 형식의 인수가 필요하지만 variadic 인수 1의 형식이 'int *'입니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\RgGame.cpp(63,9): warning C4313: 'printf': 서식 문자열의 '%d'이(가) 인수 1('int *' 형식)과(와) 충돌합니다.
-  RogueLike.vcxproj -> C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\RogueLike.exe
+﻿  RogueLike.vcxproj -> C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\RogueLike.exe

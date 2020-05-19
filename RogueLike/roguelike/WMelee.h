@@ -47,13 +47,9 @@ struct meleeWeapon {
 		bool isMelee,
 		float iAttackDmg,
 		float iAttackSpeed,
-		float _iAttackSpeed,
 		float iWidthReach,
 		float iHeightReach,
-		float holdAngle,
-		iPoint iCombatPosition,
-		iRect iHitBox,
-		bool iAttackEnemy);
+		float holdAngle);
 
 };
 
@@ -61,6 +57,7 @@ void createMeleeWeapon();
 void freeMeleeWeapon();
 void weaponPosition(meleeWeapon* mw, float dt, iPoint& wp);
 void weaponVector(meleeWeapon* mw, float dt);
+void weaponPosAndRt(meleeWeapon* mw, iPoint& wcp, iPoint& centerP, iRect& rt);
 
 void draw(meleeWeapon* mw, float dt, iPoint dropP);
 

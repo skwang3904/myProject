@@ -27,7 +27,8 @@ bool keyPlayerUI(iKeyState stat, iPoint point)
 /////////////////////////////////////////////////////////
 
 iPopup* popHP;
-iImage* imgHPgage;
+iImage* imgHPgageGreen;
+iImage* imgHPgageRed;
 
 void createPopHP()
 {
@@ -38,13 +39,16 @@ void createPopHP()
 	iImage* imgheart = new iImage();
 	iImage* imgBarBG = new iImage();
 	iImage* imgBar = new iImage();
+	iImage* imgBarFillGreen = new iImage();
 	iImage* imgBarFillRed = new iImage();
-	imgHPgage = imgBarFillRed;
+	imgHPgageGreen = imgBarFillGreen;
+	imgHPgageRed = imgBarFillRed;
 
 	Texture* texIconBar = createImage("assets/PlayerUI/Icon Bar.png");
 	Texture* texheart = createImage("assets/PlayerUI/heart.png");
 	Texture* texBarBG = createImage("assets/PlayerUI/Bar_BG.png");
 	Texture* texBar = createImage("assets/PlayerUI/Bar.png");
+	Texture* texBarFillGreen = createImage("assets/PlayerUI/Bar_Fill_Green.png");
 	Texture* texBarFillRed = createImage("assets/PlayerUI/Bar_Fill_Red.png");
 	
 	imgIconBar->addObject(texIconBar);
@@ -57,18 +61,21 @@ void createPopHP()
 
 	imgBarBG->addObject(texBarBG);
 	imgBar->addObject(texBar);
+	imgBarFillGreen->addObject(texBarFillGreen);
 	imgBarFillRed->addObject(texBarFillRed);
 
 	iPoint barPoint = iconPoint + iPointMake(140, 0);
 	imgBarBG->position = barPoint;
 	imgBar->position = imgBarBG->position + iPointMake((imgBarBG->tex->width - imgBar->tex->width)/2,
 		(imgBarBG->tex->height - imgBar->tex->height) / 2);
+	imgBarFillGreen->position = imgBar->position;
 	imgBarFillRed->position = imgBar->position;
 
 	pop->addObject(imgIconBar);
 	pop->addObject(imgheart);
 	pop->addObject(imgBarBG);
 	pop->addObject(imgBar);
+	pop->addObject(imgBarFillGreen);
 	pop->addObject(imgBarFillRed);
 
 	pop->openPosition = iPointMake(devSize.width / 2, devSize.height / 2);
@@ -78,13 +85,15 @@ void createPopHP()
 	freeImage(texheart);
 	freeImage(texBarBG);
 	freeImage(texBar);
+	freeImage(texBarFillGreen);
 	freeImage(texBarFillRed);
 }
 
 void freePopHP()
 {
 	delete popHP;
-	delete imgHPgage;
+	delete imgHPgageGreen;
+	delete imgHPgageRed;
 }
 
 void showPopHP(bool show)
@@ -94,9 +103,25 @@ void showPopHP(bool show)
 
 void drawPopHP(float dt)
 {
-	imgHPgage->imgRatioX = pc->hp / pc->_hp;
-	if (imgHPgage->imgRatioX > 1.0f)
-		imgHPgage->imgRatioX = 1.0f;
+	static float prevHP = pc->_hp;
+	static float currentHP = pc->_hp;
+	static float delta = 0.0f;
+	currentHP = pc->hp;
+	if (prevHP != currentHP)
+	{
+		delta += dt;
+		imgHPgageGreen->imgRatioX = linear(delta / 2.0f, prevHP, currentHP) / pc->_hp;
+		
+		if (delta > 2.0f)
+		{
+			delta = 0.0f;
+			prevHP = currentHP;
+		}
+	}
+		
+	imgHPgageRed->imgRatioX = pc->hp / pc->_hp;
+	if (imgHPgageRed->imgRatioX > 1.0f)
+		imgHPgageRed->imgRatioX = 1.0f;
 	popHP->paint(dt);
 }
 

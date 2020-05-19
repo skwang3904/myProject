@@ -164,10 +164,11 @@ void createPopMiniMap()
 
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
-		if (ct[i].value)	setRGBA(1, 0, 0, 1);
-		else 	setRGBA(1, 1, 1, 1);
-
+		setRGBA(1, 0, 0, 1);
+		if (ct[i].value)
+		{// 미니맵 작업
 			g->fillRect(20 * (i % TILEOFF_SQRT), 20 * (i / TILEOFF_SQRT), 20, 20);
+		}
 	}
 	setRGBA(1, 1, 1, 1);
 	Texture* tex = g->getTexture();

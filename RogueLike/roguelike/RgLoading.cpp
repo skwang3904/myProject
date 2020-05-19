@@ -8,7 +8,6 @@ void loadRgLoading()
 {
 	createPopPlayerDead();
 	createPopNextStage();
-
 }
 
 void freeRgLoading()

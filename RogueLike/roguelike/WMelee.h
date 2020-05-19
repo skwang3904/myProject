@@ -41,7 +41,6 @@ struct meleeWeapon {
 	iRect hitBox;
 	bool attackEnemy;
 
-	void init(); // 임시
 	void init(
 		iImage* iImg,
 		bool isMelee,

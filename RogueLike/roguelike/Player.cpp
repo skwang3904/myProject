@@ -78,8 +78,8 @@ void Player::initPlayerStat()
 
 	touchPlayer = iRectZero;
 
-	mw = _meleeWP[0];
-	method = _method[0];
+	mw = _meleeWP[1];
+	method = _method[1];
 
 }
 

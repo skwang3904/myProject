@@ -11,6 +11,13 @@ void newRoomTile();
 void freeRoomTile();
 void drawRoomTile(float dt);
 
+struct ConnectTile {
+	int index; // 타일 넘버
+	bool value; //
+	bool visit;
+};
+extern ConnectTile ct[TILEOFF_NUM];
+
 extern bool passAni;
 #define _passAniDt 0.2f
 void passTileAnimation(float dt);

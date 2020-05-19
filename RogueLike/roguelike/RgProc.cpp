@@ -56,17 +56,18 @@ void drawRgProc(float dt)
 	setRGBA(0, 0, 0, 1);
 	fillRect(0, 0, devSize.width, devSize.height);
 
-	// 맵 로딩 화면
-	drawRoomTile(dt);
-	passTileAnimation(dt);
-	drawNextDoor(dt);
+	// 타일 이동 애니
+	
 
+	drawRoomTile(dt);
+
+	drawNextDoor(dt);
 	if (nextStage)
 		return;
 
+	passTileAnimation(dt);
 	if (passAni)
 		return;
-
 
 
 	// 몬스터 draw

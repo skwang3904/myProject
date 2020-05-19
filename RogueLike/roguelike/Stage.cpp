@@ -28,12 +28,24 @@ void setNextDoor(int pcTile)
 {
 	int i, j, num = 0;
 	int activeTile[MAPTILE_NUM];
-	int check[MAPTILE_NUM];
+	memset(activeTile, -1, sizeof(int) * MAPTILE_NUM);
+
+
 	for (i = 0; i < TILEOFF_NUM; i++)
 	{
-		if (maps[i]->rgTile == Tile1way1 || maps[i]->rgTile == Tile1way2 || 
+		if (maps[i]->rgTile == Tile1way1 || maps[i]->rgTile == Tile1way2 ||
 			maps[i]->rgTile == Tile1way3 || maps[i]->rgTile == Tile1way4)
 		{
+			if (i == pcTile)
+				continue;
+			activeTile[num] = i;
+			num++;
+		}
+		else if (maps[i]->rgTile == Tile2way3 || maps[i]->rgTile == Tile2way4 ||
+			maps[i]->rgTile == Tile2way5 || maps[i]->rgTile == Tile2way6)
+		{
+			if (i == pcTile)
+				continue;
 			activeTile[num] = i;
 			num++;
 		}
@@ -41,8 +53,7 @@ void setNextDoor(int pcTile)
 
 	for (i = 0; ; i++)
 	{
-		if (maps[activeTile[random()%num]]->tileOff + pc->camPosition != iPointZero && 
-			activeTile[random() % num] != pcTile)
+		if (activeTile[random() % num] != pcTile)
 		{
 			nextDoor = activeTile[i];
 			break;
@@ -59,7 +70,6 @@ void nextStageAni(float dt)
 	{
 		stage++;
 		createStage(stage);
-		popHP->show(false);
 
 		showRgLoading(true, NextStage);
 
@@ -71,7 +81,6 @@ void nextStageAni(float dt)
 
 	if (bShowRgLoading(NextStage) == false)
 	{
-		popHP->show(true);
 		nextStage = false;
 		stagetest = false;
 		test = false;

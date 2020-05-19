@@ -26,6 +26,7 @@ void drawPopPlayerDead(float dt);
 bool keyPopPlayerDead(iKeyState stat, iPoint point);
 
 //-------------------------------------------------------------------
+#define _nextStageloadingTime 1.0f
 
 void createPopNextStage();
 void freePopNextStage();

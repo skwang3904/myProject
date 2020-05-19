@@ -19,8 +19,24 @@ bool keyPopHP(iKeyState stat, iPoint point);
 
 /////////////////////////////////////////////////////////
 
-void createPopCombat();
-void freePopCombat();
-void showPopCombat(bool show);
-void drawPopCombat(float dt);
-bool keyPopCombat(iKeyState stat, iPoint point);
+void createPopMiniMap();
+void freePopMiniMap();
+void showPopMiniMap(bool show);
+void drawPopMiniMap(float dt);
+bool keyPopMiniMap(iKeyState stat, iPoint point);
+
+/////////////////////////////////////////////////////////
+
+void createPopCombatMenu();
+void freePopCombatMenu();
+void showPopCombatMenu(bool show);
+void drawPopCombatMenu(float dt);
+bool keyPopCombatMenu(iKeyState stat, iPoint point);
+
+/////////////////////////////////////////////////////////
+
+void createPopInven1();
+void freePopInven1();
+void showPopInven1(bool show);
+void drawPopInven1(float dt);
+bool keyPopInven1(iKeyState stat, iPoint point);

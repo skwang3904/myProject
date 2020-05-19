@@ -87,7 +87,7 @@ void freeMeleeWeapon()
 			delete _meleeWP[i]->img;
 		free(_meleeWP[i]);
 	}
-	free(_meleeWP);
+	//free(_meleeWP);
 }
 
 static iPoint mv = iPointZero;
@@ -167,6 +167,8 @@ void weaponPosition(meleeWeapon* mw, float dt, iPoint& wp)
 
 void weaponVector(meleeWeapon* mw, float dt)
 {
+	if (pc->act != idle)
+		return;
 	if (getKeyStat(keyboard_left)) // 무기방향
 	{
 		mv.x = -1;
@@ -261,21 +263,19 @@ bool nomalSworadAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	static float delta = 0.0f;
 	float d = 0.0f;
 
-	if (delta / attTime < 0.5f) 		d = 0.0f;
-	else if (delta / attTime < 0.6f)	d = 0.3f;
-	else if (delta / attTime < 0.9f)	d = 0.6f;
+	if (delta / attTime < 0.6f) 		d = 0.0f;
+	else if (delta / attTime < 0.65f)	d = 0.3f;
+	else if (delta / attTime < 0.7f)	d = 0.6f;
 	else								d = 1.0f;
 
 	float range = iRange;
 	float rangeRate = linear(d, 0, range);
 
 	float attAngle = iAngle;
-	float attAngleRate = linear(d, 0, attAngle * 2 + attAngle/2);
+	float attAngleRate = linear(d, 0, attAngle * 2);
 
 	float ratioX = iRatioX; // 수정필요
 	float ratioRate = linear(d, 1.0, iRatioX);
-
-	mw->combatPosition += mv * rangeRate;
 
 	Texture* tex = mw->img->tex;
 	iPoint wcp = mw->combatPosition;
@@ -284,7 +284,8 @@ bool nomalSworadAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 
 	weaponPosAndRt(mw, wcp,centerP, rt);
 
-	wcp = iPointRotate(centerP, wcp, attAngleRate - attAngle/2);
+	wcp = iPointRotate(centerP, wcp, attAngleRate - attAngle);
+	wcp += mv * rangeRate;
 	wcp += pc->camPosition + setPos;
 
 	rt.origin = wcp - iPointMake(rt.size.width/2.0f, rt.size.height/2.0f);
@@ -299,7 +300,7 @@ bool nomalSworadAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 		wcp.y,
 		0, 0, tex->width, tex->height,
 		VCENTER | HCENTER, ratioRate, ratioRate,
-		2, attAngleRate - attAngle/2 + angle + mw->holdAngle, REVERSE_NONE);
+		2, attAngleRate - attAngle + angle + mw->holdAngle, REVERSE_NONE);
 
 	if (d > 0.5f)
 	{
@@ -344,7 +345,7 @@ void nomalSwordMethod(float dt, iPoint dropP)
 	if (mw->attackSpeed > 0.0f)
 		mw->attackSpeed = (int)0;
 
-	if (nomalSworadAttack(mw, dt, mw->attackEnemy, 1.0f, 0.0f, 45.0f, 1.0f, 1.0f))
+	if (nomalSworadAttack(mw, dt, mw->attackEnemy, 0.3f, 0.0f, 45.0f, 1.0f, 1.0f))
 		return;
 
 	draw(mw, dt, dropP);
@@ -386,8 +387,8 @@ bool nomalSpearAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	weaponPosAndRt(mw, mw->combatPosition, centerP, rt);
 
 	iPoint wcp = iPointRotate(centerP, mw->combatPosition, attAngleRate - attAngle / 2);
-	wcp += pc->camPosition + setPos;
 	wcp += mv * rangeRate;
+	wcp += pc->camPosition + setPos;
 
 	rt.origin = wcp - iPointMake(rt.size.width / 2.0f, rt.size.height / 2.0f);
 	mw->hitBox = rt;
@@ -496,9 +497,9 @@ bool nomalCycloneAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	}
 
 	wcp = iPointRotate(cycCenter, cycCp, attAngleRate);
+	wcp += mv * rangeRate;
 	wcp += pc->camPosition + setPos;
 
-	wcp += mv * rangeRate;
 	rt.origin = wcp - iPointMake(rt.size.width / 2.0f, rt.size.height / 2.0f);
 	mw->hitBox = rt;
 
@@ -578,7 +579,7 @@ void nomalCycloneMethod(float dt, iPoint dropP)
 	if (mw->attackSpeed > 0.0f)
 		mw->attackSpeed = (int)0;
 
-	if (nomalCycloneAttack(mw, dt, mw->attackEnemy, 1.0f, 0.0f, 1, 1.0f, 1.0f))
+	if (nomalCycloneAttack(mw, dt, mw->attackEnemy, 0.5f, 0.0f, 2, 1.0f, 1.0f))
 		return;
 
 	draw(mw, dt, dropP);

@@ -86,7 +86,7 @@ void Player::initPlayerStat()
 int Player::initPlayerPosition()
 {
 	int pcTile = 0;
-	for (int i = TILEOFF_NUM / 2 + 3; i < TILEOFF_NUM; i++)
+	for (int i = 15; i < TILEOFF_NUM; i++)
 	{
 		if (maps[i]->rgTile != NULL)
 		{
@@ -331,64 +331,68 @@ void Player::movePlayer(float dt)
 	iPoint v = iPointZero;
 	static int ch= 7;
 
-	if (getKeyStat(keyboard_left)) //이동방향, 머리방향
+	if (act == idle)
 	{
-		v.x = -1;
-		ch = 4;
+		if (getKeyStat(keyboard_left)) //이동방향, 머리방향
+		{
+			v.x = -1;
+			ch = 4;
 
-		vvv.x = -1;
-		vvv.y = 0;
-	}
-	else if (getKeyStat(keyboard_right))
-	{
-		v.x = 1;
-		ch = 5;
+			vvv.x = -1;
+			vvv.y = 0;
+		}
+		else if (getKeyStat(keyboard_right))
+		{
+			v.x = 1;
+			ch = 5;
 
-		vvv.x = 1;
-		vvv.y = 0;
-	}
-	if (getKeyStat(keyboard_up)) 
-	{ 
-		v.y = -1;
-		ch = 6;
+			vvv.x = 1;
+			vvv.y = 0;
+		}
+		if (getKeyStat(keyboard_up))
+		{
+			v.y = -1;
+			ch = 6;
 
-		vvv.x = 0;
-		vvv.y = -1;
-	}
-	else if (getKeyStat(keyboard_down))
-	{
-		v.y = 1;
-		ch = 7;
+			vvv.x = 0;
+			vvv.y = -1;
+		}
+		else if (getKeyStat(keyboard_down))
+		{
+			v.y = 1;
+			ch = 7;
 
-		vvv.x = 0;
-		vvv.y = 1;
+			vvv.x = 0;
+			vvv.y = 1;
+		}
+		viewVector = v;
 	}
-	viewVector = v;
 
 	bool ani = (v != iPointZero);
 	if(ani)
 		v /= iPointLength(v);
 	iPoint mp = v * (moveSpeed * dt);
 
-	if (pc->act == attacking)
-		mp = iPointZero;
-
 	static MapTile* tile = maps[12];
-	if (playerPosition.x + HALF_OF_TEX_WIDTH * 2 < tile->tileOff.x ||
-		playerPosition.x > tile->tileOff.x + RGTILE_X * RGTILE_Width - 1 ||
-		playerPosition.y + HALF_OF_TEX_HEIGHT * 2 < tile->tileOff.y ||
-		playerPosition.y > tile->tileOff.y + RGTILE_Y * RGTILE_Height - 1)
+	float x = playerPosition.x + HALF_OF_TEX_WIDTH;
+	float y = playerPosition.y + HALF_OF_TEX_HEIGHT;
+	if (x < tile->tileOff.x ||
+		x > tile->tileOff.x + RGTILE_X * RGTILE_Width - 1 ||
+		y < tile->tileOff.y ||
+		y > tile->tileOff.y + RGTILE_Y * RGTILE_Height - 1)
 	{
-		if (playerPosition.x + HALF_OF_TEX_WIDTH * 2 < tile->tileOff.x)
+		if (x < tile->tileOff.x)
 			playerPosition.x -= HALF_OF_TEX_WIDTH * 2;
-		else if (playerPosition.x > tile->tileOff.x + RGTILE_X * RGTILE_Width - 1)
+		else if (x > tile->tileOff.x + RGTILE_X * RGTILE_Width - 1)
 			playerPosition.x += HALF_OF_TEX_WIDTH;
-		else if (playerPosition.y + HALF_OF_TEX_HEIGHT * 2 < tile->tileOff.y)
+		else if (y < tile->tileOff.y)
 			playerPosition.y -= HALF_OF_TEX_HEIGHT * 2;
-		else if (playerPosition.y > tile->tileOff.y + RGTILE_Y * HALF_OF_TEX_HEIGHT - 1)
+		else if (y > tile->tileOff.y + RGTILE_Y * HALF_OF_TEX_HEIGHT - 1)
 			playerPosition.y += HALF_OF_TEX_HEIGHT;
 
-		tile = playerTileOffSet(tile);		
+		tile = playerTileOffSet(tile);
+		camPosition = iPointZero - tile->tileOff;
+		return;
 	}
 
 	if (act != evasion)

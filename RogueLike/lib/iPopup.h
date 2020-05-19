@@ -12,7 +12,7 @@ enum iPopupStyle {
 	iPopupStyleMove,
 	iPopupStyleZoom,
 
-	iPopupStyleTong,
+	iPopupStyleScroll,
 };
 
 enum iPopupStat {

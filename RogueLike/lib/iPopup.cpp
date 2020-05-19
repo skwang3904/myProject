@@ -66,6 +66,7 @@ void iPopup::paint(float dt)
 
 	float alpha = 1.0f;
 	float rx = 1.0f, ry = 1.0f;
+	float scrx = 1.0f, scry = 1.0f;
 	iPoint p;
 	if (style == iPopupStyleNone || style==iPopupStyleAlpha || style==iPopupStyleMove)
 	{
@@ -142,6 +143,7 @@ void iPopup::paint(float dt)
 		}
 	}
 
+
 	showDt += dt;
 
 	float gr, gg, gb, ga;
@@ -172,7 +174,8 @@ void iPopup::paint(float dt)
 
 	setRGBA(1, 1, 1, alpha);
 	p -= iPointMake(closePosition.x * rx, closePosition.y * ry);
-	drawImage(tex, p.x, p.y, 0, 0, tex->width, tex->height, TOP | LEFT, rx, ry, 2, 0, REVERSE_HEIGHT);
+	drawImage(tex, p.x, p.y, 0, 0, tex->width, tex->height, 
+		TOP | LEFT, rx, ry, 2, 0, REVERSE_HEIGHT);
 
 	setRGBA(gr, gg, gb, ga);
 	setStringSize(size);

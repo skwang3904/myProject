@@ -127,6 +127,8 @@ void drawLib(Method_Paint method)
 
 	//--------------------------------------------------------
 	// pop
+    if (bShowRgLoading(NextStage))
+        return;
 	drawPlayerUI(delta);
 
 #if 0// minimap

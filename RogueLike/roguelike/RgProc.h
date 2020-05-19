@@ -10,8 +10,6 @@
 #define SND_ENEMY_HIT 3
 #define SND_ENEMY_DEAD 4
 
-#define _nextStageloadingTime 3.0f
-
 void loadRgProc();
 void freeRgProc();
 void drawRgProc(float dt);

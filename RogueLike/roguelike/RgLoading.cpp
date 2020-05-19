@@ -147,7 +147,6 @@ void createPopNextStage()
 void freePopNextStage()
 {
 	delete popNextStage;
-	delete imgLoadingBar;
 }
 
 void showPopNextStage(bool show)

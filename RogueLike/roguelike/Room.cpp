@@ -3,19 +3,12 @@
 #include <math.h>
 
 
-struct ConnectTile {
-	int index; // 타일 넘버
-	bool value; //
-	bool visit;
-};
 ConnectTile ct[TILEOFF_NUM];
 
 void connectCheck(ConnectTile* c);
 void pathTileCheck(ConnectTile* c);
 
-
 MapTile** maps;
-
 
 void loadRoomTile()
 {
@@ -249,6 +242,24 @@ void passTileAnimation(float dt)
 
 	pc->camPosition = sp + (ep - sp) * passAniDt / _passAniDt;
 
+	int num = RGTILE_X * RGTILE_Y;
+	setRGBA(0, 0, 0, 0.5);
+	for (int i = 0; i < TILEOFF_NUM; i++)
+	{
+		if (maps[i]->rgTile != NULL)
+		{
+			for (int j = 0; j < num; j++)
+			{
+				if (maps[i]->rgTile[j] == MOVETILE) setRGBA(MOVETILE_RGBA);
+				else if (maps[i]->rgTile[j] == WALLTILE)setRGBA(WALLTILE_RGBA);
+				else if (maps[i]->rgTile[j] == FALLTILE)setRGBA(FALLTILE_RGBA);
+				fillRect(maps[i]->tileOff.x + pc->camPosition.x + setPos.x + RGTILE_Width * (j % RGTILE_X),
+					maps[i]->tileOff.y + pc->camPosition.y + setPos.y + RGTILE_Height * (j / RGTILE_X),
+					RGTILE_Width, RGTILE_Height);
+			}
+		}
+	}
+
 	passAniDt += dt;
 	if (passAniDt > _passAniDt)
 	{
@@ -268,14 +279,15 @@ void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float hal
 	MapTile* t = tile;
 	if (tile->rgTile == NULL)
 		return;
-
+	bool evase = (pc->act == evasion);
 	if (mp.x < 0)
 	{
 		int LX = pos.x - t->tileOff.x ;							LX /= RGTILE_Width;
 		int TLY = pos.y - t->tileOff.y ;						TLY /= RGTILE_Height;
 		int BLY = pos.y + halfOfTexH * 2.0f - t->tileOff.y ;	BLY /= RGTILE_Height;
-		int min = t->tileOff.x- 100;
-		//int min = t->tileOff.x;
+		int min = t->tileOff.x - HALF_OF_TEX_WIDTH * 3;
+		if(evase) 
+			min = t->tileOff.x;
 		for (i = LX - 1; i > -1; i--)
 		{
 			bool stop = false;
@@ -310,8 +322,9 @@ void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float hal
 		int RX = pos.x + halfOfTexW * 2.0f - t->tileOff.x;		RX /= RGTILE_Width;
 		int TRY = pos.y - t->tileOff.y;							TRY /= RGTILE_Height;
 		int BRY = pos.y + halfOfTexH * 2.0f - t->tileOff.y;		BRY /= RGTILE_Height;
-		int max = t->tileOff.x + RGTILE_X * RGTILE_Width * TILEOFF_SQRT  - 1;
-		//int max = t->tileOff.x + RGTILE_X * RGTILE_Width - 1;
+		int max = t->tileOff.x + RGTILE_X * RGTILE_Width - 1 + HALF_OF_TEX_WIDTH * 3;
+		if (evase)
+			 max = t->tileOff.x + RGTILE_X * RGTILE_Width - 1;
 		for (i = RX + 1; i < RGTILE_X; i++)
 		{
 			bool stop = false;
@@ -348,8 +361,9 @@ void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float hal
 		int TY = pos.y - t->tileOff.y;							TY /= RGTILE_Height;
 		int TLX = pos.x - t->tileOff.x;							TLX /= RGTILE_Width;
 		int TRX = pos.x + halfOfTexW * 2.0f - t->tileOff.x;		TRX /= RGTILE_Width;
-		int min = t->tileOff.y-100;
-		//int min = t->tileOff.y;
+		int min = t->tileOff.y - HALF_OF_TEX_HEIGHT * 3;
+		if (evase)
+		  min = t->tileOff.y;
 		for (j = TY - 1; j > -1; j--)
 		{
 			bool stop = false;
@@ -384,8 +398,9 @@ void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float hal
 		int BY =  pos.y + halfOfTexH * 2.0f - t->tileOff.y;		BY /= RGTILE_Height;
 		int BLX = pos.x - t->tileOff.x;							BLX /= RGTILE_Width;
 		int BRX = pos.x + halfOfTexW * 2.0f - t->tileOff.x;		BRX /= RGTILE_Width;
-		int max = t->tileOff.y + RGTILE_Y * RGTILE_Height * TILEOFF_SQRT - 1;
-		//int max = t->tileOff.y + RGTILE_Y * RGTILE_Height - 1;
+		int max = t->tileOff.y + RGTILE_Y * RGTILE_Height - 1 + HALF_OF_TEX_HEIGHT * 3;
+		if (evase)
+		  max = t->tileOff.y + RGTILE_Y * RGTILE_Height - 1;
 
 		for (j = BY + 1; j < RGTILE_Y; j++)
 		{

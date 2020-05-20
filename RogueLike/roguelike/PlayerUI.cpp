@@ -7,7 +7,6 @@ void loadPlayerUI()
 {
 	createPopHP();
 	createPopCombatMenu();
-	createPopInven1();
 	createPopMiniMap();
 
 	showPopHP(true);
@@ -19,7 +18,6 @@ void freePlayerUI()
 {
 	freePopHP();
 	freePopCombatMenu();
-	freePopInven1();
 	freePopMiniMap();
 }
 
@@ -27,7 +25,6 @@ void drawPlayerUI(float dt)
 {
 	drawPopHP(dt);
 	drawPopCombatMenu(dt);
-	drawPopInven1(dt);
 	drawPopMiniMap(dt);
 }
 
@@ -35,7 +32,6 @@ bool keyPlayerUI(iKeyState stat, iPoint point)
 {
 	if (keyPopHP(stat, point) ||
 		keyPopCombatMenu(stat,point)||
-		keyPopInven1(stat,point)||
 		keyPopMiniMap(stat,point))
 		return true;
 }
@@ -156,10 +152,11 @@ iImage* imgMiniMap;
 
 iPoint miniOff = iPointZero;
 #define MINIMAPTILE 40
-int minitile;
+static int minitile = MINIMAPTILE;
 Texture* refreshMiniMap()
 {
-	minitile = MINIMAPTILE;
+	if (imgMiniMap->tex)
+		freeImage(imgMiniMap->tex);
 	iGraphics* g = iGraphics::instance();
 	iSize size = iSizeMake(minitile * TILEOFF_SQRT, minitile * TILEOFF_SQRT);
 	g->init(size);
@@ -215,16 +212,22 @@ void showPopMiniMap(bool show)
 
 void drawPopMiniMap(float dt)
 {
-	if (getKeyStat(keyboard_tab))
+	if (getKeyStat(keyboard_r))
 	{
+		if (minitile == MINIMAPTILE)
+		{
 		popMiniMap->closePosition = iPointMake(500, 100);
 		minitile = 150;
+
+		}
+		else
+		{
+			popMiniMap->closePosition = iPointMake(devSize.width - minitile * TILEOFF_SQRT, 100);
+			minitile = MINIMAPTILE;
+		}
 	}
-	else
-	{
-		popMiniMap->closePosition = popMiniMap->openPosition;
-		minitile = MINIMAPTILE;
-	}
+
+
 	popMiniMap->paint(dt);
 	imgMiniMap->tex = refreshMiniMap();
 }
@@ -243,63 +246,38 @@ bool keyPopMiniMap(iKeyState stat, iPoint point)
 /////////////////////////////////////////////////////////
 
 iPopup* popCombatMenu;
-iImage** imgInvenButton;
 
-void drawPopCombatMenuBefore(iPopup* me, iPoint p, float dt);
-
-// 인벤토리 무기 양방향 링크리스트로 만들기
 void createPopCombatMenu()
 {
 	iPopup* pop = new iPopup(iPopupStyleNone);
 	popCombatMenu = pop;
-	
-	imgInvenButton = (iImage**)malloc(sizeof(iImage*) * 2);
 
-	iImage* imgInvenMenu = new iImage();
-	Texture* texInvenMenu = createImage("assets/PlayerUI/inven menu.png");
-	imgInvenMenu->addObject(texInvenMenu);
-	freeImage(texInvenMenu);
-	pop->addObject(imgInvenMenu);
+	iImage* imgCombatMenu = new iImage();
+	Texture* texCombatMenu = createImage("assets/PlayerUI/inven button1.png");
+	imgCombatMenu->addObject(texCombatMenu);
+	freeImage(texCombatMenu);
 
-	int i;
-	for (i = 0; i < 2; i++)
-		imgInvenButton[i] = new iImage();
+	imgCombatMenu->position = iPointMake(1600, 400);
+	pop->addObject(imgCombatMenu);
 
-	for (i = 0; i < 2; i++)
+	for (int i = 1; i < 8; i++)
 	{
-		for (int j = 0; j < 2; j++)
-		{
-			Texture* texInvenButton = createImage("assets/PlayerUI/inven button%d.png", 2 - j);
-			imgInvenButton[i]->addObject(texInvenButton);
-			freeImage(texInvenButton);
-		}
-		imgInvenButton[i]->position = iPointMake(50, 50 + 150 * i);
-		pop->addObject(imgInvenButton[i]);
+		iImage* imgCombatMenu1 = imgCombatMenu->copy();
+		imgCombatMenu1->position = iPointMake(1600 + 150 * (i % 2), 400 + 150 * (i / 2));
+		pop->addObject(imgCombatMenu1);
 	}
 
 
-	pop->openPosition = iPointMake(50, 200);
-	pop->closePosition = pop->openPosition;
-
-	pop->methodDrawBefore = drawPopCombatMenuBefore;
 }
 
 void freePopCombatMenu()
 {
 	delete popCombatMenu;
-	free(imgInvenButton);
 }
 
 void showPopCombatMenu(bool show)
 {
 	popCombatMenu->show(show);
-}
-
-//오픈메소드
-void drawPopCombatMenuBefore(iPopup* me, iPoint p, float dt)
-{
-	for (int i = 0; i < 2; i++)
-		imgInvenButton[i]->setTexAtIndex(i == popCombatMenu->selected);
 }
 
 void drawPopCombatMenu(float dt)
@@ -320,34 +298,10 @@ bool keyPopCombatMenu(iKeyState stat, iPoint point)
 	{
 	case iKeyStateBegan:
 	{
-		i = popCombatMenu->selected;
-		if (i == -1)
-		{
-			showPopInven1(false);
 
-		}
-		else if (i == 0)
-		{
-			showPopInven1(true);
-		}
-		else 
-		{
-			showPopInven1(false);
-		}
-		break;
 	}
 	case iKeyStateMoved:
 	{
-		for (i = 0; i < 2; i++)
-		{
-			if (containPoint(point, imgInvenButton[i]->touchRect(popCombatMenu->closePosition)))
-			{
-				j = i;
-				break;
-			}
-		}
-
-		popCombatMenu->selected = j;
 		break;
 	}
 	case iKeyStateEnded:
@@ -356,49 +310,4 @@ bool keyPopCombatMenu(iKeyState stat, iPoint point)
 	default:
 		break;
 	}
-}
-
-/////////////////////////////////////////////////////////
-//들고있는 무기 그리기
-iPopup* popInven1;
-
-void createPopInven1()
-{
-	iPopup* pop = new iPopup(iPopupStyleNone);
-	popInven1 = pop;
-
-	iImage* imgWeapon = new iImage();
-	Texture* texWeapon = createImage("assets/weapon/axe.png");
-	imgWeapon->addObject(texWeapon);
-	freeImage(texWeapon);
-
-	imgWeapon->position = imgInvenButton[0]->position + iPointMake(150, 200);
-
-	pop->addObject(imgWeapon);
-}
-
-void freePopInven1()
-{
-	delete popInven1;
-}
-
-void showPopInven1(bool show)
-{
-	popInven1->show(show);
-}
-
-void drawPopInven1(float dt)
-{
-	popInven1->paint(dt);
-}
-
-bool keyPopInven1(iKeyState stat, iPoint point)
-{
-	if (popInven1->bShow == false)
-		return false;
-
-	if (popInven1->stat != iPopupStatProc)
-		return true;
-
-	return false;
 }

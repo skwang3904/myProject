@@ -343,8 +343,7 @@ void Player::dropCombat(float dt, bool key)
 			//PMW[i].method(dt, weapon->wDropPos[i]);
 			//pmwCount--;
 			return;
-		}
-			
+		}	
 	}
 }
 

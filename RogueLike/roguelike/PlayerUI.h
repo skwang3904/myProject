@@ -32,11 +32,3 @@ void freePopCombatMenu();
 void showPopCombatMenu(bool show);
 void drawPopCombatMenu(float dt);
 bool keyPopCombatMenu(iKeyState stat, iPoint point);
-
-/////////////////////////////////////////////////////////
-
-void createPopInven1();
-void freePopInven1();
-void showPopInven1(bool show);
-void drawPopInven1(float dt);
-bool keyPopInven1(iKeyState stat, iPoint point);

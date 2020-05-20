@@ -227,7 +227,6 @@ void Player::drawPlayer(float dt)
 		printf("dead\n");
 	}
 
-
 	sort->init();
 	sort->add(pc->playerPosition.y + HALF_OF_TEX_HEIGHT * 2);
 	sort->add(pc->pmw->mw->combatPosition.y);
@@ -240,12 +239,10 @@ void Player::drawPlayer(float dt)
 		else
 			combatDraw(dt);
 	}
-	//combatDraw(dt);
-	//movePlayer(dt);
+
 	rootCombat(getKeyDown(keyboard_i));
 	dropCombat(dt, getKeyDown(keyboard_o));
 	choseWeapon();
-
 }
 
 void Player::showHpBar(float dt) // 임시

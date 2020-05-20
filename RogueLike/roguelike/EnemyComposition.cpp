@@ -18,7 +18,8 @@ void setEnemyPosition(int pcTile)
 	}
 
 	int mn = MAPTILE_NUM /2;
-	for (i = 0; i < mn; i++)
+	//for (i = 0; i < mn; i++)
+	for (i = 0; i < 1; i++)
 	{
 		int t = activeTile[random() % num];
 		bool exist = false;
@@ -39,7 +40,7 @@ void setEnemyPosition(int pcTile)
 
 		check[i] = t;
 
-		for (j = 0; j < 1; j++)
+		for (j = 0; j < 10; j++)
 		{
 			if (check[i] == pcTile)
 				continue;

@@ -1,10 +1,16 @@
-﻿  Player.cpp
+﻿  EnemyComposition.cpp
 C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(16,17): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(18,25): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(295,12): warning C4101: 'k' :참조되지 않은 지역 변수입니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(295,9): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(433,42): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(433,21): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(432,64): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(432,36): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\EnemyComposition.cpp(50,24): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Player.cpp
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\EnemyComposition.cpp(49,33): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(16,17): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(18,25): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(292,12): warning C4101: 'k' :참조되지 않은 지역 변수입니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(292,9): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(430,42): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(430,21): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(429,64): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  코드를 생성하고 있습니다...
+C:\Users\Sizz\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(429,36): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   RogueLike.vcxproj -> C:\Users\Sizz\Documents\GitHub\myProject\x64\Debug\RogueLike.exe

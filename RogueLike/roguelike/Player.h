@@ -16,7 +16,7 @@
 #define EVASION_DISTANCE 500
 #define EVASION_DURATION 0.4f
 
-#define MELEE_NUM 7
+#define MELEE_NUM 3
 
 typedef void (*Method_Combat)(float dt, iPoint dropP);
 struct PlayerMW;

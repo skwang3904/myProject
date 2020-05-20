@@ -246,16 +246,23 @@ iPopup* popCombatMenu;
 void drawCombat(float dt)
 {
 	iPoint p ;
+	
 	for (int i = 0; i < pc->weaponArray->count; i++)
 	{
-		p = iPointMake(1600 + 20 + 150 * (i % 2), 400 + 20 + +150 * (i / 2));
-		setRGBA(1, 0, 0, 1);
-		fillRect(p.x, p.y, 70, 70);
-		setRGBA(1, 1, 1, 1);
+		p = iPointMake(1600 + 150 * (i % 2), 400 + +150 * (i / 2));
 
 		PlayerMW* pw = (PlayerMW*)pc->weaponArray->objectAtIndex(i);
-		drawImage(pw->mw->img->tex,p.x , p.y, TOP | LEFT);
+		pw->mw->img->setTexAtIndex(1);
+		if (pw == pc->pmw)
+		{
+			setRGBA(0, 1, 0, 1);
+			fillRect(p.x, p.y, pw->mw->img->tex->width, pw->mw->img->tex->height);
+			setRGBA(1, 1, 1, 1);
+		}
+		drawImage(pw->mw->img->tex, p.x, p.y, TOP | LEFT);
+		pw->mw->img->setTexAtIndex(0);
 	}
+
 }
 
 void createPopCombatMenu()

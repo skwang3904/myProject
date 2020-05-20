@@ -5,8 +5,6 @@
 - 근접무기
 */
 
-extern int meleeNum;
-
 struct meleeWeapon {
 	iImage* img;
 
@@ -51,18 +49,6 @@ void weaponPosAndRt(meleeWeapon* mw, iPoint& wcp, iPoint& centerP, iRect& rt);
 
 void draw(meleeWeapon* mw, float dt, iPoint dropP);
 
-//extern meleeWeapon** _meleeWP;
-
-//extern meleeWeapon* nomalSword;
 void nomalSwordMethod(float dt, iPoint dropP);
-
-//extern meleeWeapon* nomalSpear;
 void nomalSpearMethod(float dt, iPoint dropP);
-
-//extern meleeWeapon* nomalCyclone;
 void nomalCycloneMethod(float dt, iPoint dropP);
-
-void nomalSwordMethod1(float dt, iPoint dropP);
-void nomalSwordMethod2(float dt, iPoint dropP);
-void nomalSwordMethod3(float dt, iPoint dropP);
-void nomalSwordMethod4(float dt, iPoint dropP);

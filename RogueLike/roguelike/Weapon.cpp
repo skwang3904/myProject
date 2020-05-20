@@ -11,7 +11,7 @@ Weapon::Weapon()
 	createMeleeWeapon();
 	
 	int i, j = 0;
-	for ( i = 0; i < meleeNum; i++) // 총 좌표수
+	for ( i = 0; i < MELEE_NUM; i++) // 총 좌표수
 	{
 		for (; j < TILEOFF_NUM; j++)
 		{
@@ -32,7 +32,7 @@ Weapon::~Weapon()
 
 void Weapon::drawWeapon(float dt)
 {
-	for (int i = 0; i < meleeNum; i++)
+	for (int i = 0; i < MELEE_NUM; i++)
 	{
 		if (PMW[i].drop)
 			PMW[i].method(dt, PMW[i].pos);

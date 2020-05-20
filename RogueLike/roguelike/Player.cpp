@@ -261,7 +261,7 @@ void Player::rootCombat(bool key)
 	if (actionCheck(key))
 		return;
 
-	for (int i = 0; i < meleeNum; i++)
+	for (int i = 0; i < MELEE_NUM; i++)
 	{
 		PlayerMW* pw = &PMW[i];
 		if (containRect(touchPlayer, pw->mw->hitBox))

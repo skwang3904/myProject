@@ -2,21 +2,11 @@
 
 #include "Room.h"
 
-//meleeWeapon** _meleeWP;
-
 meleeWeapon* nomalSword;
 meleeWeapon* nomalSpear;
 meleeWeapon* nomalCyclone;
 
-meleeWeapon* nomalSword1;
-meleeWeapon* nomalSword2;
-meleeWeapon* nomalSword3;
-meleeWeapon* nomalSword4;
-
-
 PlayerMW PMW[MELEE_NUM];
-
-int meleeNum;
 
 void meleeWeapon::init(
 	iImage* iImg,
@@ -45,85 +35,62 @@ void meleeWeapon::init(
 
 void createMeleeWeapon()
 {
-	meleeNum = 0;
-
-	//_meleeWP = (meleeWeapon**)malloc(sizeof(meleeWeapon*) * 2);
-
 	nomalSword = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
 	iImage* imgSword = new iImage();
-	Texture* texSword = createImage("assets/weapon/hammer.png");
-	imgSword->addObject(texSword);
-	freeImage(texSword);
-	nomalSword->init(imgSword,true,30,0.5f,30.0f, 60.0f, -30.0f);
-	meleeNum++;
-
-	nomalSword1 = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
-	iImage* imgSword1 = new iImage();
-	Texture* texSword1 = createImage("assets/weapon/hammer.png");
-	imgSword1->addObject(texSword1);
-	freeImage(texSword1);
-	nomalSword1->init(imgSword1, true, 30, 0.5f, 30.0f, 60.0f, -10.0f);
-	meleeNum++;
-
-	nomalSword2 = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
-	iImage* imgSword2 = new iImage();
-	Texture* texSword2 = createImage("assets/weapon/hammer.png");
-	imgSword2->addObject(texSword2);
-	freeImage(texSword2);
-	nomalSword2->init(imgSword2, true, 30, 0.5f, 30.0f, 60.0f, 0.0f);
-	meleeNum++;
-
-	nomalSword3 = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
-	iImage* imgSword3 = new iImage();
-	Texture* texSword3 = createImage("assets/weapon/hammer.png");
-	imgSword3->addObject(texSword3);
-	freeImage(texSword3);
-	nomalSword3->init(imgSword3, true, 30, 0.5f, 30.0f, 60.0f, 20.0f);
-	meleeNum++;
-
-	nomalSword4 = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
-	iImage* imgSword4 = new iImage();
-	Texture* texSword4 = createImage("assets/weapon/hammer.png");
-	imgSword4->addObject(texSword4);
-	freeImage(texSword4);
-	nomalSword4->init(imgSword4, true, 30, 0.5f, 30.0f, 60.0f, 40.0f);
-	meleeNum++;
+	//Texture* texSword = createImage("assets/weapon/hammer.png");
+	//imgSword->addObject(texSword);
+	//freeImage(texSword);
+	//nomalSword->init(imgSword,true,30,0.5f,30.0f, 60.0f, -30.0f);
 
 	//-----------------------------------------------------------
 
 	nomalSpear = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
 	iImage* imgSpear = new iImage();
-	Texture* texSpear = createImage("assets/weapon/upg_spear.png");
-	imgSpear->addObject(texSpear);
-	freeImage(texSpear);
-	nomalSpear->init(imgSpear, true, 40, 0.3f, 10.0f, 70.0f,-45.0f);
-	meleeNum++;
+	//Texture* texSpear = createImage("assets/weapon/upg_spear.png");
+	//imgSpear->addObject(texSpear);
+	//freeImage(texSpear);
+	//nomalSpear->init(imgSpear, true, 40, 0.3f, 10.0f, 70.0f,-45.0f);
 
 	//-----------------------------------------------------------
 
 	nomalCyclone = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
 	iImage* imgCyclon= new iImage();
-	Texture* texCyclon = createImage("assets/weapon/upg_axeDouble.png");
-	imgCyclon->addObject(texCyclon);
-	freeImage(texCyclon);
+	//Texture* texCyclon = createImage("assets/weapon/upg_axeDouble.png");
+	//imgCyclon->addObject(texCyclon);
+	//freeImage(texCyclon);
+	//nomalCyclone->init(imgCyclon, true, 30, 1.0f, 30, 50, -70);
+
+	//-----------------------------------------------------------
+
+	for (int i = 0; i < 2; i++)
+	{
+		Texture* texSword = createImage("assets/weapon/hammer%d.png",i);
+		Texture* texSpear = createImage("assets/weapon/upg_spear%d.png",i);
+		Texture* texCyclon = createImage("assets/weapon/upg_axeDouble%d.png",i);
+		
+		imgSword->addObject(texSword);
+		imgSpear->addObject(texSpear);
+		imgCyclon->addObject(texCyclon);
+
+		freeImage(texSword);
+		freeImage(texSpear);
+		freeImage(texCyclon);
+	}
+
+	nomalSword->init(imgSword, true, 30, 0.5f, 30.0f, 60.0f, -30.0f);
+	nomalSpear->init(imgSpear, true, 40, 0.3f, 10.0f, 70.0f, -45.0f);
 	nomalCyclone->init(imgCyclon, true, 30, 1.0f, 30, 50, -70);
-	meleeNum++;
+	
 
 	PMW[0] = { nomalSword,nomalSwordMethod };
 	PMW[1] = { nomalSpear,nomalSpearMethod };
 	PMW[2] = { nomalCyclone,nomalCycloneMethod };
 
-	PMW[3] = { nomalSword1,nomalSwordMethod1};
-	PMW[4] = { nomalSword2,nomalSwordMethod2 };
-	PMW[5] = { nomalSword3,nomalSwordMethod3 };
-	PMW[6] = { nomalSword4,nomalSwordMethod4 };
-
-	for (int i = 0; i < meleeNum; i++)
+	for (int i = 0; i < MELEE_NUM; i++)
 	{
 		PMW[i].pos = iPointZero;
 		PMW[i].drop = true;
 	}
-
 }
 
 void freeMeleeWeapon(PlayerMW* pmw)
@@ -291,7 +258,6 @@ void weaponPosAndRt(meleeWeapon* mw, iPoint& wcp, iPoint& centerP, iRect& rt)
 
 //------------------------------------------------------------------------------------
 
-// 무기 공격패턴 만들것
 // 무기종류, 시간, 공격중인지,공격하는데 걸리는시간, 찌르는 거리, 휘두르는 각도, 배율X, 배율Y,
 bool nomalSworadAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	float iRange, float iAngle, float iRatioX, float iRatioY)
@@ -393,118 +359,12 @@ void nomalSwordMethod(float dt, iPoint dropP)
 
 	draw(mw, dt, dropP);
 }
+
 //------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------
-void nomalSwordMethod1(float dt, iPoint dropP)
-{
-	if (pc->act == evasion || pc->act == falling)
-		return;
 
-	meleeWeapon* mw = nomalSword1;
-	weaponVector(mw, dt);
-
-	if (getKeyDown(keyboard_j) && pc->pmw->mw == mw && mw->attackSpeed == 0 && pc->act == idle)
-	{
-		pc->act = attacking;
-		mw->attackEnemy = true;
-		mw->attackSpeed -= mw->_attackSpeed;
-		audioPlay(SND_SWING);
-	}
-
-	mw->attackSpeed += dt;
-	if (mw->attackSpeed > 0.0f)
-		mw->attackSpeed = (int)0;
-
-	if (nomalSworadAttack(mw, dt, mw->attackEnemy, 0.3f, 0.0f, 45.0f, 1.0f, 1.0f))
-		return;
-
-	draw(mw, dt, dropP);
-}
-
-void nomalSwordMethod2(float dt, iPoint dropP)
-{
-	if (pc->act == evasion || pc->act == falling)
-		return;
-
-	meleeWeapon* mw = nomalSword2;
-	weaponVector(mw, dt);
-
-	if (getKeyDown(keyboard_j) && pc->pmw->mw == mw && mw->attackSpeed == 0 && pc->act == idle)
-	{
-		pc->act = attacking;
-		mw->attackEnemy = true;
-		mw->attackSpeed -= mw->_attackSpeed;
-		audioPlay(SND_SWING);
-	}
-
-	mw->attackSpeed += dt;
-	if (mw->attackSpeed > 0.0f)
-		mw->attackSpeed = (int)0;
-
-	if (nomalSworadAttack(mw, dt, mw->attackEnemy, 0.3f, 0.0f, 45.0f, 1.0f, 1.0f))
-		return;
-
-	draw(mw, dt, dropP);
-}
-
-void nomalSwordMethod3(float dt, iPoint dropP)
-{
-	if (pc->act == evasion || pc->act == falling)
-		return;
-
-	meleeWeapon* mw = nomalSword3;
-	weaponVector(mw, dt);
-
-	if (getKeyDown(keyboard_j) && pc->pmw->mw == mw && mw->attackSpeed == 0 && pc->act == idle)
-	{
-		pc->act = attacking;
-		mw->attackEnemy = true;
-		mw->attackSpeed -= mw->_attackSpeed;
-		audioPlay(SND_SWING);
-	}
-
-	mw->attackSpeed += dt;
-	if (mw->attackSpeed > 0.0f)
-		mw->attackSpeed = (int)0;
-
-	if (nomalSworadAttack(mw, dt, mw->attackEnemy, 0.3f, 0.0f, 45.0f, 1.0f, 1.0f))
-		return;
-
-	draw(mw, dt, dropP);
-}
-
-void nomalSwordMethod4(float dt, iPoint dropP)
-{
-	if (pc->act == evasion || pc->act == falling)
-		return;
-
-	meleeWeapon* mw = nomalSword4;
-	weaponVector(mw, dt);
-
-	if (getKeyDown(keyboard_j) && pc->pmw->mw == mw && mw->attackSpeed == 0 && pc->act == idle)
-	{
-		pc->act = attacking;
-		mw->attackEnemy = true;
-		mw->attackSpeed -= mw->_attackSpeed;
-		audioPlay(SND_SWING);
-	}
-
-	mw->attackSpeed += dt;
-	if (mw->attackSpeed > 0.0f)
-		mw->attackSpeed = (int)0;
-
-	if (nomalSworadAttack(mw, dt, mw->attackEnemy, 0.3f, 0.0f, 45.0f, 1.0f, 1.0f))
-		return;
-
-	draw(mw, dt, dropP);
-}
-	
-//------------------------------------------------------------------------------------
 bool nomalSpearAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	float iRange, float iAngle, float iRatioX, float iRatioY)
 {
-	printf("spw = %d\n", mw);
-	printf("pmw = %d\n", &PMW[1].mw);
 	if (pc->pmw->mw != mw)
 		return false;
 

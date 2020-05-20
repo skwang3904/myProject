@@ -118,9 +118,12 @@ void createMeleeWeapon()
 	PMW[5] = { nomalSword3,nomalSwordMethod3 };
 	PMW[6] = { nomalSword4,nomalSwordMethod4 };
 
-	//_meleeWP[0] = nomalSword;
-	//_meleeWP[1] = nomalSpear;
-	//_meleeWP[2] = nomalCyclone;
+	for (int i = 0; i < meleeNum; i++)
+	{
+		PMW[i].pos = iPointZero;
+		PMW[i].drop = true;
+	}
+
 }
 
 void freeMeleeWeapon(PlayerMW* pmw)
@@ -135,16 +138,6 @@ static float angle = 0.0f;
 void draw(meleeWeapon* mw, float dt, iPoint dropP)
 {
 	Texture* tex = mw->img->tex;
-	//for (int i = 0; i < meleeNum; i++)
-	//{
-	//	for (int j = 0; j < pc->weaponArray->count; j++)
-	//	{
-	//		if (pc->weaponArray->objectAtIndex(j) == &PMW[i] && pc->pmw->mw != mw)
-	//		{
-	//			return;
-	//		}
-	//	}
-	//}
 
 	if (pc->pmw->mw == mw)
 	{
@@ -510,6 +503,8 @@ void nomalSwordMethod4(float dt, iPoint dropP)
 bool nomalSpearAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	float iRange, float iAngle, float iRatioX, float iRatioY)
 {
+	printf("spw = %d\n", mw);
+	printf("pmw = %d\n", &PMW[1].mw);
 	if (pc->pmw->mw != mw)
 		return false;
 

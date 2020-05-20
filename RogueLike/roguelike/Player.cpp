@@ -80,6 +80,7 @@ void Player::initPlayerStat()
 
 	weaponArray->addObject(&PMW[0]);
 	pmw = &PMW[0];
+	PMW[0].drop = false;
 	pmwCount = 1;
 }
 
@@ -90,10 +91,10 @@ int Player::initPlayerPosition()
 	{
 		if (maps[i]->rgTile != NULL)
 		{
-			pc->playerPosition = maps[i]->tileOff + RGTILE_CENTER;
+			playerPosition = maps[i]->tileOff + RGTILE_CENTER;
 
-			pc->camPosition = iPointZero - maps[i]->tileOff;
-			pc->drawPos = pc->camPosition + setPos;
+			camPosition = iPointZero - maps[i]->tileOff;
+			drawPos = camPosition + setPos;
 			pcTile = i;
 			break;
 		}
@@ -260,44 +261,20 @@ void Player::rootCombat(bool key)
 	if (actionCheck(key))
 		return;
 
-	int i, j;
-	int test[10];
-	int t = 0;
-	for (i = 0; i < meleeNum; i++)
+	for (int i = 0; i < meleeNum; i++)
 	{
-		for (j = 0; j < weaponArray->count; j++)
+		PlayerMW* pw = &PMW[i];
+		if (containRect(touchPlayer, pw->mw->hitBox))
 		{
-			if (weaponArray->objectAtIndex(j) == &PMW[i])
+			if (pw->drop)
 			{
-				test[t] = i;
-				t++;
+				weaponArray->addObject(pw);
+				pmw = pw;
+				pw->pos = iPointZero;
+				pw->drop = false;
+				pmwCount++;
 				break;
 			}
-
-		}
-	}
-
-	for (i = 0; i < meleeNum; i++)
-	{
-		bool exist = false;
-		for (j = 0; j < t; j++)
-		{
-			if (test[j] == i)
-			{
-				exist = true;
-				break;
-			}
-		}
-
-		if (exist)
-			continue;
-
-		if (containRect(touchPlayer, PMW[i].mw->hitBox))
-		{
-			weaponArray->addObject(&PMW[i]);
-			pmw = &PMW[i];
-			weapon->wDropPos[i] = iPointZero;
-			break;
 		}
 	}
 }
@@ -309,21 +286,20 @@ void Player::dropCombat(float dt, bool key)
 	if (actionCheck(key))
 		return;
 	
-	for (int i = 0; i < weaponArray->count; i++)
+	int i, j, k;
+	for (i = 0; i < weaponArray->count; i++)
 	{
-		if (pmw == weaponArray->objectAtIndex(i))
+		PlayerMW* pw = (PlayerMW*)weaponArray->objectAtIndex(i);
+		if (pmw == pw)
 		{
-			weapon->wDropPos[i] = iPointMake(playerPosition.x + HALF_OF_TEX_WIDTH,
-								playerPosition.y + HALF_OF_TEX_HEIGHT);
-			weaponArray->remove();
+			weaponArray->remove(i);
+			pw->drop = true;
+			pw->pos = playerPosition;
 			pmwCount--;
 			if (pmwCount < 0)
 				pmwCount = weaponArray->count - 1;
-
-			pmw = (PlayerMW*)weaponArray->objectAtIndex(pmwCount);
-			//PMW[i].method(dt, weapon->wDropPos[i]);
-			//pmwCount--;
-			return;
+			pmw = (PlayerMW*)weaponArray->objectAtIndex(pmwCount-1);
+			break;
 		}	
 	}
 }
@@ -335,7 +311,7 @@ void Player::choseWeapon()
 		pmwCount--;
 		if (pmwCount < 0)
 			pmwCount = weaponArray->count - 1;
-		pmw = (PlayerMW*)weaponArray->objectAtIndex(pmwCount);
+		pmw = (PlayerMW*)weaponArray->objectAtIndex(pmwCount-1);
 		printf("pmwC %d\n", pmwCount);
 	}
 }

@@ -57,14 +57,15 @@ void drawRgProc(float dt)
 	fillRect(0, 0, devSize.width, devSize.height);
 
 	// 타일 이동 애니
+
+	passTileAnimation(dt);
+	if (passAni)
+		return;
+
 	drawRoomTile(dt);
 
 	drawNextDoor(dt);
 	if (nextStage)
-		return;
-
-	passTileAnimation(dt);
-	if (passAni)
 		return;
 
 	if (pc->hp < 0.1f)
@@ -75,8 +76,6 @@ void drawRgProc(float dt)
 
 	// 몬스터 draw
 	drawEnemy(dt);
-
-
 
 	// 무기 생성위치
 	weapon->drawWeapon(dt);

@@ -1,5 +1,7 @@
 #include "Room.h"
 
+#include "Stage.h"
+
 #include <math.h>
 
 
@@ -232,6 +234,12 @@ void passTileAnimation(float dt)
 
 	if (prevCamOff == pc->camPosition && passAniDt == _passAniDt)
 		return;
+
+	if (nextStage)
+	{
+		prevCamOff = pc->camPosition;
+		return;
+	}
 
 	if (passAni == false)
 	{

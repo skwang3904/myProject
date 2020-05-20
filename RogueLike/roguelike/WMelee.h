@@ -37,6 +37,9 @@ struct meleeWeapon {
 struct PlayerMW {
 	meleeWeapon* mw;
 	Method_Combat method;
+
+	iPoint pos;
+	bool drop;
 };
 extern PlayerMW PMW[MELEE_NUM];
 

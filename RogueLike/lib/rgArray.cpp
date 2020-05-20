@@ -136,11 +136,14 @@ void rgArray::remove(int index)
 			{
 				b->next = a->next;
 				a->next->prev = b;
+				curr = b;
 			}
 			else
 			{
 				a->next->prev = head;
 				head->next = a->next;
+				curr = a->next;
+				
 			}
 			
 			count--;
@@ -169,12 +172,17 @@ void* rgArray::objectAtIndex(int index)
 {
 	if (count < 2)
 		return curr->data;
+
+	int ind = index;
+	if (index < 0)
+		ind = count - 1;
+
 	rgxArray* a;
 
 	a = head->next;
 	for (int i = 0; ; i++)
 	{
-		if (i == index)
+		if (i == ind)
 		{
 			//curr = a;
 			return a->data;

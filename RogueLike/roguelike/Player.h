@@ -71,10 +71,9 @@ public:
 
 	iRect touchPlayer;
 
-	PlayerMW* pmw;
-	//int pmwCount;
-
 	rgArray* weaponArray;
+	PlayerMW* pmw;
+	int pmwCount;
 };
 extern Player* pc;
 

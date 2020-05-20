@@ -2,6 +2,7 @@
 
 #include "Room.h"
 #include "Stage.h"
+#include "WMelee.h"
 
 void loadPlayerUI()
 {
@@ -214,22 +215,17 @@ void drawPopMiniMap(float dt)
 {
 	if (getKeyStat(keyboard_r))
 	{
-		if (minitile == MINIMAPTILE)
-		{
 		popMiniMap->closePosition = iPointMake(500, 100);
 		minitile = 150;
-
-		}
-		else
-		{
-			popMiniMap->closePosition = iPointMake(devSize.width - minitile * TILEOFF_SQRT, 100);
-			minitile = MINIMAPTILE;
-		}
+	}
+	else
+	{
+		popMiniMap->closePosition = iPointMake(devSize.width - minitile * TILEOFF_SQRT, 100);
+		minitile = MINIMAPTILE;
 	}
 
-
-	popMiniMap->paint(dt);
 	imgMiniMap->tex = refreshMiniMap();
+	popMiniMap->paint(dt);
 }
 
 bool keyPopMiniMap(iKeyState stat, iPoint point)
@@ -246,6 +242,17 @@ bool keyPopMiniMap(iKeyState stat, iPoint point)
 /////////////////////////////////////////////////////////
 
 iPopup* popCombatMenu;
+
+void drawCombat(float dt)
+{
+	iPoint p ;
+	for (int i = 0; i < pc->weaponArray->count; i++)
+	{
+		p = iPointMake(1600 + 150 * (i % 2), 400 + +150 * (i / 2));
+		PlayerMW* pw = (PlayerMW*)pc->weaponArray->objectAtIndex(i);
+		drawImage(pw->mw->img->tex,p.x , p.y, TOP | LEFT);
+	}
+}
 
 void createPopCombatMenu()
 {
@@ -266,8 +273,6 @@ void createPopCombatMenu()
 		imgCombatMenu1->position = iPointMake(1600 + 150 * (i % 2), 400 + 150 * (i / 2));
 		pop->addObject(imgCombatMenu1);
 	}
-
-
 }
 
 void freePopCombatMenu()
@@ -282,7 +287,9 @@ void showPopCombatMenu(bool show)
 
 void drawPopCombatMenu(float dt)
 {
+	//무기 그리기
 	popCombatMenu->paint(dt);
+	drawCombat(dt);
 }
 
 bool keyPopCombatMenu(iKeyState stat, iPoint point)

@@ -14,22 +14,24 @@ Texture** texsHead;
 Texture** texsFall;
 Texture** texsEvasion;
 
-//Method_Combat _method[MELEE_NUM] = { nomalSwordMethod, nomalSpearMethod, nomalCycloneMethod};
-
 void freeWeapon(void* data)
 {
 	PlayerMW* pmw = (PlayerMW*)data;
 	freeMeleeWeapon(pmw);
 }
 
+iSort* sort;
 Player::Player()
 {
+	sort = new iSort();
 	weaponArray = new rgArray(freeWeapon);
 	initPlayerStat();
 }
 
 Player::~Player()
 {
+	delete sort;
+
 	for (int i = 0; i < 10; i++)
 		free(texsRight[i]);
 	free(texsRight);
@@ -225,21 +227,25 @@ void Player::drawPlayer(float dt)
 		printf("dead\n");
 	}
 
-	combatDraw(dt);
-	movePlayer(dt);
+
+	sort->init();
+	sort->add(pc->playerPosition.y + HALF_OF_TEX_HEIGHT * 2);
+	sort->add(pc->pmw->mw->combatPosition.y);
+	sort->update();
+
+	for (int i = 0; i < sort->sdNum; i++)
+	{
+		if (sort->get(i) == 0)
+			movePlayer(dt);
+		else
+			combatDraw(dt);
+	}
+	//combatDraw(dt);
+	//movePlayer(dt);
 	rootCombat(getKeyDown(keyboard_i));
 	dropCombat(dt, getKeyDown(keyboard_o));
 	choseWeapon();
 
-	//printf("pmw = %d\n", pmw);
-	//printf("PMW[0] = %d\n", &PMW[0]);
-	//printf("PMW[1] = %d\n", &PMW[1]);
-	//printf("PMW[2] = %d\n", &PMW[2]);
-	//printf("PMW[3] = %d\n", &PMW[3]);
-	//printf("PMW[4] = %d\n", &PMW[4]);
-	//printf("PMW[5] = %d\n", &PMW[5]);
-	//printf("PMW[6] = %d\n", &PMW[6]);
-	//showHpBar(dt);
 }
 
 void Player::showHpBar(float dt) // 임시

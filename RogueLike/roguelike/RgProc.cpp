@@ -10,6 +10,7 @@
 
 #include "PlayerUI.h"
 
+
 void loadRgProc()
 {
 	stage++;
@@ -27,6 +28,8 @@ void loadRgProc()
 	int pcTile = pc->initPlayerPosition();
 	setNextDoor(pcTile);
 	setEnemyPosition(pcTile);
+
+
 	//--------------------------------------------------------
 	// pop
 	loadRgLoading();
@@ -56,8 +59,6 @@ void drawRgProc(float dt)
 	setRGBA(0, 0, 0, 1);
 	fillRect(0, 0, devSize.width, devSize.height);
 
-	// 타일 이동 애니
-
 	passTileAnimation(dt);
 	if (passAni)
 		return;
@@ -74,15 +75,10 @@ void drawRgProc(float dt)
 		return;
 	}
 
-	// 몬스터 draw
 	drawEnemy(dt);
 
-	// 무기 생성위치
 	weapon->drawWeapon(dt);
-
 	pc->drawPlayer(dt);
-	//printf("%.2f\n", pc->hp);
-
 }
 
 void keyRgProc(iKeyState stat, iPoint point)

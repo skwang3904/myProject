@@ -84,8 +84,8 @@ void rgArray::addObject(void* data, bool ishead)
 	}
 
 	a->next = tail;
-	a->prev = tail->prev;
 	tail->prev->next = a;
+	a->prev = tail->prev;
 	tail->prev = a;
 
 	curr = a;
@@ -174,7 +174,7 @@ void* rgArray::objectAtIndex(int index)
 		return curr->data;
 
 	int ind = index;
-	if (index < 0)
+	if (ind < 0)
 		ind = count - 1;
 
 	rgxArray* a;

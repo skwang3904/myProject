@@ -15,7 +15,7 @@ void createStage(int stage)
 
 	// monster init
 	for (int i = 0; i < ENEMY_NUM; i++)
-		enemys[i]->init(stage);
+		golems[i]->init(stage);
 
 	int pcTile = pc->initPlayerPosition();
 

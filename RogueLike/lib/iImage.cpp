@@ -13,6 +13,7 @@ iImage::iImage()
 	_selectedDt = default_selectedDt;
 	selectedScale = default_selectedScale;
 
+	ratio = 1.0f;
 	imgRatioX = 1.0f;
 	imgRatioY = 1.0f;
 	location = 2; // 0.x 1.y 2.z
@@ -144,10 +145,10 @@ void iImage::paint(float dt, iPoint off,int reverse)
 	}
 	else
 	{
-		p.x += tex->width / 2 * imgRatioX;
-		p.y += tex->height / 2 * imgRatioY;
+		p.x += tex->width / 2 * ratio * imgRatioX;
+		p.y += tex->height / 2 * ratio * imgRatioY;
 		drawImage(tex, p.x , p.y, 0, 0, tex->width * imgRatioX, tex->height * imgRatioY,
-			VCENTER | HCENTER, s * imgRatioX, s * imgRatioY, location, a, reverse);
+			VCENTER | HCENTER, s * ratio * imgRatioX, s * ratio * imgRatioY, location, a, reverse);
 	}
 }
 

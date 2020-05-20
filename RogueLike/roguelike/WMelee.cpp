@@ -315,8 +315,8 @@ bool nomalSworadAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	{
 		for (int i = 0; i < ENEMY_NUM; i++) //enemy
 		{
-			if (containRect(mw->hitBox, enemys[i]->touchEnemyNomal))
-				enemys[i]->takeDmgEnemy(dt, mw->attackDmg);
+			if (containRect(mw->hitBox, golems[i]->touchEnemyNomal))
+				golems[i]->takeDmgEnemy(dt, mw->attackDmg);
 		}
 	}
 
@@ -418,8 +418,8 @@ bool nomalSpearAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	{
 		for (int i = 0; i < ENEMY_NUM; i++) //enemy
 		{
-			if (containRect(mw->hitBox, enemys[i]->touchEnemyNomal))
-				enemys[i]->takeDmgEnemy(dt, mw->attackDmg);
+			if (containRect(mw->hitBox, golems[i]->touchEnemyNomal))
+				golems[i]->takeDmgEnemy(dt, mw->attackDmg);
 		}
 	}
 
@@ -526,8 +526,8 @@ bool nomalCycloneAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 
 	for (int i = 0; i < ENEMY_NUM; i++) //enemy
 	{
-		if (containRect(mw->hitBox, enemys[i]->touchEnemyNomal))
-			enemys[i]->takeDmgEnemy(dt, mw->attackDmg);
+		if (containRect(mw->hitBox, golems[i]->touchEnemyNomal))
+			golems[i]->takeDmgEnemy(dt, mw->attackDmg);
 	}
 
 	for (int i = 0; i < 8; i++)

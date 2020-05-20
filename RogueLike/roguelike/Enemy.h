@@ -13,7 +13,8 @@
 #define ENEMY_NUM 10
 
 struct EnemyNomal{
-	iImage* img;
+	//iImage* img;
+	iImage** img;
 
 	float hp, _hp;
 	float attackDmg;
@@ -48,7 +49,7 @@ struct EnemyNomal{
 
 	//move func pointer
 };
-extern EnemyNomal** enemys;
+extern EnemyNomal** golems;
 
 void createEnemy();
 void freeEnemy();

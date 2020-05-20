@@ -64,8 +64,8 @@ void loadLib(HDC hDC)
 
 void freeLib()
 {
-    delete fbo;
     freeImage(texFboForiPopup);
+    delete fbo;
     setupOpenGL(false, NULL);
 
     free(keys);
@@ -741,14 +741,8 @@ void freeImage(Texture* tex)
     }
     glDeleteTextures(1, &tex->texID);
     free(tex);
-#ifdef _DEBUG
-    texNum--;
-#endif
 }
 
-#ifdef _DEBUG
-int texNum = 0;
-#endif
 
 void drawImageLikeCircle(Texture* tex, int x, int y, float rate)
 {

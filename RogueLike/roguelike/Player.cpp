@@ -8,11 +8,11 @@
 #include "Stage.h"
 
 Player* pc;
-Texture** texsRight;
-Texture** texsDown;
-Texture** texsHead;
-Texture** texsFall;
-Texture** texsEvasion;
+//Texture** texsRight;
+//Texture** texsDown;
+//Texture** texsHead;
+//Texture** texsFall;
+//Texture** texsEvasion;
 
 void freeWeapon(void* data)
 {
@@ -32,27 +32,31 @@ Player::~Player()
 {
 	delete sort;
 
-	for (int i = 0; i < 10; i++)
-		free(texsRight[i]);
-	free(texsRight);
+	//for (int i = 0; i < 10; i++)
+	//	free(texsRight[i]);
+	//free(texsRight);
+
+	//for (int i = 0; i < 10; i++)
+	//	free(texsDown[i]);
+	//free(texsDown);
+
+	//for (int i = 0; i < 8; i++)
+	//	free(texsHead[i]);
+	//free(texsHead);
+
+	//for (int i = 0; i < 4; i++)
+	//	free(texsFall[i]);
+	//free(texsFall);
+
+	//for (int i = 0; i < 4; i++)
+	//	free(texsEvasion[i]);
+	//free(texsEvasion);
 
 	for (int i = 0; i < 10; i++)
-		free(texsDown[i]);
-	free(texsDown);
-
-	for (int i = 0; i < 8; i++)
-		free(texsHead[i]);
-	free(texsHead);
-
-	for (int i = 0; i < 4; i++)
-		free(texsFall[i]);
-	free(texsFall);
-
-	for (int i = 0; i < 4; i++)
-		free(texsEvasion[i]);
-	free(texsEvasion);
-
-
+	{
+		if (img[i])
+			delete img[i];
+	}
 	free(img);
 }
 
@@ -109,19 +113,19 @@ void Player::createPlayerImage()
 	iImage** imgChar = (iImage**)malloc(sizeof(iImage*) * 10);
 
 	iImage* imgRight = new iImage();
-	texsRight = createDivideImage(10, 1, "assets/char/CharBodyR.png");	// 좌우 10개
+	Texture** texsRight = createDivideImage(10, 1, "assets/char/CharBodyR.png");	// 좌우 10개
 
 	iImage* imgDown = new iImage();
-	texsDown = createDivideImage(10, 1, "assets/char/CharBodyUD.png");	// 상하 10개
+	Texture** texsDown = createDivideImage(10, 1, "assets/char/CharBodyUD.png");	// 상하 10개
 
 	iImage** imgHead = (iImage**)malloc(sizeof(iImage*) * 4);			// 머리 상하좌우
-	texsHead = createDivideImage(8, 1, "assets/char/CharHead.png");		// 머리 4방향 각 2개
+	Texture** texsHead = createDivideImage(8, 1, "assets/char/CharHead.png");		// 머리 4방향 각 2개
 
 	iImage* imgFall = new iImage();
-	texsFall = createDivideImage(4, 1, "assets/char/CharJump.png");		// 낙하모션 4개
+	Texture** texsFall = createDivideImage(4, 1, "assets/char/CharJump.png");		// 낙하모션 4개
 
 	iImage* imgEvasion = new iImage();
-	texsEvasion = createDivideImage(4, 1, "assets/char/CharJump.png");	// 회피모션 4개
+	Texture** texsEvasion = createDivideImage(4, 1, "assets/char/CharJump.png");	// 회피모션 4개
 
 	for (int i = 0; i < 10; i++)
 		imgRight->addObject(texsRight[i]);
@@ -188,7 +192,7 @@ void Player::createPlayerImage()
 	imgEvasion->_selectedDt = imgEvasion->_aniDt * 4.0f;
 	imgEvasion->angle = 720.0f;
 
-	this->img = imgChar;
+	img = imgChar;
 
 
 	//retaincount조절
@@ -207,9 +211,8 @@ void Player::createPlayerImage()
 	for (int i = 0; i < 4; i++)
 		freeImage(texsEvasion[i]);
 
-	freeImage(imgChar[0]->tex);
-	freeImage(imgChar[1]->tex);
-
+	//freeImage(imgChar[0]->tex);
+	//freeImage(imgChar[1]->tex);
 }
 
 bool Player::actionCheck(bool key)
@@ -275,7 +278,7 @@ void Player::rootCombat(bool key)
 				pmw = pw;
 				pw->pos = iPointZero;
 				pw->drop = false;
-				pmwCount++;
+				pmwCount = weaponArray->count - 1;
 				break;
 			}
 		}
@@ -312,9 +315,13 @@ void Player::choseWeapon()
 	if (getKeyDown(keyboard_tab))
 	{
 		pmwCount--;
+		int a = pmwCount;
 		if (pmwCount < 0)
+		{
 			pmwCount = weaponArray->count - 1;
-		pmw = (PlayerMW*)weaponArray->objectAtIndex(pmwCount-1);
+			a = pmwCount;
+		}
+		pmw = (PlayerMW*)weaponArray->objectAtIndex(a);
 		printf("pmwC %d\n", pmwCount);
 	}
 }

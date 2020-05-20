@@ -34,6 +34,7 @@ public:
 	float selectedDt, _selectedDt;
 	float selectedScale;
 
+	float ratio;
 	float imgRatioX;
 	float imgRatioY;
 	int location;

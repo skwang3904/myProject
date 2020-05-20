@@ -156,8 +156,6 @@ iPoint miniOff = iPointZero;
 static int minitile = MINIMAPTILE;
 Texture* refreshMiniMap()
 {
-	if (imgMiniMap->tex)
-		freeImage(imgMiniMap->tex);
 	iGraphics* g = iGraphics::instance();
 	iSize size = iSizeMake(minitile * TILEOFF_SQRT, minitile * TILEOFF_SQRT);
 	g->init(size);
@@ -182,6 +180,8 @@ Texture* refreshMiniMap()
 		}
 	}
 	setRGBA(1, 1, 1, 1);
+	if (imgMiniMap->tex)
+		freeImage(imgMiniMap->tex);
 	return  g->getTexture();
 }
 
@@ -194,7 +194,7 @@ void createPopMiniMap()
 
 	Texture* tex = refreshMiniMap();
 	imgMiniMap->addObject(tex);
-	freeImage(tex);
+	freeImage(tex); //왜? 리테인카운터를 지우면 안되는가
 
 	pop->addObject(imgMiniMap);
 	pop->openPosition = iPointMake(devSize.width - minitile * TILEOFF_SQRT, 100);
@@ -273,7 +273,7 @@ void createPopCombatMenu()
 	iImage* imgCombatMenu = new iImage();
 	Texture* texCombatMenu = createImage("assets/PlayerUI/inven button1.png");
 	imgCombatMenu->addObject(texCombatMenu);
-	freeImage(texCombatMenu);
+	//freeImage(texCombatMenu);
 
 	imgCombatMenu->position = iPointMake(1600, 400);
 	pop->addObject(imgCombatMenu);

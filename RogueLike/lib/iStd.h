@@ -96,9 +96,6 @@ uint8* bmp2rgba(Bitmap* bmp, int& width, int& height);
 Texture* createTexture(int width, int height, bool rgba32f=false);
 void setTexture(TextureWrap wrap, TextureFilter filter);
 
-#ifdef _DEBUG
-extern int texNum;
-#endif
 Texture* createImage(const char* szFormat, ...);
 Texture* createGreyImage(const char* szFormat, ...);
 Texture* createReflectImage(float rateY, const char* szFormat, ...);

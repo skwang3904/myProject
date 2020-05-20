@@ -10,7 +10,7 @@
 - 보스 
 */
 
-#define ENEMY_NUM 50
+#define ENEMY_NUM 10
 
 struct EnemyNomal{
 	iImage* img;

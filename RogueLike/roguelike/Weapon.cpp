@@ -21,9 +21,6 @@ Weapon::Weapon()
 				j++;
 				break;
 			}
-			
-			if (j > TILEOFF_NUM - 1)
-				j = 6;
 		}
 	}
 }

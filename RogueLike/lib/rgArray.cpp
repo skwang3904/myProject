@@ -92,13 +92,43 @@ void rgArray::addObject(void* data, bool ishead)
 	count++;
 }
 
+void rgArray::remove()
+{
+	if (count < 2)
+		return;
+
+	rgxArray* a;
+	if (curr->prev == head)
+	{
+		a = curr->next;
+		head->next = curr->next;
+		curr->next->prev = head;
+		curr = a;
+	}
+	else if (curr->next == tail)
+	{
+		a = curr->prev;
+		tail->prev = curr->prev;
+		curr->prev->next = tail;
+		curr = a;
+	}
+	else
+	{
+		a = curr->prev;
+		curr->prev->next = curr->next;
+		curr->next->prev = curr->prev;
+		curr = a;
+	}
+	count--;
+}
+
 void rgArray::remove(int index)
 {
 	if (count == 1)
 		return;
 	rgxArray* a = head->next;
 	rgxArray* b = NULL;
-	for (int i=0;i<count ;i++)
+	for (int i = 0; i < count; i++)
 	{
 		if (i == index)
 		{
@@ -137,33 +167,34 @@ void rgArray::removeAll()
 
 void* rgArray::objectAtIndex(int index)
 {
+	if (count < 2)
+		return curr->data;
 	rgxArray* a;
-	if (index < count / 2 || index == 0)
+
+	a = head->next;
+	for (int i = 0; ; i++)
 	{
-		a = head->next;
-		for (int i = 0; ; i++)
+		if (i == index)
 		{
-			if (i == index)
-			{
-				curr = a;
-				return a->data;
-			}
-			a = a->next;
+			//curr = a;
+			return a->data;
 		}
+		a = a->next;
 	}
-	else
-	{
-		a = tail->prev;
-		for (int i = 0; ; i++)
-		{
-			if (i == index)
-			{
-				curr = a;
-				return a->data;
-			}
-			a = a->prev;
-		}
-	}
+
+	//else
+	//{
+	//	a = tail->prev;
+	//	for (int i = 0; ; i++)
+	//	{
+	//		if (i == index - count - 1)
+	//		{
+	//			curr = a;
+	//			return a->data;
+	//		}
+	//		a = a->prev;
+	//	}
+	//}
 }
 
 void rgArray::printArray()

@@ -39,11 +39,11 @@ void setEnemyPosition(int pcTile)
 
 		check[i] = t;
 
-		for (j = 0; j < 10; j++)
+		for (j = 0; j < 1; j++)
 		{
 			if (check[i] == pcTile)
 				continue;
-			EnemyNomal* enm = enemys[6 * i +j];
+			EnemyNomal* enm = enemys[i +j];
 			enm->EnemyNomalPosition = maps[check[i]]->tileOff +
 				iPointMake(RGTILE_Width * 5 + RGTILE_Width * 3 * (j % 3),
 					RGTILE_Height * 3 + RGTILE_Height * 2 * (j / 3));

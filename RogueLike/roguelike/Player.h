@@ -16,7 +16,7 @@
 #define EVASION_DISTANCE 500
 #define EVASION_DURATION 0.4f
 
-#define MELEE_NUM 3
+#define MELEE_NUM 7
 
 typedef void (*Method_Combat)(float dt, iPoint dropP);
 struct PlayerMW;
@@ -46,7 +46,7 @@ public:
 
 	void combatDraw(float dt);
 	void rootCombat(bool key);
-	void dropCombat(bool key);
+	void dropCombat(float dt, bool key);
 	void choseWeapon();
 
 	void movePlayer(float dt);
@@ -72,7 +72,7 @@ public:
 	iRect touchPlayer;
 
 	PlayerMW* pmw;
-	int pmwCount;
+	//int pmwCount;
 
 	rgArray* weaponArray;
 };

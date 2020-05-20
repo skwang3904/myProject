@@ -8,6 +8,12 @@ meleeWeapon* nomalSword;
 meleeWeapon* nomalSpear;
 meleeWeapon* nomalCyclone;
 
+meleeWeapon* nomalSword1;
+meleeWeapon* nomalSword2;
+meleeWeapon* nomalSword3;
+meleeWeapon* nomalSword4;
+
+
 PlayerMW PMW[MELEE_NUM];
 
 int meleeNum;
@@ -51,6 +57,38 @@ void createMeleeWeapon()
 	nomalSword->init(imgSword,true,30,0.5f,30.0f, 60.0f, -30.0f);
 	meleeNum++;
 
+	nomalSword1 = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
+	iImage* imgSword1 = new iImage();
+	Texture* texSword1 = createImage("assets/weapon/hammer.png");
+	imgSword1->addObject(texSword1);
+	freeImage(texSword1);
+	nomalSword1->init(imgSword1, true, 30, 0.5f, 30.0f, 60.0f, -10.0f);
+	meleeNum++;
+
+	nomalSword2 = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
+	iImage* imgSword2 = new iImage();
+	Texture* texSword2 = createImage("assets/weapon/hammer.png");
+	imgSword2->addObject(texSword2);
+	freeImage(texSword2);
+	nomalSword2->init(imgSword2, true, 30, 0.5f, 30.0f, 60.0f, 0.0f);
+	meleeNum++;
+
+	nomalSword3 = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
+	iImage* imgSword3 = new iImage();
+	Texture* texSword3 = createImage("assets/weapon/hammer.png");
+	imgSword3->addObject(texSword3);
+	freeImage(texSword3);
+	nomalSword3->init(imgSword3, true, 30, 0.5f, 30.0f, 60.0f, 20.0f);
+	meleeNum++;
+
+	nomalSword4 = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
+	iImage* imgSword4 = new iImage();
+	Texture* texSword4 = createImage("assets/weapon/hammer.png");
+	imgSword4->addObject(texSword4);
+	freeImage(texSword4);
+	nomalSword4->init(imgSword4, true, 30, 0.5f, 30.0f, 60.0f, 40.0f);
+	meleeNum++;
+
 	//-----------------------------------------------------------
 
 	nomalSpear = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
@@ -74,6 +112,12 @@ void createMeleeWeapon()
 	PMW[0] = { nomalSword,nomalSwordMethod };
 	PMW[1] = { nomalSpear,nomalSpearMethod };
 	PMW[2] = { nomalCyclone,nomalCycloneMethod };
+
+	PMW[3] = { nomalSword1,nomalSwordMethod1};
+	PMW[4] = { nomalSword2,nomalSwordMethod2 };
+	PMW[5] = { nomalSword3,nomalSwordMethod3 };
+	PMW[6] = { nomalSword4,nomalSwordMethod4 };
+
 	//_meleeWP[0] = nomalSword;
 	//_meleeWP[1] = nomalSpear;
 	//_meleeWP[2] = nomalCyclone;
@@ -337,6 +381,111 @@ void nomalSwordMethod(float dt, iPoint dropP)
 		return;
 
 	meleeWeapon* mw = nomalSword;
+	weaponVector(mw, dt);
+
+	if (getKeyDown(keyboard_j) && pc->pmw->mw == mw && mw->attackSpeed == 0 && pc->act == idle)
+	{
+		pc->act = attacking;
+		mw->attackEnemy = true;
+		mw->attackSpeed -= mw->_attackSpeed;
+		audioPlay(SND_SWING);
+	}
+
+	mw->attackSpeed += dt;
+	if (mw->attackSpeed > 0.0f)
+		mw->attackSpeed = (int)0;
+
+	if (nomalSworadAttack(mw, dt, mw->attackEnemy, 0.3f, 0.0f, 45.0f, 1.0f, 1.0f))
+		return;
+
+	draw(mw, dt, dropP);
+}
+//------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------
+void nomalSwordMethod1(float dt, iPoint dropP)
+{
+	if (pc->act == evasion || pc->act == falling)
+		return;
+
+	meleeWeapon* mw = nomalSword1;
+	weaponVector(mw, dt);
+
+	if (getKeyDown(keyboard_j) && pc->pmw->mw == mw && mw->attackSpeed == 0 && pc->act == idle)
+	{
+		pc->act = attacking;
+		mw->attackEnemy = true;
+		mw->attackSpeed -= mw->_attackSpeed;
+		audioPlay(SND_SWING);
+	}
+
+	mw->attackSpeed += dt;
+	if (mw->attackSpeed > 0.0f)
+		mw->attackSpeed = (int)0;
+
+	if (nomalSworadAttack(mw, dt, mw->attackEnemy, 0.3f, 0.0f, 45.0f, 1.0f, 1.0f))
+		return;
+
+	draw(mw, dt, dropP);
+}
+
+void nomalSwordMethod2(float dt, iPoint dropP)
+{
+	if (pc->act == evasion || pc->act == falling)
+		return;
+
+	meleeWeapon* mw = nomalSword2;
+	weaponVector(mw, dt);
+
+	if (getKeyDown(keyboard_j) && pc->pmw->mw == mw && mw->attackSpeed == 0 && pc->act == idle)
+	{
+		pc->act = attacking;
+		mw->attackEnemy = true;
+		mw->attackSpeed -= mw->_attackSpeed;
+		audioPlay(SND_SWING);
+	}
+
+	mw->attackSpeed += dt;
+	if (mw->attackSpeed > 0.0f)
+		mw->attackSpeed = (int)0;
+
+	if (nomalSworadAttack(mw, dt, mw->attackEnemy, 0.3f, 0.0f, 45.0f, 1.0f, 1.0f))
+		return;
+
+	draw(mw, dt, dropP);
+}
+
+void nomalSwordMethod3(float dt, iPoint dropP)
+{
+	if (pc->act == evasion || pc->act == falling)
+		return;
+
+	meleeWeapon* mw = nomalSword3;
+	weaponVector(mw, dt);
+
+	if (getKeyDown(keyboard_j) && pc->pmw->mw == mw && mw->attackSpeed == 0 && pc->act == idle)
+	{
+		pc->act = attacking;
+		mw->attackEnemy = true;
+		mw->attackSpeed -= mw->_attackSpeed;
+		audioPlay(SND_SWING);
+	}
+
+	mw->attackSpeed += dt;
+	if (mw->attackSpeed > 0.0f)
+		mw->attackSpeed = (int)0;
+
+	if (nomalSworadAttack(mw, dt, mw->attackEnemy, 0.3f, 0.0f, 45.0f, 1.0f, 1.0f))
+		return;
+
+	draw(mw, dt, dropP);
+}
+
+void nomalSwordMethod4(float dt, iPoint dropP)
+{
+	if (pc->act == evasion || pc->act == falling)
+		return;
+
+	meleeWeapon* mw = nomalSword4;
 	weaponVector(mw, dt);
 
 	if (getKeyDown(keyboard_j) && pc->pmw->mw == mw && mw->attackSpeed == 0 && pc->act == idle)

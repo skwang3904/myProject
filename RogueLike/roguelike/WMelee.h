@@ -58,3 +58,8 @@ void nomalSpearMethod(float dt, iPoint dropP);
 
 //extern meleeWeapon* nomalCyclone;
 void nomalCycloneMethod(float dt, iPoint dropP);
+
+void nomalSwordMethod1(float dt, iPoint dropP);
+void nomalSwordMethod2(float dt, iPoint dropP);
+void nomalSwordMethod3(float dt, iPoint dropP);
+void nomalSwordMethod4(float dt, iPoint dropP);

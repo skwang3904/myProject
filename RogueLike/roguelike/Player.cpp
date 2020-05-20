@@ -80,7 +80,7 @@ void Player::initPlayerStat()
 
 	weaponArray->addObject(&PMW[0]);
 	pmw = &PMW[0];
-	pmwCount = 0;
+	//pmwCount = 0;
 
 }
 
@@ -228,8 +228,17 @@ void Player::drawPlayer(float dt)
 	combatDraw(dt);
 	movePlayer(dt);
 	rootCombat(getKeyDown(keyboard_i));
-	dropCombat(getKeyDown(keyboard_o));
+	dropCombat(dt, getKeyDown(keyboard_o));
 	choseWeapon();
+
+	//printf("pmw = %d\n", pmw);
+	//printf("PMW[0] = %d\n", &PMW[0]);
+	//printf("PMW[1] = %d\n", &PMW[1]);
+	//printf("PMW[2] = %d\n", &PMW[2]);
+	//printf("PMW[3] = %d\n", &PMW[3]);
+	//printf("PMW[4] = %d\n", &PMW[4]);
+	//printf("PMW[5] = %d\n", &PMW[5]);
+	//printf("PMW[6] = %d\n", &PMW[6]);
 	//showHpBar(dt);
 }
 
@@ -244,9 +253,7 @@ void Player::showHpBar(float dt) // 임시
 
 void Player::combatDraw(float dt)
 {
-	if(pmw)
-		pmw->method(dt, iPointZero);
-	pmw =(PlayerMW*)weaponArray->objectAtIndex(pmwCount);
+	pmw->method(dt, iPointZero);
 }
 
 void Player::rootCombat(bool key)
@@ -270,38 +277,71 @@ void Player::rootCombat(bool key)
 	//	}
 	//}
 
-	for (int i = 0; i < meleeNum; i++)
+	int i, j;
+	int test[10];
+	int t = 0;
+	for (i = 0; i < meleeNum; i++)
 	{
-		if (pmw != &PMW[i])
+		for (j = 0; j < weaponArray->count; j++)
 		{
-			if (containRect(touchPlayer, PMW[i].mw->hitBox))
+			if (weaponArray->objectAtIndex(j) == &PMW[i])
 			{
-				weaponArray->addObject(&PMW[i]);
-				pmw = &PMW[i];
-				weapon->wDropPos[i] = iPointZero;	
-				pmwCount++;
+				test[t] = i;
+				t++;
 				break;
 			}
+
+		}
+	}
+
+	for (i = 0; i < meleeNum; i++)
+	{
+		bool exist = false;
+		for (j = 0; j < t; j++)
+		{
+			if (test[j] == i)
+			{
+				exist = true;
+				break;
+			}
+		}
+
+		if (exist)
+			continue;
+
+		if (containRect(touchPlayer, PMW[i].mw->hitBox))
+		{
+			weaponArray->addObject(&PMW[i]);
+			pmw = &PMW[i];
+			weapon->wDropPos[i] = iPointZero;
+			//pmwCount++;
+			break;
 		}
 	}
 }
 
-void Player::dropCombat(bool key)
+static int count = 1;
+void Player::dropCombat(float dt, bool key)
 {
 	if (weaponArray->count < 2)
 		return;
 	if (actionCheck(key))
 		return;
 	
-	for (int i = 0; i < meleeNum; i++)
+	for (int i = 0; i < weaponArray->count; i++)
 	{
-
 		if (pmw == weaponArray->objectAtIndex(i))
 		{
 			weapon->wDropPos[i] = iPointMake(playerPosition.x + HALF_OF_TEX_WIDTH,
 								playerPosition.y + HALF_OF_TEX_HEIGHT);
-			weaponArray->remove(i);
-			pmwCount--;
+			weaponArray->remove();
+			count--;
+			if (count < 0)
+				count = weaponArray->count - 1;
+
+			pmw = (PlayerMW*)weaponArray->objectAtIndex(count);
+			//PMW[i].method(dt, weapon->wDropPos[i]);
+			//pmwCount--;
 			return;
 		}
 			
@@ -312,11 +352,11 @@ void Player::choseWeapon()
 {
 	if (getKeyDown(keyboard_tab))
 	{
-		pmwCount--;
-		
-		if (pmwCount < 0)
-			pmwCount = weaponArray->count - 1;
-		printf("pmwC %d\n", pmwCount);
+		count--;
+		if (count < 0)
+			count = weaponArray->count - 1;
+		pmw = (PlayerMW*)weaponArray->objectAtIndex(count);
+		printf("pmwC %d\n", count);
 	}
 }
 

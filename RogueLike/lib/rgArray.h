@@ -18,6 +18,7 @@ public:
 	void addObject(int index, void* data);
 	void addObject(void* data, bool ishead = true);
 
+	void remove();
 	void remove(int index);
 	void removeAll();
 

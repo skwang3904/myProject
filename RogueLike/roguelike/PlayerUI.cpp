@@ -166,7 +166,6 @@ Texture* refreshMiniMap()
 
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
-
 		if (ct[i].value)
 		{
 			if (ct[i].tileOff + pc->camPosition == iPointZero) setRGBA(0, 1, 0, 1);

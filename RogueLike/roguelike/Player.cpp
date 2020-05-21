@@ -275,7 +275,7 @@ void Player::dropCombat(float dt, bool key)
 		{
 			weaponArray->remove(i);
 			pw->drop = true;
-			pw->pos = playerPosition;
+			pw->pos = playerPosition + HALF_OF_TEX_POINT;
 			pmwCount--;
 			if (pmwCount < 0)
 				pmwCount = weaponArray->count - 1;

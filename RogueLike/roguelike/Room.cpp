@@ -92,8 +92,6 @@ void newRoomTile()
 
 			for (int j = 0; j < TILEOFF_NUM; j++)
 				c->visit = false;
-
-			//printf("conectCount %d\n", conectCount);
 			conectCount = 0;
 		}
 	}
@@ -127,9 +125,9 @@ bool path(ConnectTile* c)
 {
 	if (c->value == true)
 		return true;
-	else
-		return false;
+	return false;
 }
+
 void pathTileCheck(ConnectTile* c)
 {
 	if (c->value == false)
@@ -180,16 +178,14 @@ void pathTileCheck(ConnectTile* c)
 	}
 	default:
 		maps[index]->rgTile = Tile0way1;
+		break;
 	}
 }
-
 
 void freeRoomTile()
 {
 	for (int i = 0; i < TILEOFF_NUM; i++)
-	{
 		free(maps[i]);
-	}
 	free(maps);
 }
 
@@ -251,7 +247,7 @@ void passTileAnimation(float dt)
 	pc->camPosition = sp + (ep - sp) * passAniDt / _passAniDt;
 
 	int num = RGTILE_X * RGTILE_Y;
-	setRGBA(0, 0, 0, 0.5);
+	setRGBA(0, 0, 0, 0.7f);
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
 		if (maps[i]->rgTile != NULL)
@@ -281,8 +277,6 @@ void passTileAnimation(float dt)
 
 void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float halfOfTexW, float halfOfTexH)
 {
-	// 이동시 벽 감지
-	// 계속
 	int i, j;
 	MapTile* t = tile;
 	if (tile->rgTile == NULL)
@@ -487,14 +481,12 @@ bool fallCheck(MapTile* tile, float dt)
 
 		return true;
 	}
-	else
-	{
-		return false;
-	}
+
+	return false;
 }
 
 float findMoveTile(MapTile* tile, int x, int y)
-{
+{	// 수정 필요
 	float min = 0xffff;
 	MapTile* t = tile;
 	if (t->rgTile[RGTILE_X * y + x] != MOVETILE)
@@ -595,14 +587,14 @@ void findMoveTile(MapTile* tile)
 	iPoint p = iPointMake(t->tileOff.x + RGTILE_Width * pcX ,
 		t->tileOff.y + RGTILE_Height * pcY);
 
-	if (p.x < pc->playerPosition.x )
+	if (p.x < pc->playerPosition.x + HALF_OF_TEX_WIDTH)
 		p -= iPointMake(HALF_OF_TEX_WIDTH, 0);
 	else
-		p += iPointMake(0, 0);
+		p += iPointMake(HALF_OF_TEX_WIDTH, 0);
 	if (p.y < pc->playerPosition.y + HALF_OF_TEX_HEIGHT)
 		p -= iPointMake(0, HALF_OF_TEX_HEIGHT);
 	else
-		p += iPointMake(0, 0);
+		p += iPointMake(HALF_OF_TEX_HEIGHT, 0);
 
 	pc->playerPosition = p;
 }

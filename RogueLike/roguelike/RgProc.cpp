@@ -82,7 +82,6 @@ void keyRgProc(iKeyState stat, iPoint point)
 	if (keyPlayerUI(stat, point))
 		return;
 
-
 	switch (stat)
 	{
 	case iKeyStateBegan:

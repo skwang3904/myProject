@@ -8,6 +8,7 @@
 #include "Weapon.h"
 
 #include "RgProc.h"
+
 meleeWeapon* nomalSword;
 meleeWeapon* nomalSpear;
 meleeWeapon* nomalCyclone;
@@ -43,28 +44,16 @@ void createMeleeWeapon()
 {
 	nomalSword = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
 	iImage* imgSword = new iImage();
-	//Texture* texSword = createImage("assets/weapon/hammer.png");
-	//imgSword->addObject(texSword);
-	//freeImage(texSword);
-	//nomalSword->init(imgSword,true,30,0.5f,30.0f, 60.0f, -30.0f);
 
 	//-----------------------------------------------------------
 
 	nomalSpear = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
 	iImage* imgSpear = new iImage();
-	//Texture* texSpear = createImage("assets/weapon/upg_spear.png");
-	//imgSpear->addObject(texSpear);
-	//freeImage(texSpear);
-	//nomalSpear->init(imgSpear, true, 40, 0.3f, 10.0f, 70.0f,-45.0f);
 
 	//-----------------------------------------------------------
 
 	nomalCyclone = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
 	iImage* imgCyclon= new iImage();
-	//Texture* texCyclon = createImage("assets/weapon/upg_axeDouble.png");
-	//imgCyclon->addObject(texCyclon);
-	//freeImage(texCyclon);
-	//nomalCyclone->init(imgCyclon, true, 30, 1.0f, 30, 50, -70);
 
 	//-----------------------------------------------------------
 
@@ -83,10 +72,10 @@ void createMeleeWeapon()
 		freeImage(texCyclon);
 	}
 
+	// img, ismelee, attackDmg, attackSpeed, widthReach, heightReach, holeAngle
 	nomalSword->init(imgSword, true, 30, 0.3f, 30.0f, 60.0f, -30.0f);
 	nomalSpear->init(imgSpear, true, 20, 0.2f, 10.0f, 70.0f, -45.0f);
-	nomalCyclone->init(imgCyclon, true, 30, 0.5f, 30, 50, -70);
-	
+	nomalCyclone->init(imgCyclon, true, 30, 0.5f, 30.0f, 50.0f, -70.0f);
 
 	PMW[0] = { nomalSword,nomalSwordMethod };
 	PMW[1] = { nomalSpear,nomalSpearMethod };
@@ -279,7 +268,6 @@ void hitMonster(meleeWeapon* mw, float dt)
 				golemEletes[0]->takeDmgEnemy(dt, mw->attackDmg);
 		}
 	}
-
 }
 
 //------------------------------------------------------------------------------------

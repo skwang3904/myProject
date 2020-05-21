@@ -9,16 +9,12 @@
 - 보스 
 */
 
-#define GOLEM_NUM 10
-#define GOLEM_ELETE_NUM 1
-#define ALLENEMY_NUM GOLEM_NUM + GOLEM_ELETE_NUM
-
 struct EnemyNomalGolem;
 void createEnemy();
 void freeEnemy();
 void drawEnemy(float dt);
 
-void moveEnemyType1(EnemyNomalGolem* enm,float dt);
+//void moveEnemyType1(EnemyNomalGolem* enm,float dt);
 
 
 /*

@@ -264,6 +264,25 @@ void weaponPosAndRt(meleeWeapon* mw, iPoint& wcp, iPoint& centerP, iRect& rt)
 
 //------------------------------------------------------------------------------------
 
+void hitMonster(meleeWeapon* mw, float dt)
+{
+	for (int i = 0; i < ALLENEMY_NUM; i++) //enemy
+	{
+		if (i < GOLEM_NUM)
+		{
+			if (containRect(mw->hitBox, golems[i]->touchGolem))
+				golems[i]->takeDmgEnemy(dt, mw->attackDmg);
+		}
+		else
+		{
+			if (containRect(mw->hitBox, golemEletes[0]->touchGolem))
+				golemEletes[0]->takeDmgEnemy(dt, mw->attackDmg);
+		}
+	}
+
+}
+
+//------------------------------------------------------------------------------------
 // 무기종류, 시간, 공격중인지,공격하는데 걸리는시간, 찌르는 거리, 휘두르는 각도, 배율X, 배율Y,
 bool nomalSworadAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	float iRange, float iAngle, float iRatioX, float iRatioY)
@@ -319,11 +338,7 @@ bool nomalSworadAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 
 	if (d > 0.5f)
 	{
-		for (int i = 0; i < GOLEM_NUM; i++) //enemy
-		{
-			if (containRect(mw->hitBox, golems[i]->touchGolem))
-				golems[i]->takeDmgEnemy(dt, mw->attackDmg);
-		}
+		hitMonster(mw, dt);
 	}
 
 	delta += dt;
@@ -422,11 +437,7 @@ bool nomalSpearAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 
 	if (d > 0.5f)
 	{
-		for (int i = 0; i < GOLEM_NUM; i++) //enemy
-		{
-			if (containRect(mw->hitBox, golems[i]->touchGolem))
-				golems[i]->takeDmgEnemy(dt, mw->attackDmg);
-		}
+		hitMonster(mw, dt);
 	}
 
 	delta += dt;
@@ -530,11 +541,7 @@ bool nomalCycloneAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 		VCENTER | HCENTER, ratioRate, ratioRate,
 		2, mw->holdAngle + attAngleRate + cycAngle, REVERSE_NONE);
 
-	for (int i = 0; i < ALLENEMY_NUM; i++) //enemy
-	{
-		if (containRect(mw->hitBox, golems[i]->touchGolem))
-			golems[i]->takeDmgEnemy(dt, mw->attackDmg);
-	}
+	hitMonster(mw, dt);
 
 	for (int i = 0; i < 8; i++)
 	{

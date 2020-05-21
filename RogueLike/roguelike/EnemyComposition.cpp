@@ -17,7 +17,7 @@ void setEnemyPosition(int pcTile)
 			num++;
 		} 
 	}
-
+	bool elete = false;
 	int mn = MAPTILE_NUM /2;
 	//for (i = 0; i < mn; i++)
 	for (i = 0; i < 10; i++)
@@ -41,14 +41,30 @@ void setEnemyPosition(int pcTile)
 
 		check[i] = t;
 
+		if (check[i] == pcTile)
+			continue;
+
 		for (j = 0; j < 1; j++)
 		{
-			if (check[i] == pcTile)
-				continue;
+
 			EnemyNomalGolem* enm = golems[i +j];
 			enm->golemPos = maps[check[i]]->tileOff +
 				iPointMake(RGTILE_Width * 3 + RGTILE_Width * 2 * (j % 3),
 					RGTILE_Height * 2 + RGTILE_Height * 2 * (j / 3));
+			enm->tileNumber = check[i];
+		}
+
+		if (elete == false)
+		{
+			for (j = 0; j < 1; j++)
+			{
+				EnemyEleteGolem* enm = golemEletes[j];
+				enm->golemPos = maps[check[i]]->tileOff +
+					iPointMake(RGTILE_Width * 3 + RGTILE_Width * 2 * (j % 3),
+						RGTILE_Height * 2 + RGTILE_Height * 2 * (j / 3));
+				elete = true;
+				enm->tileNumber = check[i];
+			}
 		}
 	}
 }

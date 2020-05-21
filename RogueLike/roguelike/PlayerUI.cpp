@@ -4,6 +4,8 @@
 #include "Stage.h"
 #include "WMelee.h"
 
+#include "EnemyStruct.h"
+
 void loadPlayerUI()
 {
 	createPopHP();
@@ -156,6 +158,9 @@ iPoint miniOff = iPointZero;
 static int minitile = MINIMAPTILE;
 Texture* refreshMiniMap()
 {
+	if (imgMiniMap->tex)
+		freeImage(imgMiniMap->tex);
+
 	iGraphics* g = iGraphics::instance();
 	iSize size = iSizeMake(minitile * TILEOFF_SQRT, minitile * TILEOFF_SQRT);
 	g->init(size);
@@ -174,14 +179,21 @@ Texture* refreshMiniMap()
 			if (ct[i].tileOff == ct[nextDoor].tileOff)
 			{
 				setRGBA(0, 0, 1, 1);
-				g->fillRect(miniOff.x + minitile * (i % TILEOFF_SQRT) + 10, miniOff.y + minitile * (i / TILEOFF_SQRT)+10,
+				g->fillRect(miniOff.x + minitile * (i % TILEOFF_SQRT) + 10, miniOff.y + minitile * (i / TILEOFF_SQRT) + 10,
 					minitile - 20, minitile - 20);
 			}
 		}
+
+		int a = golemEletes[0]->tileNumber;
+		if (a == i)
+		{
+			setRGBA(1, 0, 0, 1);
+			g->fillRect(miniOff.x + minitile * (i % TILEOFF_SQRT) + 10, miniOff.y + minitile * (i / TILEOFF_SQRT) + 10,
+				minitile - 20, minitile - 20);
+		}
 	}
 	setRGBA(1, 1, 1, 1);
-	if (imgMiniMap->tex)
-		freeImage(imgMiniMap->tex);
+
 	return  g->getTexture();
 }
 

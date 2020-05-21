@@ -188,9 +188,6 @@ void Player::createPlayerImage()
 
 	for (int i = 0; i < 4; i++)
 		freeImage(texsEvasion[i]);
-
-	//freeImage(imgChar[0]->tex);
-	//freeImage(imgChar[1]->tex);
 }
 
 bool Player::actionCheck(bool key)
@@ -282,7 +279,7 @@ void Player::dropCombat(float dt, bool key)
 			pmwCount--;
 			if (pmwCount < 0)
 				pmwCount = weaponArray->count - 1;
-			pmw = (PlayerMW*)weaponArray->objectAtIndex(pmwCount-1);
+			pmw = (PlayerMW*)weaponArray->objectAtIndex(pmwCount);
 			break;
 		}	
 	}
@@ -293,13 +290,9 @@ void Player::choseWeapon()
 	if (getKeyDown(keyboard_tab))
 	{
 		pmwCount--;
-		int a = pmwCount;
 		if (pmwCount < 0)
-		{
 			pmwCount = weaponArray->count - 1;
-			a = pmwCount;
-		}
-		pmw = (PlayerMW*)weaponArray->objectAtIndex(a);
+		pmw = (PlayerMW*)weaponArray->objectAtIndex(pmwCount);
 		printf("pmwC %d\n", pmwCount);
 	}
 }

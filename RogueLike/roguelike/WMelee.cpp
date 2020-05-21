@@ -83,9 +83,9 @@ void createMeleeWeapon()
 		freeImage(texCyclon);
 	}
 
-	nomalSword->init(imgSword, true, 30, 0.5f, 30.0f, 60.0f, -30.0f);
-	nomalSpear->init(imgSpear, true, 40, 0.3f, 10.0f, 70.0f, -45.0f);
-	nomalCyclone->init(imgCyclon, true, 30, 1.0f, 30, 50, -70);
+	nomalSword->init(imgSword, true, 30, 0.3f, 30.0f, 60.0f, -30.0f);
+	nomalSpear->init(imgSpear, true, 20, 0.2f, 10.0f, 70.0f, -45.0f);
+	nomalCyclone->init(imgCyclon, true, 30, 0.5f, 30, 50, -70);
 	
 
 	PMW[0] = { nomalSword,nomalSwordMethod };
@@ -591,18 +591,19 @@ void nomalCycloneMethod(float dt, iPoint dropP)
 	meleeWeapon* mw = nomalCyclone;
 	weaponVector(mw, dt);
 
-	if (getKeyDown(keyboard_j) && pc->pmw->mw == mw && mw->attackSpeed == 0 && pc->act == idle)
+	float ats = mw->_attackSpeed * pc->attackSpeed;
+	if (getKeyStat(keyboard_j) && pc->pmw->mw == mw && mw->attackSpeed == 0 && pc->act == idle)
 	{
 		pc->act = attacking;
 		mw->attackEnemy = true;
-		mw->attackSpeed -= mw->_attackSpeed;
+		mw->attackSpeed -= ats;
 	}
 
 	mw->attackSpeed += dt;
 	if (mw->attackSpeed > 0.0f)
 		mw->attackSpeed = (int)0;
 
-	if (nomalCycloneAttack(mw, dt, mw->attackEnemy, 0.5f, 0.0f, 2, 1.0f, 1.0f))
+	if (nomalCycloneAttack(mw, dt, mw->attackEnemy, ats, 0.0f, 2, 1.0f, 1.0f))
 		return;
 
 	draw(mw, dt, dropP);

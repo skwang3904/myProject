@@ -239,7 +239,10 @@ void EnemyNomalGolem::moveEnemyType1(float dt)
 	iPoint v = (pc->playerPosition + iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT))
 		- (golemPos + iPointMake(tex->width * GOLEM_ELETE_RATIO /2.0f,tex->height * GOLEM_ELETE_RATIO /2.0f));
 	if (iPointLength(v) > 300.0f || iPointLength(v) < reach)
+	{
+		act = idle;
 		return;
+	}
 	
 	v /= iPointLength(v);
 	iPoint mp = v * moveSpeed * dt;
@@ -498,7 +501,10 @@ void EnemyEleteGolem::moveEnemyType1(float dt)
 	iPoint v = (pc->playerPosition + iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT))
 		- (golemPos + iPointMake(tex->width * GOLEM_ELETE_RATIO / 2.0f, tex->height * GOLEM_ELETE_RATIO / 2.0f));
 	if (iPointLength(v) > 300.0f || iPointLength(v) < reach)
+	{
+		act = idle;
 		return;
+	}
 
 	v /= iPointLength(v);
 	iPoint mp = v * moveSpeed * dt;

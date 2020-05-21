@@ -153,7 +153,6 @@ bool keyPopHP(iKeyState stat, iPoint point)
 iPopup* popMiniMap;
 iImage* imgMiniMap;
 
-iPoint miniOff = iPointZero;
 #define MINIMAPTILE 40
 static int minitile = MINIMAPTILE;
 Texture* refreshMiniMap()
@@ -167,29 +166,44 @@ Texture* refreshMiniMap()
 
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
+
 		if (ct[i].value)
 		{
 			if (ct[i].tileOff + pc->camPosition == iPointZero) setRGBA(0, 1, 0, 1);
 			else setRGBA(0.8, 0.8, 0.8, 1);
 
-			g->fillRect(miniOff.x + minitile * (i % TILEOFF_SQRT), miniOff.y + minitile * (i / TILEOFF_SQRT), minitile, minitile);
+			g->fillRect(minitile * (i % TILEOFF_SQRT), minitile * (i / TILEOFF_SQRT), minitile, minitile);
 			setRGBA(0, 0, 0, 1);
-			g->drawRect(miniOff.x + minitile * (i % TILEOFF_SQRT), miniOff.y + minitile * (i / TILEOFF_SQRT), minitile, minitile);
+			g->drawRect(minitile * (i % TILEOFF_SQRT), minitile * (i / TILEOFF_SQRT), minitile, minitile);
 
 			if (ct[i].tileOff == ct[nextDoor].tileOff)
 			{
 				setRGBA(0, 0, 1, 1);
-				g->fillRect(miniOff.x + minitile * (i % TILEOFF_SQRT) + 10, miniOff.y + minitile * (i / TILEOFF_SQRT) + 10,
+				g->fillRect(minitile * (i % TILEOFF_SQRT) + 10,  minitile * (i / TILEOFF_SQRT) + 10,
 					minitile - 20, minitile - 20);
 			}
-		}
 
-		int a = golemEletes[0]->tileNumber;
-		if (a == i)
-		{
-			setRGBA(1, 0, 0, 1);
-			g->fillRect(miniOff.x + minitile * (i % TILEOFF_SQRT) + 10, miniOff.y + minitile * (i / TILEOFF_SQRT) + 10,
-				minitile - 20, minitile - 20);
+			for (int j = 0; j < GOLEM_NUM; j++) // 몬스터표시
+			{
+				EnemyNomalGolem* enm = golems[j];
+				if (enm->tileNumber == i)
+				{				
+					iPoint p = iPointMake((fabsf(enm->golemPos.x - tileOffSet[i].x) / (RGTILE_X * RGTILE_Width)),
+						(fabsf(enm->golemPos.y - tileOffSet[i].y) / (RGTILE_Y * RGTILE_Height)));
+					setRGBA(1, 0.5, 0, 1);
+					g->fillRect(minitile * (i % TILEOFF_SQRT) + minitile * p.x,
+						minitile * (i / TILEOFF_SQRT) + minitile * p.y,
+						5, 5);
+				}
+			}
+
+			int a = golemEletes[0]->tileNumber;
+			if (a == i)
+			{
+				setRGBA(1, 0, 0, 1);
+				g->fillRect(minitile * (i % TILEOFF_SQRT) + 10, minitile * (i / TILEOFF_SQRT) + 10,
+					minitile - 20, minitile - 20);
+			}
 		}
 	}
 	setRGBA(1, 1, 1, 1);
@@ -340,4 +354,27 @@ bool keyPopCombatMenu(iKeyState stat, iPoint point)
 	default:
 		break;
 	}
+}
+
+/////////////////////////////////////////////////////////
+
+void createPopItem()
+{
+}
+
+void freePopItem()
+{
+}
+
+void showPopItem(bool show)
+{
+}
+
+void drawPopItem(float dt)
+{
+}
+
+bool keyPopItem(iKeyState stat, iPoint point)
+{
+	return false;
 }

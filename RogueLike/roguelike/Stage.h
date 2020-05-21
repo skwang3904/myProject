@@ -12,12 +12,12 @@
 3. 몬스터 초기화 (스테이지마다 능력치 조정되게)
 */
 
-extern int stage;
-extern int nextDoor;
+extern uint8 stage;
+extern uint8 nextDoor;
 extern bool nextStage;
 
-void createStage(int stage);
-void setNextDoor(int pcTile);
+void createStage(uint8 stage);
+void setNextDoor(uint8 pcTile);
 
 void drawNextDoor(float dt);
 void containDoor(iPoint p);

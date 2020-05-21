@@ -310,7 +310,7 @@ void enforceResolution(int edge, RECT& rect, int win_border_width, int win_borde
     {
         int h = (rect.bottom - rect.top) - win_border_height;
         int w = h * devSize.width / devSize.height + win_border_width;
-        rect.left = (rect.left + rect.right) / 2 - w / 2;
+        //rect.left = (rect.left + rect.right) / 2 - w / 2;
         rect.right = rect.left + w;
         break;
     }
@@ -320,8 +320,8 @@ void enforceResolution(int edge, RECT& rect, int win_border_width, int win_borde
     {
         int w = (rect.right - rect.left) - win_border_width;
         int h = w * devSize.height / devSize.width + win_border_height;
-        rect.top = (rect.top + rect.bottom) / 2 - h / 2;
-        rect.bottom = rect.top = h;
+        //rect.top = (rect.top + rect.bottom) / 2 - h / 2;
+        rect.bottom = rect.top + h;
         break;
     }
 

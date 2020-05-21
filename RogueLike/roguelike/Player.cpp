@@ -10,6 +10,7 @@
 
 
 Player* pc;
+iSort* sort;
 
 void freeWeapon(void* data)
 {
@@ -17,7 +18,6 @@ void freeWeapon(void* data)
 	freeMeleeWeapon(pmw);
 }
 
-iSort* sort;
 Player::Player()
 {
 	sort = new iSort();
@@ -51,6 +51,7 @@ void Player::initPlayerStat()
 	moveSpeed = 500.0f;
 
 	act = idle;
+	tileNumber = -1;
 
 	playerPosition = iPointZero;
 	camPosition = iPointZero;
@@ -67,9 +68,9 @@ void Player::initPlayerStat()
 	pmwCount = 1;
 }
 
-int Player::initPlayerPosition()
+uint8 Player::initPlayerPosition()
 {
-	int pcTile = 0;
+	uint8 pcTile = 0;
 	for (int i = 15; i < TILEOFF_NUM; i++)
 	{
 		if (maps[i]->rgTile != NULL)
@@ -77,12 +78,12 @@ int Player::initPlayerPosition()
 			playerPosition = maps[i]->tileOff + RGTILE_CENTER;
 
 			camPosition = iPointZero - maps[i]->tileOff;
-			drawPos = camPosition + setPos;
-			pcTile = i;
+			drawPos = playerPosition + camPosition + setPos;
+			tileNumber = i;
 			break;
 		}
 	}
-	return pcTile;
+	return tileNumber;
 }
 
 void Player::createPlayerImage()
@@ -171,8 +172,6 @@ void Player::createPlayerImage()
 
 	img = imgChar;
 
-
-	//retaincount조절
 	for (int i = 0; i < 10; i++)
 		freeImage(texsRight[i]);
 
@@ -303,24 +302,33 @@ void Player::choseWeapon()
 	}
 }
 
-MapTile* playerTileOffSet(MapTile* tile)
+void Player::setPlayerTile()
 {
-	MapTile* t = tile;
-	float min = 0xffffff;
-
-	for (int i = 0; i < TILEOFF_NUM; i++)
+	int n = tileNumber;
+	if (playerPosition.x + HALF_OF_TEX_WIDTH < maps[n]->tileOff.x)
 	{
-		if (pc->playerPosition.x > maps[i]->tileOff.x &&
-			pc->playerPosition.y > maps[i]->tileOff.y)
-		{
-			if (iPointLength(pc->playerPosition - maps[i]->tileOff) < min)
-			{
-				min = iPointLength(pc->playerPosition - maps[i]->tileOff);
-				t = maps[i];
-			}
-		}
+		tileNumber = n - 1;
+		playerPosition.x -= HALF_OF_TEX_WIDTH;
 	}
-	return t;
+	else if (playerPosition.x + HALF_OF_TEX_WIDTH > maps[n]->tileOff.x + RGTILE_X * RGTILE_Width - 1)
+	{
+		tileNumber = n + 1;
+		playerPosition.x += HALF_OF_TEX_WIDTH;
+	}
+	else if (playerPosition.y + HALF_OF_TEX_HEIGHT < maps[n]->tileOff.y)
+	{
+		tileNumber = n - TILEOFF_SQRT;
+		playerPosition.y -= HALF_OF_TEX_HEIGHT;
+	}
+	else if (playerPosition.y + HALF_OF_TEX_HEIGHT > maps[n]->tileOff.y + RGTILE_Y * RGTILE_Height - 1)
+	{
+		tileNumber = n + TILEOFF_SQRT;
+		playerPosition.y += HALF_OF_TEX_HEIGHT;
+	}
+	else
+		printf("player setTile error\n");
+
+	camPosition = iPointZero - maps[tileNumber]->tileOff;
 }
 
 void Player::movePlayer(float dt)
@@ -371,28 +379,19 @@ void Player::movePlayer(float dt)
 		v /= iPointLength(v);
 	iPoint mp = v * (moveSpeed * dt);
 
-	static MapTile* tile = maps[12];
+	iPoint t = maps[tileNumber]->tileOff;
 	float x = playerPosition.x + HALF_OF_TEX_WIDTH;
 	float y = playerPosition.y + HALF_OF_TEX_HEIGHT;
-	if (x < tile->tileOff.x ||
-		x > tile->tileOff.x + RGTILE_X * RGTILE_Width - 1 ||
-		y < tile->tileOff.y ||
-		y > tile->tileOff.y + RGTILE_Y * RGTILE_Height - 1)
+	if (x < t.x ||
+		x > t.x + RGTILE_X * RGTILE_Width - 1 ||
+		y < t.y ||
+		y > t.y + RGTILE_Y * RGTILE_Height - 1)
 	{
-		if (x < tile->tileOff.x)
-			playerPosition.x -= HALF_OF_TEX_WIDTH * 2;
-		else if (x > tile->tileOff.x + RGTILE_X * RGTILE_Width - 1)
-			playerPosition.x += HALF_OF_TEX_WIDTH;
-		else if (y < tile->tileOff.y)
-			playerPosition.y -= HALF_OF_TEX_HEIGHT * 2;
-		else if (y > tile->tileOff.y + RGTILE_Y * HALF_OF_TEX_HEIGHT - 1)
-			playerPosition.y += HALF_OF_TEX_HEIGHT;
-
-		tile = playerTileOffSet(tile);
-		camPosition = iPointZero - tile->tileOff;
+		setPlayerTile();
 		return;
 	}
-
+	
+	MapTile* tile = maps[tileNumber];
 	if (act != evasion)
 		if (fallCheck(tile, dt))
 			return;
@@ -424,8 +423,6 @@ void Player::movePlayer(float dt)
 	setRGBA(1, 1, 1, 1);
 
 	touchPlayer = rt;
-
-	camPosition = iPointZero - tile->tileOff;
 }
 
 bool Player::evasionPlayer(MapTile* tile, float dt)
@@ -448,7 +445,6 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 		return false;
 
 	static iPoint v = iPointZero;
-
 	if (img[9]->animation == true)
 	{	
 		if (viewVector != iPointZero && v == iPointZero)
@@ -485,7 +481,6 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 		img[9]->selected = true;
 		img[9]->paint(dt, p, REVERSE_NONE);
 		
-
 		return true;
 	}
 

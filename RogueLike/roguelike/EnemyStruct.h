@@ -26,11 +26,11 @@ struct EnemyNomalGolem {
 
 	CharAction act;
 
-	int tileNumber;
-
+	uint8 tileNumber;
 	iPoint golemPos;
 	iPoint drawGolemPos;
 	iRect touchGolem;
+	float texRatio;
 
 	bool showHp;
 	float showHpTime;
@@ -42,13 +42,13 @@ struct EnemyNomalGolem {
 
 	void createEnemyImg();
 	void init(int stage);
-	void drawShowHp(float dt);
-	void takeDmgEnemy(float dt, float dmg);
-	void takeDmgEffect(float dt);
+	void drawEnemy(float dt);
 	bool enemysAttack(float dt);
 	void moveEnemyType1(float dt);
 
-	//move func pointer
+	void drawShowHp(float dt);
+	void takeDmgEnemy(float dt, float dmg);
+	void takeDmgEffect(float dt);
 };
 extern EnemyNomalGolem** golems;
 
@@ -65,11 +65,11 @@ struct EnemyEleteGolem {
 
 	CharAction act;
 
-	int tileNumber;
-
+	uint8 tileNumber;
 	iPoint golemPos;
 	iPoint drawGolemPos;
 	iRect touchGolem;
+	float texRatio;
 
 	bool showHp;
 	float showHpTime;
@@ -81,12 +81,12 @@ struct EnemyEleteGolem {
 
 	void createEnemyImg();
 	void init(int stage);
-	void drawShowHp(float dt);
-	void takeDmgEnemy(float dt, float dmg);
-	void takeDmgEffect(float dt);
+	void drawEnemy(float dt);
 	bool enemysAttack(float dt);
 	void moveEnemyType1(float dt);
 
-	//move func pointer
+	void drawShowHp(float dt);
+	void takeDmgEnemy(float dt, float dmg);
+	void takeDmgEffect(float dt);
 };
 extern EnemyEleteGolem** golemEletes;

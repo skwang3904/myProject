@@ -5,7 +5,7 @@
 
 int activeTile[MAPTILE_NUM];
 
-void setEnemyPosition(int pcTile)
+void setEnemyPosition(uint8 pcTile)
 {
 	int i, j, num = 0;
 	int check[MAPTILE_NUM];
@@ -67,9 +67,4 @@ void setEnemyPosition(int pcTile)
 			}
 		}
 	}
-}
-
-void resetEnemyPosition()
-{
-
 }

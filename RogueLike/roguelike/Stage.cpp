@@ -11,11 +11,11 @@
 
 #include "RgProc.h"
 
-int stage = 0;
-int nextDoor = -1;
+uint8 stage = 0;
+uint8 nextDoor = -1;
 bool nextStage = false;
 
-void createStage(int stage)
+void createStage(uint8 stage)
 {
 	newRoomTile();
 
@@ -23,18 +23,17 @@ void createStage(int stage)
 	for (int i = 0; i < GOLEM_NUM; i++)
 		golems[i]->init(stage);
 
-	int pcTile = pc->initPlayerPosition();
+	uint8 pcTile = pc->initPlayerPosition();
 
 	setEnemyPosition(pcTile);
-
 	setNextDoor(pcTile);
 }
 
-void setNextDoor(int pcTile)
+void setNextDoor(uint8 pcTile)
 {
 	int i, j, num = 0;
-	int activeTile[MAPTILE_NUM];
-	memset(activeTile, -1, sizeof(int) * MAPTILE_NUM);
+	uint8 activeTile[MAPTILE_NUM];
+	memset(activeTile, -1, sizeof(uint8) * MAPTILE_NUM);
 
 
 	for (i = 0; i < TILEOFF_NUM; i++)
@@ -47,13 +46,19 @@ void setNextDoor(int pcTile)
 			activeTile[num] = i;
 			num++;
 		}
-		else if (maps[i]->rgTile == Tile2way3 || maps[i]->rgTile == Tile2way4 ||
-			maps[i]->rgTile == Tile2way5 || maps[i]->rgTile == Tile2way6)
+		if (i == TILEOFF_NUM - 1 && activeTile[0] == -1)
 		{
-			if (i == pcTile)
-				continue;
-			activeTile[num] = i;
-			num++;
+			for (i = 0; i < TILEOFF_NUM; i++)
+			{
+				if (maps[i]->rgTile == Tile2way3 || maps[i]->rgTile == Tile2way4 ||
+					maps[i]->rgTile == Tile2way5 || maps[i]->rgTile == Tile2way6)
+				{
+					if (i == pcTile)
+						continue;
+					activeTile[num] = i;
+					num++;
+				}
+			}
 		}
 	}
 

@@ -12,6 +12,8 @@
 
 #define HALF_OF_TEX_WIDTH	pc->img[0]->tex->width/2
 #define HALF_OF_TEX_HEIGHT	pc->img[0]->tex->height/2
+#define HALF_OF_TEX_POINT	iPointMake(pc->img[0]->tex->width/2,	\
+										pc->img[0]->tex->height/2)
 
 #define EVASION_DISTANCE 500
 #define EVASION_DURATION 0.4f
@@ -30,7 +32,7 @@ public:
 	virtual ~Player();
 
 	void initPlayerStat();
-	int initPlayerPosition();
+	uint8 initPlayerPosition();
 	void createPlayerImage();
 
 	bool actionCheck(bool key);
@@ -46,6 +48,8 @@ public:
 	void movePlayer(float dt);
 	bool evasionPlayer(MapTile* tile, float dt);
 
+	void setPlayerTile();
+
 public:
 	iImage** img;
 
@@ -57,6 +61,7 @@ public:
 	float moveSpeed;
 
 	CharAction act;
+	uint8 tileNumber;
 
 	iPoint camPosition;
 	iPoint playerPosition;

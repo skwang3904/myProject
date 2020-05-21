@@ -1,5 +1,6 @@
 #include "EnemyComposition.h"
 
+#include "EnemyStruct.h"
 #include "Room.h"
 
 int activeTile[MAPTILE_NUM];
@@ -19,7 +20,7 @@ void setEnemyPosition(int pcTile)
 
 	int mn = MAPTILE_NUM /2;
 	//for (i = 0; i < mn; i++)
-	for (i = 0; i < 1; i++)
+	for (i = 0; i < 10; i++)
 	{
 		int t = activeTile[random() % num];
 		bool exist = false;
@@ -40,12 +41,12 @@ void setEnemyPosition(int pcTile)
 
 		check[i] = t;
 
-		for (j = 0; j < 10; j++)
+		for (j = 0; j < 1; j++)
 		{
 			if (check[i] == pcTile)
 				continue;
-			EnemyNomal* enm = golems[i +j];
-			enm->EnemyNomalPosition = maps[check[i]]->tileOff +
+			EnemyNomalGolem* enm = golems[i +j];
+			enm->golemPos = maps[check[i]]->tileOff +
 				iPointMake(RGTILE_Width * 3 + RGTILE_Width * 2 * (j % 3),
 					RGTILE_Height * 2 + RGTILE_Height * 2 * (j / 3));
 		}

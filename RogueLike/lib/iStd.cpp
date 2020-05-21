@@ -1,5 +1,8 @@
 #include "iStd.h"
+
 #include "../roguelike/PlayerUI.h"
+#include "../roguelike/RgProc.h"
+
 
 uint8 float2uint8(float f)
 {

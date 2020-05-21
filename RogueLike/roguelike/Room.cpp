@@ -2,8 +2,7 @@
 
 #include "Stage.h"
 
-#include <math.h>
-
+#include "RgProc.h"
 
 ConnectTile ct[TILEOFF_NUM];
 

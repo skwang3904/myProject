@@ -194,7 +194,7 @@ void createPopMiniMap()
 
 	Texture* tex = refreshMiniMap();
 	imgMiniMap->addObject(tex);
-	freeImage(tex); //왜? 리테인카운터를 지우면 안되는가
+	//freeImage(tex); // 리테인카운터 감소시키면 삭제에러뜸
 
 	pop->addObject(imgMiniMap);
 	pop->openPosition = iPointMake(devSize.width - minitile * TILEOFF_SQRT, 100);

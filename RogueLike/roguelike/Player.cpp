@@ -1,18 +1,15 @@
 #include "Player.h"
 
 #include "Room.h"
+#include "Stage.h"
 
 #include "Weapon.h"
 #include "WMelee.h"
 
-#include "Stage.h"
+#include "RgProc.h"
+
 
 Player* pc;
-//Texture** texsRight;
-//Texture** texsDown;
-//Texture** texsHead;
-//Texture** texsFall;
-//Texture** texsEvasion;
 
 void freeWeapon(void* data)
 {
@@ -31,26 +28,6 @@ Player::Player()
 Player::~Player()
 {
 	delete sort;
-
-	//for (int i = 0; i < 10; i++)
-	//	free(texsRight[i]);
-	//free(texsRight);
-
-	//for (int i = 0; i < 10; i++)
-	//	free(texsDown[i]);
-	//free(texsDown);
-
-	//for (int i = 0; i < 8; i++)
-	//	free(texsHead[i]);
-	//free(texsHead);
-
-	//for (int i = 0; i < 4; i++)
-	//	free(texsFall[i]);
-	//free(texsFall);
-
-	//for (int i = 0; i < 4; i++)
-	//	free(texsEvasion[i]);
-	//free(texsEvasion);
 
 	for (int i = 0; i < 10; i++)
 	{

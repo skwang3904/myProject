@@ -21,13 +21,7 @@
 typedef void (*Method_Combat)(float dt, iPoint dropP);
 struct PlayerMW;
 struct MapTile;
-
-enum PlayerAction {
-	idle = 0,
-	attacking,
-	falling,
-	evasion
-};
+enum CharAction;
 
 class Player
 {
@@ -62,7 +56,7 @@ public:
 	float _attackSpeed;
 	float moveSpeed;
 
-	PlayerAction act;
+	CharAction act;
 
 	iPoint camPosition;
 	iPoint playerPosition;

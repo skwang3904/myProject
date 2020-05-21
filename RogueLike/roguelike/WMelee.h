@@ -5,6 +5,7 @@
 - 근접무기
 */
 
+typedef void (*Method_Combat)(float dt, iPoint dropP);
 struct meleeWeapon {
 	iImage* img;
 

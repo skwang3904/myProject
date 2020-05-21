@@ -10,9 +10,7 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 #include "rgArray.h"
-#include "../roguelike//RgProc.h"
 #include "../roguelike/Player.h"
-#include "../roguelike/Enemy.h"
 #include "../roguelike/RgTile.h"
 #include "../roguelike/RgLoading.h"
 

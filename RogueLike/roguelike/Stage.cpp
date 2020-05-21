@@ -1,9 +1,15 @@
 #include "Stage.h"
 
 #include "Room.h"
+
+#include "Enemy.h"
+#include "EnemyStruct.h"
 #include "EnemyComposition.h"
+
 #include "PlayerUI.h"
 #include "RgLoading.h"
+
+#include "RgProc.h"
 
 int stage = 0;
 int nextDoor = -1;
@@ -14,7 +20,7 @@ void createStage(int stage)
 	newRoomTile();
 
 	// monster init
-	for (int i = 0; i < ENEMY_NUM; i++)
+	for (int i = 0; i < GOLEM_NUM; i++)
 		golems[i]->init(stage);
 
 	int pcTile = pc->initPlayerPosition();

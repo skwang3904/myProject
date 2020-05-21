@@ -2,6 +2,12 @@
 
 #include "Room.h"
 
+#include "Enemy.h"
+#include "EnemyStruct.h"
+
+#include "Weapon.h"
+
+#include "RgProc.h"
 meleeWeapon* nomalSword;
 meleeWeapon* nomalSpear;
 meleeWeapon* nomalCyclone;
@@ -313,9 +319,9 @@ bool nomalSworadAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 
 	if (d > 0.5f)
 	{
-		for (int i = 0; i < ENEMY_NUM; i++) //enemy
+		for (int i = 0; i < GOLEM_NUM; i++) //enemy
 		{
-			if (containRect(mw->hitBox, golems[i]->touchEnemyNomal))
+			if (containRect(mw->hitBox, golems[i]->touchGolem))
 				golems[i]->takeDmgEnemy(dt, mw->attackDmg);
 		}
 	}
@@ -416,9 +422,9 @@ bool nomalSpearAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 
 	if (d > 0.5f)
 	{
-		for (int i = 0; i < ENEMY_NUM; i++) //enemy
+		for (int i = 0; i < GOLEM_NUM; i++) //enemy
 		{
-			if (containRect(mw->hitBox, golems[i]->touchEnemyNomal))
+			if (containRect(mw->hitBox, golems[i]->touchGolem))
 				golems[i]->takeDmgEnemy(dt, mw->attackDmg);
 		}
 	}
@@ -524,9 +530,9 @@ bool nomalCycloneAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 		VCENTER | HCENTER, ratioRate, ratioRate,
 		2, mw->holdAngle + attAngleRate + cycAngle, REVERSE_NONE);
 
-	for (int i = 0; i < ENEMY_NUM; i++) //enemy
+	for (int i = 0; i < ALLENEMY_NUM; i++) //enemy
 	{
-		if (containRect(mw->hitBox, golems[i]->touchEnemyNomal))
+		if (containRect(mw->hitBox, golems[i]->touchGolem))
 			golems[i]->takeDmgEnemy(dt, mw->attackDmg);
 	}
 

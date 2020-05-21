@@ -6,6 +6,8 @@
 #include "Weapon.h"
 #include "WMelee.h"
 
+#include "Enemy.h"
+//#include "EnemyStruct.h"
 #include "EnemyComposition.h"
 
 #include "PlayerUI.h"

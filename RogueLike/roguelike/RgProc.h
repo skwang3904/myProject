@@ -10,6 +10,17 @@
 #define SND_ENEMY_HIT 3
 #define SND_ENEMY_DEAD 4
 
+enum CharAction {
+	idle = 0,
+	attacking,
+	falling,
+	evasion,
+	walking,
+	pain = 5,
+	dying,
+	dead
+};
+
 void loadRgProc();
 void freeRgProc();
 void drawRgProc(float dt);

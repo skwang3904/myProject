@@ -1,9 +1,8 @@
 #include "Weapon.h"
 
-#include "WMelee.h"
-
 #include "Room.h"
 
+#include "WMelee.h"
 
 Weapon* weapon;
 Weapon::Weapon()

@@ -21,21 +21,18 @@ void loadRgProc()
 	newRoomTile();
 
 	createEnemy();
-	//createStage(stage);
 
 	weapon = new Weapon();
 	pc = new Player();
-	pc->createPlayerImage();
 
 	int pcTile = pc->initPlayerPosition();
 	setNextDoor(pcTile);
 	setEnemyPosition(pcTile);
 
-
 	//--------------------------------------------------------
 	// pop
-	loadRgLoading();
 
+	loadRgLoading();
 	loadPlayerUI();
 }
 
@@ -52,7 +49,6 @@ void freeRgProc()
 	// pop
 
 	freeRgLoading();
-
 	freePlayerUI();
 }
 

@@ -129,7 +129,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // client rect
         resizeLib(LOWORD(lParam), HIWORD(lParam));
 
-        //drawLib(drawGame);
+        drawLib(drawRgGame);
         SwapBuffers(hDC);
         break;
     case WM_SIZING:
@@ -141,7 +141,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         //GetClientRect(hWnd, &rect);
         resizeLib(rect.right - rect.left, rect.bottom - rect.top);
 
-        //drawLib(drawGame);
+        drawLib(drawRgGame);
         SwapBuffers(hDC);
         break;
     }
@@ -152,7 +152,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         GetClientRect(hWnd, &rect);
         resizeLib(rect.right - rect.left, rect.bottom - rect.top);
 
-       // drawLib(drawGame);
+        drawLib(drawRgGame);
         SwapBuffers(hDC);
         break;
     }

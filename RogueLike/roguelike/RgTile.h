@@ -5,10 +5,10 @@
 #include "iStd.h"
 
 // 타일 정보--------
-#define RGTILE_X		16
-#define RGTILE_Y		12
-#define RGTILE_Width	80
-#define RGTILE_Height	80
+#define RGTILE_X		32
+#define RGTILE_Y		24
+#define RGTILE_Width	40
+#define RGTILE_Height	40
 #define RGTILE_CENTER iPointMake( RGTILE_X * RGTILE_Width / 2, \
 								  RGTILE_Y * RGTILE_Height / 2)
 

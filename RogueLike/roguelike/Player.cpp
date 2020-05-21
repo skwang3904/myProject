@@ -22,6 +22,8 @@ Player::Player()
 {
 	sort = new iSort();
 	weaponArray = new rgArray(freeWeapon);
+
+	createPlayerImage();
 	initPlayerStat();
 }
 

@@ -9,13 +9,9 @@
 - 보스 
 */
 
-struct EnemyNomalGolem;
 void createEnemy();
 void freeEnemy();
 void drawEnemy(float dt);
-
-//void moveEnemyType1(EnemyNomalGolem* enm,float dt);
-
 
 /*
 	// 0, 1 idle pattern 2

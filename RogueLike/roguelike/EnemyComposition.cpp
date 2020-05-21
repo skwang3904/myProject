@@ -1,7 +1,9 @@
 #include "EnemyComposition.h"
 
-#include "EnemyStruct.h"
 #include "Room.h"
+#include "Stage.h"
+
+#include "EnemyStruct.h"
 
 int activeTile[MAPTILE_NUM];
 
@@ -34,15 +36,14 @@ void setEnemyPosition(uint8 pcTile)
 		}
 
 		if (exist)
+			continue;
+
+		check[i] = t;
+		if (check[i] == pcTile || check[i] == nextDoor)
 		{
 			i--;
 			continue;
 		}
-
-		check[i] = t;
-
-		if (check[i] == pcTile)
-			continue;
 
 		for (j = 0; j < 1; j++)
 		{

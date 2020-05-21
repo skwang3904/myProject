@@ -1,12 +1,8 @@
 #include "Enemy.h"
 
-#include "Room.h"
 #include "Stage.h"
 
 #include "EnemyStruct.h"
-#include "EnemyComposition.h"
-
-#include "RgProc.h"
 
 void createEnemy()
 {

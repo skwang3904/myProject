@@ -86,7 +86,6 @@ void drawLib(Method_Paint method)
     float delta = (d - prevTickCount)/1000.f;
     prevTickCount = d;
 
-	//setClip(devSize.width / 2 - 500, devSize.height / 2 - 500, 1000,1000 );
     // --------------------
     fbo->bind();
 
@@ -99,10 +98,8 @@ void drawLib(Method_Paint method)
     fbo->unbind();
     // ------------------
 
-    glClearColor(0, 0, 0, 1);
+    glClearColor(0, 1, 1, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    //setRGBA(1, 1, 1, 1);
 
     Texture* tex = fbo->getTexture();
 
@@ -128,7 +125,6 @@ void drawLib(Method_Paint method)
 			0, 0, tex->width, tex->height, VCENTER | HCENTER,
 			1.0f, 1.0f, 2, 0, REVERSE_HEIGHT);
     }
-	//setClip(0,0,devSize.width,devSize.height);
 
 
 	//--------------------------------------------------------

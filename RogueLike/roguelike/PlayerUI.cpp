@@ -358,20 +358,38 @@ bool keyPopCombatMenu(iKeyState stat, iPoint point)
 
 /////////////////////////////////////////////////////////
 
+iPopup* popItem;
+
 void createPopItem()
 {
+	iPopup* pop = new iPopup(iPopupStyleNone);
+	iImage* imgCoin = new iImage();
+	iImage* imgHeart = new iImage();
+	Texture* texCoin = createImage("assets/item/coin.png");
+	Texture* texHeart = createImage("assets/item/heart.png");
+
+	imgCoin->addObject(texCoin);
+	imgHeart->addObject(texHeart);
+
+	imgCoin->position = iPointMake(50, 100);
+	imgHeart->position = iPointMake(50, 250);
+
+	
 }
 
 void freePopItem()
 {
+	delete popItem;
 }
 
 void showPopItem(bool show)
 {
+	popItem->show(show);
 }
 
 void drawPopItem(float dt)
 {
+	popItem->paint(dt);
 }
 
 bool keyPopItem(iKeyState stat, iPoint point)

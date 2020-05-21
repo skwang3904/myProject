@@ -170,7 +170,7 @@ bool EnemyNomal::enemysAttack(float dt)
 		ATV = v;
 		float range = reach;
 		ATV /= iPointLength(ATV);
-		ATV = EnemyNomalPosition  + (ATV * range);
+		ATV = EnemyNomalPosition + et + (ATV * range);
 	}
 
 	giveDmgTime += dt;

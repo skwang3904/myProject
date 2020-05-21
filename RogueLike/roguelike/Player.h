@@ -27,10 +27,13 @@ enum CharAction;
 
 class Player
 {
-public:
+private:
 	Player();
+
+public:
 	virtual ~Player();
 
+	static void instance();
 	void initPlayerStat();
 	uint8 initPlayerPosition();
 	void createPlayerImage();

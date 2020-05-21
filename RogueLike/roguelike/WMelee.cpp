@@ -100,7 +100,6 @@ static float angle = 0.0f;
 void draw(meleeWeapon* mw, float dt, iPoint dropP)
 {
 	Texture* tex = mw->img->tex;
-
 	if (pc->pmw->mw == mw)
 	{
 		static iPoint p = mw->combatPosition;
@@ -351,11 +350,12 @@ void nomalSwordMethod(float dt, iPoint dropP)
 	meleeWeapon* mw = nomalSword;
 	weaponVector(mw, dt);
 
+	float ats = mw->_attackSpeed * pc->attackSpeed;
 	if (getKeyDown(keyboard_j) && pc->pmw->mw == mw && mw->attackSpeed == 0 && pc->act == idle)
 	{
 		pc->act = attacking;
 		mw->attackEnemy = true;
-		mw->attackSpeed -= mw->_attackSpeed;
+		mw->attackSpeed -= ats;
 		audioPlay(SND_SWING);
 	}
 
@@ -363,7 +363,7 @@ void nomalSwordMethod(float dt, iPoint dropP)
 	if (mw->attackSpeed > 0.0f)
 		mw->attackSpeed = (int)0;
 
-	if (nomalSworadAttack(mw, dt, mw->attackEnemy, 0.3f, 0.0f, 45.0f, 1.0f, 1.0f))
+	if (nomalSworadAttack(mw, dt, mw->attackEnemy, ats, 0.0f, 45.0f, 1.0f, 1.0f))
 		return;
 
 	draw(mw, dt, dropP);
@@ -450,18 +450,19 @@ void nomalSpearMethod(float dt, iPoint dropP)
 	meleeWeapon* mw = nomalSpear;
 	weaponVector(mw, dt);
 
+	float ats = mw->_attackSpeed * pc->attackSpeed;
 	if (getKeyDown(keyboard_j) && pc->pmw->mw == mw && mw->attackSpeed == 0 && pc->act == idle)
 	{
 		pc->act = attacking;
 		mw->attackEnemy = true;
-		mw->attackSpeed -= mw->_attackSpeed;
+		mw->attackSpeed -= ats;
 	}
 
 	mw->attackSpeed += dt;
 	if (mw->attackSpeed > 0.0f)
 		mw->attackSpeed = (int)0;
 
-	if (nomalSpearAttack(mw, dt, mw->attackEnemy, 1.0f, 50.0f, 0.0f, 1.0f, 1.0f))
+	if (nomalSpearAttack(mw, dt, mw->attackEnemy, ats, 50.0f, 0.0f, 1.0f, 1.0f))
 		return;
 
 	draw(mw, dt, dropP);

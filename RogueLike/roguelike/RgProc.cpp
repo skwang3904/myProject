@@ -21,7 +21,9 @@ void loadRgProc()
 	createEnemy();
 
 	weapon = new Weapon();
-	pc = new Player();
+	pc->instance();
+	pc->instance();
+	pc->instance();
 
 	int pcTile = pc->initPlayerPosition();
 	setNextDoor(pcTile);

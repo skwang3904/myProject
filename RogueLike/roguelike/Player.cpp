@@ -39,6 +39,13 @@ Player::~Player()
 	free(img);
 }
 
+void Player::instance()
+{
+	if (pc)
+		return;
+	pc = new Player();
+}
+
 void Player::initPlayerStat()
 {
 	hp =

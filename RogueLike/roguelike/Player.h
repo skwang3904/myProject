@@ -15,7 +15,7 @@
 #define HALF_OF_TEX_POINT	iPointMake(pc->img[0]->tex->width/2,	\
 										pc->img[0]->tex->height/2)
 
-#define EVASION_DISTANCE 500
+#define EVASION_DISTANCE 200
 #define EVASION_DURATION 0.4f
 
 #define MELEE_NUM 3
@@ -57,6 +57,7 @@ public:
 	iImage** img;
 
 	float hp, _hp;
+	float prevHP;
 	float attackDmg;
 	float _attackDmg;
 	float attackSpeed;
@@ -70,12 +71,18 @@ public:
 	iPoint playerPosition;
 	iPoint drawPos;
 	iPoint viewVector;
+	int headNum;
+	iPoint bodyV;
+	iPoint evasV;
+	iPoint combatV;
+	float combatAngleV;
 
 	iRect touchPlayer;
 
 	rgArray* weaponArray;
 	PlayerMW* pmw;
 	int pmwCount;
+
 };
 extern Player* pc;
 

@@ -101,10 +101,9 @@ void EnemyNomalGolem::init(int stage)
 
 void EnemyNomalGolem::drawEnemy(float dt)
 {
-	if (act == dead)
-		return;
+	//if (act == dead)
+	//	return;
 
-	static int reverse;
 	Texture* tex = img[0]->tex;
 	drawGolemPos = golemPos + pc->camPosition + setPos;
 
@@ -160,7 +159,7 @@ void EnemyNomalGolem::drawEnemy(float dt)
 	}
 	else
 	{
-		if (act != dying)
+		if (act != dying && act != dead)
 		{
 			act = dying;
 			audioPlay(SND_ENEMY_DEAD);
@@ -171,26 +170,16 @@ void EnemyNomalGolem::drawEnemy(float dt)
 
 		if (img[4]->animation == false)
 		{
-			golemPos = iPointZero;
-			touchGolem = iRectZero;
 			act = dead;
 		}
 	}
 }
 
-bool EnemyNomalGolem::enemysAttack(float dt)
+bool EnemyNomalGolem::attackPattern1(float dt, iPoint v, iPoint texHalf, uint8& reverse)
 {
-	iPoint et = iPointMake(img[0]->tex->width * texRatio / 2.0f,
-		img[0]->tex->height * texRatio / 2.0f);
+	// 기본공격
+	// 가까우면 다가가서 공격
 
-	iPoint v = pc->playerPosition + HALF_OF_TEX_POINT
-		- golemPos - et;
-
-	if (iPointLength(v) > reach&& giveDmg == false && act != attacking)
-		return false;
-
-	static iPoint ATV = v;
-	static int reverse = REVERSE_NONE;
 	if (giveDmg == false)
 	{
 		img[3]->startAnimation();
@@ -202,7 +191,7 @@ bool EnemyNomalGolem::enemysAttack(float dt)
 		ATV = v;
 		float range = reach;
 		ATV /= iPointLength(ATV);
-		ATV = golemPos + et + (ATV * range);
+		ATV = golemPos + texHalf + (ATV * range);
 		reverse = (v.x > 0.0f ? REVERSE_NONE : REVERSE_WIDTH);
 	}
 
@@ -221,18 +210,18 @@ bool EnemyNomalGolem::enemysAttack(float dt)
 	{
 		setLineWidth(10);
 		setRGBA(1, 0, 0, 1);
-		drawLine(drawGolemPos + et,
+		drawLine(drawGolemPos + texHalf,
 			ATV + pc->camPosition + setPos);
 		setLineWidth(1);
 		setRGBA(1, 1, 1, 1);
 
 		if (hit == false && pc->act != evasion)
 		{
-			iPoint n = ATV - golemPos + et;
+			iPoint n = ATV - (golemPos + texHalf);
 			float len = iPointLength(n);
 			n /= iPointLength(n);
-			iPoint p = pc->playerPosition + HALF_OF_TEX_POINT
-				- golemPos + et;
+			iPoint p = (pc->playerPosition + HALF_OF_TEX_POINT)
+				- (golemPos + texHalf);
 
 			float dot = min(max(p.x * n.x + p.y * n.y, 0), len);
 			iPoint proj = n * dot;
@@ -243,7 +232,7 @@ bool EnemyNomalGolem::enemysAttack(float dt)
 				if (pc->act == evasion || pc->act == falling)
 					return true;
 				printf("hits\n");
-				//pc->hp -= attackDmg;
+				pc->hp -= attackDmg;
 				hit = true;
 			}
 		}
@@ -260,6 +249,92 @@ bool EnemyNomalGolem::enemysAttack(float dt)
 	}
 
 	return true;
+}
+
+bool EnemyNomalGolem::attackPattern2(float dt, iPoint v, iPoint texHalf, uint8& reverse)
+{
+	//기모아서 장풍같은거 날림
+	//일정거리 멀어지면 발동
+	static uint8 test = 0;
+	if (giveDmg == false)
+	{
+		img[3]->startAnimation();
+
+		giveDmg = true;
+		giveDmgTime -= _attackSpeed;
+		act = attacking;
+
+		ATV = v;
+		float range = reach;
+		ATV /= iPointLength(ATV);
+		//ATV = golemPos + texHalf + (ATV * range);
+		reverse = (v.x > 0.0f ? REVERSE_NONE : REVERSE_WIDTH);
+	}
+	
+	Texture* tex = img[3]->tex;
+
+
+		giveDmgTime += dt;
+	img[3]->paint(dt, drawGolemPos, reverse);
+
+	if (giveDmg == true && giveDmgTime > 0.0f - _attackSpeed * 0.33f)
+	{
+		setLineWidth(10);
+		setRGBA(1, 0, 0, 1);
+		drawLine(drawGolemPos + texHalf,
+			ATV + pc->camPosition + setPos);
+		setLineWidth(1);
+		setRGBA(1, 1, 1, 1);
+
+		if (hit == false && pc->act != evasion)
+		{
+			iPoint n = ATV - (golemPos + texHalf);
+			float len = iPointLength(n);
+			n /= iPointLength(n);
+			iPoint p = (pc->playerPosition + HALF_OF_TEX_POINT)
+				- (golemPos + texHalf);
+
+			float dot = min(max(p.x * n.x + p.y * n.y, 0), len);
+			iPoint proj = n * dot;
+			float hitDis = iPointLength(p - proj);
+
+			if (hitDis < HALF_OF_TEX_WIDTH / 2)
+			{
+				if (pc->act == evasion || pc->act == falling)
+					return true;
+				printf("hits\n");
+				//pc->hp -= attackDmg;
+				hit = true;
+			}
+		}
+	}
+
+	if (giveDmgTime > 0.0f)
+	{
+		giveDmg = false;
+		giveDmgTime = 0.0f;
+		hit = false;
+		act = idle;
+	}
+
+	return true;
+}
+
+bool EnemyNomalGolem::enemysAttack(float dt)
+{
+	iPoint et = iPointMake(img[0]->tex->width * texRatio / 2.0f,
+		img[0]->tex->height * texRatio / 2.0f);
+
+	iPoint v = (pc->playerPosition + HALF_OF_TEX_POINT)
+		- (golemPos + et);
+
+	if (iPointLength(v) > reach&& giveDmg == false && act != attacking)
+		return false;
+
+	//attackPattern1(dt, v, et, r);
+	uint8 r = reverse;
+	attackPattern1(dt, v, et, r);
+	reverse = r;
 }
 
 void EnemyNomalGolem::moveEnemyType1(float dt)
@@ -437,7 +512,6 @@ void EnemyEleteGolem::drawEnemy(float dt)
 	if (act == dead)
 		return;
 
-	static int reverseE;
 	Texture* tex = img[0]->tex;
 	drawGolemPos = golemPos + pc->camPosition + setPos;
 
@@ -453,7 +527,7 @@ void EnemyEleteGolem::drawEnemy(float dt)
 
 	if (hp > 0.0f)
 	{
-		reverseE = (pc->playerPosition.x < golemPos.x ? REVERSE_WIDTH : REVERSE_NONE);
+		reverse = (pc->playerPosition.x < golemPos.x ? REVERSE_WIDTH : REVERSE_NONE);
 		if (img[0]->animation == false && img[1]->animation == false)
 			img[random() % 2]->startAnimation();
 
@@ -461,11 +535,11 @@ void EnemyEleteGolem::drawEnemy(float dt)
 		{
 			if (act == idle)
 			{
-				if (img[0]->animation)	img[0]->paint(dt, drawGolemPos, reverseE);
-				else	img[1]->paint(dt, drawGolemPos, reverseE);
+				if (img[0]->animation)	img[0]->paint(dt, drawGolemPos, reverse);
+				else	img[1]->paint(dt, drawGolemPos, reverse);
 			}
 			else //if (act == walking)
-				img[2]->paint(dt, drawGolemPos, reverseE);
+				img[2]->paint(dt, drawGolemPos, reverse);
 		}
 		touchGolem = rt;
 
@@ -502,7 +576,7 @@ void EnemyEleteGolem::drawEnemy(float dt)
 			img[4]->startAnimation();
 		}
 
-		img[4]->paint(dt, drawGolemPos, reverseE);
+		img[4]->paint(dt, drawGolemPos, reverse);
 
 		if (img[4]->animation == false)
 		{
@@ -518,14 +592,12 @@ bool EnemyEleteGolem::enemysAttack(float dt)
 	iPoint et = iPointMake(img[0]->tex->width * texRatio / 2.0f,
 		img[0]->tex->height * texRatio / 2.0f);
 
-	iPoint v = pc->playerPosition + HALF_OF_TEX_POINT
-		- golemPos - et;
+	iPoint v = (pc->playerPosition + HALF_OF_TEX_POINT)
+		- (golemPos + et);
 
 	if (iPointLength(v) > reach&& giveDmg == false && act != attacking)
 		return false;
 
-	static iPoint ATV = v;
-	static int reverse = REVERSE_NONE;
 	if (giveDmg == false)
 	{
 		img[3]->startAnimation();

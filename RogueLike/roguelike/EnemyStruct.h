@@ -44,11 +44,17 @@ struct EnemyNomalGolem {
 	void init(int stage);
 	void drawEnemy(float dt);
 	bool enemysAttack(float dt);
+	bool attackPattern1(float dt, iPoint v, iPoint texHalf, uint8& reverse);
+	bool attackPattern2(float dt, iPoint v, iPoint texHalf, uint8& reverse);
+
 	void moveEnemyType1(float dt);
 
 	void drawShowHp(float dt);
 	void takeDmgEnemy(float dt, float dmg);
 	void takeDmgEffect(float dt);
+
+	int reverse = REVERSE_NONE;
+	iPoint ATV = iPointZero;
 };
 extern EnemyNomalGolem** golems;
 
@@ -88,5 +94,12 @@ struct EnemyEleteGolem {
 	void drawShowHp(float dt);
 	void takeDmgEnemy(float dt, float dmg);
 	void takeDmgEffect(float dt);
+
+	int reverse = REVERSE_NONE;
+	iPoint ATV = iPointZero;
 };
 extern EnemyEleteGolem** golemEletes;
+
+
+
+

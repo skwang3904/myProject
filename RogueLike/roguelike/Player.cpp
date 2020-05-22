@@ -49,7 +49,8 @@ void Player::instance()
 void Player::initPlayerStat()
 {
 	hp =
-	_hp = 100.0f;
+	_hp = 
+	prevHP = 100.0f;
 
 	attackDmg =
 	_attackDmg = 10.0f;
@@ -57,7 +58,7 @@ void Player::initPlayerStat()
 	attackSpeed =
 	_attackSpeed = 0.5f;
 
-	moveSpeed = 500.0f;
+	moveSpeed = 800.0f;
 
 	act = idle;
 	tileNumber = -1;
@@ -68,6 +69,11 @@ void Player::initPlayerStat()
 
 
 	viewVector = iPointMake(0, 1);
+	bodyV = iPointMake(0, 1);
+	headNum = 7;
+	evasV = iPointZero;
+	combatV = iPointMake(0, 1);
+	combatAngleV = 270.0f;
 
 	touchPlayer = iRectZero;
 
@@ -174,7 +180,7 @@ void Player::createPlayerImage()
 	imgFall->selectedScale = 0.5f;
 
 
-	imgEvasion->_aniDt = 0.1f;
+	imgEvasion->_aniDt = EVASION_DURATION / 4.0f;
 	imgEvasion->_repeatNum = 1;
 	imgEvasion->_selectedDt = imgEvasion->_aniDt * 4.0f;
 	imgEvasion->angle = 720.0f;
@@ -335,43 +341,41 @@ void Player::setPlayerTile()
 
 void Player::movePlayer(float dt)
 {
-	static iPoint vvv = iPointMake(0,1);
 	iPoint v = iPointZero;
-	static int ch= 7;
 
 	if (act == idle)
 	{
 		if (getKeyStat(keyboard_left)) //이동방향, 머리방향
 		{
 			v.x = -1;
-			ch = 4;
+			headNum = 4;
 
-			vvv.x = -1;
-			vvv.y = 0;
+			bodyV.x = -1;
+			bodyV.y = 0;
 		}
 		else if (getKeyStat(keyboard_right))
 		{
 			v.x = 1;
-			ch = 5;
+			headNum = 5;
 
-			vvv.x = 1;
-			vvv.y = 0;
+			bodyV.x = 1;
+			bodyV.y = 0;
 		}
 		if (getKeyStat(keyboard_up))
 		{
 			v.y = -1;
-			ch = 6;
+			headNum = 6;
 
-			vvv.x = 0;
-			vvv.y = -1;
+			bodyV.x = 0;
+			bodyV.y = -1;
 		}
 		else if (getKeyStat(keyboard_down))
 		{
 			v.y = 1;
-			ch = 7;
+			headNum = 7;
 
-			vvv.x = 0;
-			vvv.y = 1;
+			bodyV.x = 0;
+			bodyV.y = 1;
 		}
 		viewVector = v;
 	}
@@ -403,18 +407,18 @@ void Player::movePlayer(float dt)
 
 	wallCheck(false, tile, pc->playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
 
-	img[ch]->setTexAtIndex(pc->act == attacking ? true : false);
+	img[headNum]->setTexAtIndex(pc->act == attacking ? true : false);
 	drawPos = playerPosition + camPosition + setPos;
 
-	if (vvv.x)
-		img[2 * ani + 0]->paint(dt, drawPos, vvv.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);
-	else if (vvv.y)
+	if (bodyV.x)
+		img[2 * ani + 0]->paint(dt, drawPos, bodyV.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);
+	else if (bodyV.y)
 		img[2 * ani + 1]->paint(dt, drawPos , REVERSE_NONE);
 
-	drawImage(img[ch]->tex, drawPos.x + HALF_OF_TEX_WIDTH, drawPos.y,
-		0, 0, img[ch]->tex->width, img[ch]->tex->height,
+	drawImage(img[headNum]->tex, drawPos.x + HALF_OF_TEX_WIDTH, drawPos.y,
+		0, 0, img[headNum]->tex->width, img[headNum]->tex->height,
 		VCENTER | HCENTER, 1.0f, 1.0f,
-		img[ch]->location, img[ch]->angle, REVERSE_NONE);
+		img[headNum]->location, img[headNum]->angle, REVERSE_NONE);
 
 	iRect rt = iRectMake(drawPos.x, drawPos.y,
 		HALF_OF_TEX_WIDTH * 2.0f, HALF_OF_TEX_HEIGHT * 2.0f);
@@ -440,41 +444,40 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 			act = evasion;
 
 			audioPlay(SND_JUMP);
+			
+			evasV = viewVector / iPointLength(viewVector);
 		}
 	}
 
 	if (act != evasion)
 		return false;
 
-	static iPoint v = iPointZero;
+
 	if (img[9]->animation == true)
 	{	
-		if (viewVector != iPointZero && v == iPointZero)
-			v = viewVector / iPointLength(viewVector);
-
-		iPoint mp = v * (moveSpeed / 2.0f * dt);
+		iPoint mp = evasV * (EVASION_DISTANCE * dt);
 		wallCheck(false, tile, playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
 
 		drawPos = playerPosition + camPosition + setPos;
 		iPoint p = iPointMake(drawPos.x - HALF_OF_TEX_WIDTH/2,
 			drawPos.y - HALF_OF_TEX_HEIGHT);
 		
-		if (v.x < 0)
+		if (evasV.x < 0)
 		{
 			img[9]->reverseRotate = false;
 			img[9]->location = 2;
 		}
-		else if (v.x > 0)
+		else if (evasV.x > 0)
 		{
 			img[9]->reverseRotate = true;
 			img[9]->location = 2;
 		}
-		if (v.y < 0)
+		if (evasV.y < 0)
 		{
 			img[9]->reverseRotate = false;
 			img[9]->location = 1;
 		}
-		else if (v.y > 0)
+		else if (evasV.y > 0)
 		{
 			img[9]->reverseRotate = true;
 			img[9]->location = 1;
@@ -489,7 +492,7 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 	else if (img[9]->animation == false)
 	{
 		act = idle;
-		v = iPointZero;
+		evasV = iPointZero;
 
 		return false;
 	}

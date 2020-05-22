@@ -95,8 +95,6 @@ void freeMeleeWeapon(PlayerMW* pmw)
 	free(pmw->mw);
 }
 
-static iPoint mv = iPointZero;
-static float angle = 0.0f;
 void draw(meleeWeapon* mw, float dt, iPoint dropP)
 {
 	Texture* tex = mw->img->tex;
@@ -111,7 +109,7 @@ void draw(meleeWeapon* mw, float dt, iPoint dropP)
 			pc->camPosition.x + setPos.x + p.x ,
 			pc->camPosition.y + setPos.y + p.y ,
 			0, 0,	tex->width, tex->height,
-			VCENTER | HCENTER, 1.0f, 1.0f, 2, angle + mw->holdAngle, REVERSE_NONE);
+			VCENTER | HCENTER, 1.0f, 1.0f, 2, pc->combatAngleV + mw->holdAngle, REVERSE_NONE);
 	}
 	else
 	{
@@ -139,33 +137,35 @@ void weaponPosition(meleeWeapon* mw, float dt, iPoint& wp)
 	static iPoint p = iPointMake(pc->playerPosition.x + HALF_OF_TEX_WIDTH * 2.0f,
 		pc->playerPosition.y + HALF_OF_TEX_HEIGHT);
 	Texture* tex = mw->img->tex;
-
+	iPoint mv = pc->combatV;
+	//float angle = 0.0f;
 	if (mv.x < 0)
 	{
 		p.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH;
 		p.y = pc->playerPosition.y;
-		angle = 90.0f;
+		//angle = 90.0f;
 	}
 	else if (mv.x > 0)
 	{
 		p.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH;
 		p.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT * 2.0f;
-		angle = 270.0f;
+		//angle = 270.0f;
 	}
 
 	if (mv.y < 0)
 	{
 		p.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH * 2.0f;
 		p.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT;
-		angle = 0.0f;
+		//angle = 0.0f;
 	}
 	else if (mv.y > 0)
 	{
 		p.x = pc->playerPosition.x;
 		p.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT;
-		angle = 180.0f;
+		//angle = 180.0f;
 	}
 
+	//mw->angleV = angle;
 	wp = p;
 }
 
@@ -173,6 +173,8 @@ void weaponVector(meleeWeapon* mw, float dt)
 {
 	if (pc->act != idle)
 		return;
+	
+	iPoint mv = pc->combatV;
 	if (getKeyStat(keyboard_left)) // 무기방향
 	{
 		mv.x = -1;
@@ -196,6 +198,7 @@ void weaponVector(meleeWeapon* mw, float dt)
 		mv.x = 0;
 		mv.y = 1;
 	}
+	pc->combatV = mv;
 }
 
 void weaponPosAndRt(meleeWeapon* mw, iPoint& wcp, iPoint& centerP, iRect& rt)
@@ -203,6 +206,8 @@ void weaponPosAndRt(meleeWeapon* mw, iPoint& wcp, iPoint& centerP, iRect& rt)
 	Texture* tex = mw->img->tex;
 	iSize size = iSizeMake(mw->widthReach, mw->heightReach);
 
+	iPoint mv = pc->combatV;
+	float angle = pc->combatAngleV;
 	if (mv.x < 0)
 	{
 		wcp.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH + tex->height / 10.0f;
@@ -248,6 +253,7 @@ void weaponPosAndRt(meleeWeapon* mw, iPoint& wcp, iPoint& centerP, iRect& rt)
 		rt.size.height = size.height;
 		angle = 180.0f;
 	}
+	pc->combatAngleV = angle;
 }
 
 //------------------------------------------------------------------------------------
@@ -306,7 +312,7 @@ bool nomalSworadAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	weaponPosAndRt(mw, wcp,centerP, rt);
 
 	wcp = iPointRotate(centerP, wcp, attAngleRate - attAngle);
-	wcp += mv * rangeRate;
+	wcp += pc->combatAngleV * rangeRate;
 	wcp += pc->camPosition + setPos;
 
 	rt.origin = wcp - iPointMake(rt.size.width/2.0f, rt.size.height/2.0f);
@@ -321,7 +327,7 @@ bool nomalSworadAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 		wcp.y,
 		0, 0, tex->width, tex->height,
 		VCENTER | HCENTER, ratioRate, ratioRate,
-		2, attAngleRate - attAngle + angle + mw->holdAngle, REVERSE_NONE);
+		2, attAngleRate - attAngle + pc->combatAngleV + mw->holdAngle, REVERSE_NONE);
 
 	if (d > 0.5f)
 	{
@@ -406,7 +412,7 @@ bool nomalSpearAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	weaponPosAndRt(mw, mw->combatPosition, centerP, rt);
 
 	iPoint wcp = iPointRotate(centerP, mw->combatPosition, attAngleRate - attAngle / 2);
-	wcp += mv * rangeRate;
+	wcp += pc->combatAngleV * rangeRate;
 	wcp += pc->camPosition + setPos;
 
 	rt.origin = wcp - iPointMake(rt.size.width / 2.0f, rt.size.height / 2.0f);
@@ -421,7 +427,7 @@ bool nomalSpearAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 		wcp.y,
 		0, 0, tex->width, tex->height,
 		VCENTER | HCENTER, ratioRate, ratioRate,
-		2, attAngleRate - attAngle / 2 + angle + mw->holdAngle, REVERSE_NONE);
+		2, attAngleRate - attAngle / 2 + pc->combatAngleV + mw->holdAngle, REVERSE_NONE);
 
 	if (d > 0.5f)
 	{
@@ -507,13 +513,13 @@ bool nomalCycloneAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	if (cycle == false)
 	{
 		cycle = true;
-		cycAngle = angle;
+		cycAngle = pc->combatAngleV;
 		cycCp = wcp;
 		cycCenter = centerP;
 	}
 
 	wcp = iPointRotate(cycCenter, cycCp, attAngleRate);
-	wcp += mv * rangeRate;
+	wcp += pc->combatAngleV * rangeRate;
 	wcp += pc->camPosition + setPos;
 
 	rt.origin = wcp - iPointMake(rt.size.width / 2.0f, rt.size.height / 2.0f);

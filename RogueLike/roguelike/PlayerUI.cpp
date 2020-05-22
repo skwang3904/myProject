@@ -114,20 +114,19 @@ void showPopHP(bool show)
 void drawPopHP(float dt)
 {
 	static float prevHP = pc->_hp;
-	static float currentHP = pc->_hp;
 	static float delta = 0.0f;
 	if (pc->hp < 0.0f)
 		pc->hp = 0.0f;
-	currentHP = pc->hp;
-	if (prevHP != currentHP)
+
+	if (prevHP != pc->hp)
 	{
 		delta += dt;
-		imgHPgageGreen->imgRatioX = linear(delta / 2.0f, prevHP, currentHP) / pc->_hp;
+		imgHPgageGreen->imgRatioX = linear(delta / 2.0f, prevHP, pc->hp) / pc->_hp;
 		
 		if (delta > 2.0f)
 		{
 			delta = 0.0f;
-			prevHP = currentHP;
+			prevHP = pc->hp;
 		}
 	}
 		

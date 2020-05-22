@@ -18,8 +18,8 @@ struct meleeWeapon {
 	float heightReach;
 
 	float holdAngle;
-
 	iPoint combatPosition;
+
 	iRect hitBox;
 	bool attackEnemy;
 

@@ -754,29 +754,12 @@ bool commonAttack(EnemyGolem* enm, float dt);
 
 void EnemyGolem::createEnemyImg()
 {
-	golems = (EnemyGolem**)malloc(sizeof(EnemyGolem*) * GOLEM_NUM);
-	golems[0]->img = golemImg();
-	golems[0]->enmtype = golemNomal;
-	for (int i = 1; i < GOLEM_NUM; i++)
-	{
-		golems[i]->enmtype = golemNomal;
-		for (int j = 0; j < 5; j++)
-		{
-			golems[i]->img[j] = golems[0]->img[j]->copy();
-		}
-	}
+	img = golemImg();
+	enmtype = golemNomal;
 
-	golemEletes = (EnemyGolem**)malloc(sizeof(EnemyGolem*) * GOLEM_ELETE_NUM);
-	golemEletes[0]->img = (iImage**)malloc(sizeof(iImage*) * 5);
 	golemEletes[0]->img = golemEleteImg();
 	golemEletes[0]->enmtype = golemElete;
-	//for (int i = 1; i < GOLEM_ELETE_NUM; i++)
-	//{
-	//	for (int j = 0; j < 5; j++)
-	//	{
-	//		golemEletes[i]->img[j] = golemEletes[0]->img[j]->copy();
-	//	}
-	//}
+
 
 }
 

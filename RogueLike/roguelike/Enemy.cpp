@@ -6,12 +6,20 @@
 
 void createEnemy()
 {
+	golems = (EnemyGolem**)malloc(sizeof(EnemyGolem*) * GOLEM_NUM);
+	golemEletes = (EnemyGolem**)malloc(sizeof(EnemyGolem*) * GOLEM_ELETE_NUM);
+	int i;
+	for (i = 0; i < GOLEM_NUM; i++)
+		golems[i] = (EnemyGolem*)malloc(sizeof(EnemyGolem) * 1);
+	for (i = 0; i < GOLEM_ELETE_NUM; i++)
+		golemEletes[i] = (EnemyGolem*)malloc(sizeof(EnemyGolem) * 1);
+
 	createEnemyImg();
 
-	for (int i = 0; i < GOLEM_NUM; i++)
+	for ( i = 0; i < GOLEM_NUM; i++)
 		golems[i]->init(stage);
 
-	for (int i = 0; i < GOLEM_ELETE_NUM; i++)
+	for ( i = 0; i < GOLEM_ELETE_NUM; i++)
 		golemEletes[i]->init(stage);
 }
 

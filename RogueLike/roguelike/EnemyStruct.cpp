@@ -752,14 +752,26 @@ void IdleEyeBlink(EnemyGolem* enm, float dt);
 void WalkToPlayer(EnemyGolem* enm, float dt);
 bool commonAttack(EnemyGolem* enm, float dt);
 
-void EnemyGolem::createEnemyImg()
+void createEnemyImg()
 {
-	img = golemImg();
-	enmtype = golemNomal;
+	int i, j;
+	golems[0]->img = golemImg();
+	golems[0]->enmtype = golemNomal;
+	for (i = 1; i < GOLEM_NUM; i++)
+	{
+		golems[i]->enmtype;
+		for (j = 0; j < 5; j++)
+			golems[i]->img[j] = golems[0]->img[j]->copy();
+	}
 
 	golemEletes[0]->img = golemEleteImg();
 	golemEletes[0]->enmtype = golemElete;
-
+	for (i = 1; i < GOLEM_NUM; i++)
+	{
+		golemEletes[i]->enmtype;
+		for (j = 0; j < 5; j++)
+			golemEletes[i]->img[j] = golemEletes[0]->img[j]->copy();
+	}
 
 }
 

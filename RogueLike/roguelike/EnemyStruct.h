@@ -140,7 +140,6 @@ struct EnemyGolem {
 	float giveDmgTime = 0.0f;
 	bool hit = false;
 
-	void createEnemyImg();
 	void init(int stage);
 	void paint(float dt);
 

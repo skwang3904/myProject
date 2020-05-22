@@ -6,8 +6,6 @@
 #include "Weapon.h"
 #include "WMelee.h"
 
-#include "RgProc.h"
-
 
 Player* pc;
 iSort* sort;
@@ -66,7 +64,6 @@ void Player::initPlayerStat()
 	playerPosition = iPointZero;
 	camPosition = iPointZero;
 	drawPos = setPos;
-
 
 	viewVector = iPointMake(0, 1);
 	headNum = 7;

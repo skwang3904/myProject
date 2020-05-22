@@ -2,8 +2,6 @@
 
 #include "Stage.h"
 
-#include "RgProc.h"
-
 ConnectTile ct[TILEOFF_NUM];
 
 void connectCheck(ConnectTile* c);

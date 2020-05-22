@@ -2,7 +2,6 @@
 
 #include "RgIntro.h"
 #include "RgMenu.h"
-#include "RgProc.h"
 
 int gamestat;
 

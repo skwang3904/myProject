@@ -183,7 +183,7 @@ Texture* refreshMiniMap()
 
 			for (int j = 0; j < GOLEM_NUM; j++) // 몬스터표시
 			{
-				EnemyNomalGolem* enm = golems[j];
+				EnemyGolem* enm = golems[j];
 				if (enm->tileNumber == i)
 				{				
 					iPoint p = iPointMake((fabsf(enm->golemPos.x - tileOffSet[i].x) / (RGTILE_X * RGTILE_Width)),

@@ -13,101 +13,100 @@
 #define GOLEM_ELETE_ATTACK_TIME 0.5f
 
 
-
-enum CharAction;
-struct EnemyNomalGolem {
-	iImage** img;
-
-	float hp, _hp;
-	float attackDmg;
-	float _attackDmg;
-	float attackSpeed;
-	float _attackSpeed;
-	float moveSpeed;
-	float reach;
-
-	CharAction act;
-
-	uint8 tileNumber;
-	iPoint golemPos;
-	iPoint drawGolemPos;
-	iRect touchGolem;
-	float texRatio;
-
-	bool showHp;
-	float showHpTime;
-	bool takeDmg;
-	float takeDmgTime;
-	bool giveDmg;
-	float giveDmgTime;
-	bool hit;
-
-	void createEnemyImg();
-	void init(int stage);
-	void paint(float dt);
-	bool enemysAttack(float dt);
-	bool attackPattern1(float dt, iPoint v, iPoint texHalf, uint8& reverse);
-	bool attackPattern2(float dt, iPoint v, iPoint texHalf, uint8& reverse);
-
-	void moveEnemyType1(float dt);
-
-	void drawShowHp(float dt);
-	void takeDmgEnemy(float dt, float dmg);
-	void takeDmgEffect(float dt);
-
-	int reverse = REVERSE_NONE;
-	iPoint ATV = iPointZero;
-};
-//extern EnemyNomalGolem** golems;
-
-struct EnemyEleteGolem {
-	iImage** img;
-
-	float hp, _hp;
-	float attackDmg;
-	float _attackDmg;
-	float attackSpeed;
-	float _attackSpeed;
-	float moveSpeed;
-	float reach;
-
-	CharAction act;
-
-	uint8 tileNumber;
-	iPoint golemPos;
-	iPoint drawGolemPos;
-	iRect touchGolem;
-	float texRatio;
-
-	bool showHp;
-	float showHpTime;
-	bool takeDmg;
-	float takeDmgTime;
-	bool giveDmg;
-	float giveDmgTime;
-	bool hit;
-
-	void createEnemyImg();
-	void init(int stage);
-	void paint(float dt);
-	bool enemysAttack(float dt);
-	void moveEnemyType1(float dt);
-
-	void drawShowHp(float dt);
-	void takeDmgEnemy(float dt, float dmg);
-	void takeDmgEffect(float dt);
-
-	int reverse = REVERSE_NONE;
-	iPoint ATV = iPointZero;
-};
-//extern EnemyEleteGolem** golemEletes;
+//struct EnemyNomalGolem {
+//	iImage** img;
+//
+//	float hp, _hp;
+//	float attackDmg;
+//	float _attackDmg;
+//	float attackSpeed;
+//	float _attackSpeed;
+//	float moveSpeed;
+//	float reach;
+//
+//	CharAction act;
+//
+//	uint8 tileNumber;
+//	iPoint golemPos;
+//	iPoint drawGolemPos;
+//	iRect touchGolem;
+//	float texRatio;
+//
+//	bool showHp;
+//	float showHpTime;
+//	bool takeDmg;
+//	float takeDmgTime;
+//	bool giveDmg;
+//	float giveDmgTime;
+//	bool hit;
+//
+//	void createEnemyImg();
+//	void init(int stage);
+//	void paint(float dt);
+//	bool enemysAttack(float dt);
+//	bool attackPattern1(float dt, iPoint v, iPoint texHalf, uint8& reverse);
+//	bool attackPattern2(float dt, iPoint v, iPoint texHalf, uint8& reverse);
+//
+//	void moveEnemyType1(float dt);
+//
+//	void drawShowHp(float dt);
+//	void takeDmgEnemy(float dt, float dmg);
+//	void takeDmgEffect(float dt);
+//
+//	int reverse = REVERSE_NONE;
+//	iPoint ATV = iPointZero;
+//};
+////extern EnemyNomalGolem** golems;
+//
+//struct EnemyEleteGolem {
+//	iImage** img;
+//
+//	float hp, _hp;
+//	float attackDmg;
+//	float _attackDmg;
+//	float attackSpeed;
+//	float _attackSpeed;
+//	float moveSpeed;
+//	float reach;
+//
+//	CharAction act;
+//
+//	uint8 tileNumber;
+//	iPoint golemPos;
+//	iPoint drawGolemPos;
+//	iRect touchGolem;
+//	float texRatio;
+//
+//	bool showHp;
+//	float showHpTime;
+//	bool takeDmg;
+//	float takeDmgTime;
+//	bool giveDmg;
+//	float giveDmgTime;
+//	bool hit;
+//
+//	void createEnemyImg();
+//	void init(int stage);
+//	void paint(float dt);
+//	bool enemysAttack(float dt);
+//	void moveEnemyType1(float dt);
+//
+//	void drawShowHp(float dt);
+//	void takeDmgEnemy(float dt, float dmg);
+//	void takeDmgEffect(float dt);
+//
+//	int reverse = REVERSE_NONE;
+//	iPoint ATV = iPointZero;
+//};
+////extern EnemyEleteGolem** golemEletes;
 
 
 //----------------------------------------------------------------------------------------
 
+struct EnemyGolem;
 typedef void (*Method_Idle_Pattern)(EnemyGolem* enm, float dt);
 typedef void (*Method_Walk_Pattern)(EnemyGolem* enm, float dt);
-typedef bool (*Method_Attack_Pattern)(EnemyGolem* enm, float dt, iPoint v, uint8& reverse);
+typedef bool (*Method_Attack_Pattern)(EnemyGolem* enm, float dt);
 
 enum EnemyType {
 	golemNomal = 0,
@@ -123,7 +122,6 @@ struct EnemyGolem {
 	float moveSpeed;
 	float reach;
 	float ratio;
-
 
 	uint8 tileNumber;
 	iPoint golemPos;
@@ -142,10 +140,9 @@ struct EnemyGolem {
 	float giveDmgTime = 0.0f;
 	bool hit = false;
 
+	void createEnemyImg();
 	void init(int stage);
 	void paint(float dt);
-	bool enemysAttack(float dt);
-	void moveEnemy(float dt);
 
 	void drawShowHp(float dt);
 	void takeDmgEnemy(float dt, float dmg);

@@ -9,8 +9,6 @@
 #include "PlayerUI.h"
 #include "RgLoading.h"
 
-#include "RgProc.h"
-
 uint8 stage = 0;
 uint8 nextDoor = -1;
 bool nextStage = false;

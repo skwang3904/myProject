@@ -7,8 +7,6 @@
 
 #include "Weapon.h"
 
-#include "RgProc.h"
-
 meleeWeapon* nomalSword;
 meleeWeapon* nomalSpear;
 meleeWeapon* nomalCyclone;

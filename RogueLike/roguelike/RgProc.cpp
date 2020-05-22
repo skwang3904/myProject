@@ -18,16 +18,15 @@ void loadRgProc()
 	loadRoomTile();
 	newRoomTile();
 
-	createEnemy();
-
 	weapon = new Weapon();
 	pc->instance();
-	pc->instance();
-	pc->instance();
+
+	createEnemy();
 
 	int pcTile = pc->initPlayerPosition();
 	setNextDoor(pcTile);
 	setEnemyPosition(pcTile);
+
 
 	//--------------------------------------------------------
 	// pop

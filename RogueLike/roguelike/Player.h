@@ -48,7 +48,7 @@ public:
 	void dropCombat(float dt, bool key);
 	void choseWeapon();
 
-	void movePlayer(float dt);
+	void paint(float dt);
 	bool evasionPlayer(MapTile* tile, float dt);
 
 	void setPlayerTile();
@@ -72,7 +72,6 @@ public:
 	iPoint drawPos;
 	iPoint viewVector;
 	int headNum;
-	iPoint bodyV;
 	iPoint evasV;
 	iPoint combatV;
 	float combatAngleV;

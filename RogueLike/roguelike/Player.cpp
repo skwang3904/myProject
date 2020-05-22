@@ -56,7 +56,7 @@ void Player::initPlayerStat()
 	_attackDmg = 10.0f;
 
 	attackSpeed =
-	_attackSpeed = 0.5f;
+	_attackSpeed = 1.0f;
 
 	moveSpeed = 800.0f;
 
@@ -69,7 +69,6 @@ void Player::initPlayerStat()
 
 
 	viewVector = iPointMake(0, 1);
-	bodyV = iPointMake(0, 1);
 	headNum = 7;
 	evasV = iPointZero;
 	combatV = iPointMake(0, 1);
@@ -77,9 +76,9 @@ void Player::initPlayerStat()
 
 	touchPlayer = iRectZero;
 
-	weaponArray->addObject(&PMW[0]);
-	pmw = &PMW[0];
-	PMW[0].drop = false;
+	weaponArray->addObject(&PMW[1]);
+	pmw = &PMW[1];
+	PMW[1].drop = false;
 	pmwCount = 1;
 }
 
@@ -226,7 +225,7 @@ void Player::drawPlayer(float dt)
 	for (int i = 0; i < sort->sdNum; i++)
 	{
 		if (sort->get(i) == 0)
-			movePlayer(dt);
+			paint(dt);
 		else
 			combatDraw(dt);
 	}
@@ -339,9 +338,10 @@ void Player::setPlayerTile()
 	camPosition = iPointZero - maps[tileNumber]->tileOff;
 }
 
-void Player::movePlayer(float dt)
+void Player::paint(float dt)
 {
 	iPoint v = iPointZero;
+	iPoint mv = pc->combatV;
 
 	if (act == idle)
 	{
@@ -350,34 +350,37 @@ void Player::movePlayer(float dt)
 			v.x = -1;
 			headNum = 4;
 
-			bodyV.x = -1;
-			bodyV.y = 0;
+			mv.x = -1;
+			mv.y = 0;
 		}
 		else if (getKeyStat(keyboard_right))
 		{
 			v.x = 1;
 			headNum = 5;
 
-			bodyV.x = 1;
-			bodyV.y = 0;
+			mv.x = 1;
+			mv.y = 0;
 		}
 		if (getKeyStat(keyboard_up))
 		{
 			v.y = -1;
 			headNum = 6;
 
-			bodyV.x = 0;
-			bodyV.y = -1;
+			mv.x = 0;
+			mv.y = -1;
 		}
 		else if (getKeyStat(keyboard_down))
 		{
 			v.y = 1;
 			headNum = 7;
 
-			bodyV.x = 0;
-			bodyV.y = 1;
+			mv.x = 0;
+			mv.y = 1;
 		}
 		viewVector = v;
+
+		if (mv != iPointZero);
+		pc->combatV = mv;
 	}
 
 	bool ani = (v != iPointZero);
@@ -410,9 +413,9 @@ void Player::movePlayer(float dt)
 	img[headNum]->setTexAtIndex(pc->act == attacking ? true : false);
 	drawPos = playerPosition + camPosition + setPos;
 
-	if (bodyV.x)
-		img[2 * ani + 0]->paint(dt, drawPos, bodyV.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);
-	else if (bodyV.y)
+	if (mv.x)
+		img[2 * ani + 0]->paint(dt, drawPos, mv.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);
+	else if (mv.y)
 		img[2 * ani + 1]->paint(dt, drawPos , REVERSE_NONE);
 
 	drawImage(img[headNum]->tex, drawPos.x + HALF_OF_TEX_WIDTH, drawPos.y,

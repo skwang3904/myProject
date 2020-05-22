@@ -260,12 +260,13 @@ C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\EnemyStruct.cpp(729
   Player.cpp
 C:\Users\user\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(16,17): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 C:\Users\user\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(18,25): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(283,12): warning C4101: 'k' :참조되지 않은 지역 변수입니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(283,9): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(419,52): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(419,26): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(418,69): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(418,41): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(282,12): warning C4101: 'k' :참조되지 않은 지역 변수입니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(282,9): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(422,52): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(422,26): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(421,69): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(421,41): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\Player.cpp(382,24): warning C4390: ';': 제어된 빈 문이 있습니다. 이 문이 필요합니까?
   PlayerUI.cpp
 C:\Users\user\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(16,17): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 C:\Users\user\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(18,25): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
@@ -377,18 +378,18 @@ C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(126,25):
 C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(126,13): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(125,33): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(124,33): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(328,24): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(328,12): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(327,6): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(326,6): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(428,24): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(428,12): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(427,6): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(426,6): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(535,24): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(535,12): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(534,6): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(533,6): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(258,24): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(258,12): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(257,6): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(256,6): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(357,24): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(357,12): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(356,6): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(355,6): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(463,24): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(463,12): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(462,6): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\WMelee.cpp(461,6): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   Weapon.cpp
 C:\Users\user\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(16,17): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 C:\Users\user\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(18,25): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.

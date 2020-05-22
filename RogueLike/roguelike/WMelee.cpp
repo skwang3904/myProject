@@ -74,7 +74,7 @@ void createMeleeWeapon()
 
 	// img, ismelee, attackDmg, attackSpeed, widthReach, heightReach, holeAngle
 	nomalSword->init(imgSword, true, 30, 0.3f, 30.0f, 60.0f, -30.0f);
-	nomalSpear->init(imgSpear, true, 20, 0.2f, 10.0f, 70.0f, -45.0f);
+	nomalSpear->init(imgSpear, true, 20, 1.0f, 10.0f, 70.0f, -45.0f);
 	nomalCyclone->init(imgCyclon, true, 30, 0.5f, 30.0f, 50.0f, -70.0f);
 
 	PMW[0] = { nomalSword,nomalSwordMethod };
@@ -100,14 +100,14 @@ void draw(meleeWeapon* mw, float dt, iPoint dropP)
 	Texture* tex = mw->img->tex;
 	if (pc->pmw->mw == mw)
 	{
-		static iPoint p = mw->combatPosition;
+		iPoint centerP = mw->combatPosition;
 
 		iRect rt;
-		weaponPosAndRt(mw, mw->combatPosition, p, rt);
+		weaponPosAndRt(mw, mw->combatPosition, centerP, rt);
 
 		drawImage(tex, 
-			pc->camPosition.x + setPos.x + p.x ,
-			pc->camPosition.y + setPos.y + p.y ,
+			pc->camPosition.x + setPos.x + centerP.x ,
+			pc->camPosition.y + setPos.y + centerP.y ,
 			0, 0,	tex->width, tex->height,
 			VCENTER | HCENTER, 1.0f, 1.0f, 2, pc->combatAngleV + mw->holdAngle, REVERSE_NONE);
 	}
@@ -129,76 +129,6 @@ void draw(meleeWeapon* mw, float dt, iPoint dropP)
 		drawRect(mw->hitBox);
 		setRGBA(1, 1, 1, 1);
 	}
-}
-
-void weaponPosition(meleeWeapon* mw, float dt, iPoint& wp)
-{
-	//임시
-	static iPoint p = iPointMake(pc->playerPosition.x + HALF_OF_TEX_WIDTH * 2.0f,
-		pc->playerPosition.y + HALF_OF_TEX_HEIGHT);
-	Texture* tex = mw->img->tex;
-	iPoint mv = pc->combatV;
-	//float angle = 0.0f;
-	if (mv.x < 0)
-	{
-		p.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH;
-		p.y = pc->playerPosition.y;
-		//angle = 90.0f;
-	}
-	else if (mv.x > 0)
-	{
-		p.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH;
-		p.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT * 2.0f;
-		//angle = 270.0f;
-	}
-
-	if (mv.y < 0)
-	{
-		p.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH * 2.0f;
-		p.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT;
-		//angle = 0.0f;
-	}
-	else if (mv.y > 0)
-	{
-		p.x = pc->playerPosition.x;
-		p.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT;
-		//angle = 180.0f;
-	}
-
-	//mw->angleV = angle;
-	wp = p;
-}
-
-void weaponVector(meleeWeapon* mw, float dt)
-{
-	if (pc->act != idle)
-		return;
-	
-	iPoint mv = pc->combatV;
-	if (getKeyStat(keyboard_left)) // 무기방향
-	{
-		mv.x = -1;
-		mv.y = 0;
-
-	}
-	else if (getKeyStat(keyboard_right))
-	{
-		mv.x = 1;
-		mv.y = 0;
-
-	}
-	if (getKeyStat(keyboard_up))
-	{
-		mv.x = 0;
-		mv.y = -1;
-
-	}
-	else if (getKeyStat(keyboard_down))
-	{
-		mv.x = 0;
-		mv.y = 1;
-	}
-	pc->combatV = mv;
 }
 
 void weaponPosAndRt(meleeWeapon* mw, iPoint& wcp, iPoint& centerP, iRect& rt)
@@ -285,7 +215,7 @@ bool nomalSworadAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 
 	if (mw->attackEnemy == false && pc->act != attacking)
 		return false;
-	weaponPosition(mw, dt, mw->combatPosition);
+	//weaponPosition(mw, dt, mw->combatPosition);
 
 	static float delta = 0.0f;
 	float d = 0.0f;
@@ -312,7 +242,7 @@ bool nomalSworadAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	weaponPosAndRt(mw, wcp,centerP, rt);
 
 	wcp = iPointRotate(centerP, wcp, attAngleRate - attAngle);
-	wcp += pc->combatAngleV * rangeRate;
+	wcp += pc->combatV * rangeRate;
 	wcp += pc->camPosition + setPos;
 
 	rt.origin = wcp - iPointMake(rt.size.width/2.0f, rt.size.height/2.0f);
@@ -354,7 +284,6 @@ void nomalSwordMethod(float dt, iPoint dropP)
 		return;
 
 	meleeWeapon* mw = nomalSword;
-	weaponVector(mw, dt);
 
 	float ats = mw->_attackSpeed * pc->attackSpeed;
 	if (getKeyDown(keyboard_j) && pc->pmw->mw == mw && mw->attackSpeed == 0 && pc->act == idle)
@@ -386,7 +315,7 @@ bool nomalSpearAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	if (mw->attackEnemy == false && pc->act != attacking)
 		return false;
 
-	weaponPosition(mw, dt, mw->combatPosition);
+	//weaponPosition(mw, dt, mw->combatPosition);
 
 	static float delta = 0.0f;
 	float d = 0.0f;
@@ -412,7 +341,7 @@ bool nomalSpearAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	weaponPosAndRt(mw, mw->combatPosition, centerP, rt);
 
 	iPoint wcp = iPointRotate(centerP, mw->combatPosition, attAngleRate - attAngle / 2);
-	wcp += pc->combatAngleV * rangeRate;
+	wcp += pc->combatV * rangeRate;
 	wcp += pc->camPosition + setPos;
 
 	rt.origin = wcp - iPointMake(rt.size.width / 2.0f, rt.size.height / 2.0f);
@@ -454,7 +383,6 @@ void nomalSpearMethod(float dt, iPoint dropP)
 		return;
 
 	meleeWeapon* mw = nomalSpear;
-	weaponVector(mw, dt);
 
 	float ats = mw->_attackSpeed * pc->attackSpeed;
 	if (getKeyDown(keyboard_j) && pc->pmw->mw == mw && mw->attackSpeed == 0 && pc->act == idle)
@@ -519,7 +447,7 @@ bool nomalCycloneAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	}
 
 	wcp = iPointRotate(cycCenter, cycCp, attAngleRate);
-	wcp += pc->combatAngleV * rangeRate;
+	wcp += pc->combatV * rangeRate;
 	wcp += pc->camPosition + setPos;
 
 	rt.origin = wcp - iPointMake(rt.size.width / 2.0f, rt.size.height / 2.0f);
@@ -584,7 +512,6 @@ void nomalCycloneMethod(float dt, iPoint dropP)
 		return;
 
 	meleeWeapon* mw = nomalCyclone;
-	weaponVector(mw, dt);
 
 	float ats = mw->_attackSpeed * pc->attackSpeed;
 	if (getKeyStat(keyboard_j) && pc->pmw->mw == mw && mw->attackSpeed == 0 && pc->act == idle)

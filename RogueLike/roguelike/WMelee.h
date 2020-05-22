@@ -44,8 +44,7 @@ extern PlayerMW PMW[MELEE_NUM];
 
 void createMeleeWeapon();
 void freeMeleeWeapon(PlayerMW* pmw);
-void weaponPosition(meleeWeapon* mw, float dt, iPoint& wp);
-void weaponVector(meleeWeapon* mw, float dt);
+
 void weaponPosAndRt(meleeWeapon* mw, iPoint& wcp, iPoint& centerP, iRect& rt);
 
 void draw(meleeWeapon* mw, float dt, iPoint dropP);

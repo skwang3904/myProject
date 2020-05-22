@@ -71,8 +71,8 @@ void freeEnemy()
 void drawEnemy(float dt)
 {
 	for (int i = 0; i < GOLEM_NUM; i++)
-		golems[i]->drawEnemy(dt);
+		golems[i]->paint(dt);
 
 	for (int i = 0; i < GOLEM_ELETE_NUM; i++)
-		golemEletes[i]->drawEnemy(dt);
+		golemEletes[i]->paint(dt);
 }

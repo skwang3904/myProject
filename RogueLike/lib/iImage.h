@@ -40,6 +40,7 @@ public:
 	int location;
 	bool reverseRotate;
 	float angle;
+	bool lockAngle;
 
 	bool animation;
 	float aniDt, _aniDt;

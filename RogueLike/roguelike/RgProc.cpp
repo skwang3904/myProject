@@ -10,6 +10,8 @@
 
 #include "PlayerUI.h"
 
+#include "Effect.h"
+
 
 void loadRgProc()
 {
@@ -33,6 +35,9 @@ void loadRgProc()
 
 	loadRgLoading();
 	loadPlayerUI();
+
+	//createFireBallImg();
+	//testFireBall();
 }
 
 void freeRgProc()
@@ -49,8 +54,11 @@ void freeRgProc()
 
 	freeRgLoading();
 	freePlayerUI();
+
+	//freeFireBallImg();
 }
 
+int ballNum = 0;
 void drawRgProc(float dt)
 {
 	setRGBA(0, 0, 0, 1);
@@ -76,6 +84,22 @@ void drawRgProc(float dt)
 
 	weapon->drawWeapon(dt);
 	pc->drawPlayer(dt);
+
+	//for(int i=0; i<50;i++)
+	//ball[i]->paint(dt);
+	//if (getKeyDown(keyboard_j))
+	//{
+	//	ball[ballNum]->alive = true;
+	//	ball[ballNum]->sp = pc->drawPos;
+	//	ball[ballNum]->posFireBall = pc->drawPos;
+
+	//	ball[ballNum]->v =iPointMake(1,1);
+	//	ball[ballNum]->v = ball[ballNum]->v / iPointLength(ball[ballNum]->v);
+	//	ball[ballNum]->tileNumber = pc->tileNumber;
+
+	//	ballNum++;
+	//}
+
 }
 
 void keyRgProc(iKeyState stat, iPoint point)

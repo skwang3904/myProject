@@ -227,9 +227,9 @@ void Player::drawPlayer(float dt)
 			combatDraw(dt);
 	}
 
+	choseWeapon(getKeyDown(keyboard_tab));
 	rootCombat(getKeyDown(keyboard_i));
 	dropCombat(dt, getKeyDown(keyboard_o));
-	choseWeapon();
 }
 
 void Player::showHpBar(float dt) // 임시
@@ -294,16 +294,15 @@ void Player::dropCombat(float dt, bool key)
 	}
 }
 
-void Player::choseWeapon()
+void Player::choseWeapon(bool key)
 {
-	if (getKeyDown(keyboard_tab))
-	{
-		pmwCount--;
-		if (pmwCount < 0)
-			pmwCount = weaponArray->count - 1;
-		pmw = (PlayerMW*)weaponArray->objectAtIndex(pmwCount);
-		printf("pmwC %d\n", pmwCount);
-	}
+	if (actionCheck(key))
+		return;
+
+	pmwCount--;
+	if (pmwCount < 0)
+		pmwCount = weaponArray->count - 1;
+	pmw = (PlayerMW*)weaponArray->objectAtIndex(pmwCount);
 }
 
 void Player::setPlayerTile()

@@ -39,8 +39,8 @@ void createGolem()
 	for (int i = 1; i < GOLEM_NUM; i++)
 	{
 		golems[i]->enmtype = golemNomal;
-		golems[i]->img = (iImage**)malloc(sizeof(iImage*) * 5);
-		for (int j = 0; j < 5; j++)
+		golems[i]->img = (iImage**)malloc(sizeof(iImage*) * 6);
+		for (int j = 0; j < 6; j++)
 			golems[i]->img[j] = golems[0]->img[j]->copy();
 	}
 
@@ -73,7 +73,7 @@ void freeGolem()
 {
 	for (int i = 0; i < GOLEM_NUM; i++)
 	{
-		for (int j = 0; j < 5; j++)
+		for (int j = 0; j < 6; j++)
 		{
 			if (golems[i]->img[j])
 				delete golems[i]->img[j];

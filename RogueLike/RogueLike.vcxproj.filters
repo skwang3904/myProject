@@ -123,6 +123,12 @@
     <ClInclude Include="roguelike\EnemyStruct.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="roguelike\EnemyActionPattern.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="roguelike\Effect.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="roguelike\Enemy.cpp">
@@ -228,6 +234,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="roguelike\EnemyStruct.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="roguelike\EnemyActionPattern.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="roguelike\Effect.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

@@ -46,7 +46,7 @@ public:
 	void combatDraw(float dt);
 	void rootCombat(bool key);
 	void dropCombat(float dt, bool key);
-	void choseWeapon();
+	void choseWeapon(bool key);
 
 	void paint(float dt);
 	bool evasionPlayer(MapTile* tile, float dt);

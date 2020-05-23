@@ -172,7 +172,9 @@
     <ClInclude Include="lib\rgArray.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="roguelike\AppRogueLike.h" />
+    <ClInclude Include="roguelike\Effect.h" />
     <ClInclude Include="roguelike\Enemy.h" />
+    <ClInclude Include="roguelike\EnemyActionPattern.h" />
     <ClInclude Include="roguelike\EnemyComposition.h" />
     <ClInclude Include="roguelike\EnemyStruct.h" />
     <ClInclude Include="roguelike\Player.h" />
@@ -208,7 +210,9 @@
     <ClCompile Include="lib\iStrTex.cpp" />
     <ClCompile Include="lib\rgArray.cpp" />
     <ClCompile Include="roguelike\AppRogueLike.cpp" />
+    <ClCompile Include="roguelike\Effect.cpp" />
     <ClCompile Include="roguelike\Enemy.cpp" />
+    <ClCompile Include="roguelike\EnemyActionPattern.cpp" />
     <ClCompile Include="roguelike\EnemyComposition.cpp" />
     <ClCompile Include="roguelike\EnemyStruct.cpp" />
     <ClCompile Include="roguelike\glew.c" />

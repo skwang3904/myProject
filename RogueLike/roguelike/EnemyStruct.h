@@ -64,6 +64,10 @@ struct EnemyGolem {
 	Method_Idle_Pattern methodIdle;
 	Method_Walk_Pattern methodWalk;
 	Method_Attack_Pattern methodAttack;
+
+
+	float timer = 0.0f;
+	bool test = false;
 };
 
 iImage** golemImg();

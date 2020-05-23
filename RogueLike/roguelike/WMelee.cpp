@@ -72,7 +72,7 @@ void createMeleeWeapon()
 
 	// img, ismelee, attackDmg, attackSpeed, widthReach, heightReach, holeAngle
 	nomalSword->init(imgSword, true, 30, 0.3f, 30.0f, 60.0f, -30.0f);
-	nomalSpear->init(imgSpear, true, 20, 1.0f, 10.0f, 70.0f, -45.0f);
+	nomalSpear->init(imgSpear, true, 20, 0.2f, 10.0f, 70.0f, -45.0f);
 	nomalCyclone->init(imgCyclon, true, 30, 0.5f, 30.0f, 50.0f, -70.0f);
 
 	PMW[0] = { nomalSword,nomalSwordMethod };

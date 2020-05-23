@@ -19,6 +19,7 @@ iImage::iImage()
 	location = 2; // 0.x 1.y 2.z
 	reverseRotate = false;
 	angle = 0.0f;
+	lockAngle = false;
 	
 	animation = false;
 	aniDt = 0.0f;
@@ -143,11 +144,18 @@ void iImage::paint(float dt, iPoint off,int reverse)
 	{
 		drawImage(tex, p.x, p.y, VCENTER | HCENTER);
 	}
-	else
+	else if (lockAngle)
 	{
 		p.x += tex->width / 2 * ratio * imgRatioX;
 		p.y += tex->height / 2 * ratio * imgRatioY;
 		drawImage(tex, p.x , p.y, 0, 0, tex->width * imgRatioX, tex->height * imgRatioY,
+			VCENTER | HCENTER, s * ratio * imgRatioX, s * ratio * imgRatioY, location, angle, reverse);
+	}
+	else
+	{
+		p.x += tex->width / 2 * ratio * imgRatioX;
+		p.y += tex->height / 2 * ratio * imgRatioY;
+		drawImage(tex, p.x, p.y, 0, 0, tex->width * imgRatioX, tex->height * imgRatioY,
 			VCENTER | HCENTER, s * ratio * imgRatioX, s * ratio * imgRatioY, location, a, reverse);
 	}
 }

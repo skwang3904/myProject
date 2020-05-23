@@ -414,7 +414,7 @@ void Player::paint(float dt)
 	else if (mv.y)
 		img[2 * ani + 1]->paint(dt, drawPos , REVERSE_NONE);
 
-	drawImage(img[headNum]->tex, drawPos.x + HALF_OF_TEX_WIDTH, drawPos.y,
+	drawImage(img[headNum]->tex, drawPos.x + HALF_OF_TEX_WIDTH, drawPos.y + 3,
 		0, 0, img[headNum]->tex->width, img[headNum]->tex->height,
 		VCENTER | HCENTER, 1.0f, 1.0f,
 		img[headNum]->location, img[headNum]->angle, REVERSE_NONE);

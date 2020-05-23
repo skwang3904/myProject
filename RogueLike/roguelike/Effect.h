@@ -2,12 +2,9 @@
 
 #include "iStd.h"
 
-struct ChargeFire {
-	iImage* img;
+#define FIREBALL_NUM 30
 
-	float duration;
-	float ratio;
-};
+extern iImage* imgChargeFire;
 
 class FireBall
 {
@@ -15,10 +12,11 @@ public:
 	FireBall();
 	~FireBall();
 
+	void init(uint8 num, uint8 tileNum, iPoint& v, iPoint& pos);
 	void paint(float dt);
 
 	void setAngle();
-	
+	void setlimitRect(uint8 tileNum);
 public:
 	iImage* img;
 	
@@ -29,17 +27,16 @@ public:
 
 	uint8 tileNumber;
 
-	uint8 reverse;
-	float angle;
-	
 	iPoint v;
 	iPoint sp;
-	iPoint tp;
 	iPoint posFireBall;
+	iPoint drawFireBallPos;
 	iRect touchRect;
-	
+
+	iRect limitRect;
 };
 extern FireBall** ball;
+
 
 void createEffect();
 void freeEffect();

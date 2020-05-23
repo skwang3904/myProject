@@ -3,6 +3,7 @@
 #include "Room.h"
 
 iImage* imgFireBall;
+iImage* imgChargeFire;
 
 FireBall** ball;
 
@@ -11,23 +12,38 @@ FireBall::FireBall()
 	img = imgFireBall->copy();
 
 	alive = false;
-	dmg = 5.0f;
+	dmg = 0.0f;
 	speed = 300.0f;
 	duration = 0.0f;
 
-	reverse = REVERSE_NONE;
-	angle = 0.0f;
+	tileNumber = 0;
 
 	v = iPointZero;
 	sp = iPointZero;
-	tp = iPointZero;
 	posFireBall = iPointZero;
+	drawFireBallPos = iPointZero;
+
 	touchRect = iRectZero;
+	limitRect = iRectZero;
+
 }
 
 FireBall::~FireBall()
 {
 	delete img;
+}
+
+void FireBall::init(uint8 num, uint8 tileNum, iPoint& v, iPoint& pos)
+{
+	ball[num]->alive = true;
+	ball[num]->sp = pos;
+	ball[num]->posFireBall = pos;
+	ball[num]->v = v / iPointLength(v);
+	ball[num]->tileNumber = tileNum;
+	ball[num]->setlimitRect(tileNum);
+	//num++;
+	//if (num > FIREBALL_NUM - 1)
+	//	num = 0;
 }
 
 void FireBall::paint(float dt)
@@ -36,22 +52,20 @@ void FireBall::paint(float dt)
 		return;
 
 	duration += dt;
-	if (duration > 20.0f)
+	if (duration > 20.0f || containPoint(posFireBall, limitRect) == false)
 	{
 		alive = false;
 		duration = 0.0f;
-		touchRect = iRectZero;
 	}
 
-	iPoint p = iPointMake(img->tex->width / 2, img->tex->height / 2);
-
+	iPoint p = iPointMake(img->tex->width / 2.0f, img->tex->height / 2.0f);
 	iPoint mp = v * speed * dt;
 	projectileReflect(tileNumber, v, posFireBall, mp);
 	setAngle();
 	touchRect = iRectMake(posFireBall.x - p.x, posFireBall.y - p.y, p.x * 2.0f, p.y * 2.0f);
-	//setAngle();
-	iPoint texp = (posFireBall - p) + pc->camPosition + setPos;
-	img->paint(dt, texp, REVERSE_NONE);
+
+	drawFireBallPos = (posFireBall - p) + pc->camPosition + setPos;
+	img->paint(dt, drawFireBallPos, REVERSE_NONE);
 
 }
 
@@ -59,41 +73,61 @@ void FireBall::setAngle()
 {
 	iPoint v1 = iPointMake(1, 0);
 	iPoint v2 = iPointZero;
-	img->angle = iPointAngle(v1, v2, v) ;
-	printf("angle %.2f\n", img->angle);
-	printf("vx=  %.2f, vy = %.2f\n", v.x,v.y);
-	//reverse = (sp.x > tp.x ? REVERSE_WIDTH : REVERSE_NONE);
+	img->angle = iPointAngle(v1, v2, v);
+}
+
+void FireBall::setlimitRect(uint8 tileNum)
+{
+	iPoint p = maps[tileNum]->tileOff;
+
+	limitRect = iRectMake(p.x, p.y, RGTILE_X * RGTILE_Width, RGTILE_Y * RGTILE_Height);
 }
 
 void createEffect()
 {
-	iImage* img = new iImage();
-	Texture* tex;
+	iImage* imgFire = new iImage();
+	Texture* texFire;
 	for (int i = 0; i < 61; i++)
 	{
-		tex = createImage("assets/effect/fireball/1_%d.png", i);
-		img->addObject(tex);
-		freeImage(tex);
+		texFire = createImage("assets/effect/fireball/1_%d.png", i);
+		imgFire->addObject(texFire);
+		freeImage(texFire);
 	}
 
-	img->animation = true;
-	img->_repeatNum = 0;
-	img->lockAngle = true;
-	imgFireBall = img;
+	imgFire->animation = true;
+	imgFire->_repeatNum = 0;
+	imgFire->lockAngle = true;
+	imgFireBall = imgFire;
 
-	ball = (FireBall**)malloc(sizeof(FireBall*) * 50);
-	for (int i = 0; i < 50; i++)
+	ball = (FireBall**)malloc(sizeof(FireBall*) * FIREBALL_NUM);
+	for (int i = 0; i < FIREBALL_NUM; i++)
 		ball[i] = new FireBall();
+
+	//----------------------------------------------------------------------------------------
+	
+	iImage* imgCharge = new iImage();
+	Texture* texCharge;
+	for (int i = 0; i < 20; i++)
+	{
+		texCharge = createImage("assets/effect/charge fire/6800%02d.png", i);
+		imgCharge->addObject(texCharge);
+		freeImage(texCharge);
+	}
+
+	imgCharge->_repeatNum = 1;
+
+	imgChargeFire = imgCharge;
 }
 
 void freeEffect()
 {
 	delete imgFireBall;
+	delete imgChargeFire;
 }
 
 void drawEffect(float dt)
 {
-	for (int i = 0; i < 50; i++)
+	for (int i = 0; i < FIREBALL_NUM; i++)
 		ball[i]->paint(dt);
 }
 
@@ -106,8 +140,9 @@ void testFireBall()
 	ball[num]->posFireBall = pc->playerPosition;
 	ball[num]->v = p /= iPointLength(p);
 	ball[num]->tileNumber = pc->tileNumber;
+	ball[num]->setlimitRect(ball[num]->tileNumber);
 	num++;
-	if (num > 49)
+	if (num > FIREBALL_NUM - 1)
 		num = 0;
 }
 
@@ -119,11 +154,14 @@ void projectileReflect(uint8 tile, iPoint& v, iPoint& pos, iPoint& mp)
 	MapTile* t = maps[tile];
 
 	int i, j;
+	int width = RGTILE_X * RGTILE_Width;
+	int height = RGTILE_Y * RGTILE_Height;
+
 	if (v.x < 0.0f)
 	{
 		int x = (pos.x - t->tileOff.x)  / RGTILE_Width;
 		int y = (pos.y - t->tileOff.y) / RGTILE_Height;
-		int min = t->tileOff.x - (RGTILE_Y * RGTILE_Height);
+		int min = t->tileOff.x - width;
 
 		for (i = x - 1; i > -1; i--)
 		{
@@ -149,7 +187,7 @@ void projectileReflect(uint8 tile, iPoint& v, iPoint& pos, iPoint& mp)
 	{
 		int x = (pos.x - t->tileOff.x) / RGTILE_Width;
 		int y = (pos.y - t->tileOff.y) / RGTILE_Height;
-		int max = t->tileOff.x + (RGTILE_Y * RGTILE_Height) * 2;
+		int max = t->tileOff.x + width * 2;
 
 		for (i = x + 1; i < RGTILE_X; i++)
 		{
@@ -177,7 +215,7 @@ void projectileReflect(uint8 tile, iPoint& v, iPoint& pos, iPoint& mp)
 	{
 		int x = (pos.x - t->tileOff.x) / RGTILE_Width;
 		int y = (pos.y - t->tileOff.y) / RGTILE_Height;
-		int min = t->tileOff.y - (RGTILE_Y * RGTILE_Height);
+		int min = t->tileOff.y - height;
 
 		for (j = y - 1; j > -1; j--)
 		{
@@ -203,7 +241,7 @@ void projectileReflect(uint8 tile, iPoint& v, iPoint& pos, iPoint& mp)
 	{
 		int x = (pos.x - t->tileOff.x) / RGTILE_Width;
 		int y = (pos.y - t->tileOff.y) / RGTILE_Height;
-		int max = t->tileOff.y + (RGTILE_Y * RGTILE_Height) * 2 ;
+		int max = t->tileOff.y + height * 2 ;
 
 		for (j = y + 1; j < RGTILE_Y; j++)
 		{

@@ -157,6 +157,8 @@ bool rangeAttack(EnemyGolem* enm, float dt)
 	if (iPointLength(v) > 300 && e->giveDmg == false && e->act != attacking)
 		return false;
 
+	uint8 a = 0;
+	float speed = 0.0f;
 	if (e->giveDmg == false)
 	{
 		e->img[5]->startAnimation();
@@ -167,14 +169,31 @@ bool rangeAttack(EnemyGolem* enm, float dt)
 
 		e->ATV = v + e->golemPos + et;
 		e->reverse = (v.x > 0.0f ? REVERSE_NONE : REVERSE_WIDTH);
+
+		// 하나씪 생성되게 수정
+		a = random() % FIREBALL_NUM;
+		speed = 200.0f + random() % 300;
+		for (int i = 0; i < a; i++)
+		{
+			iPoint vv = iPointMake(1.0f - (random() % 200) / 100.0f, 1.0f - (random() % 200) / 100.0f);
+			ball[i]->init(i, e->tileNumber, vv, e->golemPos);
+			ball[i]->speed = speed;
+		}
+		imgChargeFire->startAnimation();
 	}
 
 	e->giveDmgTime += dt;
 	if((e->img[5]->frame < 6))
 		e->img[5]->paint(dt, e->drawGolemPos, e->reverse);
 	else
+	{
 		e->img[5]->paint(dt/2.0f, e->drawGolemPos, e->reverse);
-		
+		setRGBA(1, 1, 1, 1);
+		imgChargeFire->paint(dt, e->drawGolemPos + iPointMake(-20, -100), REVERSE_NONE);
+		setRGBA(1, 1, 1, 1);
+	}
+
+
 	iPoint tp = e->ATV + pc->camPosition + setPos;
 
 	setRGBA(1, 0, 0, 1);
@@ -189,33 +208,7 @@ bool rangeAttack(EnemyGolem* enm, float dt)
 		e->act = idle;
 	}
 
-	if (e->giveDmg == true && e->giveDmgTime > 0.0f - e->attackSpeed * 0.33f)
-	{
-
-		if (e->hit == false && pc->act != evasion)
-		{
-			iPoint n = e->ATV - e->golemPos + et;
-			float len = iPointLength(n);
-			n /= iPointLength(n);
-			iPoint p = pc->playerPosition + HALF_OF_TEX_POINT
-				- e->golemPos + et;
-
-			float dot = min(max(p.x * n.x + p.y * n.y, 0), len);
-			iPoint proj = n * dot;
-			float hitDis = iPointLength(p - proj);
-
-			if (hitDis < HALF_OF_TEX_WIDTH / 2)
-			{
-				if (pc->act == evasion || pc->act == falling)
-					return true;
-				printf("hits\n");
-				//pc->hp -= attackDmg;
-				e->hit = true;
-			}
-		}
-	}
-
-	if (iPointLength(v) > e->reach + 50 && e->giveDmgTime > 0.0f - e->attackSpeed * 0.1f)
+	if (iPointLength(v) < e->reach -50 && e->giveDmgTime > 0.0f - e->attackSpeed * 0.1f)
 	{
 		e->giveDmg = false;
 		e->giveDmgTime = 0.0f;

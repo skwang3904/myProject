@@ -85,12 +85,14 @@ void drawRgProc(float dt)
 	weapon->drawWeapon(dt);
 	pc->drawPlayer(dt);
 
-
 	if(getKeyStat(keyboard_j))
 		testFireBall();
 	drawEffect(dt);
 
-	//drawPlayerUI(dt);
+
+	//--------------------------------------------------------
+	// pop
+	drawPlayerUI(dt);
 
 }
 

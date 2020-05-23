@@ -155,7 +155,7 @@ float iPointAngle(iPoint& v1, iPoint& v2, iPoint& v3)
 	float dot = v1p.x * v3p.x + v1p.y * v3p.y;
 	float x = dot / (v1pLen * v3pLen);
 
-	if (v3p.y < v1p.y)
+	if (v3p.y > v1p.y)
 	{
 		if (dot == 0.0f)
 			return 270.0f;

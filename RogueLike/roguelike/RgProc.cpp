@@ -36,7 +36,7 @@ void loadRgProc()
 	loadRgLoading();
 	loadPlayerUI();
 
-	//createFireBallImg();
+	createEffect();
 	//testFireBall();
 }
 
@@ -55,7 +55,7 @@ void freeRgProc()
 	freeRgLoading();
 	freePlayerUI();
 
-	//freeFireBallImg();
+	freeEffect();
 }
 
 int ballNum = 0;
@@ -85,20 +85,12 @@ void drawRgProc(float dt)
 	weapon->drawWeapon(dt);
 	pc->drawPlayer(dt);
 
-	//for(int i=0; i<50;i++)
-	//ball[i]->paint(dt);
-	//if (getKeyDown(keyboard_j))
-	//{
-	//	ball[ballNum]->alive = true;
-	//	ball[ballNum]->sp = pc->drawPos;
-	//	ball[ballNum]->posFireBall = pc->drawPos;
 
-	//	ball[ballNum]->v =iPointMake(1,1);
-	//	ball[ballNum]->v = ball[ballNum]->v / iPointLength(ball[ballNum]->v);
-	//	ball[ballNum]->tileNumber = pc->tileNumber;
+	if(getKeyStat(keyboard_j))
+		testFireBall();
+	drawEffect(dt);
 
-	//	ballNum++;
-	//}
+	//drawPlayerUI(dt);
 
 }
 

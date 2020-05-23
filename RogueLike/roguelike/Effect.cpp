@@ -3,7 +3,7 @@
 #include "Room.h"
 
 iImage* imgFireBall;
-//FireBall** _ball;
+
 FireBall** ball;
 
 FireBall::FireBall()
@@ -35,10 +35,8 @@ void FireBall::paint(float dt)
 	if (alive == false)
 		return;
 
-	reflectWall();
-
 	duration += dt;
-	if (duration > 10.0f)
+	if (duration > 20.0f)
 	{
 		alive = false;
 		duration = 0.0f;
@@ -47,63 +45,27 @@ void FireBall::paint(float dt)
 
 	iPoint p = iPointMake(img->tex->width / 2, img->tex->height / 2);
 
+	iPoint mp = v * speed * dt;
+	projectileReflect(tileNumber, v, posFireBall, mp);
+	setAngle();
 	touchRect = iRectMake(posFireBall.x - p.x, posFireBall.y - p.y, p.x * 2.0f, p.y * 2.0f);
-	setRGBA(0, 1, 0, 0.5);
-	fillRect(touchRect);
-	setRGBA(1, 1, 1, 1);
-
-	posFireBall += v * speed * dt;
-
-	iPoint texp = posFireBall - p;
+	//setAngle();
+	iPoint texp = (posFireBall - p) + pc->camPosition + setPos;
 	img->paint(dt, texp, REVERSE_NONE);
-
 
 }
 
 void FireBall::setAngle()
 {
-	iPoint p = iPointMake(1, 0);
-	iPoint tileP = maps[tileNumber]->tileOff;
-	angle = 180 - angle;
-	//sp ~ posFireBall
-	//if (v == iPointMake(1, 0) || v == iPointMake(-1, 0) ||
-	//	v == iPointMake(0, 1) || v == iPointMake(0, -1))
-	//{
-	//	sp = posFireBall;
-	//	v *= -1.0f;
-	//}
-	//else
-	//{
-	//	sp = posFireBall;
-	//}
-	//v = (tp - sp) / iPointLength(tp - sp);
-
-	sp = posFireBall;
-	v *= -1.0f;
-
+	iPoint v1 = iPointMake(1, 0);
+	iPoint v2 = iPointZero;
+	img->angle = iPointAngle(v1, v2, v) ;
+	printf("angle %.2f\n", img->angle);
+	printf("vx=  %.2f, vy = %.2f\n", v.x,v.y);
 	//reverse = (sp.x > tp.x ? REVERSE_WIDTH : REVERSE_NONE);
 }
 
-void FireBall::reflectWall()
-{
-	for (int i = 0; i < RGTILE_X * RGTILE_Y; i++)
-	{
-		if (maps[tileNumber]->rgTile[i] == WALLTILE)
-		{
-			iRect rt = iRectMake(tileOffSet[tileNumber].x+ (RGTILE_X+ 1) * (i % RGTILE_X),
-				tileOffSet[tileNumber].y + (RGTILE_Y + 1) * (i / RGTILE_Y),
-				RGTILE_Width, RGTILE_Height);
-			if (containPoint(posFireBall, rt))
-			{
-				setAngle();
-			}
-
-		}
-
-	}
-}
-
-void createFireBallImg()
+void createEffect()
 {
 	iImage* img = new iImage();
 	Texture* tex;
@@ -116,30 +78,152 @@ void createFireBallImg()
 
 	img->animation = true;
 	img->_repeatNum = 0;
+	img->lockAngle = true;
 	imgFireBall = img;
 
-	//_ball = (FireBall**)malloc(sizeof(FireBall*) * 50);
 	ball = (FireBall**)malloc(sizeof(FireBall*) * 50);
 	for (int i = 0; i < 50; i++)
-	{
 		ball[i] = new FireBall();
-	}
 }
 
-void freeFireBallImg()
+void freeEffect()
 {
 	delete imgFireBall;
 }
 
-void testFireBall()
+void drawEffect(float dt)
 {
 	for (int i = 0; i < 50; i++)
+		ball[i]->paint(dt);
+}
+
+int num = 0;
+void testFireBall()
+{
+	iPoint p = iPointMake(1,1);
+	ball[num]->alive = true;
+	ball[num]->sp = pc->playerPosition;
+	ball[num]->posFireBall = pc->playerPosition;
+	ball[num]->v = p /= iPointLength(p);
+	ball[num]->tileNumber = pc->tileNumber;
+	num++;
+	if (num > 49)
+		num = 0;
+}
+
+
+//----------------------------------------------------------------------------------------
+
+void projectileReflect(uint8 tile, iPoint& v, iPoint& pos, iPoint& mp)
+{
+	MapTile* t = maps[tile];
+
+	int i, j;
+	if (v.x < 0.0f)
 	{
-		iPoint p = iPointMake(((random() % 300) / 300.0f) - 0.5f, ((random() % 300) / 300.f) - 0.5f);
-		ball[i]->alive = true;
-		ball[i]->sp = pc->drawPos;
-		ball[i]->posFireBall = pc->drawPos;
-		ball[i]->v = p;
-		ball[i]->tileNumber = pc->tileNumber;
+		int x = (pos.x - t->tileOff.x)  / RGTILE_Width;
+		int y = (pos.y - t->tileOff.y) / RGTILE_Height;
+		int min = t->tileOff.x - (RGTILE_Y * RGTILE_Height);
+
+		for (i = x - 1; i > -1; i--)
+		{
+			bool stop = false;
+			if (t->rgTile[RGTILE_X * y + i] == WALLTILE)
+			{
+				stop = true;
+				min = t->tileOff.x + RGTILE_Width * (i + 1);
+				break;
+			}
+			if (stop)
+				break;
+		}
+
+		pos.x += mp.x;
+		if (pos.x < min + 1)
+		{
+			pos.x = min + 1;
+			v.x *= -1.0f;
+		}
 	}
+	else if (v.x > 0.0f)
+	{
+		int x = (pos.x - t->tileOff.x) / RGTILE_Width;
+		int y = (pos.y - t->tileOff.y) / RGTILE_Height;
+		int max = t->tileOff.x + (RGTILE_Y * RGTILE_Height) * 2;
+
+		for (i = x + 1; i < RGTILE_X; i++)
+		{
+			bool stop = false;
+			if (t->rgTile[RGTILE_X * y + i] == WALLTILE)
+			{
+				stop = true;
+				max = t->tileOff.x + RGTILE_Width * i - 1;
+				break;
+			}
+			if (stop)
+				break;
+		}
+
+		pos.x += mp.x;
+		if (pos.x > max - 1)
+		{
+			pos.x = max - 1;
+			v.x *= -1.0f;
+		}
+
+	}
+
+	if (v.y < 0.0f)
+	{
+		int x = (pos.x - t->tileOff.x) / RGTILE_Width;
+		int y = (pos.y - t->tileOff.y) / RGTILE_Height;
+		int min = t->tileOff.y - (RGTILE_Y * RGTILE_Height);
+
+		for (j = y - 1; j > -1; j--)
+		{
+			bool stop = false;
+			if (t->rgTile[RGTILE_X * j + x] == WALLTILE)
+			{
+				stop = true;
+				min = t->tileOff.y + RGTILE_Height * (j + 1);
+				break;
+			}
+			if (stop)
+				break;
+		}
+
+		pos.y += mp.y;
+		if (pos.y < min + 1)
+		{
+			pos.y = min + 1;
+			v.y *= -1.0f;
+		}
+	}
+	else if (v.y > 0.0f)
+	{
+		int x = (pos.x - t->tileOff.x) / RGTILE_Width;
+		int y = (pos.y - t->tileOff.y) / RGTILE_Height;
+		int max = t->tileOff.y + (RGTILE_Y * RGTILE_Height) * 2 ;
+
+		for (j = y + 1; j < RGTILE_Y; j++)
+		{
+			bool stop = false;
+			if (t->rgTile[RGTILE_X * j + x] == WALLTILE)
+			{
+				stop = true;
+				max = t->tileOff.y + RGTILE_Height * j - 1;
+				break;
+			}
+			if (stop)
+				break;
+		}
+
+		pos.y += mp.y;
+		if (pos.y > max + 1)
+		{
+			pos.y = max + 1;
+			v.y *= -1.0f;
+		}
+	}
+
 }

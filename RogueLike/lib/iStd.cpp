@@ -131,7 +131,6 @@ void drawLib(Method_Paint method)
 	// pop
     if (bShowRgLoading(NextStage))
         return;
-	drawPlayerUI(delta);
 
 #if 0// minimap
     drawImage(tex, devSize.width - 50, devSize.height - 50,

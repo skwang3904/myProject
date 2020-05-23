@@ -3,6 +3,7 @@
 #include "Room.h"
 
 #include "EnemyStruct.h"
+#include "Effect.h"
 
 //----------------------------------------------------------------------------------------
 // idle
@@ -174,22 +175,9 @@ bool rangeAttack(EnemyGolem* enm, float dt)
 	else
 		e->img[5]->paint(dt/2.0f, e->drawGolemPos, e->reverse);
 		
-
-
 	iPoint tp = e->ATV + pc->camPosition + setPos;
 
-	iPoint ranPos1 = tp + iPointMake(50, 50);
-	iPoint ranPos2 = tp + iPointMake(-50, -50);
-	iPoint ranPos3 = tp + iPointMake(50, -50);
-	iPoint ranPos4 = tp + iPointMake(-50, 50);
-
 	setRGBA(1, 0, 0, 1);
-
-	fillRect(ranPos1.x - 20, ranPos1.y - 20, 40, 40);
-	fillRect(ranPos2.x - 20, ranPos2.y - 20, 40, 40);
-	fillRect(ranPos3.x - 20, ranPos3.y - 20, 40, 40);
-	fillRect(ranPos4.x - 20, ranPos4.y - 20, 40, 40);
-
 	fillRect(tp.x - 20, tp.y - 20, 40, 40);
 	setRGBA(1, 1, 1, 1);
 
@@ -203,12 +191,6 @@ bool rangeAttack(EnemyGolem* enm, float dt)
 
 	if (e->giveDmg == true && e->giveDmgTime > 0.0f - e->attackSpeed * 0.33f)
 	{
-		//setLineWidth(10);
-		//setRGBA(1, 0, 0, 1);
-		//drawLine(e->drawGolemPos + et,
-		//	e->ATV + pc->camPosition + setPos);
-		//setLineWidth(1);
-		//setRGBA(1, 1, 1, 1);
 
 		if (e->hit == false && pc->act != evasion)
 		{
@@ -239,9 +221,11 @@ bool rangeAttack(EnemyGolem* enm, float dt)
 		e->giveDmgTime = 0.0f;
 		e->hit = false;
 		e->act = idle;
-		e->img[3]->animation == false;
+		e->img[5]->animation == false;
 		return false;
 	}
 
 	return true;
 }
+
+//----------------------------------------------------------------------------------------

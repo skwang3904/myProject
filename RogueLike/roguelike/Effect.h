@@ -18,7 +18,6 @@ public:
 	void paint(float dt);
 
 	void setAngle();
-	void reflectWall();
 	
 public:
 	iImage* img;
@@ -40,10 +39,12 @@ public:
 	iRect touchRect;
 	
 };
+extern FireBall** ball;
 
-void createFireBallImg();
-void freeFireBallImg();
+void createEffect();
+void freeEffect();
+void drawEffect(float dt);
 
 void testFireBall();
 
-extern FireBall** ball;
+void projectileReflect(uint8 tile, iPoint& v, iPoint& pos, iPoint& mp);

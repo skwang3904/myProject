@@ -207,8 +207,6 @@ bool rangeAttack(EnemyGolem* enm, float dt)
 		e->giveDmg = true;
 		e->giveDmgTime -= e->rangeAtkSpeed;
 		e->act = rangeAtk;
-
-		e->ATV = v + e->golemPos + et;
 		e->reverse = (v.x > 0.0f ? REVERSE_NONE : REVERSE_WIDTH);
 
 		a = random() % FIREBALL_NUM;

@@ -12,8 +12,10 @@ void IdleEyeBlink(EnemyGolem* enm, float dt)
 {
 	EnemyGolem* e = enm;
 	iImage** img = e->img;
+	Texture* tex = img[0]->tex;
 
-	e->reverse = (pc->playerPosition.x < e->golemPos.x ?
+	iPoint gp = iPointMake(tex->width * e->ratio / 2.0f, tex->height * e->ratio / 2.0f);
+	e->reverse = (pc->playerPosition.x + HALF_OF_TEX_WIDTH < e->golemPos.x + gp.x ?
 		REVERSE_WIDTH : REVERSE_NONE);
 	uint8 r = e->reverse;
 	iPoint p = e->drawGolemPos;
@@ -154,11 +156,21 @@ bool rangeAttack(EnemyGolem* enm, float dt)
 	iPoint v = (pc->playerPosition + HALF_OF_TEX_POINT)
 		- (e->golemPos + et);
 
+	int i;
+	for (i = 0; i < FIREBALL_NUM; i++)
+	{
+		e->projectile[i]->paint(dt);
+		if (e->projectile[i]->hitFireBall(pc->touchPlayer))
+		{
+			//pc->hp -= e->attackDmg;
+			printf("hit fireball\n");
+		}
+	}
+
 	if (iPointLength(v) > 300 && e->giveDmg == false && e->act != attacking)
 		return false;
 
 	uint8 a = 0;
-	float speed = 0.0f;
 	if (e->giveDmg == false)
 	{
 		e->img[5]->startAnimation();
@@ -170,35 +182,34 @@ bool rangeAttack(EnemyGolem* enm, float dt)
 		e->ATV = v + e->golemPos + et;
 		e->reverse = (v.x > 0.0f ? REVERSE_NONE : REVERSE_WIDTH);
 
-		// 하나씪 생성되게 수정
 		a = random() % FIREBALL_NUM;
-		speed = 200.0f + random() % 300;
-		for (int i = 0; i < a; i++)
+		float speed = 0.0f;
+		float timer = 0.0f;
+		float duration = 0.0f;
+		iPoint fv = e->golemPos + et + iPointMake(0, -80);
+		iPoint vv = iPointZero;
+		for (i = 0; i < a; i++)
 		{
-			iPoint vv = iPointMake(1.0f - (random() % 200) / 100.0f, 1.0f - (random() % 200) / 100.0f);
-			ball[i]->init(i, e->tileNumber, vv, e->golemPos);
-			ball[i]->speed = speed;
+			duration = 5 + ((random() % 100) / 20.0f);
+			timer = (random() % 100) / 100.0f;
+			//speed = 200.0f + random() % 300;
+			speed = 50.0f;
+			vv = iPointMake(1.0f - (random() % 200) / 100.0f, 1.0f - (random() % 200) / 100.0f);
+
+			e->projectile[i]->init(duration, timer, speed, e->tileNumber, vv, fv);
 		}
-		imgChargeFire->startAnimation();
+		e->effectImg->startAnimation();
 	}
 
 	e->giveDmgTime += dt;
 	if((e->img[5]->frame < 6))
-		e->img[5]->paint(dt, e->drawGolemPos, e->reverse);
+		e->img[5]->paint(dt * 2.0f, e->drawGolemPos, e->reverse);
 	else
 	{
-		e->img[5]->paint(dt/2.0f, e->drawGolemPos, e->reverse);
-		setRGBA(1, 1, 1, 1);
-		imgChargeFire->paint(dt, e->drawGolemPos + iPointMake(-20, -100), REVERSE_NONE);
-		setRGBA(1, 1, 1, 1);
+
+		e->effectImg->paint(dt, e->drawGolemPos + iPointMake(-20, -100), REVERSE_NONE);
+		e->img[5]->paint(dt * 0.75f, e->drawGolemPos, e->reverse);
 	}
-
-
-	iPoint tp = e->ATV + pc->camPosition + setPos;
-
-	setRGBA(1, 0, 0, 1);
-	fillRect(tp.x - 20, tp.y - 20, 40, 40);
-	setRGBA(1, 1, 1, 1);
 
 	if (e->giveDmgTime > 0.0f)
 	{
@@ -208,7 +219,7 @@ bool rangeAttack(EnemyGolem* enm, float dt)
 		e->act = idle;
 	}
 
-	if (iPointLength(v) < e->reach -50 && e->giveDmgTime > 0.0f - e->attackSpeed * 0.1f)
+	if (iPointLength(v) < e->reach -50 && e->giveDmgTime > 0.0f - e->attackSpeed * 0.5f)
 	{
 		e->giveDmg = false;
 		e->giveDmgTime = 0.0f;

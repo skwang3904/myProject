@@ -15,6 +15,8 @@
 
 void loadRgProc()
 {
+	createEffect();
+
 	stage++;
 	createTileSet();
 	loadRoomTile();
@@ -35,13 +37,12 @@ void loadRgProc()
 
 	loadRgLoading();
 	loadPlayerUI();
-
-	createEffect();
-	//testFireBall();
 }
 
 void freeRgProc()
 {
+	freeEffect();
+
 	delete pc;
 	delete weapon;
 
@@ -49,13 +50,12 @@ void freeRgProc()
 	freeTileSet();
 	freeRoomTile();
 
+
 	//--------------------------------------------------------
 	// pop
 
 	freeRgLoading();
 	freePlayerUI();
-
-	freeEffect();
 }
 
 int ballNum = 0;
@@ -80,14 +80,14 @@ void drawRgProc(float dt)
 		return;
 	}
 
+	drawEffect(dt);
+
 	drawEnemy(dt);
 
 	weapon->drawWeapon(dt);
 	pc->drawPlayer(dt);
 
-	if(getKeyStat(keyboard_j))
-		testFireBall();
-	drawEffect(dt);
+
 
 
 	//--------------------------------------------------------

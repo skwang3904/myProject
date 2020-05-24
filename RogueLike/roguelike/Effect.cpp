@@ -2,10 +2,10 @@
 
 #include "Room.h"
 
+#include "EnemyStruct.h"
+
 iImage* imgFireBall;
 iImage* imgChargeFire;
-
-FireBall** ball;
 
 FireBall::FireBall()
 {
@@ -14,7 +14,8 @@ FireBall::FireBall()
 	alive = false;
 	dmg = 0.0f;
 	speed = 300.0f;
-	duration = 0.0f;
+	duration = alive_duration;
+	timer = fire_timer;
 
 	tileNumber = 0;
 
@@ -25,7 +26,6 @@ FireBall::FireBall()
 
 	touchRect = iRectZero;
 	limitRect = iRectZero;
-
 }
 
 FireBall::~FireBall()
@@ -33,17 +33,20 @@ FireBall::~FireBall()
 	delete img;
 }
 
-void FireBall::init(uint8 num, uint8 tileNum, iPoint& v, iPoint& pos)
+void FireBall::init(float d, float firetime, float firespeed, uint8 tileNum, iPoint& vlen, iPoint& pos)
 {
-	ball[num]->alive = true;
-	ball[num]->sp = pos;
-	ball[num]->posFireBall = pos;
-	ball[num]->v = v / iPointLength(v);
-	ball[num]->tileNumber = tileNum;
-	ball[num]->setlimitRect(tileNum);
-	//num++;
-	//if (num > FIREBALL_NUM - 1)
-	//	num = 0;
+	if (alive == true)
+		return;
+
+	alive = true;
+	duration = d;
+	timer = firetime;
+	speed = firespeed;
+	tileNumber = tileNum;
+	setlimitRect(tileNum);
+	v = vlen / iPointLength(vlen);
+	sp = pos;
+	posFireBall = pos;
 }
 
 void FireBall::paint(float dt)
@@ -51,22 +54,29 @@ void FireBall::paint(float dt)
 	if (alive == false)
 		return;
 
-	duration += dt;
-	if (duration > 20.0f || containPoint(posFireBall, limitRect) == false)
+	if (timer < fire_timer)
 	{
-		alive = false;
-		duration = 0.0f;
+		timer += dt;
+		return;
 	}
+
+	duration += dt;
+	if (duration > alive_duration || containPoint(posFireBall, limitRect) == false)
+		alive = false;
 
 	iPoint p = iPointMake(img->tex->width / 2.0f, img->tex->height / 2.0f);
 	iPoint mp = v * speed * dt;
 	projectileReflect(tileNumber, v, posFireBall, mp);
 	setAngle();
-	touchRect = iRectMake(posFireBall.x - p.x, posFireBall.y - p.y, p.x * 2.0f, p.y * 2.0f);
 
-	drawFireBallPos = (posFireBall - p) + pc->camPosition + setPos;
+	touchRect = iRectMake(posFireBall.x + p.x, posFireBall.y + p.y, p.x * 2.0f, p.y * 2.0f);
+	iPoint test = pc->camPosition + setPos;
+	setRGBA(1, 0, 0, 1);
+	fillRect(touchRect.origin.x + test.x, touchRect.origin.y+ test.y, 10, 10);
+	setRGBA(1, 1, 1, 1);
+
+	drawFireBallPos = (posFireBall + p) + pc->camPosition + setPos;
 	img->paint(dt, drawFireBallPos, REVERSE_NONE);
-
 }
 
 void FireBall::setAngle()
@@ -83,25 +93,30 @@ void FireBall::setlimitRect(uint8 tileNum)
 	limitRect = iRectMake(p.x, p.y, RGTILE_X * RGTILE_Width, RGTILE_Y * RGTILE_Height);
 }
 
+bool FireBall::hitFireBall(iRect& rt)
+{
+	iPoint p = posFireBall + iPointMake(img->tex->width / 2.0f, img->tex->height / 2.0f);
+	if (containPoint(p, rt))
+		return true;
+	return false;
+}
+
 void createEffect()
 {
 	iImage* imgFire = new iImage();
 	Texture* texFire;
 	for (int i = 0; i < 61; i++)
 	{
-		texFire = createImage("assets/effect/fireball/1_%d.png", i);
+		texFire = createImage("assets/effect/fireball/3/1_%d.png", i);
 		imgFire->addObject(texFire);
 		freeImage(texFire);
 	}
 
+	imgFire->_aniDt = 0.04f;
 	imgFire->animation = true;
 	imgFire->_repeatNum = 0;
 	imgFire->lockAngle = true;
 	imgFireBall = imgFire;
-
-	ball = (FireBall**)malloc(sizeof(FireBall*) * FIREBALL_NUM);
-	for (int i = 0; i < FIREBALL_NUM; i++)
-		ball[i] = new FireBall();
 
 	//----------------------------------------------------------------------------------------
 	
@@ -115,6 +130,7 @@ void createEffect()
 	}
 
 	imgCharge->_repeatNum = 1;
+	imgCharge->_aniDt = 0.1f;
 
 	imgChargeFire = imgCharge;
 }
@@ -127,25 +143,8 @@ void freeEffect()
 
 void drawEffect(float dt)
 {
-	for (int i = 0; i < FIREBALL_NUM; i++)
-		ball[i]->paint(dt);
-}
 
-int num = 0;
-void testFireBall()
-{
-	iPoint p = iPointMake(1,1);
-	ball[num]->alive = true;
-	ball[num]->sp = pc->playerPosition;
-	ball[num]->posFireBall = pc->playerPosition;
-	ball[num]->v = p /= iPointLength(p);
-	ball[num]->tileNumber = pc->tileNumber;
-	ball[num]->setlimitRect(ball[num]->tileNumber);
-	num++;
-	if (num > FIREBALL_NUM - 1)
-		num = 0;
 }
-
 
 //----------------------------------------------------------------------------------------
 

@@ -419,7 +419,7 @@ void Player::paint(float dt)
 		VCENTER | HCENTER, 1.0f, 1.0f,
 		img[headNum]->location, img[headNum]->angle, REVERSE_NONE);
 
-	iRect rt = iRectMake(drawPos.x, drawPos.y,
+	iRect rt = iRectMake(playerPosition.x, playerPosition.y,
 		HALF_OF_TEX_WIDTH * 2.0f, HALF_OF_TEX_HEIGHT * 2.0f);
 
 	//히트박스 표시-------------------------------

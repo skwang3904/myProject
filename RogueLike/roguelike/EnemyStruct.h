@@ -7,7 +7,7 @@
 #define ALLENEMY_NUM GOLEM_NUM + GOLEM_ELETE_NUM
 
 #define GOLEM_RATIO 0.3f
-#define GOLEM_ATTACK_TIME 0.8f
+#define GOLEM_ATTACK_TIME 2.0f
 
 #define GOLEM_ELETE_RATIO 0.4f
 #define GOLEM_ELETE_ATTACK_TIME 0.5f
@@ -24,6 +24,7 @@ enum EnemyType {
 	golemElete,
 };
 
+struct FireBall;
 struct EnemyGolem {
 	iImage** img;
 
@@ -65,6 +66,9 @@ struct EnemyGolem {
 	Method_Walk_Pattern methodWalk;
 	Method_Attack_Pattern methodAttack;
 
+
+	iImage* effectImg;
+	FireBall** projectile;
 
 	float timer = 0.0f;
 	bool test = false;

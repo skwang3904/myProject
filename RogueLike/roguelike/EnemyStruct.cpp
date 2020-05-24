@@ -3,6 +3,7 @@
 #include "Room.h"
 
 #include "EnemyActionPattern.h"
+#include "Effect.h"
 
 
 //----------------------------------------------------------------------------------------
@@ -26,6 +27,13 @@ void EnemyGolem::init(int stage)
 		methodIdle = IdleEyeBlink;
 		methodWalk = WalkToPlayer;
 		methodAttack = rangeAttack;
+
+		effectImg = imgChargeFire->copy();
+
+		projectile = (FireBall**)malloc(sizeof(FireBall*) * FIREBALL_NUM);
+		for (int i = 0; i < FIREBALL_NUM; i++)
+			projectile[i] = new FireBall();
+
 		break;
 	}
 	case golemElete:
@@ -40,6 +48,10 @@ void EnemyGolem::init(int stage)
 		methodIdle = IdleEyeBlink;
 		methodWalk = WalkToPlayer;
 		methodAttack = commonAttack;
+
+		effectImg = imgChargeFire->copy();
+
+		projectile = NULL;
 		break;
 	}
 	default:

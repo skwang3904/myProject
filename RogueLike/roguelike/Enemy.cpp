@@ -3,6 +3,7 @@
 #include "Stage.h"
 
 #include "EnemyStruct.h"
+#include "Effect.h"
 
 void createGolem();
 void freeGolem();
@@ -79,6 +80,7 @@ void freeGolem()
 				delete golems[i]->img[j];
 		}
 		free(golems[i]->img);
+		delete golems[i]->effectImg;
 	}
 	free(golems);
 
@@ -92,6 +94,7 @@ void freeGolem()
 				delete golemEletes[i]->img[j];
 		}
 		free(golemEletes[i]->img);
+		delete golemEletes[i]->effectImg;
 	}
 	free(golemEletes);
 

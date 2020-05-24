@@ -5,32 +5,44 @@
 #include "EnemyStruct.h"
 #include "Effect.h"
 
+bool MethodFalse(EnemyGolem* enm, float dt)
+{
+	return false;
+}
+
 //----------------------------------------------------------------------------------------
 // idle
 
 void IdleEyeBlink(EnemyGolem* enm, float dt)
 {
+
 	EnemyGolem* e = enm;
+	if (e->act != idle && e->act != walking)
+		return;
+
 	iImage** img = e->img;
 	Texture* tex = img[0]->tex;
 
 	iPoint gp = iPointMake(tex->width * e->ratio / 2.0f, tex->height * e->ratio / 2.0f);
+
+
 	e->reverse = (pc->playerPosition.x + HALF_OF_TEX_WIDTH < e->golemPos.x + gp.x ?
 		REVERSE_WIDTH : REVERSE_NONE);
+
 	uint8 r = e->reverse;
 	iPoint p = e->drawGolemPos;
 
 	if (img[0]->animation == false && img[1]->animation == false)
 		img[random() % 2]->startAnimation();
 
-	if (e->act != attacking)
+	if (e->act != attacking && e->act != meleeAtk && e->act != rangeAtk)
 	{
 		if (e->act == idle)
 		{
 			if (img[0]->animation)	img[0]->paint(dt, p, r);
 			else	img[1]->paint(dt, p, r);
 		}
-		else //if (act == walking)
+		else //if (e->act == walking)
 			img[2]->paint(dt, p, r);
 	}
 }
@@ -46,7 +58,7 @@ void WalkToPlayer(EnemyGolem* enm, float dt)
 	iPoint v = (pc->playerPosition + HALF_OF_TEX_POINT)
 		- (e->golemPos + gp);
 
-	if (iPointLength(v) > 300.0f || iPointLength(v) < e->reach)
+	if (iPointLength(v) > 500.0f)
 	{
 		e->act = idle;
 		return;
@@ -67,13 +79,18 @@ void WalkToPlayer(EnemyGolem* enm, float dt)
 bool commonAttack(EnemyGolem* enm, float dt)
 {
 	EnemyGolem* e = enm;
+
+	if (e->act == rangeAtk)
+		return false;
+
 	iPoint et = iPointMake(e->img[0]->tex->width * e->ratio / 2.0f,
 		e->img[0]->tex->height * e->ratio / 2.0f);
 
 	iPoint v = (pc->playerPosition + HALF_OF_TEX_POINT)
 		- (e->golemPos + et);
 
-	if (iPointLength(v) > e->reach&& e->giveDmg == false && e->act != attacking)
+
+	if (iPointLength(v) > e->meleeReach && e->act != meleeAtk)
 		return false;
 
 	if (e->giveDmg == false)
@@ -81,11 +98,11 @@ bool commonAttack(EnemyGolem* enm, float dt)
 		e->img[3]->startAnimation();
 
 		e->giveDmg = true;
-		e->giveDmgTime -= e->attackSpeed;
-		e->act = attacking;
+		e->giveDmgTime -= e->meleeAtkSpeed;
+		e->act = meleeAtk;
 
 		e->ATV = v;
-		float range = e->reach;
+		float range = e->meleeReach;
 		e->ATV /= iPointLength(e->ATV);
 		e->ATV = e->golemPos + et + (e->ATV * range);
 		e->reverse = (v.x > 0.0f ? REVERSE_NONE : REVERSE_WIDTH);
@@ -102,7 +119,7 @@ bool commonAttack(EnemyGolem* enm, float dt)
 		e->act = idle;
 	}
 
-	if (e->giveDmg == true && e->giveDmgTime > 0.0f - e->attackSpeed * 0.33f)
+	if (e->giveDmg == true)// && e->giveDmgTime > 0.0f - e->meleeAtkSpeed * 0.33f)
 	{
 		setLineWidth(10);
 		setRGBA(1, 0, 0, 1);
@@ -134,7 +151,7 @@ bool commonAttack(EnemyGolem* enm, float dt)
 		}
 	}
 
-	if (iPointLength(v) > e->reach + 50 && e->giveDmgTime > 0.0f - e->attackSpeed * 0.1f)
+	if (iPointLength(v) > e->meleeReach + 50 && e->giveDmgTime > 0.0f - e->meleeAtkSpeed * 0.1f)
 	{
 		e->giveDmg = false;
 		e->giveDmgTime = 0.0f;
@@ -150,8 +167,9 @@ bool commonAttack(EnemyGolem* enm, float dt)
 bool rangeAttack(EnemyGolem* enm, float dt)
 {
 	EnemyGolem* e = enm;
-	iPoint et = iPointMake(e->img[0]->tex->width * e->ratio / 2.0f,
-		e->img[0]->tex->height * e->ratio / 2.0f);
+	Texture* tex = e->img[0]->tex;
+	iPoint et = iPointMake(tex->width * e->ratio / 2.0f,
+		tex->height * e->ratio / 2.0f);
 
 	iPoint v = (pc->playerPosition + HALF_OF_TEX_POINT)
 		- (e->golemPos + et);
@@ -159,25 +177,36 @@ bool rangeAttack(EnemyGolem* enm, float dt)
 	int i;
 	for (i = 0; i < FIREBALL_NUM; i++)
 	{
-		e->projectile[i]->paint(dt);
-		if (e->projectile[i]->hitFireBall(pc->touchPlayer))
+		FireBall* fb = e->projectile[i];
+		fb->paint(dt);
+		if (fb->hitFireBall(pc->touchPlayer))
 		{
-			//pc->hp -= e->attackDmg;
-			printf("hit fireball\n");
+			if (pc->act != evasion && pc->act != falling)
+			{
+				pc->hp -= e->attackDmg;
+				fb->alive = false;
+				audioPlay(SND_ENEMY_HIT);
+			}
 		}
 	}
 
-	if (iPointLength(v) > 300 && e->giveDmg == false && e->act != attacking)
+	e->rangeTime += dt;
+	if (e->act == meleeAtk || e->rangeTime < 10.0f)
+		return false;
+	if ((iPointLength(v) > e->rangeReach || iPointLength(v) < e->rangeReach -50 )&&
+		 e->act != rangeAtk)
 		return false;
 
 	uint8 a = 0;
+	iPoint fbp = iPointMake(e->projectile[0]->img->tex->width, e->projectile[0]->img->tex->height);
+	iPoint cfp = iPointMake(e->effectImg->tex->width, e->effectImg->tex->height);
 	if (e->giveDmg == false)
 	{
 		e->img[5]->startAnimation();
 
 		e->giveDmg = true;
-		e->giveDmgTime -= e->attackSpeed;
-		e->act = attacking;
+		e->giveDmgTime -= e->rangeAtkSpeed;
+		e->act = rangeAtk;
 
 		e->ATV = v + e->golemPos + et;
 		e->reverse = (v.x > 0.0f ? REVERSE_NONE : REVERSE_WIDTH);
@@ -186,17 +215,26 @@ bool rangeAttack(EnemyGolem* enm, float dt)
 		float speed = 0.0f;
 		float timer = 0.0f;
 		float duration = 0.0f;
-		iPoint fv = e->golemPos + et + iPointMake(0, -80);
+		iPoint fv = e->golemPos - fbp / 2.0f + iPointMake(et.x, 0);
 		iPoint vv = iPointZero;
 		for (i = 0; i < a; i++)
 		{
-			duration = 5 + ((random() % 100) / 20.0f);
-			timer = (random() % 100) / 100.0f;
-			//speed = 200.0f + random() % 300;
-			speed = 50.0f;
+			//duration = 5 + ((random() % 100) / 20.0f);
+			duration = 0.0f;
+			//timer = (random() % 100) / 100.0f;
+			timer = 0;
+			speed = 200.0f + random() % 300;
+			//speed = 100.0f;
 			vv = iPointMake(1.0f - (random() % 200) / 100.0f, 1.0f - (random() % 200) / 100.0f);
 
-			e->projectile[i]->init(duration, timer, speed, e->tileNumber, vv, fv);
+			if (e->projectile[i]->alive == false)
+				e->projectile[i]->init(duration, timer, speed, e->tileNumber, vv, fv);
+			else
+			{
+				a++;
+				if (a > FIREBALL_NUM - 1)
+					break;
+			}
 		}
 		e->effectImg->startAnimation();
 	}
@@ -206,8 +244,7 @@ bool rangeAttack(EnemyGolem* enm, float dt)
 		e->img[5]->paint(dt * 2.0f, e->drawGolemPos, e->reverse);
 	else
 	{
-
-		e->effectImg->paint(dt, e->drawGolemPos + iPointMake(-20, -100), REVERSE_NONE);
+		e->effectImg->paint(dt, e->drawGolemPos - cfp/2.0f + iPointMake(et.x, 0), REVERSE_NONE);
 		e->img[5]->paint(dt * 0.75f, e->drawGolemPos, e->reverse);
 	}
 
@@ -217,16 +254,7 @@ bool rangeAttack(EnemyGolem* enm, float dt)
 		e->giveDmgTime = 0.0f;
 		e->hit = false;
 		e->act = idle;
-	}
-
-	if (iPointLength(v) < e->reach -50 && e->giveDmgTime > 0.0f - e->attackSpeed * 0.5f)
-	{
-		e->giveDmg = false;
-		e->giveDmgTime = 0.0f;
-		e->hit = false;
-		e->act = idle;
-		e->img[5]->animation == false;
-		return false;
+		e->rangeTime = 0.0f;
 	}
 
 	return true;

@@ -24,7 +24,7 @@ FireBall::FireBall()
 	posFireBall = iPointZero;
 	drawFireBallPos = iPointZero;
 
-	touchRect = iRectZero;
+	touchPos = iPointZero;
 	limitRect = iRectZero;
 }
 
@@ -65,24 +65,26 @@ void FireBall::paint(float dt)
 		alive = false;
 
 	iPoint p = iPointMake(img->tex->width / 2.0f, img->tex->height / 2.0f);
+	iPoint posFB = posFireBall + p;
 	iPoint mp = v * speed * dt;
-	projectileReflect(tileNumber, v, posFireBall, mp);
+	projectileReflect(tileNumber, v, posFB, mp);
+	posFireBall = posFB - p;
 	setAngle();
 
-	touchRect = iRectMake(posFireBall.x + p.x, posFireBall.y + p.y, p.x * 2.0f, p.y * 2.0f);
+	touchPos = posFireBall + p;
 	iPoint test = pc->camPosition + setPos;
 	setRGBA(1, 0, 0, 1);
-	fillRect(touchRect.origin.x + test.x, touchRect.origin.y+ test.y, 10, 10);
+	fillRect(touchPos.x + test.x, touchPos.y + test.y, 10, 10);
 	setRGBA(1, 1, 1, 1);
 
-	drawFireBallPos = (posFireBall + p) + pc->camPosition + setPos;
+	drawFireBallPos = (posFireBall) + pc->camPosition + setPos;
 	img->paint(dt, drawFireBallPos, REVERSE_NONE);
 }
 
+static iPoint v1 = iPointMake(1, 0);
+static iPoint v2 = iPointZero;
 void FireBall::setAngle()
 {
-	iPoint v1 = iPointMake(1, 0);
-	iPoint v2 = iPointZero;
 	img->angle = iPointAngle(v1, v2, v);
 }
 
@@ -95,6 +97,9 @@ void FireBall::setlimitRect(uint8 tileNum)
 
 bool FireBall::hitFireBall(iRect& rt)
 {
+	if (alive == false)
+		return false;
+
 	iPoint p = posFireBall + iPointMake(img->tex->width / 2.0f, img->tex->height / 2.0f);
 	if (containPoint(p, rt))
 		return true;

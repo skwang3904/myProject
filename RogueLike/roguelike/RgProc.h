@@ -13,6 +13,9 @@
 enum CharAction {
 	idle = 0,
 	attacking,
+	meleeAtk,
+	rangeAtk,
+
 	falling,
 	evasion,
 	walking,

@@ -77,7 +77,7 @@ void drawRgProc(float dt)
 	if (pc->hp < 0.1f)
 	{
 		// pc dead ani
-		return;
+		//return;
 	}
 
 	drawEffect(dt);
@@ -86,9 +86,6 @@ void drawRgProc(float dt)
 
 	weapon->drawWeapon(dt);
 	pc->drawPlayer(dt);
-
-
-
 
 	//--------------------------------------------------------
 	// pop

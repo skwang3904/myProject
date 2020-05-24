@@ -19,39 +19,50 @@ void EnemyGolem::init(int stage)
 	{
 		hp = _hp = 50.0f + ((stage - 1) * 20);
 		attackDmg = 5.0f + ((stage - 1) * 5);
-		attackSpeed = GOLEM_ATTACK_TIME - ((stage - 1) * GOLEM_ATTACK_TIME * 0.1f);
+		meleeAtkSpeed = GOLEM_MELEE_ATKTIME - ((stage - 1) * GOLEM_MELEE_ATKTIME * 0.1f);
+		rangeAtkSpeed = GOLEM_RANGE_ATKTIME;
 		moveSpeed = 50.0f + ((stage - 1) * 50);
-		reach = 50.0f;
+		meleeReach = 100.0f;
+		rangeReach = 300.0f;
 		ratio = GOLEM_RATIO;
 
 		methodIdle = IdleEyeBlink;
 		methodWalk = WalkToPlayer;
-		methodAttack = rangeAttack;
+		methodMelee = commonAttack;
+		methodRange = rangeAttack;
+
+		rangeTime = 0.0f;
 
 		effectImg = imgChargeFire->copy();
 
 		projectile = (FireBall**)malloc(sizeof(FireBall*) * FIREBALL_NUM);
 		for (int i = 0; i < FIREBALL_NUM; i++)
 			projectile[i] = new FireBall();
-
 		break;
 	}
 	case golemElete:
 	{
 		hp = _hp = 100.0f + ((stage - 1) * 40);
 		attackDmg = 5.0f + ((stage - 1) * 10);
-		attackSpeed = GOLEM_ELETE_ATTACK_TIME - ((stage - 1) * GOLEM_ELETE_ATTACK_TIME * 0.15f);
+		meleeAtkSpeed = GOLEM_ELETE_MELEE_ATKTIME - ((stage - 1) * GOLEM_ELETE_MELEE_ATKTIME * 0.15f);
+		rangeAtkSpeed = GOLEM_ELETE_RANGE_ATKTIME;
 		moveSpeed = 80.0f + ((stage - 1) * 50);
-		reach = 100.0f;
+		meleeReach = 150.0f;
+		rangeReach = 500.0f;
 		ratio = GOLEM_ELETE_RATIO;
 
 		methodIdle = IdleEyeBlink;
 		methodWalk = WalkToPlayer;
-		methodAttack = commonAttack;
+		methodMelee = commonAttack;
+		methodRange = rangeAttack;
+
+		rangeTime = 0.0f;
 
 		effectImg = imgChargeFire->copy();
 
-		projectile = NULL;
+		projectile = (FireBall**)malloc(sizeof(FireBall*) * FIREBALL_NUM);
+		for (int i = 0; i < FIREBALL_NUM; i++)
+			projectile[i] = new FireBall();
 		break;
 	}
 	default:
@@ -74,6 +85,7 @@ void EnemyGolem::init(int stage)
 
 	reverse = REVERSE_NONE;
 	ATV = iPointZero;
+
 }
 
 void EnemyGolem::paint(float dt)
@@ -112,7 +124,8 @@ void EnemyGolem::paint(float dt)
 			drawShowHp(dt);
 
 		iPoint mapPos = maps[tileNumber]->tileOff;
-		if (methodAttack(this, dt) == false &&
+		if ((methodRange(this, dt) == false) &&
+			(methodMelee(this, dt) == false) &&
 			(mapPos.x < golemPos.x &&
 				mapPos.x + RGTILE_X * RGTILE_Width - 1 > golemPos.x + tex->width * ratio * 0.75f &&
 				mapPos.y < golemPos.y + tex->height * ratio * 0.25f &&
@@ -182,7 +195,7 @@ void EnemyGolem::takeDmgEffect(float dt)
 	setRGBA(0, 0, 0, linear(takeDmgTime / TAKE_DMG_TIME, 1.0f, 0.0f));
 	drawImage(tex, drawGolemPos.x, drawGolemPos.y,
 		0, 0, tex->width, tex->height,
-		TOP | LEFT, ratio, ratio, 2, 0, REVERSE_NONE);
+		TOP | LEFT, ratio, ratio, 2, 0, reverse);
 	setRGBA(1, 1, 1, 1);
 
 	takeDmgTime += dt;
@@ -249,17 +262,17 @@ iImage** golemImg()
 	imgGolemIdleBlink->_repeatNum = 1;
 
 	imgGolemWalk->animation = true;
-	imgGolemWalk->_aniDt = 0.05;
+	imgGolemWalk->_aniDt = 0.05f;
 
 
-	imgGolemAttacking->_aniDt = GOLEM_ATTACK_TIME / 12.0f;
+	imgGolemAttacking->_aniDt = GOLEM_MELEE_ATKTIME / 12.0f;
 	imgGolemAttacking->_repeatNum = 1;
 
 	imgGolemDying->_aniDt = 0.07f;
 	imgGolemDying->lastFrame = true;
 	imgGolemDying->_repeatNum = 1;
 
-	imgGolemMagic->_aniDt = GOLEM_ATTACK_TIME / 18.0f;
+	imgGolemMagic->_aniDt = GOLEM_RANGE_ATKTIME / 18.0f;
 	imgGolemMagic->_repeatNum = 1;
 
 	imgGolem[0] = imgGolemIdle;
@@ -277,7 +290,7 @@ iImage** golemImg()
 
 iImage** golemEleteImg()
 {
-	iImage** imgGE = (iImage**)malloc(sizeof(iImage*) * 5);
+	iImage** imgGE = (iImage**)malloc(sizeof(iImage*) * 6);
 
 	iImage* imgGEIdle = new iImage();
 	Texture** texGEIdle = (Texture**)malloc(sizeof(Texture*) * 12);
@@ -288,8 +301,8 @@ iImage** golemEleteImg()
 	for (int i = 0; i < 12; i++)
 	{
 		texGEIdle[i] = createImage("assets/monster/golemElete/Idle/Golem_03_Idle_0%02d.png", i);
-		texGEIdleBlink[i] = createImage("assets/monster/golemElete/Idle Blink/Golem_03_Idle Blinking_0%02d.png", i % 10);
-		texGEAttacking[i] = createImage("assets/monster/golemElete/Attacking/Golem_03_Attacking_0%02d.png", i % 10);
+		texGEIdleBlink[i] = createImage("assets/monster/golemElete/Idle Blink/Golem_03_Idle Blinking_0%02d.png", i);
+		texGEAttacking[i] = createImage("assets/monster/golemElete/Attacking/Golem_03_Attacking_0%02d.png",i);
 
 		imgGEIdle->addObject(texGEIdle[i]);
 		imgGEIdleBlink->addObject(texGEIdleBlink[i]);
@@ -302,18 +315,25 @@ iImage** golemEleteImg()
 
 	iImage* imgGEWalk = new iImage();
 	Texture** texGEWalk = (Texture**)malloc(sizeof(Texture*) * 18);
+	iImage* imgGEMagic = new iImage();
+	Texture** texGEMagic = (Texture**)malloc(sizeof(Texture*) * 18);
 	for (int i = 0; i < 18; i++)
 	{
-		texGEWalk[i] = createImage("assets/monster/golemElete/Walking/Golem_03_Walking_0%02d.png", i % 10);
+		texGEWalk[i] = createImage("assets/monster/golemElete/Walking/Golem_03_Walking_0%02d.png", i);
+		texGEMagic[i] = createImage("assets/monster/golemElete/Taunt/Golem_03_Taunt_0%02d.png", i);
+
 		imgGEWalk->addObject(texGEWalk[i]);
+		imgGEMagic->addObject(texGEMagic[i]);
+
 		freeImage(texGEWalk[i]);
+		freeImage(texGEMagic[i]);
 	}
 
 	iImage* imgGEDying = new iImage();
 	Texture** texGEDying = (Texture**)malloc(sizeof(Texture*) * 15);
 	for (int i = 0; i < 15; i++)
 	{
-		texGEDying[i] = createImage("assets/monster/golemElete/Dying/Golem_03_Dying_0%02d.png", i % 10);
+		texGEDying[i] = createImage("assets/monster/golemElete/Dying/Golem_03_Dying_0%02d.png", i );
 		imgGEDying->addObject(texGEDying[i]);
 		freeImage(texGEDying[i]);
 	}
@@ -324,20 +344,24 @@ iImage** golemEleteImg()
 	imgGEWalk->animation = true;
 	imgGEWalk->_aniDt = 0.05;
 
-	imgGEAttacking->_aniDt = GOLEM_ELETE_ATTACK_TIME / 12.0f;
+	imgGEAttacking->_aniDt = GOLEM_ELETE_MELEE_ATKTIME / 12.0f;
 	imgGEAttacking->_repeatNum = 1;
 
 	imgGEDying->_aniDt = 0.07f;
 	imgGEDying->lastFrame = true;
 	imgGEDying->_repeatNum = 1;
 
+	imgGEMagic->_aniDt = GOLEM_ELETE_RANGE_ATKTIME / 18.0f;
+	imgGEMagic->_repeatNum = 1;
+
 	imgGE[0] = imgGEIdle;
 	imgGE[1] = imgGEIdleBlink;
 	imgGE[2] = imgGEWalk;
 	imgGE[3] = imgGEAttacking;
 	imgGE[4] = imgGEDying;
+	imgGE[5] = imgGEMagic;
 
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 6; i++)
 		imgGE[i]->ratio = GOLEM_ELETE_RATIO;
 
 	return imgGE;

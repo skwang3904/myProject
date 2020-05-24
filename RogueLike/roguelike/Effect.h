@@ -37,7 +37,7 @@ public:
 	iPoint sp;
 	iPoint posFireBall;
 	iPoint drawFireBallPos;
-	iRect touchRect;
+	iPoint touchPos;
 
 	iRect limitRect;
 };

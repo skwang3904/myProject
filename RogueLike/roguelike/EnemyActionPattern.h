@@ -4,6 +4,8 @@
 
 struct EnemyGolem;
 
+bool MethodFalse(EnemyGolem* enm, float dt);
+
 //----------------------------------------------------------------------------------------
 // idle
 

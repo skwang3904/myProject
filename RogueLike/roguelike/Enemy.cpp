@@ -59,7 +59,7 @@ void createGolem()
 	for (int i = 1; i < GOLEM_ELETE_NUM; i++)
 	{
 		golemEletes[i]->enmtype = golemElete;
-		golemEletes[i]->img = (iImage**)malloc(sizeof(iImage*) * 5);
+		golemEletes[i]->img = (iImage**)malloc(sizeof(iImage*) * 6);
 		for (int j = 0; j < 5; j++)
 			golemEletes[i]->img[j] = golemEletes[0]->img[j]->copy();
 	}

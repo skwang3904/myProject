@@ -3,8 +3,9 @@
 #include "Room.h"
 
 #include "EnemyActionPattern.h"
-#include "Effect.h"
 
+#include "Effect.h"
+#include "useitem.h"
 
 //----------------------------------------------------------------------------------------
 
@@ -86,12 +87,25 @@ void EnemyGolem::init(int stage)
 	reverse = REVERSE_NONE;
 	ATV = iPointZero;
 
+	items = (UseItem**)malloc(sizeof(UseItem*) * 2);
+	items[0] = new UseItem(coin);
+	items[0]->value = 1;
+
+	items[1] = new UseItem(healing);
+	items[1]->value = 10.0f;
+
+	methodead = golemItems;
+
 }
 
 void EnemyGolem::paint(float dt)
 {
 	if (act == dead)
+	{
+		for (int i = 0; i < 2; i++)
+			items[i]->paint(dt);
 		return;
+	}
 
 	Texture* tex = img[0]->tex;
 	drawGolemPos = golemPos + pc->camPosition + setPos;
@@ -148,6 +162,7 @@ void EnemyGolem::paint(float dt)
 
 		if (img[4]->animation == false)
 		{
+			methodead(this);
 			golemPos = iPointZero;
 			touchGolem = iRectZero;
 			act = dead;

@@ -119,12 +119,17 @@ void draw(meleeWeapon* mw, float dt, iPoint dropP)
 			VCENTER | HCENTER, 1.2f, 1.2f, 2, 90, REVERSE_NONE);
 
 		mw->hitBox = getHitBoxRect(tex,
-			pc->camPosition.x + setPos.x + p.x,
-			pc->camPosition.y + setPos.y + p.y,
+			 p.x,
+			 p.y,
 			0, 0,	tex->width, tex->height,
 			VCENTER | HCENTER, 1.5f, 1.5f, 2, 90);
+
+		printf("mw %.2f  // %.2f\n", mw->hitBox.origin.x, mw->hitBox.origin.y);
+		printf("pc %.2f  // %.2f\n", pc->playerPosition.x, pc->playerPosition.y);
+		iRect mt = mw->hitBox;
+		mt.origin += pc->camPosition + setPos;
 		setRGBA(0, 1, 0, 1);
-		drawRect(mw->hitBox);
+		drawRect(mt);
 		setRGBA(1, 1, 1, 1);
 	}
 }

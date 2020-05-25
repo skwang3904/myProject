@@ -19,9 +19,9 @@ enum CharAction {
 	falling,
 	evasion,
 	walking,
-	pain = 5,
+	pain,
 	dying,
-	dead
+	dead,
 };
 
 void loadRgProc();

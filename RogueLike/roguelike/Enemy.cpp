@@ -25,7 +25,6 @@ void drawEnemy(float dt)
 	drawGolem(dt);
 }
 
-
 //----------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------
 
@@ -81,6 +80,10 @@ void freeGolem()
 		}
 		free(golems[i]->img);
 		delete golems[i]->effectImg;
+
+		for (int j = 0; j < 2; j++)
+			delete golems[i]->items[j];
+		free(golems[i]->items);
 	}
 	free(golems);
 
@@ -95,6 +98,10 @@ void freeGolem()
 		}
 		free(golemEletes[i]->img);
 		delete golemEletes[i]->effectImg;
+
+		for (int j = 0; j < 2; j++)
+			delete golemEletes[i]->items[j];
+		free(golemEletes[i]->items);
 	}
 	free(golemEletes);
 

@@ -22,11 +22,14 @@ typedef void (*Method_Walk_Pattern)(EnemyGolem* enm, float dt);
 typedef bool (*Method_Melee_Attack_Pattern)(EnemyGolem* enm, float dt);
 typedef bool (*Method_Range_Attack_Pattern)(EnemyGolem* enm, float dt);
 
+typedef void (*Method_Item)(EnemyGolem* enm);
+
 enum EnemyType {
 	golemNomal = 0,
 	golemElete,
 };
 
+class UseItem;
 struct FireBall;
 struct EnemyGolem {
 	iImage** img;
@@ -36,6 +39,7 @@ struct EnemyGolem {
 	float meleeAtkSpeed;
 	float rangeAtkSpeed;
 	float moveSpeed;
+
 	float meleeReach;
 	float rangeReach;
 	float ratio;
@@ -72,15 +76,16 @@ struct EnemyGolem {
 	Method_Melee_Attack_Pattern methodMelee;
 	Method_Range_Attack_Pattern methodRange;
 
-	float rangeTime;
-	
 	iImage* effectImg;
 	FireBall** projectile;
+	float rangeTime;
+
+	UseItem** items;
+	Method_Item methodead;
 };
 
 iImage** golemImg();
 iImage** golemEleteImg();
-
 
 extern EnemyGolem** golems;
 extern EnemyGolem** golemEletes;

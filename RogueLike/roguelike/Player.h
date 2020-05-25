@@ -82,6 +82,8 @@ public:
 	PlayerMW* pmw;
 	int pmwCount;
 
+public:
+	uint16 coin;
 };
 extern Player* pc;
 

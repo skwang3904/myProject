@@ -77,6 +77,8 @@ void Player::initPlayerStat()
 	pmw = &PMW[1];
 	PMW[1].drop = false;
 	pmwCount = 1;
+
+	coin = 0;
 }
 
 uint8 Player::initPlayerPosition()
@@ -419,12 +421,13 @@ void Player::paint(float dt)
 		VCENTER | HCENTER, 1.0f, 1.0f,
 		img[headNum]->location, img[headNum]->angle, REVERSE_NONE);
 
-	iRect rt = iRectMake(playerPosition.x, playerPosition.y,
+	iRect rt = iRectMake(playerPosition.x,
+		playerPosition.y ,
 		HALF_OF_TEX_WIDTH * 2.0f, HALF_OF_TEX_HEIGHT * 2.0f);
 
 	//히트박스 표시-------------------------------
 	setRGBA(0, 1, 0, 0.3f);
-	//fillRect(rt);
+	fillRect(rt);
 	setRGBA(1, 1, 1, 1);
 
 	touchPlayer = rt;

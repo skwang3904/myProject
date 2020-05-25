@@ -100,11 +100,13 @@ void EnemyGolem::init(int stage)
 
 void EnemyGolem::paint(float dt)
 {
-	if (act == dead)
+	if (act == dying || act == dead)
 	{
 		for (int i = 0; i < 2; i++)
 			items[i]->paint(dt);
-		return;
+
+		if (act == dead)
+			return;
 	}
 
 	Texture* tex = img[0]->tex;
@@ -137,7 +139,7 @@ void EnemyGolem::paint(float dt)
 		if (showHp)
 			drawShowHp(dt);
 
-		iPoint mapPos = maps[tileNumber]->tileOff;
+		iPoint mapPos = maps[pc->tileNumber]->tileOff;
 		if ((methodRange(this, dt) == false) &&
 			(methodMelee(this, dt) == false) &&
 			(mapPos.x < golemPos.x &&
@@ -156,13 +158,14 @@ void EnemyGolem::paint(float dt)
 			act = dying;
 			audioPlay(SND_ENEMY_DEAD);
 			img[4]->startAnimation();
+			methodead(this);
 		}
 
 		img[4]->paint(dt, drawGolemPos, reverse);
 
 		if (img[4]->animation == false)
 		{
-			methodead(this);
+
 			golemPos = iPointZero;
 			touchGolem = iRectZero;
 			act = dead;

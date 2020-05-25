@@ -14,35 +14,6 @@
 
 #include "useitem.h"
 
-
-iImage* coinimgtest;
-void cointest()
-{
-	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(500, 500);
-	g->init(size);
-
-	setStringSize(50);
-	setStringRGBA(1, 0, 0, 1);
-	setStringBorder(0);
-	g->drawString(size.width / 2, size.height / 2, TOP | LEFT, "%d", pc->coin);
-
-	Texture* tex = g->getTexture();
-	iImage* img = new iImage();
-	img->addObject(tex);
-	freeImage(tex);
-
-	coinimgtest = img;
-}
-
-void freecointest()
-{
-	delete coinimgtest;
-}
-//--------------------------------------------------------
-//--------------------------------------------------------
-//--------------------------------------------------------
-
 void loadRgProc()
 {
 	createEffect();
@@ -91,7 +62,7 @@ void freeRgProc()
 
 	//--------------------------------------------------------
 	// test
-	freecointest();
+
 }
 
 int ballNum = 0;
@@ -129,9 +100,6 @@ void drawRgProc(float dt)
 
 	//--------------------------------------------------------
 	// test
-
-	cointest();
-	coinimgtest->paint(dt, iPointZero, REVERSE_NONE);
 }
 
 void keyRgProc(iKeyState stat, iPoint point)

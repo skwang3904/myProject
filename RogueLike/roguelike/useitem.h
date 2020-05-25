@@ -24,8 +24,14 @@ public:
 public:
 	iImage* img;
 
+	bool alive;
 	float value;
 	
+
+	iPoint sp;
+	float aniHeight;
+	float aniDt;
+
 	iPoint itemPos;
 	iPoint drawitemPos;
 	iRect touchItem;
@@ -33,6 +39,7 @@ public:
 	itemType type;
 
 	void gainValue();
+	bool animation(float dt);
 
 	void paint(float dt);
 	//습득시 애니메이션

@@ -26,8 +26,13 @@ UseItem::UseItem(itemType it)
     }
     }
 
+    alive = false;
     value = 0.0f;
     type = it;
+
+    sp = iPointZero;
+    aniHeight = 100.0f;
+    aniDt = 0.0f;
 
     itemPos = iPointZero;
     drawitemPos = iPointZero;
@@ -51,6 +56,8 @@ void UseItem::gainValue()
     case healing:
     {
         pc->hp += value;
+        if (pc->hp > 100.0f)
+            pc->hp = 100.0f;
         break;
     }
     case dmgUp:
@@ -61,17 +68,53 @@ void UseItem::gainValue()
 	}
 }
 
-void UseItem::paint(float dt)
+#define ANIDT 3.0f
+bool UseItem::animation(float dt)
 {
+    if (sp == itemPos)
+        return false;
+
+    aniDt += dt;
+    if (aniDt > ANIDT)
+    {
+        sp = itemPos;
+        aniDt = ANIDT;
+    }
+    // 수정
+    float h = aniHeight - aniHeight * (fabsf((aniDt / ANIDT) * 2.0f - 1))* -1.0f + 1;
+    printf("%.2f\n", h);
+    iPoint a = linear(aniDt / ANIDT, sp, itemPos);
+    iPoint b = a + iPointMake(0, h);
+    
+    drawitemPos = b + pc->camPosition + setPos;
     img->paint(dt, drawitemPos, REVERSE_NONE);
 
-    setRGBA(1, 1, 0, 1);
-    fillRect(touchItem.origin.x, touchItem.origin.y, touchItem.size.width, touchItem.size.height);
+    return true;
+}
+
+void UseItem::paint(float dt)
+{
+    if (animation(dt))
+        return;
+
+    if (alive == false)
+        return;
+
+    iRect rt = touchItem;
+    rt.origin += pc->camPosition + setPos;
+    setRGBA(1, 0, 0, 0.5f);
+    fillRect(rt);
     setRGBA(1, 1, 1, 1);
 
+    img->paint(dt, drawitemPos, REVERSE_NONE);
+
+    drawitemPos = itemPos + pc->camPosition + setPos;
+
+    iPoint p = pc->playerPosition + HALF_OF_TEX_POINT;
     
-    if (containRect(pc->touchPlayer, touchItem))
+    if (containPoint(p, touchItem))
     {
+        alive = false;
         gainValue();
     }
 }
@@ -103,28 +146,25 @@ void freeItemImg()
     delete imgCoin;
 }
 
-
 void golemItems(EnemyGolem* enm)
 {
     for (int i = 0; i < 2; i++)
     {
         UseItem* ui = enm->items[i];
         Texture* tex = ui->img->tex;
-        ui->value = i * 10;
-        ui->itemPos = pc->playerPosition;
+
+        ui->alive = true;
+        ui->value = 1 + i * 9;
 
         iPoint p = iPointMake(-100 + 200 * i, 0);
-        ui->drawitemPos = ui->itemPos + p + (pc->camPosition + maps[enm->tileNumber]->tileOff);
+        ui->sp = enm->golemPos;
+        ui->itemPos = enm->golemPos + p;
+        ui->drawitemPos = ui->itemPos + (pc->camPosition + setPos);
 
-        printf("%.2f, %.2f\n", ui->drawitemPos.x, ui->drawitemPos.y);
-
-        ui->touchItem = iRectMake(ui->itemPos.x, 
-            ui->itemPos.y,
-            tex->width, tex->height);
+        ui->touchItem = iRectMake(ui->itemPos.x + tex->width * 0.25f, 
+            ui->itemPos.y + tex->height * 0.25f,
+            tex->width * 0.5f, tex->height * 0.5f);
 
         iPoint pp = iPointMake(ui->touchItem.origin.x, ui->touchItem.origin.y);
-
-        printf("%.2f, %.2f\n", pp.x, pp.y);
-
     }
 }

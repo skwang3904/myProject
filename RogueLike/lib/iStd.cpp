@@ -921,6 +921,7 @@ void drawImage(Texture* tex, int x, int y,
     glPopMatrix();
 }
 
+
 // 임시 // 무기 히트박스용
 iRect getHitBoxRect(Texture* tex, int x, int y, 
     int ix, int iy, int iw, int ih,

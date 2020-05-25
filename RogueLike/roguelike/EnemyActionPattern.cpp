@@ -119,7 +119,8 @@ bool commonAttack(EnemyGolem* enm, float dt)
 		e->act = idle;
 	}
 
-	if (e->giveDmg == true)// && e->giveDmgTime > 0.0f - e->meleeAtkSpeed * 0.33f)
+	if (e->giveDmg == true && e->giveDmgTime > 0.0f - e->meleeAtkSpeed * 0.4f &&
+		e->giveDmgTime < 0.0f - e->meleeAtkSpeed * 0.3f)
 	{
 		setLineWidth(10);
 		setRGBA(1, 0, 0, 1);
@@ -144,8 +145,8 @@ bool commonAttack(EnemyGolem* enm, float dt)
 			{
 				if (pc->act == evasion || pc->act == falling)
 					return true;
-				printf("hits\n");
-				//pc->hp -= attackDmg;
+
+				pc->hp -= e->attackDmg;
 				e->hit = true;
 			}
 		}
@@ -209,7 +210,7 @@ bool rangeAttack(EnemyGolem* enm, float dt)
 		e->act = rangeAtk;
 		e->reverse = (v.x > 0.0f ? REVERSE_NONE : REVERSE_WIDTH);
 
-		a = random() % FIREBALL_NUM;
+		a = 5 + (random() % (FIREBALL_NUM - 5));
 		float speed = 0.0f;
 		float timer = 0.0f;
 		float duration = 0.0f;

@@ -11,10 +11,12 @@ void loadPlayerUI()
 	createPopHP();
 	createPopCombatMenu();
 	createPopMiniMap();
+	createPopItem();
 
 	showPopHP(true);
 	showPopCombatMenu(true);
 	showPopMiniMap(true);
+	showPopItem(true);
 }
 
 void freePlayerUI()
@@ -22,6 +24,7 @@ void freePlayerUI()
 	freePopHP();
 	freePopCombatMenu();
 	freePopMiniMap();
+	freePopItem();
 }
 
 void drawPlayerUI(float dt)
@@ -29,13 +32,15 @@ void drawPlayerUI(float dt)
 	drawPopHP(dt);
 	drawPopCombatMenu(dt);
 	drawPopMiniMap(dt);
+	drawPopItem(dt);
 }
 
 bool keyPlayerUI(iKeyState stat, iPoint point)
 {
 	if (keyPopHP(stat, point) ||
-		keyPopCombatMenu(stat,point)||
-		keyPopMiniMap(stat,point))
+		keyPopCombatMenu(stat, point) ||
+		keyPopMiniMap(stat, point) ||
+		keyPopItem(stat, point))
 		return true;
 }
 
@@ -357,27 +362,57 @@ bool keyPopCombatMenu(iKeyState stat, iPoint point)
 /////////////////////////////////////////////////////////
 
 iPopup* popItem;
+iImage* coinimgtest;
 
 void createPopItem()
 {
 	iPopup* pop = new iPopup(iPopupStyleNone);
+	popItem = pop;
+
+	iImage* imgHP = new iImage();
+	Texture* texHP = createImage("assets/item/heart.png");
+
 	iImage* imgCoin = new iImage();
-	iImage* imgHeart = new iImage();
 	Texture* texCoin = createImage("assets/item/coin.png");
-	Texture* texHeart = createImage("assets/item/heart.png");
 
+	iImage* imgGemRed = new iImage();
+	Texture* texGemRed = createImage("assets/item/gemRed.png");
+
+	iImage* imgGemBlue = new iImage();
+	Texture* texGemBlue = createImage("assets/item/gemBlue.png");
+
+	iImage* imgGemGreen = new iImage();
+	Texture* texGemGreen = createImage("assets/item/gemGreen.png");
+
+	imgHP->addObject(texHP);
 	imgCoin->addObject(texCoin);
-	imgHeart->addObject(texHeart);
+	imgGemRed->addObject(texGemRed);
+	imgGemBlue->addObject(texGemBlue);
+	imgGemGreen->addObject(texGemGreen);
 
-	imgCoin->position = iPointMake(50, 100);
-	imgHeart->position = iPointMake(50, 250);
+	freeImage(texHP);
+	freeImage(texCoin);
+	freeImage(texGemRed);
+	freeImage(texGemBlue);
+	freeImage(texGemGreen);
 
-	
+	imgHP->position =		iPointMake(50, 150);
+	imgCoin->position =		iPointMake(50, 250);
+	imgGemRed->position =	iPointMake(50, 350);
+	imgGemBlue->position =	iPointMake(50, 450);
+	imgGemGreen->position = iPointMake(50, 550);
+
+	pop->addObject(imgHP);
+	pop->addObject(imgCoin);
+	pop->addObject(imgGemRed);
+	pop->addObject(imgGemBlue);
+	pop->addObject(imgGemGreen);
 }
 
 void freePopItem()
 {
 	delete popItem;
+	delete coinimgtest;
 }
 
 void showPopItem(bool show)
@@ -385,12 +420,50 @@ void showPopItem(bool show)
 	popItem->show(show);
 }
 
+void cointest()
+{
+	if (coinimgtest)
+		delete coinimgtest;
+
+	iGraphics* g = iGraphics::instance();
+	iSize size = iSizeMake(1024, 1024);
+	g->init(size);
+
+	setStringSize(50);
+	setStringRGBA(0, 1, 0, 1);
+	setStringBorder(1);
+
+	g->drawString(200, 200, TOP | LEFT, "%.1f", pc->hp);
+
+	g->drawString(200, 300, TOP | LEFT, "%d", pc->coin);
+
+	g->drawString(200, 400, TOP | LEFT, "%.1f", pc->attackDmg);
+
+	g->drawString(200, 500, TOP | LEFT, "%.1f", pc->attackSpeed);
+
+	Texture* tex = g->getTexture();
+	iImage* img = new iImage();
+	img->addObject(tex);
+	freeImage(tex);
+
+	coinimgtest = img;
+}
+
 void drawPopItem(float dt)
 {
 	popItem->paint(dt);
+
+	cointest();
+	coinimgtest->paint(dt, iPointZero, REVERSE_NONE);
 }
 
 bool keyPopItem(iKeyState stat, iPoint point)
 {
+	if (popItem->bShow == false)
+		return false;
+
+	if (popItem->stat != iPopupStatProc)
+		return true;
+
 	return false;
 }

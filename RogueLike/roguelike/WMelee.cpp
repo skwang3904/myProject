@@ -72,7 +72,7 @@ void createMeleeWeapon()
 
 	// img, ismelee, attackDmg, attackSpeed, widthReach, heightReach, holeAngle
 	nomalSword->init(imgSword, true, 30, 0.3f, 30.0f, 60.0f, -30.0f);
-	nomalSpear->init(imgSpear, true, 20, 0.2f, 10.0f, 70.0f, -45.0f);
+	nomalSpear->init(imgSpear, true, 50, 0.2f, 10.0f, 70.0f, -45.0f);
 	nomalCyclone->init(imgCyclon, true, 30, 0.5f, 30.0f, 50.0f, -70.0f);
 
 	PMW[0] = { nomalSword,nomalSwordMethod };
@@ -124,8 +124,6 @@ void draw(meleeWeapon* mw, float dt, iPoint dropP)
 			0, 0,	tex->width, tex->height,
 			VCENTER | HCENTER, 1.5f, 1.5f, 2, 90);
 
-		printf("mw %.2f  // %.2f\n", mw->hitBox.origin.x, mw->hitBox.origin.y);
-		printf("pc %.2f  // %.2f\n", pc->playerPosition.x, pc->playerPosition.y);
 		iRect mt = mw->hitBox;
 		mt.origin += pc->camPosition + setPos;
 		setRGBA(0, 1, 0, 1);

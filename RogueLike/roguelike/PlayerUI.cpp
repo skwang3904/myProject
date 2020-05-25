@@ -42,6 +42,7 @@ bool keyPlayerUI(iKeyState stat, iPoint point)
 		keyPopMiniMap(stat, point) ||
 		keyPopItem(stat, point))
 		return true;
+	return false;
 }
 
 /////////////////////////////////////////////////////////
@@ -159,20 +160,21 @@ iImage* imgMiniMap;
 
 #define MINIMAPTILE 40
 static int minitile = MINIMAPTILE;
+static uint8 prevTileNum = 0;
 Texture* refreshMiniMap()
 {
 	if (imgMiniMap->tex)
 		freeImage(imgMiniMap->tex);
 
 	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(minitile * TILEOFF_SQRT, minitile * TILEOFF_SQRT);
+	iSize size = iSizeMake(devSize.width,devSize.height);
 	g->init(size);
 
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
 		if (ct[i].value)
 		{
-			if (ct[i].tileOff + pc->camPosition == iPointZero) setRGBA(0, 1, 0, 1);
+			if (i == pc->tileNumber) setRGBA(0, 1, 0, 1);
 			else setRGBA(0.8, 0.8, 0.8, 1);
 
 			g->fillRect(minitile * (i % TILEOFF_SQRT), minitile * (i / TILEOFF_SQRT), minitile, minitile);
@@ -226,8 +228,10 @@ void createPopMiniMap()
 	//freeImage(tex); // 리테인카운터 감소시키면 삭제에러뜸
 
 	pop->addObject(imgMiniMap);
-	pop->openPosition = iPointMake(devSize.width - minitile * TILEOFF_SQRT, 100);
+	pop->openPosition = iPointMake(devSize.width - minitile * (TILEOFF_SQRT + 5), 100);
 	pop->closePosition = pop->openPosition;
+
+	prevTileNum = pc->tileNumber;
 }
 
 void freePopMiniMap()
@@ -242,18 +246,27 @@ void showPopMiniMap(bool show)
 
 void drawPopMiniMap(float dt)
 {
-	if (getKeyStat(keyboard_r))
+	if (getKeyDown(keyboard_r))
 	{
-		popMiniMap->closePosition = iPointMake(500, 100);
-		minitile = 150;
-	}
-	else
-	{
-		popMiniMap->closePosition = iPointMake(devSize.width - minitile * TILEOFF_SQRT, 100);
-		minitile = MINIMAPTILE;
+		if (minitile == MINIMAPTILE)
+		{
+			imgMiniMap->position = iPointMake(-1.0f * (devSize.width / 2.0f) - minitile * TILEOFF_SQRT, 100);
+			minitile = 150;
+		}
+		else if (minitile == 150)
+		{
+			imgMiniMap->position = iPointZero;
+			minitile = MINIMAPTILE;
+		}
+		imgMiniMap->tex = refreshMiniMap();
 	}
 
-	imgMiniMap->tex = refreshMiniMap();
+	if (prevTileNum != pc->tileNumber)
+	{
+		imgMiniMap->tex = refreshMiniMap();
+		prevTileNum = pc->tileNumber;
+	}
+
 	popMiniMap->paint(dt);
 }
 
@@ -268,34 +281,54 @@ bool keyPopMiniMap(iKeyState stat, iPoint point)
 	return false;
 }
 
-/////////////////////////////////////////////////////////
+//---------------------------------------------------------------------------
 
 iPopup* popCombatMenu;
+iPopup* popCombatInfo;
+iImage* imgCombatInfo;
+iImage* imgInfoButten;
 
 void drawCombat(float dt)
 {
-	iPoint p ;
-	
+	iPoint p;
+
+	PlayerMW* pw;
 	for (int i = 0; i < pc->weaponArray->count; i++)
 	{
 		p = iPointMake(1600 + 150 * (i % 2), 400 + +150 * (i / 2));
 
-		PlayerMW* pw = (PlayerMW*)pc->weaponArray->objectAtIndex(i);
+		pw = (PlayerMW*)pc->weaponArray->objectAtIndex(i);
 		pw->mw->img->setTexAtIndex(1);
 		if (pw == pc->pmw)
 		{
-			setRGBA(0, 1, 0, 1);
+			if (popCombatMenu->selected == i) setRGBA(0, 0, 1, 1);
+			else setRGBA(0, 1, 0, 1);
 			fillRect(p.x, p.y, pw->mw->img->tex->width, pw->mw->img->tex->height);
 			setRGBA(1, 1, 1, 1);
 		}
+
 		drawImage(pw->mw->img->tex, p.x, p.y, TOP | LEFT);
 		pw->mw->img->setTexAtIndex(0);
 	}
+}
 
+iImage* setCombatInfo(int i)
+{
+	iImage* img = new iImage();
+	
+	PlayerMW* pw = (PlayerMW * )pc->weaponArray->objectAtIndex(i);
+	if (pw == pc->pmw)
+		printf("same\n");
+
+	img = pw->mw->img;
+
+	return img;
 }
 
 void createPopCombatMenu()
 {
+	//---------------------------------------------------------------------------
+	// menu
 	iPopup* pop = new iPopup(iPopupStyleNone);
 	popCombatMenu = pop;
 
@@ -313,11 +346,34 @@ void createPopCombatMenu()
 		imgCombatMenu1->position = iPointMake(1600 + 150 * (i % 2), 400 + 150 * (i / 2));
 		pop->addObject(imgCombatMenu1);
 	}
+
+	//---------------------------------------------------------------------------
+	// info
+	iPopup* popInfo = new iPopup(iPopupStyleNone);
+	popCombatInfo = popInfo;
+
+	iImage* imgButten = new iImage();
+	imgInfoButten = imgButten;
+
+	Texture* texButten = createImage("assets/PlayerUI/check button.png");
+	imgButten->addObject(texButten);
+	freeImage(texButten);
+
+	imgCombatInfo = setCombatInfo(0);
+	imgCombatInfo->position = iPointMake(devSize.width / 2, devSize.height / 2);
+
+	imgButten->position = imgCombatInfo->position + iPointMake(250, 0);
+
+	popInfo->addObject(imgCombatInfo);
+	popInfo->addObject(imgButten);
+
+	popInfo->_showDt = 0.01f;
 }
 
 void freePopCombatMenu()
 {
 	delete popCombatMenu;
+	delete popCombatInfo;
 }
 
 void showPopCombatMenu(bool show)
@@ -325,11 +381,17 @@ void showPopCombatMenu(bool show)
 	popCombatMenu->show(show);
 }
 
+void showPopCombatInfo(bool show)
+{
+	popCombatInfo->show(show);
+}
+
 void drawPopCombatMenu(float dt)
 {
-	//무기 그리기
 	popCombatMenu->paint(dt);
 	drawCombat(dt);
+
+	popCombatInfo->paint(dt);
 }
 
 bool keyPopCombatMenu(iKeyState stat, iPoint point)
@@ -345,10 +407,35 @@ bool keyPopCombatMenu(iKeyState stat, iPoint point)
 	{
 	case iKeyStateBegan:
 	{
-
+		i = popCombatMenu->selected;
+		if (i == -1)
+			break;
+		if (i == 100)
+		{
+			popCombatInfo->show(false);
+			break;
+		}
+		imgCombatInfo = setCombatInfo(i);
+		showPopCombatInfo(true);
+		break;
 	}
 	case iKeyStateMoved:
 	{
+		for (int i = 0; i < pc->weaponArray->count; i++)
+		{
+			iPoint	p = iPointMake(1600 + 150 * (i % 2), 400 + +150 * (i / 2));
+			iRect rt = iRectMake(p.x, p.y, 128, 128);
+			if (containPoint(point, rt))
+			{
+				j = i;
+				break;
+			}
+		}
+
+		if (containPoint(point, imgInfoButten->touchRect(popCombatInfo->closePosition)))
+			j = 100;
+
+		popCombatMenu->selected = j;
 		break;
 	}
 	case iKeyStateEnded:
@@ -359,7 +446,7 @@ bool keyPopCombatMenu(iKeyState stat, iPoint point)
 	}
 }
 
-/////////////////////////////////////////////////////////
+//---------------------------------------------------------------------------
 
 iPopup* popItem;
 iImage* coinimgtest;

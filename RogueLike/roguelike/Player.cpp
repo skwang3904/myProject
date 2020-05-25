@@ -425,12 +425,14 @@ void Player::paint(float dt)
 		playerPosition.y ,
 		HALF_OF_TEX_WIDTH * 2.0f, HALF_OF_TEX_HEIGHT * 2.0f);
 
+	touchPlayer = rt;
+
 	//히트박스 표시-------------------------------
-	setRGBA(0, 1, 0, 0.3f);
+	setRGBA(0, 1, 0, 0.1f);
+	rt.origin += pc->camPosition + setPos;
 	fillRect(rt);
 	setRGBA(1, 1, 1, 1);
 
-	touchPlayer = rt;
 }
 
 bool Player::evasionPlayer(MapTile* tile, float dt)

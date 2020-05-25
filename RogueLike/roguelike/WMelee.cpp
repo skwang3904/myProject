@@ -13,7 +13,10 @@ meleeWeapon* nomalCyclone;
 
 PlayerMW PMW[MELEE_NUM];
 
+iImage* infoFromMW(const char* info);
+
 void meleeWeapon::init(
+	const char* info,
 	iImage* iImg,
 	bool isMelee,
 	float iAttackDmg,
@@ -22,6 +25,8 @@ void meleeWeapon::init(
 	float iHeightReach,
 	float iHoldAngle)
 {
+	infoImg = infoFromMW(info);
+	infomation = info;
 	img = iImg;
 	melee = isMelee;
 
@@ -40,16 +45,19 @@ void meleeWeapon::init(
 
 void createMeleeWeapon()
 {
+	char swordInfo[32] = "Sword";
 	nomalSword = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
 	iImage* imgSword = new iImage();
 
 	//-----------------------------------------------------------
 
+	char spearInfo[32] = "Spear";
 	nomalSpear = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
 	iImage* imgSpear = new iImage();
 
 	//-----------------------------------------------------------
 
+	char cycleonInfo[32] = "Cyclone";
 	nomalCyclone = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
 	iImage* imgCyclon= new iImage();
 
@@ -71,9 +79,9 @@ void createMeleeWeapon()
 	}
 
 	// img, ismelee, attackDmg, attackSpeed, widthReach, heightReach, holeAngle
-	nomalSword->init(imgSword, true, 30, 0.3f, 30.0f, 60.0f, -30.0f);
-	nomalSpear->init(imgSpear, true, 50, 0.2f, 10.0f, 70.0f, -45.0f);
-	nomalCyclone->init(imgCyclon, true, 30, 0.5f, 30.0f, 50.0f, -70.0f);
+	nomalSword->init(swordInfo, imgSword, true, 30, 0.3f, 30.0f, 60.0f, -30.0f);
+	nomalSpear->init(spearInfo, imgSpear, true, 50, 0.2f, 10.0f, 70.0f, -45.0f);
+	nomalCyclone->init(cycleonInfo, imgCyclon, true, 30, 0.5f, 30.0f, 50.0f, -70.0f);
 
 	PMW[0] = { nomalSword,nomalSwordMethod };
 	PMW[1] = { nomalSpear,nomalSpearMethod };
@@ -130,6 +138,28 @@ void draw(meleeWeapon* mw, float dt, iPoint dropP)
 		drawRect(mt);
 		setRGBA(1, 1, 1, 1);
 	}
+}
+
+iImage* infoFromMW(const char* info)
+{
+	iGraphics* g = iGraphics::instance();
+	iSize size = iSizeMake(300, 300);
+	g->init(size);
+
+	setRGBA(0.3, 0.3, 1, 1);
+	g->fillRect(0, 0, size.width, size.height, 30);
+
+	setStringRGBA(0, 0, 0, 1);
+	setStringSize(30);
+	setStringBorder(0);
+	g->drawString(size.width / 2, size.height / 2, VCENTER | HCENTER, "%s", info);
+
+	iImage* img = new iImage();
+	Texture* tex = g->getTexture();
+	img->addObject(tex);
+	freeImage(tex);
+
+	return img;
 }
 
 void weaponPosAndRt(meleeWeapon* mw, iPoint& wcp, iPoint& centerP, iRect& rt)

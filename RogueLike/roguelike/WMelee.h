@@ -7,6 +7,9 @@
 
 //typedef void (*Method_Combat)(float dt, iPoint dropP);
 struct meleeWeapon {
+	iImage* infoImg;
+	const char* infomation;
+	
 	iImage* img;
 
 	bool melee;
@@ -24,6 +27,7 @@ struct meleeWeapon {
 	bool attackEnemy;
 
 	void init(
+		const char* info,
 		iImage* iImg,
 		bool isMelee,
 		float iAttackDmg,

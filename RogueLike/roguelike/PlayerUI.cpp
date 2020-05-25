@@ -320,7 +320,7 @@ iImage* setCombatInfo(int i)
 	if (pw == pc->pmw)
 		printf("same\n");
 
-	img = pw->mw->img;
+	img = pw->mw->infoImg;
 
 	return img;
 }
@@ -359,6 +359,7 @@ void createPopCombatMenu()
 	imgButten->addObject(texButten);
 	freeImage(texButten);
 
+	imgCombatInfo = new iImage();
 	imgCombatInfo = setCombatInfo(0);
 	imgCombatInfo->position = iPointMake(devSize.width / 2, devSize.height / 2);
 

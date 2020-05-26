@@ -10,7 +10,7 @@
 #include "RgLoading.h"
 
 uint8 stage = 0;
-uint8 nextDoor = -1;
+uint8 nextDoor = 255;
 bool nextStage = false;
 
 void createStage(uint8 stage)
@@ -22,9 +22,8 @@ void createStage(uint8 stage)
 		golems[i]->init(stage);
 
 	uint8 pcTile = pc->initPlayerPosition();
-
 	setEnemyPosition(pcTile);
-	setNextDoor(pcTile);
+	//setNextDoor(pcTile);
 }
 
 void setNextDoor(uint8 pcTile)
@@ -32,7 +31,6 @@ void setNextDoor(uint8 pcTile)
 	int i, j, num = 0;
 	uint8 activeTile[MAPTILE_NUM];
 	memset(activeTile, -1, sizeof(uint8) * MAPTILE_NUM);
-
 
 	for (i = 0; i < TILEOFF_NUM; i++)
 	{
@@ -44,19 +42,20 @@ void setNextDoor(uint8 pcTile)
 			activeTile[num] = i;
 			num++;
 		}
-		if (i == TILEOFF_NUM - 1 && activeTile[0] == -1)
-		{
+	}
 
-			for (i = 0; i < TILEOFF_NUM; i++)
+	if (i == TILEOFF_NUM - 1 && activeTile[0] == -1)
+	{
+
+		for (i = 0; i < TILEOFF_NUM; i++)
+		{
+			if (maps[i]->rgTile == Tile2way3 || maps[i]->rgTile == Tile2way4 ||
+				maps[i]->rgTile == Tile2way5 || maps[i]->rgTile == Tile2way6)
 			{
-				if (maps[i]->rgTile == Tile2way3 || maps[i]->rgTile == Tile2way4 ||
-					maps[i]->rgTile == Tile2way5 || maps[i]->rgTile == Tile2way6)
-				{
-					if (i == pcTile)
-						continue;
-					activeTile[num] = i;
-					num++;
-				}
+				if (i == pcTile)
+					continue;
+				activeTile[num] = i;
+				num++;
 			}
 		}
 	}
@@ -79,6 +78,7 @@ void nextStageAni(float dt)
 	{
 		pc->img[8]->startAnimation();
 		stageAni = true;
+		nextDoor = 255;
 	}
 	
 	if (pc->img[8]->animation == true)
@@ -105,16 +105,12 @@ void nextStageAni(float dt)
 		stagetest = false;
 		stageAni = false;
 	}
-
 }
 
 void drawNextDoor(float dt)
 {
-	if (nextStage)
-	{
-		nextStageAni(dt);
+	if (nextStage || nextDoor == 255)
 		return;
-	}
 
 	iPoint p = pc->camPosition + maps[nextDoor]->tileOff + setPos + RGTILE_CENTER;
 
@@ -127,7 +123,7 @@ void drawNextDoor(float dt)
 
 void containDoor(iPoint p)
 {
-	if (maps[nextDoor]->tileOff + pc->camPosition != iPointZero)
+	if (nextDoor != pc->tileNumber)
 		return;
 
 	iPoint dp = maps[nextDoor]->tileOff + RGTILE_CENTER;

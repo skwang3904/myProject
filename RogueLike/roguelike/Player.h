@@ -65,7 +65,7 @@ public:
 	float moveSpeed;
 
 	CharAction act;
-	uint8 tileNumber;
+	int tileNumber;
 
 	iPoint camPosition;
 	iPoint playerPosition;

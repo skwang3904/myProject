@@ -203,7 +203,7 @@ Texture* refreshMiniMap()
 			}
 
 			int a = golemEletes[0]->tileNumber;
-			if (a == i)
+			if (a == i && golemEletes[0]->hp > 0.0f)
 			{
 				setRGBA(1, 0, 0, 1);
 				g->fillRect(minitile * (i % TILEOFF_SQRT) + 10, minitile * (i / TILEOFF_SQRT) + 10,

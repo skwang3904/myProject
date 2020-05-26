@@ -21,3 +21,5 @@ void setNextDoor(uint8 pcTile);
 
 void drawNextDoor(float dt);
 void containDoor(iPoint p);
+
+void nextStageAni(float dt);

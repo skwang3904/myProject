@@ -74,9 +74,9 @@ void Player::initPlayerStat()
 
 	touchPlayer = iRectZero;
 
-	weaponArray->addObject(&PMW[1]);
-	pmw = &PMW[1];
-	PMW[1].drop = false;
+	weaponArray->addObject(&PMW[0]);
+	pmw = &PMW[0];
+	PMW[0].drop = false;
 	pmwCount = 1;
 
 	coin = 0;
@@ -85,15 +85,16 @@ void Player::initPlayerStat()
 uint8 Player::initPlayerPosition()
 {
 	uint8 pcTile = 0;
-	for (int i = 15; i < TILEOFF_NUM; i++)
+	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
-		if (maps[i]->rgTile != NULL)
+		int a = random() % TILEOFF_NUM;
+		if (maps[a]->rgTile != NULL)
 		{
-			playerPosition = maps[i]->tileOff + RGTILE_CENTER;
+			playerPosition = maps[a]->tileOff + RGTILE_CENTER;
 
-			camPosition = iPointZero - maps[i]->tileOff;
+			camPosition = iPointZero - maps[a]->tileOff;
 			drawPos = playerPosition + camPosition + setPos;
-			tileNumber = i;
+			tileNumber = a;
 			break;
 		}
 	}
@@ -182,7 +183,7 @@ void Player::createPlayerImage()
 	imgEvasion->_aniDt = EVASION_DURATION / 4.0f;
 	imgEvasion->_repeatNum = 1;
 	imgEvasion->_selectedDt = imgEvasion->_aniDt * 4.0f;
-	imgEvasion->angle = 720.0f;
+	//imgEvasion->angle = 720.0f;
 
 	img = imgChar;
 
@@ -467,28 +468,28 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 		iPoint p = iPointMake(drawPos.x - HALF_OF_TEX_WIDTH/2,
 			drawPos.y - HALF_OF_TEX_HEIGHT);
 		
-		if (evasV.x < 0)
-		{
-			img[9]->reverseRotate = false;
-			img[9]->location = 2;
-		}
-		else if (evasV.x > 0)
-		{
-			img[9]->reverseRotate = true;
-			img[9]->location = 2;
-		}
-		if (evasV.y < 0)
-		{
-			img[9]->reverseRotate = false;
-			img[9]->location = 1;
-		}
-		else if (evasV.y > 0)
-		{
-			img[9]->reverseRotate = true;
-			img[9]->location = 1;
-		}
+		//if (evasV.x < 0)
+		//{
+		//	img[9]->reverseRotate = false;
+		//	img[9]->location = 2;
+		//}
+		//else if (evasV.x > 0)
+		//{
+		//	img[9]->reverseRotate = true;
+		//	img[9]->location = 2;
+		//}
+		//if (evasV.y < 0)
+		//{
+		//	img[9]->reverseRotate = false;
+		//	img[9]->location = 1;
+		//}
+		//else if (evasV.y > 0)
+		//{
+		//	img[9]->reverseRotate = true;
+		//	img[9]->location = 1;
+		//}
+		//img[9]->selected = true;
 
-		img[9]->selected = true;
 		img[9]->paint(dt, p, REVERSE_NONE);
 		
 		return true;

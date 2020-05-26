@@ -249,6 +249,7 @@ bool nomalSworadAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 
 	if (mw->attackEnemy == false && pc->act != attacking)
 		return false;
+
 	//weaponPosition(mw, dt, mw->combatPosition);
 
 	static float delta = 0.0f;

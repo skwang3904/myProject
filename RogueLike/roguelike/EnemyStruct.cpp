@@ -1,6 +1,7 @@
 #include "EnemyStruct.h"
 
 #include "Room.h"
+#include "Stage.h"
 
 #include "Enemy.h"
 #include "EnemyActionPattern.h"
@@ -178,6 +179,8 @@ void EnemyGolem::paint(float dt)
 			golemPos = iPointZero;
 			touchGolem = iRectZero;
 			act = dead;
+			if (this == golemEletes[0])
+				nextDoor = tileNumber;
 		}
 	}
 }

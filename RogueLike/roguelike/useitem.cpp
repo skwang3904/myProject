@@ -38,7 +38,7 @@ UseItem::UseItem(itemType it)
     type = it;
 
     sp = iPointZero;
-    aniHeight = 30.0f;
+    aniHeight = 50.0f;
     aniDt = 0.0f;
 
     itemPos = iPointZero;
@@ -76,7 +76,7 @@ void UseItem::gainValue()
 	}
 }
 
-#define ANIDT 1.0f
+#define ANIDT 0.5f
 bool UseItem::animation(float dt)
 {
     if (aniDt == ANIDT)
@@ -90,7 +90,7 @@ bool UseItem::animation(float dt)
     }
 
     float h = 0.0f - aniHeight * _sin(180 * aniDt / ANIDT);
-    iPoint a = linear(aniDt / ANIDT, sp, itemPos);
+    iPoint a = easeIn(aniDt / ANIDT, sp, itemPos);
     a += iPointMake(0, h);
     
     drawitemPos = a + pc->camPosition + setPos;
@@ -170,9 +170,10 @@ void golemItems(EnemyGolem* enm)
         ui->alive = true;
         ui->value =  i * 10;
 
+		iPoint et = iPointMake(enm->img[0]->tex->width / 4.0f * enm->ratio, enm->img[0]->tex->height / 2.0f  * enm->ratio);
         iPoint p = iPointMake(-100 + 100 * i, 0);
-        ui->sp = enm->golemPos;
-        ui->itemPos = enm->golemPos + p;
+        ui->sp = enm->golemPos + et;
+        ui->itemPos = enm->golemPos + et + p;
         ui->drawitemPos = ui->itemPos + (pc->camPosition + setPos);
 
         ui->touchItem = iRectMake(ui->itemPos.x + tex->width * 0.25f, 

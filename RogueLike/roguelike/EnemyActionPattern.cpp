@@ -102,9 +102,10 @@ bool commonAttack(EnemyGolem* enm, float dt)
 		e->act = meleeAtk;
 
 		e->ATV = v;
-		float range = e->meleeReach;
-		e->ATV /= iPointLength(e->ATV);
-		e->ATV = e->golemPos + et + (e->ATV * range);
+		//float range = e->meleeReach;
+		//e->ATV /= iPointLength(e->ATV);
+		//e->ATV = e->golemPos + et + (e->ATV * range);
+		e->ATV += e->golemPos + et;
 		e->reverse = (v.x > 0.0f ? REVERSE_NONE : REVERSE_WIDTH);
 	}
 
@@ -135,11 +136,7 @@ bool commonAttack(EnemyGolem* enm, float dt)
 			float len = iPointLength(n);
 			n /= len;
 			iPoint p = pc->playerPosition + iPointMake(HALF_OF_TEX_WIDTH,HALF_OF_TEX_HEIGHT) - e->golemPos + et;
-
-			float dot = min(max(p.x * n.x + p.y * n.y, 0), len);
-			printf("max %.2f\n", max(p.x * n.x + p.y * n.y, 0));
-			printf("   min %.2f\n", min(max(p.x * n.x + p.y * n.y, 0), len));
-
+			float dot = min(max(p.x * n.x + p.y * n.y, 0.0f), len);
 			iPoint proj =  n * dot;
 			float hitDis = iPointLength(p - proj);
 			//printf("dis %.2f\n", hitDis);

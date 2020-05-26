@@ -119,21 +119,24 @@ void EnemyGolem::paint(float dt)
 	}
 
 	Texture* tex = img[0]->tex;
-	drawGolemPos = golemPos + pc->camPosition + setPos;
 
-	iRect rt = iRectMake(drawGolemPos.x + tex->width * ratio * 0.25,
-		drawGolemPos.y + tex->height * ratio * 0.25f,
+
+	iRect rt = iRectMake(golemPos.x + tex->width * ratio * 0.25,
+		golemPos.y + tex->height * ratio * 0.25f,
 		tex->width * ratio * 0.5f,
 		tex->height * ratio * 0.75f);
-	iRect rt1 = iRectMake(drawGolemPos.x,
-		drawGolemPos.y,
+	iRect rt1 = iRectMake(golemPos.x,
+		golemPos.y,
 		tex->width * ratio,
 		tex->height * ratio);
 
+	drawGolemPos = golemPos + pc->camPosition + setPos;
 	touchGolem = rt;
 
+	rt.origin += pc->camPosition + setPos;
+	rt1.origin += pc->camPosition + setPos;
 	setRGBA(0, 0, 0, 1);
-	drawRect(touchGolem);
+	drawRect(rt);
 	setRGBA(1, 0, 1, 1);
 	drawRect(rt1);
 	setRGBA(1, 1, 1, 1);

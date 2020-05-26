@@ -35,6 +35,7 @@ Player::~Player()
 			delete img[i];
 	}
 	free(img);
+	delete pc;
 }
 
 void Player::instance()

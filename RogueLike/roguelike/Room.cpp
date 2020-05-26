@@ -254,14 +254,13 @@ void passTileAnimation(float dt)
 				if (maps[i]->rgTile[j] == MOVETILE) setRGBA(MOVETILE_RGBA);
 				else if (maps[i]->rgTile[j] == WALLTILE)setRGBA(WALLTILE_RGBA);
 				else if (maps[i]->rgTile[j] == FALLTILE)setRGBA(FALLTILE_RGBA);
+				setRGBA(0, 0, 0, 0.7f);
 				fillRect(maps[i]->tileOff.x + pc->camPosition.x + setPos.x + RGTILE_Width * (j % RGTILE_X),
 					maps[i]->tileOff.y + pc->camPosition.y + setPos.y + RGTILE_Height * (j / RGTILE_X),
 					RGTILE_Width, RGTILE_Height);
 			}
 		}
 	}
-	setRGBA(0,0,0, 0.7f);
-	fillRect(0, 0,devSize.width,devSize.height);
 	setRGBA(1, 1, 1, 1);
 	passAniDt += dt;
 	if (passAniDt > _passAniDt)

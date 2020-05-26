@@ -46,6 +46,7 @@ void setNextDoor(uint8 pcTile)
 		}
 		if (i == TILEOFF_NUM - 1 && activeTile[0] == -1)
 		{
+
 			for (i = 0; i < TILEOFF_NUM; i++)
 			{
 				if (maps[i]->rgTile == Tile2way3 || maps[i]->rgTile == Tile2way4 ||

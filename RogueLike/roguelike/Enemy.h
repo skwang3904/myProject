@@ -9,6 +9,10 @@
 - 보스 
 */
 
+#define GOLEM_IMG_NUM 6
+#define GOLEM_ELETE_IMG_NUM 6
+
+
 void createEnemy();
 void freeEnemy();
 void drawEnemy(float dt);

@@ -5,6 +5,7 @@
 
 iImage* imgPotion;
 iImage* imgCoin;
+iImage* imgPowerUp;
 
 UseItem::UseItem(itemType it)
 {
@@ -20,8 +21,14 @@ UseItem::UseItem(itemType it)
         img = imgPotion->copy();
         break;
     }
-    case dmgUp:
+    case powerUp:
     {
+        img = imgPowerUp->copy();
+        break;
+    }
+    default:
+    {
+        img = imgPotion->copy();
         break;
     }
     }
@@ -50,7 +57,8 @@ void UseItem::gainValue()
 	{
     case coin:
     {
-        pc->coin += value;
+        //pc->coin += value;
+        pc->coin++;
         break;
     }
     case healing:
@@ -60,9 +68,9 @@ void UseItem::gainValue()
             pc->hp = pc->_hp;
         break;
     }
-    case dmgUp:
+    case powerUp:
     {
-
+        pc->attackDmg += value;
         break;
     }
 	}
@@ -71,7 +79,7 @@ void UseItem::gainValue()
 #define ANIDT 1.0f
 bool UseItem::animation(float dt)
 {
-    if (sp == itemPos)
+    if (aniDt == ANIDT)
         return false;
 
     aniDt += dt;
@@ -134,25 +142,35 @@ void createItemImg()
    freeImage(texMoney);
 
    imgCoin = imgMoney;
+
+   //----------------------------------------------------------------------------
+
+   iImage* imgPower = new iImage();
+   Texture* texPower = createImage("assets/item/gemRed.png");
+   imgPower->addObject(texPower);
+   freeImage(texPower);
+
+   imgPowerUp = imgPower;
 }
 
 void freeItemImg()
 {
     delete imgPotion;
     delete imgCoin;
+    delete imgPowerUp;
 }
 
 void golemItems(EnemyGolem* enm)
 {
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 3; i++)
     {
         UseItem* ui = enm->items[i];
         Texture* tex = ui->img->tex;
 
         ui->alive = true;
-        ui->value = 1 + i * 9;
+        ui->value =  i * 10;
 
-        iPoint p = iPointMake(-100 + 200 * i, 0);
+        iPoint p = iPointMake(-100 + 100 * i, 0);
         ui->sp = enm->golemPos;
         ui->itemPos = enm->golemPos + p;
         ui->drawitemPos = ui->itemPos + (pc->camPosition + setPos);
@@ -160,7 +178,5 @@ void golemItems(EnemyGolem* enm)
         ui->touchItem = iRectMake(ui->itemPos.x + tex->width * 0.25f, 
             ui->itemPos.y + tex->height * 0.25f,
             tex->width * 0.5f, tex->height * 0.5f);
-
-        iPoint pp = iPointMake(ui->touchItem.origin.x, ui->touchItem.origin.y);
     }
 }

@@ -81,7 +81,7 @@ void createMeleeWeapon()
 	char cycleonInfo[32] = "Cyclone";
 
 	nomalSword->init(swordInfo, imgSword, true, 30, 0.3f, 30.0f, 60.0f, -30.0f);
-	nomalSpear->init(spearInfo, imgSpear, true, 50, 0.2f, 10.0f, 70.0f, -45.0f);
+	nomalSpear->init(spearInfo, imgSpear, true, 30, 0.2f, 10.0f, 70.0f, -45.0f);
 	nomalCyclone->init(cycleonInfo, imgCyclon, true, 30, 0.5f, 30.0f, 50.0f, -70.0f);
 
 	PMW[0] = { nomalSword,nomalSwordMethod };
@@ -223,17 +223,18 @@ void weaponPosAndRt(meleeWeapon* mw, iPoint& wcp, iPoint& centerP, iRect& rt)
 
 void hitMonster(meleeWeapon* mw, float dt)
 {
+	float dmg = pc->attackDmg + mw->attackDmg;
 	for (int i = 0; i < ALLENEMY_NUM; i++) //enemy
 	{
 		if (i < GOLEM_NUM)
 		{
 			if (containRect(mw->hitBox, golems[i]->touchGolem))
-				golems[i]->takeDmgEnemy(dt, mw->attackDmg);
+				golems[i]->takeDmgEnemy(dt, dmg);
 		}
 		else
 		{
 			if (containRect(mw->hitBox, golemEletes[0]->touchGolem))
-				golemEletes[0]->takeDmgEnemy(dt, mw->attackDmg);
+				golemEletes[0]->takeDmgEnemy(dt, dmg);
 		}
 	}
 }

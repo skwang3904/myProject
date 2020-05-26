@@ -2,6 +2,7 @@
 
 #include "Room.h"
 
+#include "Enemy.h"
 #include "EnemyActionPattern.h"
 
 #include "Effect.h"
@@ -91,12 +92,15 @@ void EnemyGolem::init(int stage)
 	reverse = REVERSE_NONE;
 	ATV = iPointZero;
 
-	items = (UseItem**)malloc(sizeof(UseItem*) * 2);
+	items = (UseItem**)malloc(sizeof(UseItem*) * 3);
 	items[0] = new UseItem(coin);
 	items[0]->value = 1;
 
 	items[1] = new UseItem(healing);
 	items[1]->value = 10.0f;
+
+	items[2] = new UseItem(powerUp);
+	items[2]->value = 10.0f;
 
 	methodead = golemItems;
 
@@ -106,7 +110,7 @@ void EnemyGolem::paint(float dt)
 {
 	if (act == dying || act == dead)
 	{
-		for (int i = 0; i < 2; i++)
+		for (int i = 0; i < 3; i++)
 			items[i]->paint(dt);
 
 		if (act == dead)
@@ -143,17 +147,18 @@ void EnemyGolem::paint(float dt)
 		if (showHp)
 			drawShowHp(dt);
 
-		iPoint mapPos = maps[pc->tileNumber]->tileOff;
-		if ((methodRange(this, dt) == false) &&
-			(methodMelee(this, dt) == false) &&
-			(mapPos.x < golemPos.x &&
-				mapPos.x + RGTILE_X * RGTILE_Width - 1 > golemPos.x + tex->width * ratio * 0.75f &&
-				mapPos.y < golemPos.y + tex->height * ratio * 0.25f &&
-				mapPos.y + RGTILE_Y * RGTILE_Height - 1 > golemPos.y + tex->height * ratio))
+		bool mapPos = (tileNumber == pc->tileNumber);
+		if (mapPos)
 		{
-			act = walking;
-			methodWalk(this, dt);
+			if ((methodRange(this, dt) == false) &&
+				(methodMelee(this, dt) == false))
+			{
+				act = walking;
+				methodWalk(this, dt);
+			}
 		}
+		else
+			act = idle;
 	}
 	else
 	{
@@ -232,7 +237,7 @@ void EnemyGolem::takeDmgEffect(float dt)
 
 iImage** golemImg()
 {
-	iImage** imgGolem = (iImage**)malloc(sizeof(iImage*) * 6);
+	iImage** imgGolem = (iImage**)malloc(sizeof(iImage*) * GOLEM_IMG_NUM);
 
 	iImage* imgGolemIdle = new iImage();
 	Texture** texGolemIdle = (Texture**)malloc(sizeof(Texture*) * 12);
@@ -304,7 +309,7 @@ iImage** golemImg()
 	imgGolem[4] = imgGolemDying;
 	imgGolem[5] = imgGolemMagic;
 
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < GOLEM_IMG_NUM; i++)
 		imgGolem[i]->ratio = GOLEM_RATIO;
 
 	return imgGolem;
@@ -312,7 +317,7 @@ iImage** golemImg()
 
 iImage** golemEleteImg()
 {
-	iImage** imgGE = (iImage**)malloc(sizeof(iImage*) * 6);
+	iImage** imgGE = (iImage**)malloc(sizeof(iImage*) * GOLEM_ELETE_IMG_NUM);
 
 	iImage* imgGEIdle = new iImage();
 	Texture** texGEIdle = (Texture**)malloc(sizeof(Texture*) * 12);
@@ -383,7 +388,7 @@ iImage** golemEleteImg()
 	imgGE[4] = imgGEDying;
 	imgGE[5] = imgGEMagic;
 
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < GOLEM_ELETE_IMG_NUM; i++)
 		imgGE[i]->ratio = GOLEM_ELETE_RATIO;
 
 	return imgGE;

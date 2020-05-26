@@ -12,7 +12,7 @@ struct EnemyGolem;
 enum itemType{
 	coin = 0,
 	healing,
-	dmgUp,
+	powerUp,
 };
 
 class UseItem 

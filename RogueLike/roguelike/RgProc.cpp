@@ -14,8 +14,33 @@
 
 #include "useitem.h"
 
+void memoryTest()
+{
+	stage++;
+	for (int i = 0; i < 300; i++)
+	{
+		printf("i = %d\n", i);
+		createEnemy();
+		//int pcTile = pc->initPlayerPosition();
+		//setNextDoor(pcTile);
+		//setEnemyPosition(pcTile);
+		//loadRgLoading();
+		//loadPlayerUI();
+
+
+
+		freeEnemy();
+
+	
+		//freeRgLoading();
+		//freePlayerUI();
+	}
+}
+
 void loadRgProc()
 {
+	//memoryTest();
+
 	createEffect();
 	createItemImg();
 
@@ -32,7 +57,6 @@ void loadRgProc()
 	int pcTile = pc->initPlayerPosition();
 	setNextDoor(pcTile);
 	setEnemyPosition(pcTile);
-
 
 	//--------------------------------------------------------
 	// pop
@@ -87,7 +111,7 @@ void drawRgProc(float dt)
 
 	drawRoomTile(dt);
 	passTileAnimation(dt);
-	curtainTile();
+	//curtainTile();
 	if (passAni)
 		return;
 
@@ -112,7 +136,7 @@ void drawRgProc(float dt)
 	//--------------------------------------------------------
 	// pop
 
-	curtainTile();
+	//curtainTile();
 	drawPlayerUI(dt);
 
 	//--------------------------------------------------------

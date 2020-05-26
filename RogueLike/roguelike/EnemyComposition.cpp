@@ -24,7 +24,8 @@ void setEnemyPosition(uint8 pcTile)
 	bool elete = false;
 	int mn = MAPTILE_NUM /2;
 	//for (i = 0; i < mn; i++)
-	for (i = 0; i < 5; i++)
+	int n = num - 1;
+	for (i = 0; i < n; i++)
 	{
 		int t = activeTile[random() % num];
 		bool exist = false;
@@ -38,7 +39,7 @@ void setEnemyPosition(uint8 pcTile)
 		}
 
 		check[i] = t;
-		if (exist || check[i] == pcTile || check[i] == nextDoor)
+		if (exist || check[i] == pcTile)
 		{
 			i--;
 			continue;
@@ -52,17 +53,22 @@ void setEnemyPosition(uint8 pcTile)
 					RGTILE_Height * 5 + RGTILE_Height * 5 * (j / 3));
 			enm->tileNumber = check[i];
 		}
+	}
 
-		if (elete == false)
+	if (elete == false)
+	{
+		for (j = 0; j < n; j++)
 		{
-			for (j = 0; j < 1; j++)
+			if (maps[check[j]]->rgTile== Tile1way1 ||
+				maps[check[j]]->rgTile== Tile1way2 ||
+				maps[check[j]]->rgTile== Tile1way3 ||
+				maps[check[j]]->rgTile== Tile1way4)
 			{
-				EnemyGolem* enm = golemEletes[j];
-				enm->golemPos = maps[check[i]]->tileOff +
-					iPointMake(RGTILE_Width * 10 + RGTILE_Width * 3 * (j % 3),
-						RGTILE_Height * 10 + RGTILE_Height * 3 * (j / 3));
+				EnemyGolem* enm = golemEletes[0];
+				enm->golemPos = maps[check[j]]->tileOff +
+					RGTILE_CENTER;
 				elete = true;
-				enm->tileNumber = check[i];
+				enm->tileNumber = check[j];
 			}
 		}
 	}

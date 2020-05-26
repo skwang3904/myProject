@@ -28,8 +28,8 @@
 						 devSize.height / 2 - RGTILE_Y * RGTILE_Height / 2)
 
 #define MAPTILE_NUM 10
-#define TILEOFF_NUM 36 // 제곱수
-#define TILEOFF_SQRT 6
+#define TILEOFF_NUM 25 // 제곱수
+#define TILEOFF_SQRT 5
 
 struct MapTile {
 	int* rgTile;

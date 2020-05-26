@@ -119,8 +119,8 @@ bool commonAttack(EnemyGolem* enm, float dt)
 		e->act = idle;
 	}
 
-	if (e->giveDmg == true && e->giveDmgTime > 0.0f - e->meleeAtkSpeed * 0.4f &&
-		e->giveDmgTime < 0.0f - e->meleeAtkSpeed * 0.3f)
+	if (e->giveDmg == true && e->giveDmgTime
+		> 0.0f - e->meleeAtkSpeed * 0.4f && e->giveDmgTime < 0.0f - e->meleeAtkSpeed * 0.3f)
 	{
 		setLineWidth(10);
 		setRGBA(1, 0, 0, 1);
@@ -133,15 +133,18 @@ bool commonAttack(EnemyGolem* enm, float dt)
 		{
 			iPoint n = e->ATV - e->golemPos + et;
 			float len = iPointLength(n);
-			n /= iPointLength(n);
-			iPoint p = pc->playerPosition + HALF_OF_TEX_POINT
-				- e->golemPos + et;
+			n /= len;
+			iPoint p = pc->playerPosition + iPointMake(HALF_OF_TEX_WIDTH,HALF_OF_TEX_HEIGHT) - e->golemPos + et;
 
 			float dot = min(max(p.x * n.x + p.y * n.y, 0), len);
-			iPoint proj = n * dot;
-			float hitDis = iPointLength(p - proj);
+			printf("max %.2f\n", max(p.x * n.x + p.y * n.y, 0));
+			printf("   min %.2f\n", min(max(p.x * n.x + p.y * n.y, 0), len));
 
-			if (hitDis < HALF_OF_TEX_WIDTH / 2)
+			iPoint proj =  n * dot;
+			float hitDis = iPointLength(p - proj);
+			//printf("dis %.2f\n", hitDis);
+
+			if (hitDis < e->meleeReach * 0.33f)
 			{
 				if (pc->act == evasion || pc->act == falling)
 					return true;

@@ -18,8 +18,7 @@ extern bool nextStage;
 
 void createStage(uint8 stage);
 void setNextDoor(uint8 pcTile);
+void nextStageAni(float dt);
 
 void drawNextDoor(float dt);
 void containDoor(iPoint p);
-
-void nextStageAni(float dt);

@@ -215,7 +215,7 @@ void Player::drawPlayer(float dt)
 	if (hp <= 0.0f)
 	{
 		//gameover
-		printf("dead\n");
+		//printf("dead\n");
 	}
 
 	sort->init();

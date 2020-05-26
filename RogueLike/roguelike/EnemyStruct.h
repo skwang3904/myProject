@@ -79,6 +79,7 @@ struct EnemyGolem {
 	iImage* effectImg;
 	FireBall** projectile;
 	float rangeTime;
+	float _rangeTime;
 
 	UseItem** items;
 	Method_Item methodead;

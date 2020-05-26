@@ -45,19 +45,16 @@ void meleeWeapon::init(
 
 void createMeleeWeapon()
 {
-	char swordInfo[32] = "Sword";
 	nomalSword = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
 	iImage* imgSword = new iImage();
 
 	//-----------------------------------------------------------
 
-	char spearInfo[32] = "Spear";
 	nomalSpear = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
 	iImage* imgSpear = new iImage();
 
 	//-----------------------------------------------------------
 
-	char cycleonInfo[32] = "Cyclone";
 	nomalCyclone = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
 	iImage* imgCyclon= new iImage();
 
@@ -78,7 +75,11 @@ void createMeleeWeapon()
 		freeImage(texCyclon);
 	}
 
-	// img, ismelee, attackDmg, attackSpeed, widthReach, heightReach, holeAngle
+	//info, img, ismelee, attackDmg, attackSpeed, widthReach, heightReach, holeAngle
+	char swordInfo[32] = "Sword\nSword\nSword\nSword";
+	char spearInfo[64] = "Spear\nSpear\nSpear\nSpear\nSpear";
+	char cycleonInfo[32] = "Cyclone";
+
 	nomalSword->init(swordInfo, imgSword, true, 30, 0.3f, 30.0f, 60.0f, -30.0f);
 	nomalSpear->init(spearInfo, imgSpear, true, 50, 0.2f, 10.0f, 70.0f, -45.0f);
 	nomalCyclone->init(cycleonInfo, imgCyclon, true, 30, 0.5f, 30.0f, 50.0f, -70.0f);
@@ -148,11 +149,12 @@ iImage* infoFromMW(const char* info)
 
 	setRGBA(0.3, 0.3, 1, 1);
 	g->fillRect(0, 0, size.width, size.height, 30);
+	setRGBA(1, 1, 1, 1);
 
 	setStringRGBA(0, 0, 0, 1);
 	setStringSize(30);
 	setStringBorder(0);
-	g->drawString(size.width / 2, size.height / 2, VCENTER | HCENTER, "%s", info);
+	g->drawString(size.width / 2, size.height / 2, VCENTER | HCENTER, info);
 
 	iImage* img = new iImage();
 	Texture* tex = g->getTexture();

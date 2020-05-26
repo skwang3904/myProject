@@ -30,15 +30,18 @@ void EnemyGolem::init(int stage)
 		methodIdle = IdleEyeBlink;
 		methodWalk = WalkToPlayer;
 		methodMelee = commonAttack;
-		methodRange = rangeAttack;
+		methodRange = MethodFalse;
 
 		rangeTime = 0.0f;
+		_rangeTime = 10.0f;
 
-		effectImg = imgChargeFire->copy();
+		effectImg = NULL;
+		projectile = NULL;
 
-		projectile = (FireBall**)malloc(sizeof(FireBall*) * FIREBALL_NUM);
-		for (int i = 0; i < FIREBALL_NUM; i++)
-			projectile[i] = new FireBall();
+		//effectImg = imgChargeFire->copy();
+		//projectile = (FireBall**)malloc(sizeof(FireBall*) * FIREBALL_NUM);
+		//for (int i = 0; i < FIREBALL_NUM; i++)
+		//	projectile[i] = new FireBall();
 		break;
 	}
 	case golemElete:
@@ -58,6 +61,7 @@ void EnemyGolem::init(int stage)
 		methodRange = rangeAttack;
 
 		rangeTime = 0.0f;
+		_rangeTime = 3.0f;
 
 		effectImg = imgChargeFire->copy();
 

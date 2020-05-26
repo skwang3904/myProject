@@ -79,7 +79,6 @@ float zoomRate;
 #define _zoomDt 0.5f
 float zoomDt = _zoomDt;
 
-
 void drawLib(Method_Paint method)
 {
     DWORD d = GetTickCount();
@@ -98,7 +97,7 @@ void drawLib(Method_Paint method)
     fbo->unbind();
     // ------------------
 
-    glClearColor(0, 1, 1, 1);
+    glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     Texture* tex = fbo->getTexture();
@@ -195,7 +194,6 @@ void keyLib(iKeyState stat, int c)
 {
     if (stat == iKeyStateBegan)
     {
-        keyRgProc(stat, iPointZero);
         //xprintf("%d\n", c);
         if (keys[c]==false)
             keyLib(keyDown, stat, c);

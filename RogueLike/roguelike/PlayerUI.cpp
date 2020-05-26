@@ -312,17 +312,10 @@ void drawCombat(float dt)
 	}
 }
 
-iImage* setCombatInfo(int i)
+Texture* setCombatInfo(int i)
 {
-	iImage* img = new iImage();
-	
 	PlayerMW* pw = (PlayerMW * )pc->weaponArray->objectAtIndex(i);
-	if (pw == pc->pmw)
-		printf("same\n");
-
-	img = pw->mw->infoImg;
-
-	return img;
+	return pw->mw->infoImg->tex;
 }
 
 void createPopCombatMenu()
@@ -335,15 +328,15 @@ void createPopCombatMenu()
 	iImage* imgCombatMenu = new iImage();
 	Texture* texCombatMenu = createImage("assets/PlayerUI/inven button1.png");
 	imgCombatMenu->addObject(texCombatMenu);
-	//freeImage(texCombatMenu);
+	freeImage(texCombatMenu);
 
-	imgCombatMenu->position = iPointMake(1600, 400);
+	imgCombatMenu->position = CombatMenu_Pos;
 	pop->addObject(imgCombatMenu);
 
 	for (int i = 1; i < 8; i++)
 	{
 		iImage* imgCombatMenu1 = imgCombatMenu->copy();
-		imgCombatMenu1->position = iPointMake(1600 + 150 * (i % 2), 400 + 150 * (i / 2));
+		imgCombatMenu1->position = CombatMenu_Pos +iPointMake(150 * (i % 2), 150 * (i / 2));
 		pop->addObject(imgCombatMenu1);
 	}
 
@@ -360,8 +353,8 @@ void createPopCombatMenu()
 	freeImage(texButten);
 
 	imgCombatInfo = new iImage();
-	imgCombatInfo = setCombatInfo(0);
-	imgCombatInfo->position = iPointMake(devSize.width / 2, devSize.height / 2);
+	imgCombatInfo->tex = setCombatInfo(0);
+	imgCombatInfo->position = CombatMenu_Pos + iPointMake(-350, 0);
 
 	imgButten->position = imgCombatInfo->position + iPointMake(250, 0);
 
@@ -395,6 +388,7 @@ void drawPopCombatMenu(float dt)
 	popCombatInfo->paint(dt);
 }
 
+
 bool keyPopCombatMenu(iKeyState stat, iPoint point)
 {
 	if (popCombatMenu->bShow == false)
@@ -416,7 +410,7 @@ bool keyPopCombatMenu(iKeyState stat, iPoint point)
 			popCombatInfo->show(false);
 			break;
 		}
-		imgCombatInfo = setCombatInfo(i);
+		imgCombatInfo->tex = setCombatInfo(i);
 		showPopCombatInfo(true);
 		break;
 	}
@@ -424,7 +418,7 @@ bool keyPopCombatMenu(iKeyState stat, iPoint point)
 	{
 		for (int i = 0; i < pc->weaponArray->count; i++)
 		{
-			iPoint	p = iPointMake(1600 + 150 * (i % 2), 400 + +150 * (i / 2));
+			iPoint	p = CombatMenu_Pos + iPointMake(150 * (i % 2), 150 * (i / 2));
 			iRect rt = iRectMake(p.x, p.y, 128, 128);
 			if (containPoint(point, rt))
 			{

@@ -245,7 +245,6 @@ void passTileAnimation(float dt)
 	pc->camPosition = sp + (ep - sp) * passAniDt / _passAniDt;
 
 	int num = RGTILE_X * RGTILE_Y;
-	setRGBA(0, 0, 0, 0.7f);
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
 		if (maps[i]->rgTile != NULL)
@@ -261,7 +260,9 @@ void passTileAnimation(float dt)
 			}
 		}
 	}
-
+	setRGBA(0,0,0, 0.7f);
+	fillRect(0, 0,devSize.width,devSize.height);
+	setRGBA(1, 1, 1, 1);
 	passAniDt += dt;
 	if (passAniDt > _passAniDt)
 	{

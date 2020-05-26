@@ -31,7 +31,7 @@ UseItem::UseItem(itemType it)
     type = it;
 
     sp = iPointZero;
-    aniHeight = 100.0f;
+    aniHeight = 30.0f;
     aniDt = 0.0f;
 
     itemPos = iPointZero;
@@ -56,8 +56,8 @@ void UseItem::gainValue()
     case healing:
     {
         pc->hp += value;
-        if (pc->hp > 100.0f)
-            pc->hp = 100.0f;
+        if (pc->hp > pc->_hp)
+            pc->hp = pc->_hp;
         break;
     }
     case dmgUp:
@@ -68,7 +68,7 @@ void UseItem::gainValue()
 	}
 }
 
-#define ANIDT 3.0f
+#define ANIDT 1.0f
 bool UseItem::animation(float dt)
 {
     if (sp == itemPos)
@@ -80,13 +80,12 @@ bool UseItem::animation(float dt)
         sp = itemPos;
         aniDt = ANIDT;
     }
-    // 수정
-    float h = aniHeight - aniHeight * (fabsf((aniDt / ANIDT) * 2.0f - 1))* -1.0f + 1;
-    printf("%.2f\n", h);
+
+    float h = 0.0f - aniHeight * _sin(180 * aniDt / ANIDT);
     iPoint a = linear(aniDt / ANIDT, sp, itemPos);
-    iPoint b = a + iPointMake(0, h);
+    a += iPointMake(0, h);
     
-    drawitemPos = b + pc->camPosition + setPos;
+    drawitemPos = a + pc->camPosition + setPos;
     img->paint(dt, drawitemPos, REVERSE_NONE);
 
     return true;
@@ -94,10 +93,7 @@ bool UseItem::animation(float dt)
 
 void UseItem::paint(float dt)
 {
-    if (animation(dt))
-        return;
-
-    if (alive == false)
+    if (animation(dt) || alive == false)
         return;
 
     iRect rt = touchItem;

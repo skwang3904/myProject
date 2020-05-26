@@ -65,17 +65,32 @@ void freeRgProc()
 
 }
 
-int ballNum = 0;
+void curtainTile() // 화면가리개
+{
+	setRGBA(0, 0, 0, 1);
+	fillRect(0, 0,
+		devSize.width, (devSize.height - RGTILE_Y * RGTILE_Height) / 2.0f);
+	fillRect((devSize.width + RGTILE_X * RGTILE_Width) / 2.0f, 0,
+		(devSize.width - RGTILE_X * RGTILE_Width) / 2.0f, devSize.height);
+	fillRect(0, (devSize.height + RGTILE_Y * RGTILE_Height) / 2.0f,
+		devSize.width, (devSize.height - RGTILE_Y * RGTILE_Height) / 2.0f);
+	fillRect(0, 0,
+		(devSize.width - RGTILE_X * RGTILE_Width) / 2.0f, devSize.height);
+	setRGBA(1, 1, 1, 1);
+}
+
 void drawRgProc(float dt)
 {
 	setRGBA(0, 0, 0, 1);
 	fillRect(0, 0, devSize.width, devSize.height);
+	setRGBA(1, 1, 1, 1);
 
+	drawRoomTile(dt);
 	passTileAnimation(dt);
+	curtainTile();
 	if (passAni)
 		return;
 
-	drawRoomTile(dt);
 
 	drawNextDoor(dt);
 	if (nextStage)
@@ -96,6 +111,8 @@ void drawRgProc(float dt)
 
 	//--------------------------------------------------------
 	// pop
+
+	curtainTile();
 	drawPlayerUI(dt);
 
 	//--------------------------------------------------------

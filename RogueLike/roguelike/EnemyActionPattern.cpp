@@ -194,7 +194,7 @@ bool rangeAttack(EnemyGolem* enm, float dt)
 	if (e->tileNumber == pc->tileNumber)
 		e->rangeTime += dt;
 
-	if (e->act == meleeAtk || e->rangeTime < 10.0f)
+	if (e->act == meleeAtk || e->rangeTime < e->_rangeTime)
 		return false;
 	if ((iPointLength(v) > e->rangeReach || iPointLength(v) < e->rangeReach -50 )&&
 		 e->act != rangeAtk)

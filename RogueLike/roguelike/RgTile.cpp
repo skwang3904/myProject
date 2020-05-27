@@ -1,7 +1,6 @@
 #include "RgTile.h"
 
 iPoint* tileOffSet;
-MapTile** mapTiles;
 iPoint setPos;
 void createTileSet()
 {

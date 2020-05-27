@@ -32,6 +32,8 @@ struct PlayerWP {
 };
 extern PlayerWP PWP[TOTAL_WP_NUM];
 
+//------------------------------------------------------------------------
+
 iImage* infoFromMW(const char* info);
 class Weapon
 {

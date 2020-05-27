@@ -43,13 +43,14 @@ void loadRgProc()
 {
 	//memoryTest();
 
-
 	createEffect();
 	createItemImg();
 
 	createTileSet();
 	loadRoomTile();
 	newRoomTile();
+
+	//--------------------------------------------------------
 
 	numberFont = new numFont();
 	weapon = new Weapon();

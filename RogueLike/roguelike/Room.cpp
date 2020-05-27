@@ -3,11 +3,10 @@
 #include "Stage.h"
 
 ConnectTile ct[TILEOFF_NUM];
+MapTile** maps;
 
 void connectCheck(ConnectTile* c);
 void pathTileCheck(ConnectTile* c);
-
-MapTile** maps;
 
 void loadRoomTile()
 {
@@ -25,7 +24,6 @@ void newRoomTile()
 	conectCount = 0;
 	while (conectCount < MAPTILE_NUM)
 	{
-
 		for (int i = 0; i < TILEOFF_NUM; i++)
 		{
 			maps[i]->rgTile = NULL;
@@ -100,7 +98,6 @@ void newRoomTile()
 		pathTileCheck(c);
 	}
 }
-
 
 void connectCheck(ConnectTile* c)
 {

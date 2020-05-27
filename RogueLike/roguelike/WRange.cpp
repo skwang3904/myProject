@@ -25,4 +25,3 @@ void rangeWeapon::init(
 	hitBox = iRectZero;
 	attackEnemy = false;
 }
-

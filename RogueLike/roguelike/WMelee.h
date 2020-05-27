@@ -5,17 +5,11 @@
 - 근접무기
 */
 
-//typedef void (*Method_Combat)(float dt, iPoint dropP);
-
-#define MELEE_NUM 3
-
 struct meleeWeapon {
 	iImage* infoImg;
 	const char* infomation;
 	
 	iImage* img;
-
-	bool melee;
 
 	float attackDmg;
 	float attackSpeed;
@@ -32,30 +26,19 @@ struct meleeWeapon {
 	void init(
 		const char* info,
 		iImage* iImg,
-		bool isMelee,
 		float iAttackDmg,
 		float iAttackSpeed,
 		float iWidthReach,
 		float iHeightReach,
-		float holdAngle);
+		float iHoldAngle);
 };
-
-struct PlayerMW {
-	meleeWeapon* mw;
-	Method_Combat method;
-
-	iPoint pos;
-	bool drop;
-};
-extern PlayerMW PMW[MELEE_NUM];
 
 void createMeleeWeapon();
-void freeMeleeWeapon(PlayerMW* pmw);
 
 void weaponPosAndRt(meleeWeapon* mw, iPoint& wcp, iPoint& centerP, iRect& rt);
 
 void draw(meleeWeapon* mw, float dt, iPoint dropP);
 
-void nomalSwordMethod(float dt, iPoint dropP);
-void nomalSpearMethod(float dt, iPoint dropP);
-void nomalCycloneMethod(float dt, iPoint dropP);
+//void nomalHammerMethod(float dt, iPoint dropP);
+//void nomalSpearMethod(float dt, iPoint dropP);
+//void nomalCycloneMethod(float dt, iPoint dropP);

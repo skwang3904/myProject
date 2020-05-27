@@ -188,9 +188,11 @@
     <ClInclude Include="roguelike\RgTile.h" />
     <ClInclude Include="roguelike\Room.h" />
     <ClInclude Include="roguelike\Stage.h" />
+    <ClInclude Include="roguelike\TreasureChest.h" />
     <ClInclude Include="roguelike\useitem.h" />
     <ClInclude Include="roguelike\Weapon.h" />
     <ClInclude Include="roguelike\WMelee.h" />
+    <ClInclude Include="roguelike\WRange.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\iArray.cpp" />
@@ -228,9 +230,11 @@
     <ClCompile Include="roguelike\RgTile.cpp" />
     <ClCompile Include="roguelike\Room.cpp" />
     <ClCompile Include="roguelike\Stage.cpp" />
+    <ClCompile Include="roguelike\TreasureChest.cpp" />
     <ClCompile Include="roguelike\useitem.cpp" />
     <ClCompile Include="roguelike\Weapon.cpp" />
     <ClCompile Include="roguelike\WMelee.cpp" />
+    <ClCompile Include="roguelike\WRange.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="RogueLike.rc" />

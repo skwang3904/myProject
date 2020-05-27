@@ -26,7 +26,6 @@ public:
 
 	bool alive;
 	float value;
-	
 
 	iPoint sp;
 	float aniHeight;

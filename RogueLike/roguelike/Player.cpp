@@ -10,16 +10,10 @@
 Player* pc;
 iSort* sort;
 
-void freeWeapon(void* data)
-{
-	PlayerMW* pmw = (PlayerMW*)data;
-	freeMeleeWeapon(pmw);
-}
-
 Player::Player()
 {
 	sort = new iSort();
-	weaponArray = new rgArray(freeWeapon);
+	weaponArray = new rgArray();
 
 	createPlayerImage();
 	initPlayerStat();
@@ -35,7 +29,6 @@ Player::~Player()
 			delete img[i];
 	}
 	free(img);
-	delete pc;
 }
 
 void Player::instance()
@@ -74,10 +67,10 @@ void Player::initPlayerStat()
 
 	touchPlayer = iRectZero;
 
-	weaponArray->addObject(&PMW[0]);
-	pmw = &PMW[0];
-	PMW[0].drop = false;
-	pmwCount = 1;
+	weaponArray->addObject(&PWP[0]);
+	pwp = &PWP[0];
+	PWP[0].drop = false;
+	pwpCount = 1;
 
 	coin = 0;
 }
@@ -220,7 +213,16 @@ void Player::drawPlayer(float dt)
 
 	sort->init();
 	sort->add(pc->playerPosition.y + HALF_OF_TEX_HEIGHT/2.0f);
-	sort->add(pc->pmw->mw->combatPosition.y);
+	if (pc->pwp->isMelee)
+	{
+		meleeWeapon* mw = (meleeWeapon*)pc->pwp->wp;
+		sort->add(mw->combatPosition.y);
+	}
+	else
+	{	
+		//range
+		//sort->add(pc->pwp->wp->combatPosition.y);
+	}
 	sort->update();
 
 	for (int i = 0; i < sort->sdNum; i++) // 수정필요
@@ -247,7 +249,7 @@ void Player::showHpBar(float dt) // 임시
 
 void Player::combatDraw(float dt)
 {
-	pmw->method(dt, iPointZero);
+	pwp->method(dt, iPointZero);
 }
 
 void Player::rootCombat(bool key)
@@ -255,20 +257,28 @@ void Player::rootCombat(bool key)
 	if (actionCheck(key))
 		return;
 
-	for (int i = 0; i < MELEE_NUM; i++)
+	for (int i = 0; i < TOTAL_WP_NUM; i++)
 	{
-		PlayerMW* pw = &PMW[i];
-		if (containRect(touchPlayer, pw->mw->hitBox))
+		PlayerWP* pwa = &PWP[i];
+		if (pwa->isMelee)
 		{
-			if (pw->drop)
+			meleeWeapon* mw = (meleeWeapon*)pwa->wp;
+			if (pwa->drop)
 			{
-				weaponArray->addObject(pw);
-				pmw = pw;
-				pw->pos = iPointZero;
-				pw->drop = false;
-				pmwCount = weaponArray->count - 1;
-				break;
+				if (containRect(touchPlayer, mw->hitBox))
+				{
+					weaponArray->addObject(pwa);
+					pwp = pwa;
+					pwa->pos = iPointZero;
+					pwa->drop = false;
+					pwpCount = weaponArray->count - 1;
+					break;
+				}
 			}
+		}
+		else //range
+		{
+			;
 		}
 	}
 }
@@ -283,16 +293,16 @@ void Player::dropCombat(float dt, bool key)
 	int i, j, k;
 	for (i = 0; i < weaponArray->count; i++)
 	{
-		PlayerMW* pw = (PlayerMW*)weaponArray->objectAtIndex(i);
-		if (pmw == pw)
+		PlayerWP* pw = (PlayerWP*)weaponArray->objectAtIndex(i);
+		if (pwp == pw)
 		{
 			weaponArray->remove(i);
 			pw->drop = true;
 			pw->pos = playerPosition + HALF_OF_TEX_POINT;
-			pmwCount--;
-			if (pmwCount < 0)
-				pmwCount = weaponArray->count - 1;
-			pmw = (PlayerMW*)weaponArray->objectAtIndex(pmwCount);
+			pwpCount--;
+			if (pwpCount < 0)
+				pwpCount = weaponArray->count - 1;
+			pwp = (PlayerWP*)weaponArray->objectAtIndex(pwpCount);
 			break;
 		}	
 	}
@@ -303,10 +313,10 @@ void Player::choseWeapon(bool key)
 	if (actionCheck(key))
 		return;
 
-	pmwCount--;
-	if (pmwCount < 0)
-		pmwCount = weaponArray->count - 1;
-	pmw = (PlayerMW*)weaponArray->objectAtIndex(pmwCount);
+	pwpCount--;
+	if (pwpCount < 0)
+		pwpCount = weaponArray->count - 1;
+	pwp = (PlayerWP*)weaponArray->objectAtIndex(pwpCount);
 }
 
 void Player::setPlayerTile()

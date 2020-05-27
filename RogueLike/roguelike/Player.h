@@ -21,8 +21,8 @@
 #define EVASION_DISTANCE 500
 #define EVASION_DURATION 0.3f
 
-typedef void (*Method_Combat)(float dt, iPoint dropP);
-struct PlayerMW;
+
+struct PlayerWP;
 struct MapTile;
 enum CharAction;
 
@@ -82,8 +82,8 @@ public:
 	iRect touchPlayer;
 
 	rgArray* weaponArray;
-	PlayerMW* pmw;
-	int pmwCount;
+	PlayerWP* pwp;
+	int pwpCount;
 
 public:
 	uint16 coin;

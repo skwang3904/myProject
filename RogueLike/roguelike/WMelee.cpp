@@ -7,18 +7,17 @@
 
 #include "Weapon.h"
 
-meleeWeapon* nomalSword;
+meleeWeapon* nomalHammer;
 meleeWeapon* nomalSpear;
 meleeWeapon* nomalCyclone;
 
-PlayerMW PMW[MELEE_NUM];
-
-iImage* infoFromMW(const char* info);
+void nomalHammerMethod(float dt, iPoint dropP);
+void nomalSpearMethod(float dt, iPoint dropP);
+void nomalCycloneMethod(float dt, iPoint dropP);
 
 void meleeWeapon::init(
 	const char* info,
 	iImage* iImg,
-	bool isMelee,
 	float iAttackDmg,
 	float iAttackSpeed,
 	float iWidthReach,
@@ -28,7 +27,6 @@ void meleeWeapon::init(
 	infoImg = infoFromMW(info);
 	infomation = info;
 	img = iImg;
-	melee = isMelee;
 
 	attackDmg = iAttackDmg;
 	attackSpeed = _attackSpeed = iAttackSpeed;
@@ -45,8 +43,8 @@ void meleeWeapon::init(
 
 void createMeleeWeapon()
 {
-	nomalSword = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
-	iImage* imgSword = new iImage();
+	nomalHammer = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
+	iImage* imgHammer = new iImage();
 
 	//-----------------------------------------------------------
 
@@ -62,50 +60,44 @@ void createMeleeWeapon()
 
 	for (int i = 0; i < 2; i++)
 	{
-		Texture* texSword = createImage("assets/weapon/hammer%d.png",i);
+		Texture* texHammer = createImage("assets/weapon/hammer%d.png",i);
 		Texture* texSpear = createImage("assets/weapon/upg_spear%d.png",i);
 		Texture* texCyclon = createImage("assets/weapon/upg_axeDouble%d.png",i);
 		
-		imgSword->addObject(texSword);
+		imgHammer->addObject(texHammer);
 		imgSpear->addObject(texSpear);
 		imgCyclon->addObject(texCyclon);
 
-		freeImage(texSword);
+		freeImage(texHammer);
 		freeImage(texSpear);
 		freeImage(texCyclon);
 	}
 
 	//info, img, ismelee, attackDmg, attackSpeed, widthReach, heightReach, holeAngle
-	char swordInfo[32] = "Sword\nSword\nSword\nSword";
+	char swordInfo[32] = "Hammer\Hammer\Hammer\Hammer";
 	char spearInfo[64] = "Spear\nSpear\nSpear\nSpear\nSpear";
 	char cycleonInfo[32] = "Cyclone";
 
-	nomalSword->init(swordInfo, imgSword, true, 30, 0.3f, 30.0f, 60.0f, -30.0f);
-	nomalSpear->init(spearInfo, imgSpear, true, 30, 0.2f, 10.0f, 70.0f, -45.0f);
-	nomalCyclone->init(cycleonInfo, imgCyclon, true, 30, 0.5f, 30.0f, 50.0f, -70.0f);
+	nomalHammer->init(swordInfo, imgHammer, 30, 0.3f, 30.0f, 60.0f, -30.0f);
+	nomalSpear->init(spearInfo, imgSpear, 30, 0.2f, 10.0f, 70.0f, -45.0f);
+	nomalCyclone->init(cycleonInfo, imgCyclon, 30, 0.5f, 30.0f, 50.0f, -70.0f);
 
-	PMW[0] = { nomalSword,nomalSwordMethod };
-	PMW[1] = { nomalSpear,nomalSpearMethod };
-	PMW[2] = { nomalCyclone,nomalCycloneMethod };
+	PWP[NOMALSWORD] = { nomalHammer,nomalHammerMethod };
+	PWP[NOMALSPEAR] = { nomalSpear,nomalSpearMethod };
+	PWP[NOMALCYCLON] = {  nomalCyclone,nomalCycloneMethod };
 
 	for (int i = 0; i < MELEE_NUM; i++)
 	{
-		PMW[i].pos = iPointZero;
-		PMW[i].drop = true;
+		PWP[i].isMelee = true;
+		PWP[i].pos = iPointZero;
+		PWP[i].drop = true;
 	}
-}
-
-void freeMeleeWeapon(PlayerMW* pmw)
-{
-	if (pmw->mw->img)
-		delete pmw->mw->img;
-	free(pmw->mw);
 }
 
 void draw(meleeWeapon* mw, float dt, iPoint dropP)
 {
 	Texture* tex = mw->img->tex;
-	if (pc->pmw->mw == mw)
+	if (pc->pwp->wp == mw)
 	{
 		iPoint centerP = mw->combatPosition;
 
@@ -139,29 +131,6 @@ void draw(meleeWeapon* mw, float dt, iPoint dropP)
 		drawRect(mt);
 		setRGBA(1, 1, 1, 1);
 	}
-}
-
-iImage* infoFromMW(const char* info)
-{
-	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(300, 300);
-	g->init(size);
-
-	setRGBA(0.3, 0.3, 1, 1);
-	g->fillRect(0, 0, size.width, size.height, 30);
-	setRGBA(1, 1, 1, 1);
-
-	setStringRGBA(0, 0, 0, 1);
-	setStringSize(30);
-	setStringBorder(0);
-	g->drawString(size.width / 2, size.height / 2, VCENTER | HCENTER, info);
-
-	iImage* img = new iImage();
-	Texture* tex = g->getTexture();
-	img->addObject(tex);
-	freeImage(tex);
-
-	return img;
 }
 
 void weaponPosAndRt(meleeWeapon* mw, iPoint& wcp, iPoint& centerP, iRect& rt)
@@ -244,7 +213,7 @@ void hitMonster(meleeWeapon* mw, float dt)
 bool nomalSworadAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	float iRange, float iAngle, float iRatioX, float iRatioY)
 {
-	if (pc->pmw->mw != mw)
+	if (pc->pwp->wp != mw)
 		return false;
 
 	if (mw->attackEnemy == false && pc->act != attacking)
@@ -313,15 +282,15 @@ bool nomalSworadAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	return true;
 }
 
-void nomalSwordMethod(float dt, iPoint dropP)
+void nomalHammerMethod(float dt, iPoint dropP)
 {
 	if (pc->act == evasion || pc->act == falling)
 		return;
 
-	meleeWeapon* mw = nomalSword;
+	meleeWeapon* mw = nomalHammer;
 
 	float ats = mw->_attackSpeed * pc->attackSpeed;
-	if (getKeyDown(keyboard_j) && pc->pmw->mw == mw && mw->attackSpeed == 0 && pc->act == idle)
+	if (getKeyDown(keyboard_j) && pc->pwp->wp == mw && mw->attackSpeed == 0 && pc->act == idle)
 	{
 		pc->act = attacking;
 		mw->attackEnemy = true;
@@ -344,7 +313,7 @@ void nomalSwordMethod(float dt, iPoint dropP)
 bool nomalSpearAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	float iRange, float iAngle, float iRatioX, float iRatioY)
 {
-	if (pc->pmw->mw != mw)
+	if (pc->pwp->wp != mw)
 		return false;
 
 	if (mw->attackEnemy == false && pc->act != attacking)
@@ -420,7 +389,7 @@ void nomalSpearMethod(float dt, iPoint dropP)
 	meleeWeapon* mw = nomalSpear;
 
 	float ats = mw->_attackSpeed * pc->attackSpeed;
-	if (getKeyDown(keyboard_j) && pc->pmw->mw == mw && mw->attackSpeed == 0 && pc->act == idle)
+	if (getKeyDown(keyboard_j) && pc->pwp->wp == mw && mw->attackSpeed == 0 && pc->act == idle)
 	{
 		pc->act = attacking;
 		mw->attackEnemy = true;
@@ -442,7 +411,7 @@ void nomalSpearMethod(float dt, iPoint dropP)
 bool nomalCycloneAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	float iRange, int iCycleCount, float iRatioX, float iRatioY)
 {
-	if (pc->pmw->mw != mw )
+	if (pc->pwp->wp != mw )
 		return false;
 
 	if (mw->attackEnemy == false && pc->act != attacking)
@@ -550,7 +519,7 @@ void nomalCycloneMethod(float dt, iPoint dropP)
 	meleeWeapon* mw = nomalCyclone;
 
 	float ats = mw->_attackSpeed * pc->attackSpeed;
-	if (getKeyStat(keyboard_j) && pc->pmw->mw == mw && mw->attackSpeed == 0 && pc->act == idle)
+	if (getKeyStat(keyboard_j) && pc->pwp->wp == mw && mw->attackSpeed == 0 && pc->act == idle)
 	{
 		pc->act = attacking;
 		mw->attackEnemy = true;

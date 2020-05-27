@@ -10,6 +10,29 @@
 // 무기능력 외에 무기관련 관리하는 클래스
 // 무기 생성, 파괴, 무기 드랍포지션 등,
 
+#define MELEE_NUM 3
+#define RANGE_NUM 0
+#define TOTAL_WP_NUM MELEE_NUM + RANGE_NUM
+
+#define NOMALSWORD	0
+#define NOMALSPEAR	1
+#define NOMALCYCLON	2
+
+#define RANGEWEAPON MELEE_NUM + 0
+
+typedef void (*Method_Combat)(float dt, iPoint dropP);
+
+struct PlayerWP {
+	void* wp;
+	Method_Combat method;
+
+	bool isMelee;
+	iPoint pos;
+	bool drop;
+};
+extern PlayerWP PWP[TOTAL_WP_NUM];
+
+iImage* infoFromMW(const char* info);
 class Weapon
 {
 public:
@@ -19,9 +42,7 @@ public:
 	void drawWeapon(float dt);
 
 public:
-	//iArray* weaponArray;
-
 	iPoint wDropPos[10];
 };
-
 extern Weapon* weapon;
+

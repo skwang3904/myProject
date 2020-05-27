@@ -2,6 +2,8 @@
 
 #include "Room.h"
 #include "Stage.h"
+
+#include "Weapon.h"
 #include "WMelee.h"
 
 #include "EnemyStruct.h"
@@ -298,30 +300,56 @@ void drawCombat(float dt)
 {
 	iPoint p;
 
-	PlayerMW* pw;
+	PlayerWP* pw;
+
 	for (int i = 0; i < pc->weaponArray->count; i++)
 	{
 		p = iPointMake(1600 + 150 * (i % 2), 400 + +150 * (i / 2));
 
-		pw = (PlayerMW*)pc->weaponArray->objectAtIndex(i);
-		pw->mw->img->setTexAtIndex(1);
-		if (pw == pc->pmw)
+		pw = (PlayerWP*)pc->weaponArray->objectAtIndex(i);
+		if (pw->isMelee)
 		{
-			if (popCombatMenu->selected == i) setRGBA(0, 0, 1, 1);
-			else setRGBA(0, 1, 0, 1);
-			fillRect(p.x, p.y, pw->mw->img->tex->width, pw->mw->img->tex->height);
-			setRGBA(1, 1, 1, 1);
-		}
+			meleeWeapon* mw = (meleeWeapon*)pw->wp;
+			mw->img->setTexAtIndex(1);
+			if (pw == pc->pwp)
+			{
+				if (popCombatMenu->selected == i) setRGBA(0, 0, 1, 1);
+				else setRGBA(0, 1, 0, 1);
+				fillRect(p.x, p.y, mw->img->tex->width, mw->img->tex->height);
+				setRGBA(1, 1, 1, 1);
+			}
 
-		drawImage(pw->mw->img->tex, p.x, p.y, TOP | LEFT);
-		pw->mw->img->setTexAtIndex(0);
+			drawImage(mw->img->tex, p.x, p.y, TOP | LEFT);
+			mw->img->setTexAtIndex(0);
+		}
+		else //range
+		{ 
+			//if (pw == pc->pwp)
+			//{
+			//	if (popCombatMenu->selected == i) setRGBA(0, 0, 1, 1);
+			//	else setRGBA(0, 1, 0, 1);
+			//	fillRect(p.x, p.y, mw->img->tex->width, pw->wp->img->tex->height);
+			//	setRGBA(1, 1, 1, 1);
+			//}
+
+			//drawImage(pw->mw->img->tex, p.x, p.y, TOP | LEFT);
+			//pw->mw->img->setTexAtIndex(0);
+		}
 	}
 }
 
 Texture* setCombatInfo(int i)
 {
-	PlayerMW* pw = (PlayerMW * )pc->weaponArray->objectAtIndex(i);
-	return pw->mw->infoImg->tex;
+	PlayerWP* pw = (PlayerWP*)pc->weaponArray->objectAtIndex(i);
+	if (pw->isMelee)
+	{
+		meleeWeapon* mw = (meleeWeapon*)pw->wp;
+		return mw->infoImg->tex;
+	}
+	else // range
+	{
+		return NULL;
+	}
 }
 
 void createPopCombatMenu()

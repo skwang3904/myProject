@@ -82,7 +82,6 @@ void freeRgProc()
 	freeTileSet();
 	freeRoomTile();
 
-
 	//--------------------------------------------------------
 	// pop
 

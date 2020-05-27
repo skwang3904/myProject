@@ -12,7 +12,7 @@ typedef void (*RGARRAY_METHOD)(void* data);
 class rgArray
 {
 public:
-	rgArray(RGARRAY_METHOD m);
+	rgArray(RGARRAY_METHOD m = 0);
 	virtual ~rgArray();
 
 	void addObject(int index, void* data);

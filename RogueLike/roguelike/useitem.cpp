@@ -162,9 +162,9 @@ void freeItemImg()
 
 void golemItems(EnemyGolem* enm)
 {
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 2; i++)
     {
-        UseItem* ui = enm->items[i];
+        UseItem* ui = enm->items[random()%3];
         Texture* tex = ui->img->tex;
 
         ui->alive = true;

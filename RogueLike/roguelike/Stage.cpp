@@ -15,8 +15,6 @@ bool nextStage = false;
 
 void createStage()
 {
-	changeStageNum();
-
 	int i;
 	newRoomTile();
 

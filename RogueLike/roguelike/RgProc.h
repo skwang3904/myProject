@@ -10,6 +10,8 @@
 #define SND_ENEMY_HIT 3
 #define SND_ENEMY_DEAD 4
 
+
+
 enum CharAction {
 	idle = 0,
 	attacking,

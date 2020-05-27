@@ -37,6 +37,8 @@ void drawPlayerUI(float dt)
 	drawPopMiniMap(dt);
 	drawPopItem(dt);
 	drawPopStageNum(dt);
+
+	numberFont->drawFont(devSize.width / 2 + 200, 30, TOP | LEFT, 1, 1, 1, "%d", stage + 1);
 }
 
 bool keyPlayerUI(iKeyState stat, iPoint point)
@@ -557,14 +559,16 @@ bool keyPopItem(iKeyState stat, iPoint point)
 /////////////////////////////////////////////////////////
 
 iPopup* popStageNum;
-iImage* imgStageNum;
 
-void changeStageNum()
+void createPopStageNum()
 {
-	if (imgStageNum->tex)
-		freeImage(imgStageNum->tex);
+	iPopup* pop = new iPopup(iPopupStyleNone);
+	popStageNum = pop;
+
+	iImage* img = new iImage();
+
 	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(300, 50);
+	iSize size = iSizeMake(400, 100);
 	g->init(size);
 
 	setRGBA(1, 1, 1, 1);
@@ -575,22 +579,14 @@ void changeStageNum()
 	setStringRGBA(0, 1, 1, 1);
 	setStringBorder(2);
 	setStringBorderRGBA(0, 0, 0, 1);
-	g->drawString(size.width / 2, size.height / 2, VCENTER | HCENTER, "STAGE %d", stage + 1);
+	g->drawString(size.width / 2, size.height / 2, VCENTER | HCENTER, "STAGE");
 
 	Texture* tex = g->getTexture();
-	imgStageNum->tex = tex;
-}
+	img->addObject(tex);
+	freeImage(tex);
 
-void createPopStageNum()
-{
-	iPopup* pop = new iPopup(iPopupStyleNone);
-	popStageNum = pop;
-
-	imgStageNum = new iImage();
-	changeStageNum();
-	
-	imgStageNum->position = iPointMake(devSize.width / 2, 30);
-	pop->addObject(imgStageNum);
+	img->position = iPointMake(devSize.width / 2 -100, 0);
+	pop->addObject(img);
 }
 
 void freePopStageNum()

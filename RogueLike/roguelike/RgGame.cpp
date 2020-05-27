@@ -44,7 +44,6 @@ void freeRgGame()
 }
 
 void curtainTile();
-
 void drawRgGame(float dt)
 {
 	switch (gamestat) {

@@ -127,12 +127,12 @@ void UseItem::paint(float dt)
 
 void createItemImg()
 {
-   iImage* imgHP = new iImage();
-   Texture* texHP = createImage("assets/item/heart.png");
-   imgHP->addObject(texHP);
-   freeImage(texHP);
+   iImage* imgpotion = new iImage();
+   Texture* texpotion = createImage("assets/item/potionRed.png");
+   imgpotion->addObject(texpotion);
+   freeImage(texpotion);
 
-   imgPotion = imgHP;
+   imgPotion = imgpotion;
 
    //----------------------------------------------------------------------------
 

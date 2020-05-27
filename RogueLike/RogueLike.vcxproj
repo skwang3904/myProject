@@ -154,6 +154,7 @@
   <ItemGroup>
     <ClInclude Include="lib\iArray.h" />
     <ClInclude Include="lib\iColor.h" />
+    <ClInclude Include="lib\iDrawNumber.h" />
     <ClInclude Include="lib\iFPS.h" />
     <ClInclude Include="lib\iGraphics.h" />
     <ClInclude Include="lib\iImage.h" />
@@ -194,6 +195,7 @@
   <ItemGroup>
     <ClCompile Include="lib\iArray.cpp" />
     <ClCompile Include="lib\iColor.cpp" />
+    <ClCompile Include="lib\iDrawNumber.cpp" />
     <ClCompile Include="lib\iFPS.cpp" />
     <ClCompile Include="lib\iGraphics.cpp" />
     <ClCompile Include="lib\iImage.cpp" />

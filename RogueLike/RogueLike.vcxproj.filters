@@ -129,6 +129,9 @@
     <ClInclude Include="roguelike\Effect.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="lib\iDrawNumber.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="roguelike\Enemy.cpp">
@@ -240,6 +243,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="roguelike\Effect.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\iDrawNumber.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

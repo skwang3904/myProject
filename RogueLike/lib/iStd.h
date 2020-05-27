@@ -9,6 +9,7 @@
 #include "iStrTex.h"
 /////////////////////////////////////////////////////////////////////////////////
 
+#include "iDrawNumber.h"
 #include "rgArray.h"
 #include "../roguelike/Player.h"
 #include "../roguelike/RgTile.h"

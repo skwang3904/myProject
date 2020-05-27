@@ -387,7 +387,7 @@ void createPopCombatMenu()
 	freeImage(texButten);
 
 	imgCombatInfo = new iImage();
-	//imgCombatInfo->tex = setCombatInfo(0);
+	imgCombatInfo->tex = setCombatInfo(0);
 	imgCombatInfo->position = CombatMenu_Pos + iPointMake(-350, 0);
 
 	imgButten->position = imgCombatInfo->position + iPointMake(250, 0);
@@ -438,12 +438,17 @@ bool keyPopCombatMenu(iKeyState stat, iPoint point)
 	{
 		i = popCombatMenu->selected;
 		if (i == -1)
-			break;
-		if (i == 100)
 		{
-			popCombatInfo->show(false);
+			showPopCombatInfo(false);
 			break;
 		}
+
+		if (i == 100) // 닫기버튼
+		{
+			showPopCombatInfo(false);
+			break;
+		}
+
 		imgCombatInfo->tex = setCombatInfo(i);
 		showPopCombatInfo(true);
 		break;

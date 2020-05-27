@@ -12,14 +12,6 @@ iImage::iImage()
 	selectedDt = 0.0f;
 	_selectedDt = default_selectedDt;
 	selectedScale = default_selectedScale;
-
-	ratio = 1.0f;
-	imgRatioX = 1.0f;
-	imgRatioY = 1.0f;
-	location = 2; // 0.x 1.y 2.z
-	reverseRotate = false;
-	angle = 0.0f;
-	lockAngle = false;
 	
 	animation = false;
 	aniDt = 0.0f;
@@ -28,6 +20,14 @@ iImage::iImage()
 	repeatNum = 0;
 	_repeatNum = 0;// inf
 	method = NULL;
+
+	ratio = 1.0f;
+	imgRatioX = 1.0f;
+	imgRatioY = 1.0f;
+	location = 2; // 0.x 1.y 2.z
+	reverseRotate = false;
+	angle = 0.0f;
+	lockAngle = false;
 }
 
 iImage::~iImage()

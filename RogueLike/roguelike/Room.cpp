@@ -439,7 +439,7 @@ void wallCheck(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float half
 	wallCheck2(checkFall, tile, pos, mp, halfOfTexW, halfOfTexH);
 }
 
-void findMoveTile(MapTile* tile);
+void findMoveTile(MapTile* tile, iPoint& moveTileNum);
 bool fallCheck(MapTile* tile, float dt)
 {
 	// 임시 - 낭떨어지에 진입시 가장 가까이있는 타일로 이동  - 어색함
@@ -452,20 +452,23 @@ bool fallCheck(MapTile* tile, float dt)
 
 	int x = (int)(pc->playerPosition.x - t->tileOff.x + HALF_OF_TEX_WIDTH) / RGTILE_Width;
 	int y = (int)(pc->playerPosition.y - t->tileOff.y + HALF_OF_TEX_HEIGHT) / RGTILE_Height;
-
+	iPoint moveTileNum = iPointZero;
 	if (t->rgTile[RGTILE_X * y + x] == FALLTILE)
 	{
 		if (pc->act != falling)
 		{
-			pc->img[8]->startAnimation();
+			pc->img[Player_imgFall]->startAnimation();
+			pc->img[Player_imgFall]->selected = true;
+			findMoveTile(t, moveTileNum);
+
 			audioPlay(SND_FALL);
 		}
 
-		if (pc->img[8]->animation == false)
+		if (pc->img[Player_imgFall]->animation == false)
 		{
+			pc->img[Player_imgFall]->selected = false;
 			pc->act = idle;
-			
-			findMoveTile(t);
+			pc->playerPosition = moveTileNum;
 
 			return false;
 		}
@@ -474,8 +477,8 @@ bool fallCheck(MapTile* tile, float dt)
 		iPoint p = pc->playerPosition - t->tileOff + setPos
 			- iPointMake(HALF_OF_TEX_WIDTH/2, HALF_OF_TEX_HEIGHT/2);
 			
-		pc->img[8]->selected = true;
-		pc->img[8]->paint(dt, p, REVERSE_NONE);
+		pc->img[Player_imgFall]->selected = true;
+		pc->img[Player_imgFall]->paint(dt, p, REVERSE_NONE);
 
 		return true;
 	}
@@ -500,7 +503,7 @@ float findMoveTile(MapTile* tile, int x, int y)
 	return min;
 }
 
-void findMoveTile(MapTile* tile)
+void findMoveTile(MapTile* tile, iPoint& moveTileNum)
 {
 	MapTile* t = tile;
 	int x = (int)(pc->playerPosition.x - t->tileOff.x + HALF_OF_TEX_WIDTH) / RGTILE_Width;
@@ -594,5 +597,5 @@ void findMoveTile(MapTile* tile)
 	else
 		p += iPointMake(HALF_OF_TEX_HEIGHT, 0);
 
-	pc->playerPosition = p;
+	moveTileNum = p;
 }

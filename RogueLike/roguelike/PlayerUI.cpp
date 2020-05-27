@@ -12,11 +12,13 @@ void loadPlayerUI()
 	createPopCombatMenu();
 	createPopMiniMap();
 	createPopItem();
+	createPopStageNum();
 
 	showPopHP(true);
 	showPopCombatMenu(true);
 	showPopMiniMap(true);
 	showPopItem(true);
+	showPopStageNum(true);
 }
 
 void freePlayerUI()
@@ -25,6 +27,7 @@ void freePlayerUI()
 	freePopCombatMenu();
 	freePopMiniMap();
 	freePopItem();
+	freePopStageNum();
 }
 
 void drawPlayerUI(float dt)
@@ -33,6 +36,7 @@ void drawPlayerUI(float dt)
 	drawPopCombatMenu(dt);
 	drawPopMiniMap(dt);
 	drawPopItem(dt);
+	drawPopStageNum(dt);
 }
 
 bool keyPlayerUI(iKeyState stat, iPoint point)
@@ -40,7 +44,8 @@ bool keyPlayerUI(iKeyState stat, iPoint point)
 	if (keyPopHP(stat, point) ||
 		keyPopCombatMenu(stat, point) ||
 		keyPopMiniMap(stat, point) ||
-		keyPopItem(stat, point))
+		keyPopItem(stat, point) ||
+		keyPopStageNum(stat, point))
 		return true;
 	return false;
 }
@@ -161,7 +166,7 @@ iImage* imgMiniMap;
 #define MINIMAPTILE 40
 static int minitile = MINIMAPTILE;
 static uint8 prevTileNum = 0;
-Texture* refreshMiniMap()
+void refreshMiniMap()
 {
 	if (imgMiniMap->tex)
 		freeImage(imgMiniMap->tex);
@@ -174,14 +179,14 @@ Texture* refreshMiniMap()
 	{
 		if (ct[i].value)
 		{
-			if (i == pc->tileNumber) setRGBA(0, 1, 0, 1);
+			if (i == pc->tileNumber) setRGBA(0, 1, 0, 1); // 플레이어 표시
 			else setRGBA(0.8, 0.8, 0.8, 1);
 
 			g->fillRect(minitile * (i % TILEOFF_SQRT), minitile * (i / TILEOFF_SQRT), minitile, minitile);
 			setRGBA(0, 0, 0, 1);
 			g->drawRect(minitile * (i % TILEOFF_SQRT), minitile * (i / TILEOFF_SQRT), minitile, minitile);
 
-			if (ct[i].tileOff == ct[nextDoor].tileOff)
+			if (i == nextDoor) // 다음스테이지 표시
 			{
 				setRGBA(0, 0, 1, 1);
 				g->fillRect(minitile * (i % TILEOFF_SQRT) + 10,  minitile * (i / TILEOFF_SQRT) + 10,
@@ -213,19 +218,17 @@ Texture* refreshMiniMap()
 	}
 	setRGBA(1, 1, 1, 1);
 
-	return  g->getTexture();
+	Texture* tex = g->getTexture();
+	imgMiniMap->tex = tex;
 }
 
 void createPopMiniMap()
 {
 	iPopup* pop = new iPopup(iPopupStyleNone);
 	popMiniMap = pop;
-	
 	imgMiniMap = new iImage();
 
-	Texture* tex = refreshMiniMap();
-	imgMiniMap->addObject(tex);
-	//freeImage(tex); // 리테인카운터 감소시키면 삭제에러뜸
+	refreshMiniMap();
 
 	pop->addObject(imgMiniMap);
 	pop->openPosition = iPointMake(devSize.width - minitile * (TILEOFF_SQRT + 5), 100);
@@ -258,15 +261,16 @@ void drawPopMiniMap(float dt)
 			imgMiniMap->position = iPointZero;
 			minitile = MINIMAPTILE;
 		}
-		imgMiniMap->tex = refreshMiniMap();
+		refreshMiniMap();
 	}
 
 	if (prevTileNum != pc->tileNumber)
 	{
-		imgMiniMap->tex = refreshMiniMap();
+		refreshMiniMap();
 		prevTileNum = pc->tileNumber;
 	}
 
+	//refreshMiniMap();
 	popMiniMap->paint(dt);
 }
 
@@ -545,6 +549,71 @@ bool keyPopItem(iKeyState stat, iPoint point)
 		return false;
 
 	if (popItem->stat != iPopupStatProc)
+		return true;
+
+	return false;
+}
+
+/////////////////////////////////////////////////////////
+
+iPopup* popStageNum;
+iImage* imgStageNum;
+
+void changeStageNum()
+{
+	if (imgStageNum->tex)
+		freeImage(imgStageNum->tex);
+	iGraphics* g = iGraphics::instance();
+	iSize size = iSizeMake(300, 50);
+	g->init(size);
+
+	setRGBA(1, 1, 1, 1);
+	g->fillRect(0, 0, size.width, size.height, 30);
+	setRGBA(1, 1, 1, 1);
+
+	setStringSize(50);
+	setStringRGBA(0, 1, 1, 1);
+	setStringBorder(2);
+	setStringBorderRGBA(0, 0, 0, 1);
+	g->drawString(size.width / 2, size.height / 2, VCENTER | HCENTER, "STAGE %d", stage + 1);
+
+	Texture* tex = g->getTexture();
+	imgStageNum->tex = tex;
+}
+
+void createPopStageNum()
+{
+	iPopup* pop = new iPopup(iPopupStyleNone);
+	popStageNum = pop;
+
+	imgStageNum = new iImage();
+	changeStageNum();
+	
+	imgStageNum->position = iPointMake(devSize.width / 2, 30);
+	pop->addObject(imgStageNum);
+}
+
+void freePopStageNum()
+{
+	delete popStageNum;
+}
+
+void showPopStageNum(bool show)
+{
+	popStageNum->show(show);
+}
+
+void drawPopStageNum(float dt)
+{
+	popStageNum->paint(dt);
+}
+
+bool keyPopStageNum(iKeyState stat, iPoint point)
+{
+	if (popStageNum->bShow == false)
+		return false;
+
+	if (popStageNum->stat != iPopupStatProc)
 		return true;
 
 	return false;

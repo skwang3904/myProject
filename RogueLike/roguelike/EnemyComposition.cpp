@@ -6,6 +6,25 @@
 #include "EnemyStruct.h"
 
 
+iPoint enemyPos[16] = {
+{RGTILE_Width * 3,  RGTILE_Height * 3},
+{RGTILE_Width * 3,  RGTILE_Height * 6},
+{RGTILE_Width * 3,  RGTILE_Height * 9},
+{RGTILE_Width * 8,  RGTILE_Height * 3},
+{RGTILE_Width * 8,  RGTILE_Height * 6},
+{RGTILE_Width * 8,  RGTILE_Height * 9},
+{RGTILE_Width * 13, RGTILE_Height * 3},
+{RGTILE_Width * 13, RGTILE_Height * 6},
+{RGTILE_Width * 13, RGTILE_Height * 9},
+{RGTILE_Width * 18, RGTILE_Height * 3},
+{RGTILE_Width * 18, RGTILE_Height * 6},
+{RGTILE_Width * 18, RGTILE_Height * 9},
+{RGTILE_Width * 23, RGTILE_Height * 3},
+{RGTILE_Width * 23, RGTILE_Height * 6},
+{RGTILE_Width * 23, RGTILE_Height * 9},
+{RGTILE_Width * 25, RGTILE_Height * 18}, 
+};
+
 void setEnemyPosition(uint8 pcTile)
 {
 	int i, j, num = 0;
@@ -45,12 +64,19 @@ void setEnemyPosition(uint8 pcTile)
 			continue;
 		}
 
-		for (j = 0; j < 2; j++)
+		int index = -1;
+		for (j = 0; j < 5; j++)
 		{
-			EnemyGolem* enm = golems[2 * i + j];
-			enm->golemPos = maps[check[i]]->tileOff +
-				iPointMake(RGTILE_Width * 5 + RGTILE_Width * 5 * (j % 3),
-					RGTILE_Height * 5 + RGTILE_Height * 5 * (j / 3));
+			if (index == -1)
+				index = random() % 16;
+
+			EnemyGolem* enm = golems[5 * i + j];
+			enm->golemPos = maps[check[i]]->tileOff + 
+				enemyPos[index];
+
+			index -= 1 + (random() % 3);
+			if (index < 0)
+				index = 15;
 			enm->tileNumber = check[i];
 		}
 	}
@@ -69,6 +95,7 @@ void setEnemyPosition(uint8 pcTile)
 					RGTILE_CENTER;
 				elete = true;
 				enm->tileNumber = check[j];
+				break;
 			}
 		}
 	}

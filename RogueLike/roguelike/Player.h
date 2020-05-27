@@ -15,10 +15,11 @@
 #define HALF_OF_TEX_POINT	iPointMake(pc->img[0]->tex->width/2,	\
 										pc->img[0]->tex->height/2)
 
-#define EVASION_DISTANCE 500
-#define EVASION_DURATION 0.4f
+#define Player_imgFall 8
+#define Player_imgEvasion 9
 
-#define MELEE_NUM 3
+#define EVASION_DISTANCE 500
+#define EVASION_DURATION 0.3f
 
 typedef void (*Method_Combat)(float dt, iPoint dropP);
 struct PlayerMW;
@@ -52,6 +53,8 @@ public:
 	bool evasionPlayer(MapTile* tile, float dt);
 
 	void setPlayerTile();
+
+	void drawtouchPlayer();
 
 public:
 	iImage** img;

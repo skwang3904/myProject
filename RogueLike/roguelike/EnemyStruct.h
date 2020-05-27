@@ -2,14 +2,16 @@
 
 #include "iStd.h"
 
-#define GOLEM_NUM 20
+#define GOLEM_NUM 50
 #define GOLEM_ELETE_NUM 1
 #define ALLENEMY_NUM GOLEM_NUM + GOLEM_ELETE_NUM
 
+#define GOLEM_IMG_NUM 6
 #define GOLEM_RATIO 0.3f
 #define GOLEM_MELEE_ATKTIME 1.0f
 #define GOLEM_RANGE_ATKTIME 2.5f
 
+#define GOLEM_ELETE_IMG_NUM 6
 #define GOLEM_ELETE_RATIO 0.5f
 #define GOLEM_ELETE_MELEE_ATKTIME 0.3f
 #define GOLEM_ELETE_RANGE_ATKTIME 2.0f
@@ -61,7 +63,7 @@ struct EnemyGolem {
 	float giveDmgTime;
 	bool hit;
 
-	void init(int stage);
+	void init(int stage = 0);
 	void paint(float dt);
 
 	void drawShowHp(float dt);

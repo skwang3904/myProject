@@ -3,7 +3,6 @@
 #include "Room.h"
 #include "Stage.h"
 
-#include "Enemy.h"
 #include "EnemyActionPattern.h"
 
 #include "Effect.h"
@@ -20,11 +19,11 @@ void EnemyGolem::init(int stage)
 	{
 	case golemNomal:
 	{
-		hp = _hp = 50.0f + ((stage - 1) * 20);
-		attackDmg = 5.0f + ((stage - 1) * 5);
-		meleeAtkSpeed = GOLEM_MELEE_ATKTIME - ((stage - 1) * GOLEM_MELEE_ATKTIME * 0.1f);
+		hp = _hp = 50.0f + ((stage) * 20);
+		attackDmg = 5.0f + ((stage) * 5);
+		meleeAtkSpeed = GOLEM_MELEE_ATKTIME - ((stage) * GOLEM_MELEE_ATKTIME * 0.1f);
 		rangeAtkSpeed = GOLEM_RANGE_ATKTIME;
-		moveSpeed = 50.0f + ((stage - 1) * 50);
+		moveSpeed = 50.0f + ((stage) * 50);
 		meleeReach = 100.0f;
 		rangeReach = 300.0f;
 		ratio = GOLEM_RATIO;
@@ -40,19 +39,22 @@ void EnemyGolem::init(int stage)
 		effectImg = NULL;
 		projectile = NULL;
 
-		//effectImg = imgChargeFire->copy();
-		//projectile = (FireBall**)malloc(sizeof(FireBall*) * FIREBALL_NUM);
-		//for (int i = 0; i < FIREBALL_NUM; i++)
-		//	projectile[i] = new FireBall();
+		if (stage == 0)
+		{
+			//effectImg = imgChargeFire->copy();
+			//projectile = (FireBall**)malloc(sizeof(FireBall*) * FIREBALL_NUM);
+			//for (int i = 0; i < FIREBALL_NUM; i++)
+			//	projectile[i] = new FireBall();
+		}
 		break;
 	}
 	case golemElete:
 	{
-		hp = _hp = 100.0f + ((stage - 1) * 40);
-		attackDmg = 5.0f + ((stage - 1) * 10);
-		meleeAtkSpeed = GOLEM_ELETE_MELEE_ATKTIME - ((stage - 1) * GOLEM_ELETE_MELEE_ATKTIME * 0.15f);
+		hp = _hp = 100.0f + ((stage) * 40);
+		attackDmg = 5.0f + ((stage) * 10);
+		meleeAtkSpeed = GOLEM_ELETE_MELEE_ATKTIME - ((stage) * GOLEM_ELETE_MELEE_ATKTIME * 0.15f);
 		rangeAtkSpeed = GOLEM_ELETE_RANGE_ATKTIME;
-		moveSpeed = 80.0f + ((stage - 1) * 50);
+		moveSpeed = 80.0f + ((stage) * 50);
 		meleeReach = 150.0f;
 		rangeReach = 500.0f;
 		ratio = GOLEM_ELETE_RATIO;
@@ -65,11 +67,14 @@ void EnemyGolem::init(int stage)
 		rangeTime = 0.0f;
 		_rangeTime = 3.0f;
 
-		effectImg = imgChargeFire->copy();
+		if (stage == 0)
+		{
+			effectImg = imgChargeFire->copy();
 
-		projectile = (FireBall**)malloc(sizeof(FireBall*) * FIREBALL_NUM);
-		for (int i = 0; i < FIREBALL_NUM; i++)
-			projectile[i] = new FireBall();
+			projectile = (FireBall**)malloc(sizeof(FireBall*) * FIREBALL_NUM);
+			for (int i = 0; i < FIREBALL_NUM; i++)
+				projectile[i] = new FireBall();
+		}
 		break;
 	}
 	default:
@@ -93,16 +98,18 @@ void EnemyGolem::init(int stage)
 	reverse = REVERSE_NONE;
 	ATV = iPointZero;
 
-	items = (UseItem**)malloc(sizeof(UseItem*) * 3);
-	items[0] = new UseItem(coin);
-	items[0]->value = 1;
+	if (stage == 0)
+	{
+		items = (UseItem**)malloc(sizeof(UseItem*) * 3);
+		items[0] = new UseItem(coin);
+		items[0]->value = 1;
 
-	items[1] = new UseItem(healing);
-	items[1]->value = 10.0f;
+		items[1] = new UseItem(healing);
+		items[1]->value = 10.0f;
 
-	items[2] = new UseItem(powerUp);
-	items[2]->value = 10.0f;
-
+		items[2] = new UseItem(powerUp);
+		items[2]->value = 10.0f;
+	}
 	methodead = golemItems;
 
 }
@@ -178,12 +185,12 @@ void EnemyGolem::paint(float dt)
 
 		if (img[4]->animation == false)
 		{
-
 			golemPos = iPointZero;
 			touchGolem = iRectZero;
 			act = dead;
 			if (this == golemEletes[0])
 				nextDoor = tileNumber;
+			tileNumber = 0;
 		}
 	}
 }

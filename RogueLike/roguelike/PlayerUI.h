@@ -41,3 +41,12 @@ void freePopItem();
 void showPopItem(bool show);
 void drawPopItem(float dt);
 bool keyPopItem(iKeyState stat, iPoint point);
+
+/////////////////////////////////////////////////////////
+
+void changeStageNum();
+void createPopStageNum();
+void freePopStageNum();
+void showPopStageNum(bool show);
+void drawPopStageNum(float dt);
+bool keyPopStageNum(iKeyState stat, iPoint point);

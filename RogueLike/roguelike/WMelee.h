@@ -6,6 +6,9 @@
 */
 
 //typedef void (*Method_Combat)(float dt, iPoint dropP);
+
+#define MELEE_NUM 3
+
 struct meleeWeapon {
 	iImage* infoImg;
 	const char* infomation;

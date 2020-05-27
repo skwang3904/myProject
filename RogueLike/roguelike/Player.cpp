@@ -182,7 +182,7 @@ void Player::createPlayerImage()
 
 	imgEvasion->_aniDt = EVASION_DURATION / 4.0f;
 	imgEvasion->_repeatNum = 1;
-	imgEvasion->_selectedDt = imgEvasion->_aniDt * 4.0f;
+	//imgEvasion->_selectedDt = imgEvasion->_aniDt * 4.0f;
 	//imgEvasion->angle = 720.0f;
 
 	img = imgChar;
@@ -219,11 +219,11 @@ void Player::drawPlayer(float dt)
 	}
 
 	sort->init();
-	sort->add(pc->playerPosition.y + HALF_OF_TEX_HEIGHT * 2);
+	sort->add(pc->playerPosition.y + HALF_OF_TEX_HEIGHT/2.0f);
 	sort->add(pc->pmw->mw->combatPosition.y);
 	sort->update();
 
-	for (int i = 0; i < sort->sdNum; i++)
+	for (int i = 0; i < sort->sdNum; i++) // 수정필요
 	{
 		if (sort->get(i) == 0)
 			paint(dt);
@@ -338,6 +338,21 @@ void Player::setPlayerTile()
 	camPosition = iPointZero - maps[tileNumber]->tileOff;
 }
 
+void Player::drawtouchPlayer()
+{
+	iRect rt = iRectMake(playerPosition.x,
+		playerPosition.y,
+		HALF_OF_TEX_WIDTH * 2.0f, HALF_OF_TEX_HEIGHT * 2.0f);
+
+	touchPlayer = rt;
+
+	setRGBA(0, 0, 0, 0.5f);
+	rt.origin += pc->camPosition + setPos;
+	fillRect(rt);
+	setRGBA(1, 1, 1, 1);
+
+}
+
 void Player::paint(float dt)
 {
 	iPoint v = iPointZero;
@@ -413,6 +428,9 @@ void Player::paint(float dt)
 	img[headNum]->setTexAtIndex(pc->act == attacking ? true : false);
 	drawPos = playerPosition + camPosition + setPos;
 
+	//히트박스 표시-------------------------------
+	drawtouchPlayer();
+
 	if (mv.x)
 		img[2 * ani + 0]->paint(dt, drawPos, mv.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);
 	else if (mv.y)
@@ -423,17 +441,7 @@ void Player::paint(float dt)
 		VCENTER | HCENTER, 1.0f, 1.0f,
 		img[headNum]->location, img[headNum]->angle, REVERSE_NONE);
 
-	iRect rt = iRectMake(playerPosition.x,
-		playerPosition.y ,
-		HALF_OF_TEX_WIDTH * 2.0f, HALF_OF_TEX_HEIGHT * 2.0f);
 
-	touchPlayer = rt;
-
-	//히트박스 표시-------------------------------
-	setRGBA(0, 1, 0, 0.1f);
-	rt.origin += pc->camPosition + setPos;
-	fillRect(rt);
-	setRGBA(1, 1, 1, 1);
 
 }
 
@@ -446,7 +454,7 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 	{
 		if (viewVector != iPointZero)
 		{
-			img[9]->startAnimation();
+			img[Player_imgEvasion]->startAnimation();
 			act = evasion;
 
 			audioPlay(SND_JUMP);
@@ -459,14 +467,15 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 		return false;
 
 
-	if (img[9]->animation == true)
+	if (img[Player_imgEvasion]->animation == true)
 	{	
 		iPoint mp = evasV * (EVASION_DISTANCE * dt);
 		wallCheck(false, tile, playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
 
-		drawPos = playerPosition + camPosition + setPos;
-		iPoint p = iPointMake(drawPos.x - HALF_OF_TEX_WIDTH/2,
-			drawPos.y - HALF_OF_TEX_HEIGHT);
+		//drawPos = playerPosition + camPosition + setPos;
+		iPoint dp = playerPosition + iPointMake(0,-30) + camPosition + setPos;
+		iPoint p = iPointMake(dp.x - HALF_OF_TEX_WIDTH/2,
+			dp.y - HALF_OF_TEX_HEIGHT);
 		
 		//if (evasV.x < 0)
 		//{
@@ -490,12 +499,15 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 		//}
 		//img[9]->selected = true;
 
-		img[9]->paint(dt, p, REVERSE_NONE);
+		//히트박스 표시-------------------------------
+		drawtouchPlayer();
+
+		img[Player_imgEvasion]->paint(dt, p, REVERSE_NONE);
 		
 		return true;
 	}
 
-	else if (img[9]->animation == false)
+	else if (img[Player_imgEvasion]->animation == false)
 	{
 		act = idle;
 		evasV = iPointZero;

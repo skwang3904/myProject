@@ -36,6 +36,8 @@ void memoryTest()
 		//freePlayerUI();
 	}
 }
+//--------------------------------------------------------
+//--------------------------------------------------------
 
 void loadRgProc()
 {
@@ -44,7 +46,6 @@ void loadRgProc()
 	createEffect();
 	createItemImg();
 
-	stage++;
 	createTileSet();
 	loadRoomTile();
 	newRoomTile();
@@ -63,6 +64,8 @@ void loadRgProc()
 
 	loadRgLoading();
 	loadPlayerUI();
+
+	stage++;
 }
 
 void freeRgProc()

@@ -16,7 +16,7 @@ extern uint8 stage;
 extern uint8 nextDoor;
 extern bool nextStage;
 
-void createStage(uint8 stage);
+void createStage();
 void setNextDoor(uint8 pcTile);
 void nextStageAni(float dt);
 

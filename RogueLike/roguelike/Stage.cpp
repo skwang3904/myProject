@@ -13,17 +13,25 @@ uint8 stage = 0;
 uint8 nextDoor = 255;
 bool nextStage = false;
 
-void createStage(uint8 stage)
+void createStage()
 {
+	changeStageNum();
+
+	int i;
 	newRoomTile();
 
 	// monster init
-	for (int i = 0; i < GOLEM_NUM; i++)
+	for (i = 0; i < GOLEM_NUM; i++)
 		golems[i]->init(stage);
+	for (i = 0; i < GOLEM_ELETE_NUM; i++)
+		golemEletes[i]->init(stage);
+
 
 	uint8 pcTile = pc->initPlayerPosition();
 	setEnemyPosition(pcTile);
 	//setNextDoor(pcTile);
+
+	stage++;
 }
 
 void setNextDoor(uint8 pcTile)
@@ -76,22 +84,24 @@ void nextStageAni(float dt)
 	static bool stageAni = false;
 	if (stageAni == false)
 	{
-		pc->img[8]->startAnimation();
+		pc->img[Player_imgFall]->startAnimation();
+		pc->img[Player_imgFall]->selected = true;
 		stageAni = true;
 		nextDoor = 255;
 	}
 	
-	if (pc->img[8]->animation == true)
+	if (pc->img[Player_imgFall]->animation == true)
 	{
 		iPoint p = pc->drawPos - iPointMake(HALF_OF_TEX_WIDTH / 2, HALF_OF_TEX_HEIGHT / 2);
-		pc->img[8]->paint(dt,p,REVERSE_NONE);
+		pc->img[Player_imgFall]->paint(dt,p,REVERSE_NONE);
 		return;
 	}
 	
 	if (stagetest == false)
 	{
-		stage++;
-		createStage(stage);
+		pc->img[Player_imgFall]->selected = false;
+
+		createStage();
 
 		showRgLoading(true, NextStage);
 		stagetest = true;

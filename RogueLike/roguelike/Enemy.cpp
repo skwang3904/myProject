@@ -45,7 +45,7 @@ void createGolem()
 	}
 
 	for (int i = 0; i < GOLEM_NUM; i++)
-		golems[i]->init(stage);
+		golems[i]->init();
 
 	//----------------------------------------------------------------------------------------
 
@@ -64,7 +64,7 @@ void createGolem()
 	}
 
 	for (int i = 0; i < GOLEM_ELETE_NUM; i++)
-		golemEletes[i]->init(stage);
+		golemEletes[i]->init();
 
 	//----------------------------------------------------------------------------------------
 }

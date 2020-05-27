@@ -34,6 +34,13 @@ public:
 	float selectedDt, _selectedDt;
 	float selectedScale;
 
+	bool animation;
+	float aniDt, _aniDt;
+	int frame;
+	bool lastFrame;
+	int repeatNum, _repeatNum;	// 0 : inf
+	IMAGE_METHOD method;
+
 	float ratio;
 	float imgRatioX;
 	float imgRatioY;
@@ -41,13 +48,6 @@ public:
 	bool reverseRotate;
 	float angle;
 	bool lockAngle;
-
-	bool animation;
-	float aniDt, _aniDt;
-	int frame;
-	bool lastFrame;
-	int repeatNum, _repeatNum;	// 0 : inf
-	IMAGE_METHOD method;
 };
 
 #define default_selectedDt 0.1f

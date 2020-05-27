@@ -87,8 +87,11 @@ struct EnemyGolem {
 	Method_Item methodead;
 };
 
-iImage** golemImg();
-iImage** golemEleteImg();
+void createGolemImg();
+void freeGolemImg();
+
+void golemImg();
+void golemEleteImg();
 
 extern EnemyGolem** golems;
 extern EnemyGolem** golemEletes;

@@ -30,22 +30,16 @@ void drawEnemy(float dt)
 
 void createGolem()
 {
+	createGolemImg();
 	golems = (EnemyGolem**)malloc(sizeof(EnemyGolem*) * GOLEM_NUM);
 	for (int i = 0; i < GOLEM_NUM; i++)
 		golems[i] = (EnemyGolem*)malloc(sizeof(EnemyGolem) * 1);
 
-	golems[0]->enmtype = golemNomal;
-	golems[0]->img = golemImg();
-	for (int i = 1; i < GOLEM_NUM; i++)
+	for (int i = 0; i < GOLEM_NUM; i++)
 	{
 		golems[i]->enmtype = golemNomal;
-		golems[i]->img = (iImage**)malloc(sizeof(iImage*) * GOLEM_IMG_NUM);
-		for (int j = 0; j < GOLEM_IMG_NUM; j++)
-			golems[i]->img[j] = golems[0]->img[j]->copy();
-	}
-
-	for (int i = 0; i < GOLEM_NUM; i++)
 		golems[i]->init();
+	}
 
 	//----------------------------------------------------------------------------------------
 
@@ -53,24 +47,19 @@ void createGolem()
 	for (int i = 0; i < GOLEM_ELETE_NUM; i++)
 		golemEletes[i] = (EnemyGolem*)malloc(sizeof(EnemyGolem) * 1);
 
-	golemEletes[0]->enmtype = golemElete;
-	golemEletes[0]->img = golemEleteImg();
-	for (int i = 1; i < GOLEM_ELETE_NUM; i++)
+	for (int i = 0; i < GOLEM_ELETE_NUM; i++)
 	{
 		golemEletes[i]->enmtype = golemElete;
-		golemEletes[i]->img = (iImage**)malloc(sizeof(iImage*) * GOLEM_ELETE_IMG_NUM);
-		for (int j = 0; j < GOLEM_ELETE_IMG_NUM; j++)
-			golemEletes[i]->img[j] = golemEletes[0]->img[j]->copy();
-	}
-
-	for (int i = 0; i < GOLEM_ELETE_NUM; i++)
 		golemEletes[i]->init();
+	}
 
 	//----------------------------------------------------------------------------------------
 }
 
 void freeGolem()
 {
+	freeGolemImg();
+
 	for (int i = 0; i < GOLEM_NUM; i++)
 	{
 		for (int j = 0; j < GOLEM_IMG_NUM; j++)
@@ -83,7 +72,7 @@ void freeGolem()
 		if (golems[i]->effectImg)
 			delete golems[i]->effectImg;
 
-		for (int j = 0; j < 2; j++)
+		for (int j = 0; j < 3; j++)
 			delete golems[i]->items[j];
 		free(golems[i]->items);
 
@@ -112,7 +101,7 @@ void freeGolem()
 		if (golemEletes[i]->effectImg)
 			delete golemEletes[i]->effectImg;
 
-		for (int j = 0; j < 2; j++)
+		for (int j = 0; j < 3; j++)
 			delete golemEletes[i]->items[j];
 		free(golemEletes[i]->items);
 

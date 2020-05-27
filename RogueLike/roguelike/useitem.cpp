@@ -160,6 +160,9 @@ void freeItemImg()
     delete imgPowerUp;
 }
 
+//----------------------------------------------------------------------------
+// golem drops
+
 void golemItems(EnemyGolem* enm)
 {
     for (int i = 0; i < 2; i++)
@@ -170,7 +173,8 @@ void golemItems(EnemyGolem* enm)
         ui->alive = true;
         ui->value =  i * 10;
 
-		iPoint et = iPointMake(enm->img[0]->tex->width / 4.0f * enm->ratio, enm->img[0]->tex->height / 2.0f  * enm->ratio);
+		iPoint et = iPointMake(enm->img[0]->tex->width / 4.0f * enm->ratio,
+			enm->img[0]->tex->height / 2.0f  * enm->ratio);
         iPoint p = iPointMake(-100 + 100 * i, 0);
         ui->sp = enm->golemPos + et;
         ui->itemPos = enm->golemPos + et + p;

@@ -94,6 +94,21 @@ void createMeleeWeapon()
 	}
 }
 
+void freeMeleeWeapon()
+{
+	delete nomalHammer->img;
+	delete nomalHammer->infoImg;
+	free(nomalHammer);
+
+	delete nomalSpear->img;
+	delete nomalSpear->infoImg;
+	free(nomalSpear);
+
+	delete nomalCyclone->img;
+	delete nomalCyclone->infoImg;
+	free(nomalCyclone);
+}
+
 void draw(meleeWeapon* mw, float dt, iPoint dropP)
 {
 	Texture* tex = mw->img->tex;

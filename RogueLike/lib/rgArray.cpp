@@ -159,6 +159,13 @@ void rgArray::removeAll()
 	tail->prev = curr;
 	while (curr)
 	{
+		if (curr->prev == head)
+		{
+			if (method)
+				method(curr->data);
+			free(curr);
+			break;
+		}
 		rgxArray* c = curr->prev;
 		if (method)
 			method(curr->data);

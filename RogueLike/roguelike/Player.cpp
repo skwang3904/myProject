@@ -22,6 +22,7 @@ Player::Player()
 Player::~Player()
 {
 	delete sort;
+	delete weaponArray;
 
 	for (int i = 0; i < 10; i++)
 	{

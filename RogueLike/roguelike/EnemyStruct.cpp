@@ -13,12 +13,19 @@
 EnemyGolem** golems;
 EnemyGolem** golemEletes;
 
+iImage** imgGolem;
+iImage** imgGolemElete;
+
 void EnemyGolem::init(int stage)
 {
 	switch (enmtype)
 	{
 	case golemNomal:
 	{
+		img = (iImage**)malloc(sizeof(iImage*) * GOLEM_IMG_NUM);
+		for (int i = 0; i < GOLEM_IMG_NUM; i++)
+			img[i] = imgGolem[i]->copy();
+
 		hp = _hp = 50.0f + ((stage) * 20);
 		attackDmg = 5.0f + ((stage) * 5);
 		meleeAtkSpeed = GOLEM_MELEE_ATKTIME - ((stage) * GOLEM_MELEE_ATKTIME * 0.1f);
@@ -50,6 +57,10 @@ void EnemyGolem::init(int stage)
 	}
 	case golemElete:
 	{
+		img = (iImage**)malloc(sizeof(iImage*) * GOLEM_ELETE_IMG_NUM);
+		for (int i = 0; i < GOLEM_ELETE_IMG_NUM; i++)
+			img[i] = imgGolemElete[i]->copy();
+
 		hp = _hp = 100.0f + ((stage) * 40);
 		attackDmg = 5.0f + ((stage) * 10);
 		meleeAtkSpeed = GOLEM_ELETE_MELEE_ATKTIME - ((stage) * GOLEM_ELETE_MELEE_ATKTIME * 0.15f);
@@ -248,9 +259,26 @@ void EnemyGolem::takeDmgEffect(float dt)
 
 //----------------------------------------------------------------------------------------
 
-iImage** golemImg()
+void createGolemImg()
 {
-	iImage** imgGolem = (iImage**)malloc(sizeof(iImage*) * GOLEM_IMG_NUM);
+	golemImg();
+	golemEleteImg();
+}
+
+void freeGolemImg()
+{
+	for (int i = 0; i < GOLEM_IMG_NUM; i++)
+		delete imgGolem[i];
+	free(imgGolem);
+
+	for (int i = 0; i < GOLEM_ELETE_IMG_NUM; i++)
+		delete imgGolemElete[i];
+	free(imgGolemElete);
+}
+
+void golemImg()
+{
+	iImage** imgG = (iImage**)malloc(sizeof(iImage*) * GOLEM_IMG_NUM);
 
 	iImage* imgGolemIdle = new iImage();
 	Texture** texGolemIdle = (Texture**)malloc(sizeof(Texture*) * 12);
@@ -315,20 +343,20 @@ iImage** golemImg()
 	imgGolemMagic->_aniDt = GOLEM_RANGE_ATKTIME / 18.0f;
 	imgGolemMagic->_repeatNum = 1;
 
-	imgGolem[0] = imgGolemIdle;
-	imgGolem[1] = imgGolemIdleBlink;
-	imgGolem[2] = imgGolemWalk;
-	imgGolem[3] = imgGolemAttacking;
-	imgGolem[4] = imgGolemDying;
-	imgGolem[5] = imgGolemMagic;
+	imgG[0] = imgGolemIdle;
+	imgG[1] = imgGolemIdleBlink;
+	imgG[2] = imgGolemWalk;
+	imgG[3] = imgGolemAttacking;
+	imgG[4] = imgGolemDying;
+	imgG[5] = imgGolemMagic;
 
 	for (int i = 0; i < GOLEM_IMG_NUM; i++)
-		imgGolem[i]->ratio = GOLEM_RATIO;
+		imgG[i]->ratio = GOLEM_RATIO;
 
-	return imgGolem;
+	imgGolem = imgG;
 }
 
-iImage** golemEleteImg()
+void golemEleteImg()
 {
 	iImage** imgGE = (iImage**)malloc(sizeof(iImage*) * GOLEM_ELETE_IMG_NUM);
 
@@ -404,5 +432,5 @@ iImage** golemEleteImg()
 	for (int i = 0; i < GOLEM_ELETE_IMG_NUM; i++)
 		imgGE[i]->ratio = GOLEM_ELETE_RATIO;
 
-	return imgGE;
+	imgGolemElete = imgGE;
 }

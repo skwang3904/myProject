@@ -34,6 +34,7 @@ struct meleeWeapon {
 };
 
 void createMeleeWeapon();
+void freeMeleeWeapon();
 
 void weaponPosAndRt(meleeWeapon* mw, iPoint& wcp, iPoint& centerP, iRect& rt);
 

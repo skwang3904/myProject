@@ -26,22 +26,7 @@ Weapon::Weapon()
 
 Weapon::~Weapon()
 {
-	for (int i = 0; i < TOTAL_WP_NUM; i++)
-	{
-		PlayerWP* pw = &PWP[i];
-		if (i < MELEE_NUM)
-		{
-			meleeWeapon* mw = (meleeWeapon*)pw->wp;
-			if (mw->img)
-				delete mw->img;
-			free(pw->wp);
-		}
-		else //range
-		{
-			;
-		}
-
-	}
+	freeMeleeWeapon();
 }
 
 void Weapon::drawWeapon(float dt)

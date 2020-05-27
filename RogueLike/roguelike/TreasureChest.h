@@ -21,12 +21,13 @@ public:
 	void openAni();
 	void paint(float dt);
 
-
 public:
+	bool open;
+
 	iPoint pos;
 	int tileNumber;
 
-	UseItem* items;
+	UseItem** items;
 	PlayerWP* weapons;
 };
 

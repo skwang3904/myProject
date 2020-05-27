@@ -10,6 +10,12 @@ int gamestat;
 
 void loadRgGame()
 {
+	//for (int i = 0; i < 100; i++)
+	//{
+	//	loadRgProc();
+	//	freeRgProc();
+	//}
+
 #if 1
 	loadRgProc();
 	gamestat = gs_proc;

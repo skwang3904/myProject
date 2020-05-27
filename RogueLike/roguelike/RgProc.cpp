@@ -16,24 +16,33 @@
 
 void memoryTest()
 {
-	stage++;
 	for (int i = 0; i < 300; i++)
 	{
 		printf("i = %d\n", i);
+
+		createTileSet();
+		loadRoomTile();
+		createEffect();
+		createItemImg();
 		createEnemy();
-		//int pcTile = pc->initPlayerPosition();
-		//setNextDoor(pcTile);
-		//setEnemyPosition(pcTile);
-		//loadRgLoading();
-		//loadPlayerUI();
+		numberFont = new numFont();
+		weapon = new Weapon();
+		pc->instance();
 
+		loadRgLoading();
+		loadPlayerUI();
 
-
+		freeTileSet();
+		freeRoomTile();
+		freeEffect();
+		freeItemImg();
 		freeEnemy();
+		delete numberFont;
+		delete weapon;
 
 	
-		//freeRgLoading();
-		//freePlayerUI();
+		freeRgLoading();
+		freePlayerUI();
 	}
 }
 //--------------------------------------------------------
@@ -64,6 +73,7 @@ void loadRgProc()
 	//--------------------------------------------------------
 	// pop
 
+
 	loadRgLoading();
 	loadPlayerUI();
 
@@ -77,7 +87,7 @@ void freeRgProc()
 
 	delete numberFont;
 	delete weapon;
-	delete pc;
+	//delete pc;
 
 	freeEnemy();
 	freeTileSet();

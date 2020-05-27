@@ -27,7 +27,7 @@ numFont::numFont()
 
 numFont::~numFont()
 {
-	for (int i = 0; i < 11; i++)
+	for (int i = 0; i < 18; i++)
 		freeImage(fontNum->tex[i]);
 
 	free(fontNum);

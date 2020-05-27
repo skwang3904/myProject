@@ -40,7 +40,7 @@ void drawPlayerUI(float dt)
 	drawPopItem(dt);
 	drawPopStageNum(dt);
 
-	numberFont->drawFont(devSize.width / 2 + 200, 30, TOP | LEFT, 1, 1, 1, "%d", stage + 1);
+	numberFont->drawFont(devSize.width / 2 + 200, 30, TOP | LEFT, 1, 1, 1, "%d", stage);
 }
 
 bool keyPlayerUI(iKeyState stat, iPoint point)
@@ -223,7 +223,8 @@ void refreshMiniMap()
 	setRGBA(1, 1, 1, 1);
 
 	Texture* tex = g->getTexture();
-	imgMiniMap->tex = tex;
+	imgMiniMap->addObject(tex);
+	freeImage(tex);
 }
 
 void createPopMiniMap()
@@ -231,7 +232,6 @@ void createPopMiniMap()
 	iPopup* pop = new iPopup(iPopupStyleNone);
 	popMiniMap = pop;
 	imgMiniMap = new iImage();
-
 	refreshMiniMap();
 
 	pop->addObject(imgMiniMap);
@@ -387,7 +387,7 @@ void createPopCombatMenu()
 	freeImage(texButten);
 
 	imgCombatInfo = new iImage();
-	imgCombatInfo->tex = setCombatInfo(0);
+	//imgCombatInfo->tex = setCombatInfo(0);
 	imgCombatInfo->position = CombatMenu_Pos + iPointMake(-350, 0);
 
 	imgButten->position = imgCombatInfo->position + iPointMake(250, 0);

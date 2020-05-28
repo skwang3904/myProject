@@ -36,14 +36,15 @@ void drawLoading(float dt)
 		methodFree();
 		methodLoad();
 		gamestat = _gamestat;
-		loadingDt += 0.00001f;
+		loadingDt += 0.1f;
 		alpha = 1.0f;
 	}
 	else //if( loadingDt > 0.5f)
 	{
 		loadingDt += dt;
-		alpha = 1.0f - (loadingDt - 0.5f) / 0.5f;
-		if (loadingDt > 1.0f)
+		alpha = 7.0f - (loadingDt - 0.5f) / 0.5f;
+		printf("%.2f\n" , alpha);
+		if (loadingDt > 4.0f)
 			loadingDt = _loadingDt;
 	}
 

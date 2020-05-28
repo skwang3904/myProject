@@ -217,3 +217,28 @@ bool keyPopIntroButten(iKeyState stat, iPoint point)
 }
 
 //-------------------------------------------------------------------------------------
+
+iPopup* popIntroOption;
+iImage* imgOptionBtn;
+
+void createPopIntroOption()
+{
+}
+
+void freePopIntroOption()
+{
+}
+
+void showPopIntroOption(bool show)
+{
+}
+
+void drawPopIntroOption(float dt)
+{
+}
+
+bool keyPopIntroOption(iKeyState stat, iPoint point)
+{
+	return false;
+}
+

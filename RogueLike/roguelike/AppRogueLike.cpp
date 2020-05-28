@@ -177,8 +177,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         //case WM_CHAR:
         //    break;
     case WM_KEYDOWN:
-        if (wParam == VK_ESCAPE)
-            goFullscreen();
+        //if (wParam == VK_ESCAPE)
+        //    goFullscreen();
         keyLib(iKeyStateBegan, wParam);
         break;
     case WM_KEYUP:

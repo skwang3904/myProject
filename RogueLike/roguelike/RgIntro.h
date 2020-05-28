@@ -24,3 +24,11 @@ void freePopIntroButten();
 void showPopIntroButten(bool show);
 void drawPopIntroButten(float dt);
 bool keyPopIntroButten(iKeyState stat, iPoint point);
+
+//-------------------------------------------------------------------------------------
+
+void createPopIntroOption();
+void freePopIntroOption();
+void showPopIntroOption(bool show);
+void drawPopIntroOption(float dt);
+bool keyPopIntroOption(iKeyState stat, iPoint point);

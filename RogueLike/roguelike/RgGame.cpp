@@ -25,6 +25,8 @@ void loadRgGame()
 	loadRgIntro();
 	gamestat = gs_intro;
 
+	//loadRgProc();
+
 #endif
 
 	//--------------------------------------------------------

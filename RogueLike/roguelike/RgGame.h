@@ -8,6 +8,7 @@
 #define gs_menu		2
 #define gs_proc		3
 
+extern int gamestat;
 
 void loadRgGame();
 void freeRgGame();

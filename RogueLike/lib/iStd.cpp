@@ -1,5 +1,6 @@
 #include "iStd.h"
 
+#include "../roguelike/RgGame.h"
 #include "../roguelike/PlayerUI.h"
 #include "../roguelike/RgProc.h"
 
@@ -128,8 +129,12 @@ void drawLib(Method_Paint method)
 
 	//--------------------------------------------------------
 	// pop
-    if (bShowRgLoading(NextStage))
-        return;
+
+    if (gamestat == gs_proc)
+    {
+        if (bShowRgLoading(NextStage))
+            return;
+    }
 
 #if 0// minimap
     drawImage(tex, devSize.width - 50, devSize.height - 50,

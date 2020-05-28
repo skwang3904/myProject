@@ -3,6 +3,8 @@
 #include "RgIntro.h"
 #include "RgMenu.h"
 
+#include "loading.h"
+
 #include "Stage.h"
 #include "PlayerUI.h"
 
@@ -16,10 +18,13 @@ void loadRgGame()
 	//	freeRgProc();
 	//}
 
-#if 1
+#if 0
 	loadRgProc();
 	gamestat = gs_proc;
 #else
+	loadRgIntro();
+	gamestat = gs_intro;
+
 #endif
 
 	//--------------------------------------------------------
@@ -55,18 +60,25 @@ void drawRgGame(float dt)
 	switch (gamestat) {
 	case gs_intro:	drawRgIntro(dt);	break;
 	case gs_menu:	drawRgMenu(dt);		break;
-	case gs_proc:	drawRgProc(dt);		break;
+	case gs_proc:	
+	{
+		drawRgProc(dt);		
+		curtainTile();
+		drawPlayerUI(dt);
+
+		if (nextStage)
+			nextStageAni(dt);
+		break;
+	}
 	}
 
-	curtainTile();
-	drawPlayerUI(dt);
-
-	if (nextStage)
-		nextStageAni(dt);
+	drawLoading(dt);
 }
 
 void keyRgGame(iKeyState stat, iPoint point)
 {
+	if (keyLoading(stat, point))
+		return;
 	//if (stat == iKeyStateBegan)
 	//	zoomLib(point, 2.0f);
 

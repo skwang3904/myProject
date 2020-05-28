@@ -51,7 +51,7 @@ void memoryTest()
 
 void loadRgProc()
 {
-	memoryTest();
+	//memoryTest();
 
 	createEffect();
 	createItemImg();

@@ -7,6 +7,7 @@ iImage* imgPotion;
 iImage* imgCoin;
 iImage* imgPowerUp;
 
+#define ANIDT 2.0f
 UseItem::UseItem(itemType it)
 {
     switch (it)
@@ -39,7 +40,7 @@ UseItem::UseItem(itemType it)
 
     sp = iPointZero;
     aniHeight = 50.0f;
-    aniDt = 0.0f;
+    aniDt = ANIDT;
 
     itemPos = iPointZero;
     drawitemPos = iPointZero;
@@ -76,7 +77,6 @@ void UseItem::gainValue()
 	}
 }
 
-#define ANIDT 0.5f
 bool UseItem::animation(float dt)
 {
     if (aniDt == ANIDT)
@@ -165,12 +165,13 @@ void freeItemImg()
 
 void golemItems(EnemyGolem* enm)
 {
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 3; i++)
     {
         UseItem* ui = enm->items[random()%3];
         Texture* tex = ui->img->tex;
 
         ui->alive = true;
+        ui->aniDt = 0.0f;
         ui->value =  i * 10;
 
 		iPoint et = iPointMake(enm->img[0]->tex->width / 4.0f * enm->ratio,

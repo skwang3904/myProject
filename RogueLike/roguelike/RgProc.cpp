@@ -13,10 +13,11 @@
 #include "Effect.h"
 
 #include "useitem.h"
+#include "TreasureChest.h"
 
 void memoryTest()
 {
-	for (int i = 0; i < 300; i++)
+	for (int i = 0; i < 3000; i++)
 	{
 		printf("i = %d\n", i);
 
@@ -50,7 +51,7 @@ void memoryTest()
 
 void loadRgProc()
 {
-	//memoryTest();
+	memoryTest();
 
 	createEffect();
 	createItemImg();
@@ -60,19 +61,20 @@ void loadRgProc()
 	newRoomTile();
 
 	//--------------------------------------------------------
-
 	numberFont = new numFont();
 	weapon = new Weapon();
 	pc->instance();
+
 
 	createEnemy();
 
 	int pcTile = pc->initPlayerPosition();
 	setEnemyPosition(pcTile);
 
+	createChest();
+
 	//--------------------------------------------------------
 	// pop
-
 
 	loadRgLoading();
 	loadPlayerUI();
@@ -87,12 +89,13 @@ void freeRgProc()
 
 	delete numberFont;
 	delete weapon;
-	//delete pc;
+	delete pc;
 
 	freeEnemy();
 	freeTileSet();
 	freeRoomTile();
 
+	freeChest();
 	//--------------------------------------------------------
 	// pop
 
@@ -131,6 +134,8 @@ void drawRgProc(float dt)
 	weapon->drawWeapon(dt);
 	pc->drawPlayer(dt);
 
+
+	drawChest(dt);
 	//--------------------------------------------------------
 	// pop
 

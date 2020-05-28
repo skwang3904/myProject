@@ -15,16 +15,15 @@ bool MethodFalse(EnemyGolem* enm, float dt)
 
 void IdleEyeBlink(EnemyGolem* enm, float dt)
 {
-
 	EnemyGolem* e = enm;
-	if (e->act != idle && e->act != walking)
+
+	if (e->act != idle)
 		return;
 
 	iImage** img = e->img;
 	Texture* tex = img[0]->tex;
 
 	iPoint gp = iPointMake(tex->width * e->ratio / 2.0f, tex->height * e->ratio / 2.0f);
-
 
 	e->reverse = (pc->playerPosition.x + HALF_OF_TEX_WIDTH < e->golemPos.x + gp.x ?
 		REVERSE_WIDTH : REVERSE_NONE);
@@ -35,16 +34,38 @@ void IdleEyeBlink(EnemyGolem* enm, float dt)
 	if (img[0]->animation == false && img[1]->animation == false)
 		img[random() % 2]->startAnimation();
 
-	if (e->act != attacking && e->act != meleeAtk && e->act != rangeAtk)
+	if (img[0]->animation)	img[0]->paint(dt, p, r);
+	else	img[1]->paint(dt, p, r);
+}
+
+//----------------------------------------------------------------------------------------
+// hurt
+
+void commonHurt(EnemyGolem* enm, float dt)
+{
+	EnemyGolem* e = enm;
+	if (e->act != hurt)
 	{
-		if (e->act == idle)
-		{
-			if (img[0]->animation)	img[0]->paint(dt, p, r);
-			else	img[1]->paint(dt, p, r);
-		}
-		else //if (e->act == walking)
-			img[2]->paint(dt, p, r);
+		return;
 	}
+
+	iImage** img = e->img;
+	Texture* tex = img[0]->tex;
+
+	iPoint gp = iPointMake(tex->width * e->ratio / 2.0f, tex->height * e->ratio / 2.0f);
+
+	e->reverse = (pc->playerPosition.x + HALF_OF_TEX_WIDTH < e->golemPos.x + gp.x ?
+		REVERSE_WIDTH : REVERSE_NONE);
+
+	uint8 r = e->reverse;
+	iPoint p = e->drawGolemPos;
+
+	if (img[6]->animation == false)
+		img[6]->startAnimation();
+
+	img[6]->paint(dt, p, r);
+	if (img[6]->animation == false)
+		e->act = idle;
 }
 
 //----------------------------------------------------------------------------------------
@@ -53,7 +74,8 @@ void IdleEyeBlink(EnemyGolem* enm, float dt)
 void WalkToPlayer(EnemyGolem* enm, float dt)
 {
 	EnemyGolem* e = enm;
-	Texture* tex = e->img[0]->tex;
+	iImage** img = e->img;
+	Texture* tex = img[0]->tex;
 	iPoint gp = iPointMake(tex->width * e->ratio / 2.0f, tex->height * e->ratio / 2.0f);
 	iPoint v = (pc->playerPosition + HALF_OF_TEX_POINT)
 		- (e->golemPos + gp);
@@ -64,6 +86,10 @@ void WalkToPlayer(EnemyGolem* enm, float dt)
 		return;
 	}
 
+	if (e->act == hurt)
+		return;
+
+	e->act = walking;
 	v /= iPointLength(v);
 	iPoint mp = v * e->moveSpeed * dt;
 
@@ -71,6 +97,8 @@ void WalkToPlayer(EnemyGolem* enm, float dt)
 	iPoint dummy = e->golemPos + gp;
 	wallCheck(true, maps[e->tileNumber], dummy, mp, gp.x, gp.y * 1.5f);
 	e->golemPos = dummy - gp;
+
+	img[2]->paint(dt, e->drawGolemPos, e->reverse);
 }
 
 //----------------------------------------------------------------------------------------
@@ -89,10 +117,10 @@ bool commonAttack(EnemyGolem* enm, float dt)
 	iPoint v = (pc->playerPosition + HALF_OF_TEX_POINT)
 		- (e->golemPos + et);
 
-
 	if (iPointLength(v) > e->meleeReach && e->act != meleeAtk)
 		return false;
 
+	e->resetActAtAttack();
 	if (e->giveDmg == false)
 	{
 		e->img[3]->startAnimation();
@@ -152,15 +180,15 @@ bool commonAttack(EnemyGolem* enm, float dt)
 		}
 	}
 
-	if (iPointLength(v) > e->meleeReach + 50 && e->giveDmgTime > 0.0f - e->meleeAtkSpeed * 0.1f)
-	{
-		e->giveDmg = false;
-		e->giveDmgTime = 0.0f;
-		e->hit = false;
-		e->act = idle;
-		e->img[3]->animation == false;
-		return false;
-	}
+	//if (iPointLength(v) > e->meleeReach + 50 && e->giveDmgTime > 0.0f - e->meleeAtkSpeed * 0.1f)
+	//{
+	//	e->giveDmg = false;
+	//	e->giveDmgTime = 0.0f;
+	//	e->hit = false;
+	//	e->act = idle;
+	//	e->img[3]->animation == false;
+	//	return false;
+	//}
 
 	return true;
 }
@@ -200,6 +228,7 @@ bool rangeAttack(EnemyGolem* enm, float dt)
 		 e->act != rangeAtk)
 		return false;
 
+	e->resetActAtAttack();
 	uint8 a = 0;
 	iPoint fbp = iPointMake(e->projectile[0]->img->tex->width, e->projectile[0]->img->tex->height);
 	iPoint cfp = iPointMake(e->effectImg->tex->width, e->effectImg->tex->height);

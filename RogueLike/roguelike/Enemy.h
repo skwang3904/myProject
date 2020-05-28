@@ -14,17 +14,12 @@ void freeEnemy();
 void drawEnemy(float dt);
 
 /*
-	// 0, 1 idle pattern 2
-	img[0] idle
-	img[1] idle eye Blink
-
-	// 2 Walk
-	img[2] 
-
-	// 3 Attacking
-	img[3] 
-
-	// 4 Dying
-	img[4]
-
+	imgNumber
+	0 idle 
+	1 idle Blink
+	2 Walk
+	3 Attacking
+	4 Dying
+	5 Magic
+	6 Hurt
 */

@@ -483,7 +483,7 @@ bool keyPopCombatMenu(iKeyState stat, iPoint point)
 //---------------------------------------------------------------------------
 
 iPopup* popItem;
-iImage* coinimgtest;
+//iImage* coinimgtest;
 
 void createPopItem()
 {
@@ -491,49 +491,55 @@ void createPopItem()
 	popItem = pop;
 
 	iImage* imgHP = new iImage();
-	Texture* texHP = createImage("assets/item/heart.png");
+	Texture* texHP = createImage("assets/icons/hp.png");
 
 	iImage* imgCoin = new iImage();
-	Texture* texCoin = createImage("assets/item/coin.png");
+	Texture* texCoin = createImage("assets/icons/Money.png");
 
-	iImage* imgGemRed = new iImage();
-	Texture* texGemRed = createImage("assets/item/gemRed.png");
+	iImage* imgAtkDmg = new iImage();
+	Texture* texAtkDmg = createImage("assets/icons/attackDmg.png");
 
-	iImage* imgGemBlue = new iImage();
-	Texture* texGemBlue = createImage("assets/item/gemBlue.png");
+	iImage* imgAtkSpeed = new iImage();
+	Texture* texAtkSpeed = createImage("assets/icons/attackSpeed.png");
 
-	iImage* imgGemGreen = new iImage();
-	Texture* texGemGreen = createImage("assets/item/gemGreen.png");
+	iImage* imgMoveSpeed = new iImage();
+	Texture* texMoveSpeed = createImage("assets/icons/moveSpeed.png");
 
 	imgHP->addObject(texHP);
 	imgCoin->addObject(texCoin);
-	imgGemRed->addObject(texGemRed);
-	imgGemBlue->addObject(texGemBlue);
-	imgGemGreen->addObject(texGemGreen);
+	imgAtkDmg->addObject(texAtkDmg);
+	imgAtkSpeed->addObject(texAtkSpeed);
+	imgMoveSpeed->addObject(texMoveSpeed);
 
 	freeImage(texHP);
 	freeImage(texCoin);
-	freeImage(texGemRed);
-	freeImage(texGemBlue);
-	freeImage(texGemGreen);
+	freeImage(texAtkDmg);
+	freeImage(texAtkSpeed);
+	freeImage(texMoveSpeed);
 
-	imgHP->position =		iPointMake(50, 150);
-	imgCoin->position =		iPointMake(50, 250);
-	imgGemRed->position =	iPointMake(50, 350);
-	imgGemBlue->position =	iPointMake(50, 450);
-	imgGemGreen->position = iPointMake(50, 550);
+	imgHP->position =		iPointMake(20, 170);
+	imgCoin->position =		iPointMake(20, 270);
+	imgAtkDmg->position =	iPointMake(20, 370);
+	imgAtkSpeed->position =	iPointMake(20, 470);
+	imgMoveSpeed->position = iPointMake(20, 570);
+
+	imgHP->ratio = 0.25f;
+	imgCoin->ratio = 0.25f;
+	imgAtkDmg->ratio = 0.25f;
+	imgAtkSpeed->ratio = 0.25f;
+	imgMoveSpeed->ratio = 0.25f;
 
 	pop->addObject(imgHP);
 	pop->addObject(imgCoin);
-	pop->addObject(imgGemRed);
-	pop->addObject(imgGemBlue);
-	pop->addObject(imgGemGreen);
+	pop->addObject(imgAtkDmg);
+	pop->addObject(imgAtkSpeed);
+	pop->addObject(imgMoveSpeed);
 }
 
 void freePopItem()
 {
 	delete popItem;
-	delete coinimgtest;
+	//delete coinimgtest;
 }
 
 void showPopItem(bool show)
@@ -543,31 +549,37 @@ void showPopItem(bool show)
 
 void cointest()
 {
-	if (coinimgtest)
-		delete coinimgtest;
+	//if (coinimgtest)
+	//	delete coinimgtest;
 
-	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(1024, 1024);
-	g->init(size);
+	//iGraphics* g = iGraphics::instance();
+	//iSize size = iSizeMake(1024, 1024);
+	//g->init(size);
 
-	setStringSize(50);
-	setStringRGBA(0, 1, 0, 1);
-	setStringBorder(1);
+	//setStringSize(50);
+	//setStringRGBA(0, 1, 0, 1);
+	//setStringBorder(1);
 
-	g->drawString(200, 200, TOP | LEFT, "%.1f", pc->hp);
+	//g->drawString(200, 200, TOP | LEFT, "%.1f", pc->hp);
 
-	g->drawString(200, 300, TOP | LEFT, "%d", pc->coin);
+	//g->drawString(200, 300, TOP | LEFT, "%d", pc->coin);
 
-	g->drawString(200, 400, TOP | LEFT, "%.1f", pc->attackDmg);
+	//g->drawString(200, 400, TOP | LEFT, "%.1f", pc->attackDmg);
 
-	g->drawString(200, 500, TOP | LEFT, "%.1f", pc->attackSpeed);
+	//g->drawString(200, 500, TOP | LEFT, "%.1f", pc->attackSpeed);
 
-	Texture* tex = g->getTexture();
-	iImage* img = new iImage();
-	img->addObject(tex);
-	freeImage(tex);
+	//Texture* tex = g->getTexture();
+	//iImage* img = new iImage();
+	//img->addObject(tex);
+	//freeImage(tex);
 
-	coinimgtest = img;
+	//coinimgtest = img;
+
+	numberFont->drawFont(150, 200, TOP | LEFT, 1, 1, 1, "%d", pc->hp);
+	numberFont->drawFont(150, 300, TOP | LEFT, 1, 1, 1, "%d", pc->coin);
+	numberFont->drawFont(150, 400, TOP | LEFT, 1, 1, 1, "%.0f", pc->attackDmg);
+	numberFont->drawFont(150, 500, TOP | LEFT, 1, 1, 1, "%.1f", pc->attackSpeed);
+	numberFont->drawFont(150, 600, TOP | LEFT, 1, 1, 1, "%.1f", pc->moveSpeed);
 }
 
 void drawPopItem(float dt)
@@ -575,7 +587,7 @@ void drawPopItem(float dt)
 	popItem->paint(dt);
 
 	cointest();
-	coinimgtest->paint(dt, iPointZero, REVERSE_NONE);
+	//coinimgtest->paint(dt, iPointZero, REVERSE_NONE);
 }
 
 bool keyPopItem(iKeyState stat, iPoint point)

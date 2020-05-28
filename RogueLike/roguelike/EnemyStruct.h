@@ -6,12 +6,12 @@
 #define GOLEM_ELETE_NUM 1
 #define ALLENEMY_NUM GOLEM_NUM + GOLEM_ELETE_NUM
 
-#define GOLEM_IMG_NUM 6
+#define GOLEM_IMG_NUM 7
 #define GOLEM_RATIO 0.3f
 #define GOLEM_MELEE_ATKTIME 1.0f
 #define GOLEM_RANGE_ATKTIME 2.5f
 
-#define GOLEM_ELETE_IMG_NUM 6
+#define GOLEM_ELETE_IMG_NUM 7
 #define GOLEM_ELETE_RATIO 0.5f
 #define GOLEM_ELETE_MELEE_ATKTIME 0.3f
 #define GOLEM_ELETE_RANGE_ATKTIME 2.0f
@@ -21,6 +21,7 @@
 struct EnemyGolem;
 typedef void (*Method_Idle_Pattern)(EnemyGolem* enm, float dt);
 typedef void (*Method_Walk_Pattern)(EnemyGolem* enm, float dt);
+typedef void (*Method_Hurt_Pattern)(EnemyGolem* enm, float dt);
 typedef bool (*Method_Melee_Attack_Pattern)(EnemyGolem* enm, float dt);
 typedef bool (*Method_Range_Attack_Pattern)(EnemyGolem* enm, float dt);
 
@@ -63,6 +64,8 @@ struct EnemyGolem {
 	float giveDmgTime;
 	bool hit;
 
+	void resetActAtAttack();
+
 	void init(int stage = 0);
 	void paint(float dt);
 
@@ -75,6 +78,7 @@ struct EnemyGolem {
 
 	Method_Idle_Pattern methodIdle;
 	Method_Walk_Pattern methodWalk;
+	Method_Hurt_Pattern methodHurt;
 	Method_Melee_Attack_Pattern methodMelee;
 	Method_Range_Attack_Pattern methodRange;
 

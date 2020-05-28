@@ -12,22 +12,33 @@ enum ChestType {
 	unique,
 };
 
+class Chest;
+typedef void (*Method_OpenChest)(Chest* me);
 class Chest
 {
 public:
 	Chest(ChestType ct);
 	~Chest();
 
-	void openAni();
+	bool openAni(float dt);
 	void paint(float dt);
 
 public:
+	iImage* img;
+
 	bool open;
 
-	iPoint pos;
 	int tileNumber;
+	iPoint pos;
+	iPoint drawPos;
+	iRect touchRect;
 
 	UseItem** items;
 	PlayerWP* weapons;
+
+	Method_OpenChest openMethod;
 };
 
+void createChest();
+void freeChest();
+void drawChest(float dt);

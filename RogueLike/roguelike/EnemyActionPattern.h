@@ -12,6 +12,11 @@ bool MethodFalse(EnemyGolem* enm, float dt);
 void IdleEyeBlink(EnemyGolem* enm, float dt);
 
 //----------------------------------------------------------------------------------------
+// hurt
+
+void commonHurt(EnemyGolem* enm, float dt);
+
+//----------------------------------------------------------------------------------------
 // walk
 
 void WalkToPlayer(EnemyGolem* enm, float dt);

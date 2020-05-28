@@ -12,7 +12,6 @@ void drawGolem(float dt);
 void createEnemy()
 {
 	createGolem();
-
 }
 
 void freeEnemy()
@@ -28,8 +27,20 @@ void drawEnemy(float dt)
 //----------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------
 
+void testmem()
+{
+	for (int i = 0; i < 3000; i++)
+	{
+		printf("%d\n", i);
+		createGolemImg();
+		freeGolemImg();
+
+	}
+}
+
 void createGolem()
 {
+	//testmem();
 	createGolemImg();
 	golems = (EnemyGolem**)malloc(sizeof(EnemyGolem*) * GOLEM_NUM);
 	for (int i = 0; i < GOLEM_NUM; i++)

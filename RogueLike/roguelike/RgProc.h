@@ -21,7 +21,7 @@ enum CharAction {
 	falling,
 	evasion,
 	walking,
-	pain,
+	hurt,
 	dying,
 	dead,
 };

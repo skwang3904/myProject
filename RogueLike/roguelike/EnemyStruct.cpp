@@ -16,6 +16,17 @@ EnemyGolem** golemEletes;
 iImage** imgGolem;
 iImage** imgGolemElete;
 
+void EnemyGolem::resetActAtAttack()
+{
+	img[0]->frame = 0;
+	img[1]->frame = 0;
+	img[2]->frame = 0;
+
+	img[4]->frame = 0;
+
+	img[6]->frame = 0;
+}
+
 void EnemyGolem::init(int stage)
 {
 	switch (enmtype)
@@ -37,6 +48,7 @@ void EnemyGolem::init(int stage)
 
 		methodIdle = IdleEyeBlink;
 		methodWalk = WalkToPlayer;
+		methodHurt = commonHurt;
 		methodMelee = commonAttack;
 		methodRange = MethodFalse;
 
@@ -72,6 +84,7 @@ void EnemyGolem::init(int stage)
 
 		methodIdle = IdleEyeBlink;
 		methodWalk = WalkToPlayer;
+		methodHurt = commonHurt;
 		methodMelee = commonAttack;
 		methodRange = rangeAttack;
 
@@ -113,13 +126,8 @@ void EnemyGolem::init(int stage)
 	{
 		items = (UseItem**)malloc(sizeof(UseItem*) * 3);
 		items[0] = new UseItem(coin);
-		items[0]->value = 1;
-
 		items[1] = new UseItem(healing);
-		items[1]->value = 10.0f;
-
 		items[2] = new UseItem(powerUp);
-		items[2]->value = 10.0f;
 	}
 	methodead = golemItems;
 
@@ -137,8 +145,6 @@ void EnemyGolem::paint(float dt)
 	}
 
 	Texture* tex = img[0]->tex;
-
-
 	iRect rt = iRectMake(golemPos.x + tex->width * ratio * 0.25,
 		golemPos.y + tex->height * ratio * 0.25f,
 		tex->width * ratio * 0.5f,
@@ -162,6 +168,7 @@ void EnemyGolem::paint(float dt)
 	if (hp > 0.0f)
 	{
 		methodIdle(this, dt);
+		methodHurt(this, dt);
 
 		if (takeDmg)
 			takeDmgEffect(dt);
@@ -175,7 +182,6 @@ void EnemyGolem::paint(float dt)
 			if ((methodRange(this, dt) == false) &&
 				(methodMelee(this, dt) == false))
 			{
-				act = walking;
 				methodWalk(this, dt);
 			}
 		}
@@ -233,8 +239,8 @@ void EnemyGolem::takeDmgEnemy(float dt, float dmg)
 		hp -= dmg;
 		takeDmg = true;
 		showHp = true;
-		if (act != attacking)
-			act = pain;
+		if (act != meleeAtk && act != rangeAtk)
+			act = hurt;
 
 		audioPlay(SND_ENEMY_HIT);
 	}
@@ -242,12 +248,12 @@ void EnemyGolem::takeDmgEnemy(float dt, float dmg)
 
 void EnemyGolem::takeDmgEffect(float dt)
 {
-	Texture* tex = img[0]->tex;
-	setRGBA(0, 0, 0, linear(takeDmgTime / TAKE_DMG_TIME, 1.0f, 0.0f));
-	drawImage(tex, drawGolemPos.x, drawGolemPos.y,
-		0, 0, tex->width, tex->height,
-		TOP | LEFT, ratio, ratio, 2, 0, reverse);
-	setRGBA(1, 1, 1, 1);
+	//Texture* tex = img[0]->tex;
+	//setRGBA(0, 0, 0, linear(takeDmgTime / TAKE_DMG_TIME, 1.0f, 0.0f));
+	//drawImage(tex, drawGolemPos.x, drawGolemPos.y,
+	//	0, 0, tex->width, tex->height,
+	//	TOP | LEFT, ratio, ratio, 2, 0, reverse);
+	//setRGBA(1, 1, 1, 1);
 
 	takeDmgTime += dt;
 	if (takeDmgTime > TAKE_DMG_TIME)
@@ -280,50 +286,108 @@ void golemImg()
 {
 	iImage** imgG = (iImage**)malloc(sizeof(iImage*) * GOLEM_IMG_NUM);
 
+	//iImage* imgGolemIdle = new iImage();
+	//Texture** texGolemIdle = (Texture**)malloc(sizeof(Texture*) * 12);
+	//iImage* imgGolemIdleBlink = new iImage();
+	//Texture** texGolemIdleBlink = (Texture**)malloc(sizeof(Texture*) * 12);
+	//iImage* imgGolemAttacking = new iImage();
+	//Texture** texGolemAttacking = (Texture**)malloc(sizeof(Texture*) * 12);
+	//iImage* imgGolemHurt = new iImage();
+	//Texture** texGolemHurt = (Texture**)malloc(sizeof(Texture*) * 12);
+	//for (int i = 0; i < 12; i++)
+	//{
+	//	texGolemIdle[i] = createImage("assets/monster/golem1/Idle/Golem_01_Idle_%d.png", i);
+	//	texGolemIdleBlink[i] = createImage("assets/monster/golem1/Idle Blink/Golem_01_Idle Blinking_%d.png", i);
+	//	texGolemAttacking[i] = createImage("assets/monster/golem1/Attacking/Golem_01_Attacking_%d.png", i);
+	//	texGolemHurt[i] = createImage("assets/monster/golem1/Hurt/Golem_01_Hurt_%03d.png", i);
+
+
+	//	imgGolemIdle->addObject(texGolemIdle[i]);
+	//	imgGolemIdleBlink->addObject(texGolemIdleBlink[i]);
+	//	imgGolemAttacking->addObject(texGolemAttacking[i]);
+	//	imgGolemHurt->addObject(texGolemHurt[i]);
+
+	//	freeImage(texGolemIdle[i]);
+	//	freeImage(texGolemIdleBlink[i]);
+	//	freeImage(texGolemAttacking[i]);
+	//	freeImage(texGolemHurt[i]);
+	//}
+
+	//iImage* imgGolemWalk = new iImage();
+	//Texture** texGolemWalk = (Texture**)malloc(sizeof(Texture*) * 18);
+	//iImage* imgGolemMagic = new iImage();
+	//Texture** texGolemMagic = (Texture**)malloc(sizeof(Texture*) * 18);
+	//for (int i = 0; i < 18; i++)
+	//{
+	//	texGolemWalk[i] = createImage("assets/monster/golem1/Walking/Golem_01_Walking_%d.png", i);
+	//	texGolemMagic[i] = createImage("assets/monster/golem1/Taunt/Golem_01_Taunt_%03d.png", i);
+
+	//	imgGolemWalk->addObject(texGolemWalk[i]);
+	//	imgGolemMagic->addObject(texGolemMagic[i]);
+
+	//	freeImage(texGolemWalk[i]);
+	//	freeImage(texGolemMagic[i]);
+	//}
+
+	//iImage* imgGolemDying = new iImage();
+	//Texture** texGolemDying = (Texture**)malloc(sizeof(Texture*) * 15);
+	//for (int i = 0; i < 15; i++)
+	//{
+	//	texGolemDying[i] = createImage("assets/monster/golem1/Dying/Golem_01_Dying_%d.png", i);
+	//	imgGolemDying->addObject(texGolemDying[i]);
+	//	freeImage(texGolemDying[i]);
+	//}
+
 	iImage* imgGolemIdle = new iImage();
-	Texture** texGolemIdle = (Texture**)malloc(sizeof(Texture*) * 12);
+	Texture* texGolemIdle;
 	iImage* imgGolemIdleBlink = new iImage();
-	Texture** texGolemIdleBlink = (Texture**)malloc(sizeof(Texture*) * 12);
+	Texture* texGolemIdleBlink;
 	iImage* imgGolemAttacking = new iImage();
-	Texture** texGolemAttacking = (Texture**)malloc(sizeof(Texture*) * 12);
+	Texture* texGolemAttacking;
+	iImage* imgGolemHurt = new iImage();
+	Texture* texGolemHurt;
 	for (int i = 0; i < 12; i++)
 	{
-		texGolemIdle[i] = createImage("assets/monster/golem1/Idle/Golem_01_Idle_%d.png", i);
-		texGolemIdleBlink[i] = createImage("assets/monster/golem1/Idle Blink/Golem_01_Idle Blinking_%d.png", i);
-		texGolemAttacking[i] = createImage("assets/monster/golem1/Attacking/Golem_01_Attacking_%d.png", i);
+		texGolemIdle = createImage("assets/monster/golem1/Idle/Golem_01_Idle_%d.png", i);
+		texGolemIdleBlink = createImage("assets/monster/golem1/Idle Blink/Golem_01_Idle Blinking_%d.png", i);
+		texGolemAttacking = createImage("assets/monster/golem1/Attacking/Golem_01_Attacking_%d.png", i);
+		texGolemHurt = createImage("assets/monster/golem1/Hurt/Golem_01_Hurt_%03d.png", i);
 
-		imgGolemIdle->addObject(texGolemIdle[i]);
-		imgGolemIdleBlink->addObject(texGolemIdleBlink[i]);
-		imgGolemAttacking->addObject(texGolemAttacking[i]);
 
-		freeImage(texGolemIdle[i]);
-		freeImage(texGolemIdleBlink[i]);
-		freeImage(texGolemAttacking[i]);
+		imgGolemIdle->addObject(texGolemIdle);
+		imgGolemIdleBlink->addObject(texGolemIdleBlink);
+		imgGolemAttacking->addObject(texGolemAttacking);
+		imgGolemHurt->addObject(texGolemHurt);
+
+		freeImage(texGolemIdle);
+		freeImage(texGolemIdleBlink);
+		freeImage(texGolemAttacking);
+		freeImage(texGolemHurt);
 	}
 
 	iImage* imgGolemWalk = new iImage();
-	Texture** texGolemWalk = (Texture**)malloc(sizeof(Texture*) * 18);
+	Texture* texGolemWalk;
 	iImage* imgGolemMagic = new iImage();
-	Texture** texGolemMagic = (Texture**)malloc(sizeof(Texture*) * 18);
+	Texture* texGolemMagic;
 	for (int i = 0; i < 18; i++)
 	{
-		texGolemWalk[i] = createImage("assets/monster/golem1/Walking/Golem_01_Walking_%d.png", i);
-		texGolemMagic[i] = createImage("assets/monster/golem1/Taunt/Golem_01_Taunt_%03d.png", i);
+		texGolemWalk = createImage("assets/monster/golem1/Walking/Golem_01_Walking_%d.png", i);
+		texGolemMagic = createImage("assets/monster/golem1/Taunt/Golem_01_Taunt_%03d.png", i);
 
-		imgGolemWalk->addObject(texGolemWalk[i]);
-		imgGolemMagic->addObject(texGolemMagic[i]);
+		imgGolemWalk->addObject(texGolemWalk);
+		imgGolemMagic->addObject(texGolemMagic);
 
-		freeImage(texGolemWalk[i]);
-		freeImage(texGolemMagic[i]);
+		freeImage(texGolemWalk);
+		freeImage(texGolemMagic);
 	}
 
 	iImage* imgGolemDying = new iImage();
-	Texture** texGolemDying = (Texture**)malloc(sizeof(Texture*) * 15);
+	Texture* texGolemDying;
 	for (int i = 0; i < 15; i++)
 	{
-		texGolemDying[i] = createImage("assets/monster/golem1/Dying/Golem_01_Dying_%d.png", i);
-		imgGolemDying->addObject(texGolemDying[i]);
-		freeImage(texGolemDying[i]);
+		texGolemDying = createImage("assets/monster/golem1/Dying/Golem_01_Dying_%d.png", i);
+		imgGolemDying->addObject(texGolemDying);
+		freeImage(texGolemDying);
 	}
 
 	imgGolemIdle->_repeatNum = 1;
@@ -331,7 +395,6 @@ void golemImg()
 
 	imgGolemWalk->animation = true;
 	imgGolemWalk->_aniDt = 0.05f;
-
 
 	imgGolemAttacking->_aniDt = GOLEM_MELEE_ATKTIME / 12.0f;
 	imgGolemAttacking->_repeatNum = 1;
@@ -343,12 +406,15 @@ void golemImg()
 	imgGolemMagic->_aniDt = GOLEM_RANGE_ATKTIME / 18.0f;
 	imgGolemMagic->_repeatNum = 1;
 
+	imgGolemHurt->_repeatNum = 1;
+
 	imgG[0] = imgGolemIdle;
 	imgG[1] = imgGolemIdleBlink;
 	imgG[2] = imgGolemWalk;
 	imgG[3] = imgGolemAttacking;
 	imgG[4] = imgGolemDying;
 	imgG[5] = imgGolemMagic;
+	imgG[6] = imgGolemHurt;
 
 	for (int i = 0; i < GOLEM_IMG_NUM; i++)
 		imgG[i]->ratio = GOLEM_RATIO;
@@ -360,52 +426,107 @@ void golemEleteImg()
 {
 	iImage** imgGE = (iImage**)malloc(sizeof(iImage*) * GOLEM_ELETE_IMG_NUM);
 
+	//iImage* imgGEIdle = new iImage();
+	//Texture** texGEIdle = (Texture**)malloc(sizeof(Texture*) * 12);
+	//iImage* imgGEIdleBlink = new iImage();
+	//Texture** texGEIdleBlink = (Texture**)malloc(sizeof(Texture*) * 12);
+	//iImage* imgGEAttacking = new iImage();
+	//Texture** texGEAttacking = (Texture**)malloc(sizeof(Texture*) * 12);
+	//iImage* imgGEHurt = new iImage();
+	//Texture** texGEHurt = (Texture**)malloc(sizeof(Texture*) * 12);
+	//for (int i = 0; i < 12; i++)
+	//{
+	//	texGEIdle[i] = createImage("assets/monster/golemElete/Idle/Golem_03_Idle_0%02d.png", i);
+	//	texGEIdleBlink[i] = createImage("assets/monster/golemElete/Idle Blink/Golem_03_Idle Blinking_0%02d.png", i);
+	//	texGEAttacking[i] = createImage("assets/monster/golemElete/Attacking/Golem_03_Attacking_0%02d.png",i);
+	//	texGEHurt[i] = createImage("assets/monster/golemElete/Hurt/Golem_03_Hurt_%03d.png", i);
+
+	//	imgGEIdle->addObject(texGEIdle[i]);
+	//	imgGEIdleBlink->addObject(texGEIdleBlink[i]);
+	//	imgGEAttacking->addObject(texGEAttacking[i]);
+	//	imgGEHurt->addObject(texGEHurt[i]);
+
+	//	freeImage(texGEIdle[i]);
+	//	freeImage(texGEIdleBlink[i]);
+	//	freeImage(texGEAttacking[i]);
+	//	freeImage(texGEHurt[i]);
+	//}
+
+	//iImage* imgGEWalk = new iImage();
+	//Texture** texGEWalk = (Texture**)malloc(sizeof(Texture*) * 18);
+	//iImage* imgGEMagic = new iImage();
+	//Texture** texGEMagic = (Texture**)malloc(sizeof(Texture*) * 18);
+	//for (int i = 0; i < 18; i++)
+	//{
+	//	texGEWalk[i] = createImage("assets/monster/golemElete/Walking/Golem_03_Walking_0%02d.png", i);
+	//	texGEMagic[i] = createImage("assets/monster/golemElete/Taunt/Golem_03_Taunt_0%02d.png", i);
+
+	//	imgGEWalk->addObject(texGEWalk[i]);
+	//	imgGEMagic->addObject(texGEMagic[i]);
+
+	//	freeImage(texGEWalk[i]);
+	//	freeImage(texGEMagic[i]);
+	//}
+
+	//iImage* imgGEDying = new iImage();
+	//Texture** texGEDying = (Texture**)malloc(sizeof(Texture*) * 15);
+	//for (int i = 0; i < 15; i++)
+	//{
+	//	texGEDying[i] = createImage("assets/monster/golemElete/Dying/Golem_03_Dying_0%02d.png", i );
+	//	imgGEDying->addObject(texGEDying[i]);
+	//	freeImage(texGEDying[i]);
+	//}
+
 	iImage* imgGEIdle = new iImage();
-	Texture** texGEIdle = (Texture**)malloc(sizeof(Texture*) * 12);
+	Texture* texGEIdle;// = (Texture**)malloc(sizeof(Texture*) * 12);
 	iImage* imgGEIdleBlink = new iImage();
-	Texture** texGEIdleBlink = (Texture**)malloc(sizeof(Texture*) * 12);
+	Texture* texGEIdleBlink;// = (Texture**)malloc(sizeof(Texture*) * 12);
 	iImage* imgGEAttacking = new iImage();
-	Texture** texGEAttacking = (Texture**)malloc(sizeof(Texture*) * 12);
+	Texture* texGEAttacking;// = (Texture**)malloc(sizeof(Texture*) * 12);
+	iImage* imgGEHurt = new iImage();
+	Texture* texGEHurt;// = (Texture**)malloc(sizeof(Texture*) * 12);
 	for (int i = 0; i < 12; i++)
 	{
-		texGEIdle[i] = createImage("assets/monster/golemElete/Idle/Golem_03_Idle_0%02d.png", i);
-		texGEIdleBlink[i] = createImage("assets/monster/golemElete/Idle Blink/Golem_03_Idle Blinking_0%02d.png", i);
-		texGEAttacking[i] = createImage("assets/monster/golemElete/Attacking/Golem_03_Attacking_0%02d.png",i);
+		texGEIdle = createImage("assets/monster/golemElete/Idle/Golem_03_Idle_0%02d.png", i);
+		texGEIdleBlink = createImage("assets/monster/golemElete/Idle Blink/Golem_03_Idle Blinking_0%02d.png", i);
+		texGEAttacking = createImage("assets/monster/golemElete/Attacking/Golem_03_Attacking_0%02d.png", i);
+		texGEHurt = createImage("assets/monster/golemElete/Hurt/Golem_03_Hurt_%03d.png", i);
 
-		imgGEIdle->addObject(texGEIdle[i]);
-		imgGEIdleBlink->addObject(texGEIdleBlink[i]);
-		imgGEAttacking->addObject(texGEAttacking[i]);
+		imgGEIdle->addObject(texGEIdle);
+		imgGEIdleBlink->addObject(texGEIdleBlink);
+		imgGEAttacking->addObject(texGEAttacking);
+		imgGEHurt->addObject(texGEHurt);
 
-		freeImage(texGEIdle[i]);
-		freeImage(texGEIdleBlink[i]);
-		freeImage(texGEAttacking[i]);
+		freeImage(texGEIdle);
+		freeImage(texGEIdleBlink);
+		freeImage(texGEAttacking);
+		freeImage(texGEHurt);
 	}
 
 	iImage* imgGEWalk = new iImage();
-	Texture** texGEWalk = (Texture**)malloc(sizeof(Texture*) * 18);
+	Texture* texGEWalk;// = (Texture**)malloc(sizeof(Texture*) * 18);
 	iImage* imgGEMagic = new iImage();
-	Texture** texGEMagic = (Texture**)malloc(sizeof(Texture*) * 18);
+	Texture* texGEMagic;// = (Texture**)malloc(sizeof(Texture*) * 18);
 	for (int i = 0; i < 18; i++)
 	{
-		texGEWalk[i] = createImage("assets/monster/golemElete/Walking/Golem_03_Walking_0%02d.png", i);
-		texGEMagic[i] = createImage("assets/monster/golemElete/Taunt/Golem_03_Taunt_0%02d.png", i);
+		texGEWalk = createImage("assets/monster/golemElete/Walking/Golem_03_Walking_0%02d.png", i);
+		texGEMagic = createImage("assets/monster/golemElete/Taunt/Golem_03_Taunt_0%02d.png", i);
 
-		imgGEWalk->addObject(texGEWalk[i]);
-		imgGEMagic->addObject(texGEMagic[i]);
+		imgGEWalk->addObject(texGEWalk);
+		imgGEMagic->addObject(texGEMagic);
 
-		freeImage(texGEWalk[i]);
-		freeImage(texGEMagic[i]);
+		freeImage(texGEWalk);
+		freeImage(texGEMagic);
 	}
 
 	iImage* imgGEDying = new iImage();
-	Texture** texGEDying = (Texture**)malloc(sizeof(Texture*) * 15);
+	Texture* texGEDying;// = (Texture**)malloc(sizeof(Texture*) * 15);
 	for (int i = 0; i < 15; i++)
 	{
-		texGEDying[i] = createImage("assets/monster/golemElete/Dying/Golem_03_Dying_0%02d.png", i );
-		imgGEDying->addObject(texGEDying[i]);
-		freeImage(texGEDying[i]);
+		texGEDying = createImage("assets/monster/golemElete/Dying/Golem_03_Dying_0%02d.png", i);
+		imgGEDying->addObject(texGEDying);
+		freeImage(texGEDying);
 	}
-
 	imgGEIdle->_repeatNum = 1;
 	imgGEIdleBlink->_repeatNum = 1;
 
@@ -422,12 +543,15 @@ void golemEleteImg()
 	imgGEMagic->_aniDt = GOLEM_ELETE_RANGE_ATKTIME / 18.0f;
 	imgGEMagic->_repeatNum = 1;
 
+	imgGEHurt->_repeatNum = 1;
+
 	imgGE[0] = imgGEIdle;
 	imgGE[1] = imgGEIdleBlink;
 	imgGE[2] = imgGEWalk;
 	imgGE[3] = imgGEAttacking;
 	imgGE[4] = imgGEDying;
 	imgGE[5] = imgGEMagic;
+	imgGE[6] = imgGEHurt;
 
 	for (int i = 0; i < GOLEM_ELETE_IMG_NUM; i++)
 		imgGE[i]->ratio = GOLEM_ELETE_RATIO;

@@ -74,7 +74,7 @@ void createMeleeWeapon()
 	}
 
 	//info, img, ismelee, attackDmg, attackSpeed, widthReach, heightReach, holeAngle
-	char swordInfo[32] = "Hammer\Hammer\Hammer\Hammer";
+	char swordInfo[32] = "Hammer\nHammer\nHammer\nHammer";
 	char spearInfo[64] = "Spear\nSpear\nSpear\nSpear\nSpear";
 	char cycleonInfo[32] = "Cyclone";
 

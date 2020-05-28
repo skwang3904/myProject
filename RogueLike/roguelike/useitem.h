@@ -21,6 +21,13 @@ public:
 	UseItem(itemType it);
 	~UseItem();
 
+	void gainValue();
+	bool animation(float dt);
+
+	void paint(float dt);
+
+	//습득시 애니메이션
+
 public:
 	iImage* img;
 
@@ -36,12 +43,6 @@ public:
 	iRect touchItem;
 
 	itemType type;
-
-	void gainValue();
-	bool animation(float dt);
-
-	void paint(float dt);
-	//습득시 애니메이션
 };
 
  //----------------------------------------------------------------------------

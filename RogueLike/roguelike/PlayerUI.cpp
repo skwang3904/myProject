@@ -23,9 +23,9 @@ void testui() // test
 void loadPlayerUI()
 {
 	createPopHP();
-	createPopCombatMenu();
 	//testui();
 	createPopMiniMap();
+	createPopCombatMenu();
 	createPopItem();
 	createPopStageNum();
 
@@ -39,8 +39,8 @@ void loadPlayerUI()
 void freePlayerUI()
 {
 	freePopHP();
-	freePopCombatMenu();
 	freePopMiniMap();
+	freePopCombatMenu();
 	freePopItem();
 	freePopStageNum();
 }
@@ -48,8 +48,8 @@ void freePlayerUI()
 void drawPlayerUI(float dt)
 {
 	drawPopHP(dt);
-	drawPopCombatMenu(dt);
 	drawPopMiniMap(dt);
+	drawPopCombatMenu(dt);
 	drawPopItem(dt);
 	drawPopStageNum(dt);
 

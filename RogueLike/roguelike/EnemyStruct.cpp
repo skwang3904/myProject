@@ -124,7 +124,7 @@ void EnemyGolem::init(int stage)
 
 	if (stage == 0)
 	{
-		items = (UseItem**)malloc(sizeof(UseItem*) * 3);
+		items = (UseItem**)malloc(sizeof(UseItem*) * 5);
 		items[0] = new UseItem(coin);
 		items[1] = new UseItem(healing);
 		items[2] = new UseItem(powerUp);
@@ -139,7 +139,7 @@ void EnemyGolem::paint(float dt)
 {
 	if (act == dying || act == dead)
 	{
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 5; i++)
 			items[i]->paint(dt);
 
 		if (act == dead)

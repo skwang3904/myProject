@@ -31,12 +31,12 @@ UseItem::UseItem(itemType it)
     }
     case atkSpeedUp:
     {
-        img = imgPowerUp->copy();
+        img = imgAtkSpeedUp->copy();
         break;
     }
     case moveSpeedUp:
     {
-        img = imgAtkSpeedUp->copy();
+        img = imgMoveSpeedUp->copy();
         break;
     }
     default:
@@ -88,7 +88,7 @@ void UseItem::gainValue()
     }
     case atkSpeedUp:
     {
-        pc->attackSpeed += value;
+        pc->attackSpeed += pc->_attackSpeed * value;
         break;
     }
     case moveSpeedUp:
@@ -209,16 +209,16 @@ void golemItems(EnemyGolem* enm)
 {
     for (int i = 0; i < 3; i++)
     {
-        UseItem* ui = enm->items[random()%5];
+        UseItem* ui = enm->items[random() % 5];
         Texture* tex = ui->img->tex;
 
         ui->alive = true;
         ui->aniDt = 0.0f;
-        ui->value =  i * 10;
+        ui->value = 10;
 
 		iPoint et = iPointMake(enm->img[0]->tex->width / 4.0f * enm->ratio,
 			enm->img[0]->tex->height / 2.0f  * enm->ratio);
-        iPoint p = iPointMake(-100 + 100 * i, 0);
+        iPoint p = iPointMake(-100 + 50 * i, 0);
         ui->sp = enm->golemPos + et;
         ui->itemPos = enm->golemPos + et + p;
         ui->drawitemPos = ui->itemPos + (pc->camPosition + setPos);

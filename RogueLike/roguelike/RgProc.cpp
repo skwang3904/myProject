@@ -15,35 +15,44 @@
 #include "useitem.h"
 #include "TreasureChest.h"
 
-void memoryTest()
+void memoryTest() // test
 {
 	for (int i = 0; i < 3000; i++)
 	{
 		printf("i = %d\n", i);
 
-		createTileSet();
-		loadRoomTile();
 		createEffect();
 		createItemImg();
+		createTileSet();
+		loadRoomTile();
+		newRoomTile();
 		createEnemy();
 		numberFont = new numFont();
 		weapon = new Weapon();
 		pc->instance();
 
+		int pcTile = pc->initPlayerPosition();
+		setEnemyPosition(pcTile);
+
+		createChest();
+
 		loadRgLoading();
 		loadPlayerUI();
 
-		freeTileSet();
-		freeRoomTile();
+
+
 		freeEffect();
 		freeItemImg();
+		freeTileSet();
+		freeRoomTile();
 		freeEnemy();
 		delete numberFont;
 		delete weapon;
 
-	
 		freeRgLoading();
 		freePlayerUI();
+
+		freeChest();
 	}
 }
 //--------------------------------------------------------
@@ -64,7 +73,6 @@ void loadRgProc()
 	numberFont = new numFont();
 	weapon = new Weapon();
 	pc->instance();
-
 
 	createEnemy();
 

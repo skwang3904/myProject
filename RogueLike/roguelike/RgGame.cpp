@@ -12,13 +12,13 @@ int gamestat;
 
 void loadRgGame()
 {
-	//for (int i = 0; i < 100; i++)
+	//for (int i = 0; i < 100; i++) //test
 	//{
 	//	loadRgProc();
 	//	freeRgProc();
 	//}
 
-#if 0
+#if 1
 	loadRgProc();
 	gamestat = gs_proc;
 #else
@@ -66,10 +66,13 @@ void drawRgGame(float dt)
 	{
 		drawRgProc(dt);		
 		curtainTile();
-		drawPlayerUI(dt);
+		if (loadingCheck == false)
+		{
+			drawPlayerUI(dt);
 
-		if (nextStage)
-			nextStageAni(dt);
+			if (nextStage)
+				nextStageAni(dt);
+		}
 		break;
 	}
 	}

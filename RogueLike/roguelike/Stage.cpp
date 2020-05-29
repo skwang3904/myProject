@@ -91,7 +91,7 @@ void nextStageAni(float dt)
 	if (pc->img[Player_imgFall]->animation == true)
 	{
 		iPoint p = pc->drawPos - iPointMake(HALF_OF_TEX_WIDTH / 2, HALF_OF_TEX_HEIGHT / 2);
-		pc->img[Player_imgFall]->paint(dt,p,REVERSE_NONE);
+		pc->img[Player_imgFall]->paint(dt,p);
 		return;
 	}
 	

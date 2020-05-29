@@ -6,6 +6,8 @@
 iImage* imgPotion;
 iImage* imgCoin;
 iImage* imgPowerUp;
+iImage* imgAtkSpeedUp;
+iImage* imgMoveSpeedUp;
 
 #define ANIDT 2.0f
 UseItem::UseItem(itemType it)
@@ -25,6 +27,16 @@ UseItem::UseItem(itemType it)
     case powerUp:
     {
         img = imgPowerUp->copy();
+        break;
+    }
+    case atkSpeedUp:
+    {
+        img = imgPowerUp->copy();
+        break;
+    }
+    case moveSpeedUp:
+    {
+        img = imgAtkSpeedUp->copy();
         break;
     }
     default:
@@ -74,6 +86,16 @@ void UseItem::gainValue()
         pc->attackDmg += value;
         break;
     }
+    case atkSpeedUp:
+    {
+        pc->attackSpeed += value;
+        break;
+    }
+    case moveSpeedUp:
+    {
+        pc->moveSpeed += value;
+        break;
+    }
 	}
 }
 
@@ -94,7 +116,7 @@ bool UseItem::animation(float dt)
     a += iPointMake(0, h);
     
     drawitemPos = a + pc->camPosition + setPos;
-    img->paint(dt, drawitemPos, REVERSE_NONE);
+    img->paint(dt, drawitemPos);
 
     return true;
 }
@@ -110,7 +132,7 @@ void UseItem::paint(float dt)
     fillRect(rt);
     setRGBA(1, 1, 1, 1);
 
-    img->paint(dt, drawitemPos, REVERSE_NONE);
+    img->paint(dt, drawitemPos);
 
     drawitemPos = itemPos + pc->camPosition + setPos;
 
@@ -151,6 +173,24 @@ void createItemImg()
    freeImage(texPower);
 
    imgPowerUp = imgPower;
+
+   //----------------------------------------------------------------------------
+
+   iImage* imgAtkSU = new iImage();
+   Texture* texAtkSU = createImage("assets/item/gemGreen.png");
+   imgAtkSU->addObject(texAtkSU);
+   freeImage(texAtkSU);
+
+   imgAtkSpeedUp = imgAtkSU;
+
+   //----------------------------------------------------------------------------
+
+   iImage* imgMoveSU = new iImage();
+   Texture* texMoveSU = createImage("assets/item/gemBlue.png");
+   imgMoveSU->addObject(texMoveSU);
+   freeImage(texMoveSU);
+
+   imgMoveSpeedUp = imgMoveSU;
 }
 
 void freeItemImg()
@@ -158,6 +198,8 @@ void freeItemImg()
     delete imgPotion;
     delete imgCoin;
     delete imgPowerUp;
+    delete imgAtkSpeedUp;
+    delete imgMoveSpeedUp;
 }
 
 //----------------------------------------------------------------------------
@@ -167,7 +209,7 @@ void golemItems(EnemyGolem* enm)
 {
     for (int i = 0; i < 3; i++)
     {
-        UseItem* ui = enm->items[random()%3];
+        UseItem* ui = enm->items[random()%5];
         Texture* tex = ui->img->tex;
 
         ui->alive = true;

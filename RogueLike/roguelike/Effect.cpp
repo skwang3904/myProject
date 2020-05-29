@@ -78,7 +78,7 @@ void FireBall::paint(float dt)
 	setRGBA(1, 1, 1, 1);
 
 	drawFireBallPos = (posFireBall) + pc->camPosition + setPos;
-	img->paint(dt, drawFireBallPos, REVERSE_NONE);
+	img->paint(dt, drawFireBallPos);
 }
 
 static iPoint v1 = iPointMake(1, 0);

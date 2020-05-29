@@ -21,6 +21,7 @@ iImage::iImage()
 	_repeatNum = 0;// inf
 	method = NULL;
 
+	reverse = REVERSE_NONE;
 	ratio = 1.0f;
 	imgRatioX = 1.0f;
 	imgRatioY = 1.0f;
@@ -83,7 +84,7 @@ void iImage::replaceAtIndex(int index, Texture* tex)
 #endif
 }
 
-void iImage::paint(float dt, iPoint off,int reverse)
+void iImage::paint(float dt, iPoint off)
 {
 	if (animation)
 	{

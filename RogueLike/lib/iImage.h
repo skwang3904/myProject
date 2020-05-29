@@ -18,7 +18,7 @@ public:
 	void setTexAtIndex(int index);
 	void replaceAtIndex(int index, Texture* tex);
 
-	void paint(float dt, iPoint off, int reverse);
+	void paint(float dt, iPoint off);
 	void startAnimation(IMAGE_METHOD m=0);
 
 	iRect touchRect(iPoint p=iPointMake(0,0));
@@ -41,6 +41,7 @@ public:
 	int repeatNum, _repeatNum;	// 0 : inf
 	IMAGE_METHOD method;
 
+	uint8 reverse;
 	float ratio;
 	float imgRatioX;
 	float imgRatioY;

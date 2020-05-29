@@ -443,9 +443,12 @@ void Player::paint(float dt)
 	drawtouchPlayer();
 
 	if (mv.x)
-		img[2 * ani + 0]->paint(dt, drawPos, mv.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);
+	{
+		img[2 * ani + 0]->reverse = (mv.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);
+		img[2 * ani + 0]->paint(dt, drawPos);
+	}
 	else if (mv.y)
-		img[2 * ani + 1]->paint(dt, drawPos , REVERSE_NONE);
+		img[2 * ani + 1]->paint(dt, drawPos);
 
 	drawImage(img[headNum]->tex, drawPos.x + HALF_OF_TEX_WIDTH, drawPos.y + 3,
 		0, 0, img[headNum]->tex->width, img[headNum]->tex->height,
@@ -513,7 +516,7 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 		//히트박스 표시-------------------------------
 		drawtouchPlayer();
 
-		img[Player_imgEvasion]->paint(dt, p, REVERSE_NONE);
+		img[Player_imgEvasion]->paint(dt, p);
 		
 		return true;
 	}

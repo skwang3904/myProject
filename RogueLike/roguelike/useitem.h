@@ -13,6 +13,8 @@ enum itemType{
 	coin = 0,
 	healing,
 	powerUp,
+	atkSpeedUp,
+	moveSpeedUp,
 };
 
 class UseItem 

@@ -475,7 +475,7 @@ bool fallCheck(MapTile* tile, float dt)
 			- iPointMake(HALF_OF_TEX_WIDTH/2, HALF_OF_TEX_HEIGHT/2);
 			
 		pc->img[Player_imgFall]->selected = true;
-		pc->img[Player_imgFall]->paint(dt, p, REVERSE_NONE);
+		pc->img[Player_imgFall]->paint(dt, p);
 
 		return true;
 	}

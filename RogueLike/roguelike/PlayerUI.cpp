@@ -8,10 +8,23 @@
 
 #include "EnemyStruct.h"
 
+void testui() // test
+{
+	for (int i = 0; i < 1000; i++)
+	{
+		printf("i  = %d\n", i);
+		createPopMiniMap();
+		freePopMiniMap();
+	}
+
+}
+//------------------------
+
 void loadPlayerUI()
 {
 	createPopHP();
 	createPopCombatMenu();
+	//testui();
 	createPopMiniMap();
 	createPopItem();
 	createPopStageNum();
@@ -165,6 +178,7 @@ bool keyPopHP(iKeyState stat, iPoint point)
 /////////////////////////////////////////////////////////
 
 iPopup* popMiniMap;
+Texture* texMiniMap;
 iImage* imgMiniMap;
 
 #define MINIMAPTILE 40
@@ -172,12 +186,8 @@ static int minitile = MINIMAPTILE;
 static uint8 prevTileNum = 0;
 void refreshMiniMap()
 {
-	if (imgMiniMap->tex)
-		freeImage(imgMiniMap->tex);
-
-	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(devSize.width,devSize.height);
-	g->init(size);
+	fbo->bind(texMiniMap);
+	fbo->clear(0, 0, 0, 1);
 
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
@@ -186,14 +196,14 @@ void refreshMiniMap()
 			if (i == pc->tileNumber) setRGBA(0, 1, 0, 1); // 플레이어 표시
 			else setRGBA(0.8, 0.8, 0.8, 1);
 
-			g->fillRect(minitile * (i % TILEOFF_SQRT), minitile * (i / TILEOFF_SQRT), minitile, minitile);
+			fillRect(minitile * (i % TILEOFF_SQRT), minitile * (i / TILEOFF_SQRT), minitile, minitile);
 			setRGBA(0, 0, 0, 1);
-			g->drawRect(minitile * (i % TILEOFF_SQRT), minitile * (i / TILEOFF_SQRT), minitile, minitile);
+			drawRect(minitile * (i % TILEOFF_SQRT), minitile * (i / TILEOFF_SQRT), minitile, minitile);
 
 			if (i == nextDoor) // 다음스테이지 표시
 			{
 				setRGBA(0, 0, 1, 1);
-				g->fillRect(minitile * (i % TILEOFF_SQRT) + 10,  minitile * (i / TILEOFF_SQRT) + 10,
+				fillRect(minitile * (i % TILEOFF_SQRT) + 10,  minitile * (i / TILEOFF_SQRT) + 10,
 					minitile - 20, minitile - 20);
 			}
 
@@ -205,7 +215,7 @@ void refreshMiniMap()
 					iPoint p = iPointMake((fabsf(enm->golemPos.x - tileOffSet[i].x) / (RGTILE_X * RGTILE_Width)),
 						(fabsf(enm->golemPos.y - tileOffSet[i].y) / (RGTILE_Y * RGTILE_Height)));
 					setRGBA(1, 0.5, 0, 1);
-					g->fillRect(minitile * (i % TILEOFF_SQRT) + minitile * p.x,
+					fillRect(minitile * (i % TILEOFF_SQRT) + minitile * p.x,
 						minitile * (i / TILEOFF_SQRT) + minitile * p.y,
 						5, 5);
 				}
@@ -215,26 +225,32 @@ void refreshMiniMap()
 			if (a == i && golemEletes[0]->hp > 0.0f)
 			{
 				setRGBA(1, 0, 0, 1);
-				g->fillRect(minitile * (i % TILEOFF_SQRT) + 10, minitile * (i / TILEOFF_SQRT) + 10,
+				fillRect(minitile * (i % TILEOFF_SQRT) + 10, minitile * (i / TILEOFF_SQRT) + 10,
 					minitile - 20, minitile - 20);
 			}
 		}
 	}
-	setRGBA(1, 1, 1, 1);
 
-	Texture* tex = g->getTexture();
-	imgMiniMap->addObject(tex);
-	freeImage(tex);
+	fbo->unbind();
+	setRGBA(1, 1, 1, 1);
 }
 
 void createPopMiniMap()
 {
 	iPopup* pop = new iPopup(iPopupStyleNone);
 	popMiniMap = pop;
-	imgMiniMap = new iImage();
-	refreshMiniMap();
 
-	pop->addObject(imgMiniMap);
+	texMiniMap = createTexture(devSize.width, devSize.height);
+	iImage* img = new iImage();
+	imgMiniMap = img;
+
+	img->addObject(texMiniMap);
+	freeImage(texMiniMap);
+
+	img->reverse = REVERSE_HEIGHT;
+
+	pop->addObject(img);
+
 	pop->openPosition = iPointMake(devSize.width - minitile * (TILEOFF_SQRT + 5), 100);
 	pop->closePosition = pop->openPosition;
 
@@ -265,16 +281,15 @@ void drawPopMiniMap(float dt)
 			imgMiniMap->position = iPointZero;
 			minitile = MINIMAPTILE;
 		}
-		refreshMiniMap();
 	}
 
-	if (prevTileNum != pc->tileNumber)
-	{
-		refreshMiniMap();
-		prevTileNum = pc->tileNumber;
-	}
+	//if (prevTileNum != pc->tileNumber)
+	//{
+	//	//imgMiniMap = refreshMiniMap();
+	//	prevTileNum = pc->tileNumber;
+	//}
 
-	//refreshMiniMap();
+	refreshMiniMap();
 	popMiniMap->paint(dt);
 }
 
@@ -356,6 +371,7 @@ void createPopCombatMenu()
 {
 	//---------------------------------------------------------------------------
 	// menu
+
 	iPopup* pop = new iPopup(iPopupStyleNone);
 	popCombatMenu = pop;
 
@@ -549,32 +565,6 @@ void showPopItem(bool show)
 
 void cointest()
 {
-	//if (coinimgtest)
-	//	delete coinimgtest;
-
-	//iGraphics* g = iGraphics::instance();
-	//iSize size = iSizeMake(1024, 1024);
-	//g->init(size);
-
-	//setStringSize(50);
-	//setStringRGBA(0, 1, 0, 1);
-	//setStringBorder(1);
-
-	//g->drawString(200, 200, TOP | LEFT, "%.1f", pc->hp);
-
-	//g->drawString(200, 300, TOP | LEFT, "%d", pc->coin);
-
-	//g->drawString(200, 400, TOP | LEFT, "%.1f", pc->attackDmg);
-
-	//g->drawString(200, 500, TOP | LEFT, "%.1f", pc->attackSpeed);
-
-	//Texture* tex = g->getTexture();
-	//iImage* img = new iImage();
-	//img->addObject(tex);
-	//freeImage(tex);
-
-	//coinimgtest = img;
-
 	numberFont->drawFont(150, 200, TOP | LEFT, 1, 1, 1, "%d", pc->hp);
 	numberFont->drawFont(150, 300, TOP | LEFT, 1, 1, 1, "%d", pc->coin);
 	numberFont->drawFont(150, 400, TOP | LEFT, 1, 1, 1, "%.0f", pc->attackDmg);
@@ -587,7 +577,6 @@ void drawPopItem(float dt)
 	popItem->paint(dt);
 
 	cointest();
-	//coinimgtest->paint(dt, iPointZero, REVERSE_NONE);
 }
 
 bool keyPopItem(iKeyState stat, iPoint point)

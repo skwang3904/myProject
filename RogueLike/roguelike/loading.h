@@ -2,6 +2,7 @@
 
 #include "iStd.h"
 
+extern bool loadingCheck;
 
 typedef void (*Loading_Method)();
 void setLoading(int gamestat, Loading_Method free, Loading_Method load);

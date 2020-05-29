@@ -202,7 +202,7 @@ void Chest::paint(float dt)
 		return;
 
 	drawPos = pos + pc->camPosition + setPos;
-	img->paint(dt, drawPos, REVERSE_NONE);
+	img->paint(dt, drawPos);
 	
 	//if( ? ) open = true;
 

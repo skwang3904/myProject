@@ -14,7 +14,9 @@ EnemyGolem** golems;
 EnemyGolem** golemEletes;
 
 iImage** imgGolem;
+iImage** imgGolem222;
 iImage** imgGolemElete;
+iImage** imgGolemElete222;
 
 void EnemyGolem::resetActAtAttack()
 {
@@ -124,7 +126,7 @@ void EnemyGolem::init(int stage)
 
 	if (stage == 0)
 	{
-		items = (UseItem**)malloc(sizeof(UseItem*) * 5);
+		items = (UseItem**)malloc(sizeof(UseItem*) * GOLEM_ITEM_NUM);
 		items[0] = new UseItem(coin);
 		items[1] = new UseItem(healing);
 		items[2] = new UseItem(powerUp);
@@ -139,7 +141,7 @@ void EnemyGolem::paint(float dt)
 {
 	if (act == dying || act == dead)
 	{
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < GOLEM_ITEM_NUM; i++)
 			items[i]->paint(dt);
 
 		if (act == dead)
@@ -370,6 +372,7 @@ void golemImg()
 		imgG[i]->ratio = GOLEM_RATIO;
 
 	imgGolem = imgG;
+	imgGolem222 = imgG;
 }
 
 void golemEleteImg()
@@ -455,4 +458,5 @@ void golemEleteImg()
 		imgGE[i]->ratio = GOLEM_ELETE_RATIO;
 
 	imgGolemElete = imgGE;
+	imgGolemElete222 = imgGE;
 }

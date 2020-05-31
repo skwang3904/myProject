@@ -28,6 +28,7 @@
 #if _DEBUG
 #pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
 #define xprintf printf
+
 #else
 #define xprintf(...) (void)0
 #endif

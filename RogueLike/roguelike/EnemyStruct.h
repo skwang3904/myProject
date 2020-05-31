@@ -16,6 +16,8 @@
 #define GOLEM_ELETE_MELEE_ATKTIME 0.3f
 #define GOLEM_ELETE_RANGE_ATKTIME 2.0f
 
+#define GOLEM_ITEM_NUM 5
+
 //----------------------------------------------------------------------------------------
 
 struct EnemyGolem;

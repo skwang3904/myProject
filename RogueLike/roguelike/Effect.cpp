@@ -81,10 +81,11 @@ void FireBall::paint(float dt)
 	img->paint(dt, drawFireBallPos);
 }
 
-static iPoint v1 = iPointMake(1, 0);
-static iPoint v2 = iPointZero;
+
 void FireBall::setAngle()
 {
+	iPoint v1 = iPointMake(1, 0);
+	iPoint v2 = iPointZero;
 	img->angle = iPointAngle(v1, v2, v);
 }
 

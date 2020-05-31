@@ -15,14 +15,27 @@ bool nextStage = false;
 
 void createStage()
 {
-	int i;
+	int i,j;
 	newRoomTile();
 
 	// monster init
-	for (i = 0; i < GOLEM_NUM; i++)
-		golems[i]->init(stage);
-	for (i = 0; i < GOLEM_ELETE_NUM; i++)
-		golemEletes[i]->init(stage);
+	for (i = 0; i < 1; i++)
+	{
+		for (j = 0; j < GOLEM_NUM; j++)
+		{
+			EnemyGolem* eg = &golems[i][j];
+			eg->init(stage);
+		}
+	}
+
+	for (i = 0; i < 1; i++)
+	{
+		for (j = 0; j < GOLEM_NUM; j++)
+		{
+			EnemyGolem* eg = &golemEletes[i][j];
+			eg->init(stage);
+		}
+	}
 
 
 	uint8 pcTile = pc->initPlayerPosition();

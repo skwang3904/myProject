@@ -21,38 +21,38 @@ void memoryTest() // test
 	{
 		printf("i = %d\n", i);
 
-		createEffect();
-		createItemImg();
-		createTileSet();
-		loadRoomTile();
-		newRoomTile();
-		createEnemy();
-		numberFont = new numFont();
-		weapon = new Weapon();
-		pc->instance();
+		//createEffect();
+		//createItemImg();
+		//createTileSet();
+		//loadRoomTile();
+		//newRoomTile();
+		//createEnemy();
+		//numberFont = new numFont();
+		//weapon = new Weapon();
 
-		int pcTile = pc->initPlayerPosition();
-		setEnemyPosition(pcTile);
+		//pc->instance();
+		//int pcTile = pc->initPlayerPosition();
+		//setEnemyPosition(pcTile);
 
-		createChest();
+		//createChest();
 
 		loadRgLoading();
 		loadPlayerUI();
 
 
 
-		freeEffect();
-		freeItemImg();
-		freeTileSet();
-		freeRoomTile();
-		freeEnemy();
-		delete numberFont;
-		delete weapon;
+		//freeEffect();
+		//freeItemImg();
+		//freeTileSet();
+		//freeRoomTile();
+		//freeEnemy();
+		//delete numberFont;
+		//delete weapon;
 
+		//freeChest();
 		freeRgLoading();
 		freePlayerUI();
 
-		freeChest();
 	}
 }
 //--------------------------------------------------------
@@ -80,6 +80,7 @@ void loadRgProc()
 	setEnemyPosition(pcTile);
 
 	createChest();
+	
 
 	//--------------------------------------------------------
 	// pop
@@ -97,7 +98,7 @@ void freeRgProc()
 
 	delete numberFont;
 	delete weapon;
-	delete pc;
+	//delete pc;
 
 	freeEnemy();
 	freeTileSet();
@@ -141,7 +142,6 @@ void drawRgProc(float dt)
 
 	weapon->drawWeapon(dt);
 	pc->drawPlayer(dt);
-
 
 	drawChest(dt);
 	//--------------------------------------------------------

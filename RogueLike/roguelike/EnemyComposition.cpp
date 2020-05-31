@@ -70,7 +70,7 @@ void setEnemyPosition(uint8 pcTile)
 			if (index == -1)
 				index = random() % 16;
 
-			EnemyGolem* enm = golems[5 * i + j];
+			EnemyGolem* enm = &golems[0][5 * i + j];
 			enm->golemPos = maps[check[i]]->tileOff + 
 				enemyPos[index];
 
@@ -90,7 +90,7 @@ void setEnemyPosition(uint8 pcTile)
 				maps[check[j]]->rgTile== Tile1way3 ||
 				maps[check[j]]->rgTile== Tile1way4)
 			{
-				EnemyGolem* enm = golemEletes[0];
+				EnemyGolem* enm = &golemEletes[0][0];
 				enm->golemPos = maps[check[j]]->tileOff +
 					RGTILE_CENTER;
 				elete = true;

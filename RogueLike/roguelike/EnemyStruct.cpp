@@ -207,7 +207,7 @@ void EnemyGolem::paint(float dt)
 			golemPos = iPointZero;
 			touchGolem = iRectZero;
 			act = dead;
-			if (this == golemEletes[0])
+			if (this == &golemEletes[0][0])
 				nextDoor = tileNumber;
 			tileNumber = 0;
 		}
@@ -375,7 +375,6 @@ void golemImg()
 void golemEleteImg()
 {
 	iImage** imgGE = (iImage**)malloc(sizeof(iImage*) * GOLEM_ELETE_IMG_NUM);
-
 	iImage* imgGEIdle = new iImage();
 	Texture* texGEIdle;
 	iImage* imgGEIdleBlink = new iImage();

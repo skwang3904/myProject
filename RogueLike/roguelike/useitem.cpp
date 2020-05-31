@@ -88,7 +88,7 @@ void UseItem::gainValue()
     }
     case atkSpeedUp:
     {
-        pc->attackSpeed += pc->_attackSpeed * value;
+        pc->attackSpeed -= pc->_attackSpeed / value;
         break;
     }
     case moveSpeedUp:

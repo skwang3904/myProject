@@ -207,22 +207,25 @@ void refreshMiniMap()
 					minitile - 20, minitile - 20);
 			}
 
-			for (int j = 0; j < GOLEM_NUM; j++) // 몬스터표시
+			for (int k = 0; k < 1; k++)
 			{
-				EnemyGolem* enm = golems[j];
-				if (enm->tileNumber == i)
-				{				
-					iPoint p = iPointMake((fabsf(enm->golemPos.x - tileOffSet[i].x) / (RGTILE_X * RGTILE_Width)),
-						(fabsf(enm->golemPos.y - tileOffSet[i].y) / (RGTILE_Y * RGTILE_Height)));
-					setRGBA(1, 0.5, 0, 1);
-					fillRect(minitile * (i % TILEOFF_SQRT) + minitile * p.x,
-						minitile * (i / TILEOFF_SQRT) + minitile * p.y,
-						5, 5);
+				for (int j = 0; j < GOLEM_NUM; j++) // 몬스터표시
+				{
+					EnemyGolem* eg = &golems[k][j];
+					if (eg->tileNumber == i)
+					{
+						iPoint p = iPointMake((fabsf(eg->golemPos.x - tileOffSet[i].x) / (RGTILE_X * RGTILE_Width)),
+							(fabsf(eg->golemPos.y - tileOffSet[i].y) / (RGTILE_Y * RGTILE_Height)));
+						setRGBA(1, 0.5, 0, 1);
+						fillRect(minitile * (i % TILEOFF_SQRT) + minitile * p.x,
+							minitile * (i / TILEOFF_SQRT) + minitile * p.y,
+							5, 5);
+					}
 				}
 			}
 
-			int a = golemEletes[0]->tileNumber;
-			if (a == i && golemEletes[0]->hp > 0.0f)
+			int a = golemEletes[0][0].tileNumber;
+			if (a == i && golemEletes[0][0].hp > 0.0f)
 			{
 				setRGBA(1, 0, 0, 1);
 				fillRect(minitile * (i % TILEOFF_SQRT) + 10, minitile * (i / TILEOFF_SQRT) + 10,

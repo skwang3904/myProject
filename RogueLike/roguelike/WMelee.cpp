@@ -208,17 +208,23 @@ void weaponPosAndRt(meleeWeapon* mw, iPoint& wcp, iPoint& centerP, iRect& rt)
 void hitMonster(meleeWeapon* mw, float dt)
 {
 	float dmg = pc->attackDmg + mw->attackDmg;
-	for (int i = 0; i < ALLENEMY_NUM; i++) //enemy
+	for (int i = 0; i < 1; i++) //enemy
 	{
-		if (i < GOLEM_NUM)
+		for (int j = 0; j < GOLEM_NUM; j++)
 		{
-			if (containRect(mw->hitBox, golems[i]->touchGolem))
-				golems[i]->takeDmgEnemy(dt, dmg);
+			EnemyGolem* eg = &golems[i][j];
+			if (containRect(mw->hitBox, eg->touchGolem))
+				eg->takeDmgEnemy(dt, dmg);
 		}
-		else
+	}
+
+	for (int i = 0; i < 1; i++)
+	{
+		for (int j = 0; j < GOLEM_ELETE_NUM; j++)
 		{
-			if (containRect(mw->hitBox, golemEletes[0]->touchGolem))
-				golemEletes[0]->takeDmgEnemy(dt, dmg);
+			EnemyGolem* eg = &golemEletes[i][j];
+			if (containRect(mw->hitBox, eg->touchGolem))
+				eg->takeDmgEnemy(dt, dmg);
 		}
 	}
 }

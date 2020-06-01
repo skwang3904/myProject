@@ -168,6 +168,8 @@ Chest::Chest(ChestType ct)
 
 	touchRect = iRectMake(pos.x, pos.y, img->tex->width, img->tex->height);
 
+	weapons = NULL;
+
 	open = false;
 	openMethod = openChestBasic;
 }

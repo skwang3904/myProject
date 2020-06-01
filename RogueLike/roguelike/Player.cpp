@@ -55,7 +55,7 @@ void Player::createPlayerImage()
 	imgDown->_aniDt = 0.05f;
 	imgDown->_repeatNum = 0;
 
-	iImage** imgHead = (iImage**)malloc(sizeof(iImage*) * 4);			// 머리 상하좌우
+	iImage* imgHead[4];																// 머리 상하좌우
 	Texture** texsHead = createDivideImage(8, 1, "assets/char/CharHead.png");		// 머리 4방향 각 2개
 	for (int i = 0; i < 4; i++)
 	{
@@ -115,7 +115,7 @@ void Player::createPlayerImage()
 	for (int i = 0; i < 10; i++)
 	{
 		if (img[i] == NULL)
-			printf("player imgChar[%d] error", i);
+			printf("player img[%d] error", i);
 	}
 }
 

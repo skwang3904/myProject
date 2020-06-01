@@ -16,6 +16,8 @@ rgArray::rgArray(RGARRAY_METHOD m)
 rgArray::~rgArray()
 {
 	removeAll();
+	free(head);
+	free(tail);
 }
 
 void rgArray::addObject(int index, void* data)

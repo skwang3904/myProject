@@ -17,6 +17,7 @@
 
 void memoryTest() // test
 {
+	pc = new Player();
 	for (int i = 0; i < 3000; i++)
 	{
 		printf("i = %d\n", i);
@@ -26,7 +27,7 @@ void memoryTest() // test
 		createTileSet();
 		loadRoomTile();
 		setRoomTile();
-		createEnemy();
+		//createEnemy();
 		//numberFont = new numFont();
 		//weapon = new Weapon();
 		//pc = new Player();
@@ -34,10 +35,10 @@ void memoryTest() // test
 		//int pcTile = pc->initPlayerPosition();
 		//setEnemyPosition(pcTile);
 
-		//createChest();
+		createChest();
 
-		//loadRgLoading();
-		//loadPlayerUI();
+		loadRgLoading();
+		loadPlayerUI();
 
 
 
@@ -45,14 +46,14 @@ void memoryTest() // test
 		freeItemImg();
 		freeTileSet();
 		freeRoomTile();
-		freeEnemy();
+		//freeEnemy();
 		//delete numberFont;
 		//delete weapon;
 		//delete pc;
 
-		//freeChest();
-		//freeRgLoading();
-		//freePlayerUI();
+		freeChest();
+		freeRgLoading();
+		freePlayerUI();
 
 	}
 }
@@ -97,13 +98,14 @@ void freeRgProc()
 	freeEffect();
 	freeItemImg();
 
+	freeTileSet();
+	freeRoomTile();
+
 	delete numberFont;
 	delete weapon;
 	delete pc;
 
 	freeEnemy();
-	freeTileSet();
-	freeRoomTile();
 
 	freeChest();
 	//--------------------------------------------------------

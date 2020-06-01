@@ -1,11 +1,11 @@
-﻿D:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(467,5): warning MSB8028: 중간 디렉터리(Debug\)에 다른 프로젝트(TowerDefense.vcxproj)에서 공유하는 파일이 포함되어 있습니다.  이로 인해 잘못된 정리 및 다시 빌드 동작이 수행될 수 있습니다.
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(459,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (TowerDefense.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   Enemy.cpp
-C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(16,17): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(18,25): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\roguelike\Effect.h(12,1): warning C4099: 'FireBall': 처음에는 'struct'을(를) 사용하여 형식 이름을 표시했는데 이제는 'class'을(를) 사용하여 표시합니다.
-C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\roguelike\Effect.h(11): message : 'FireBall' 선언을 참조하십시오.
-C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\roguelike\Enemy.cpp(95,24): warning C4150: 불완전한 형식 'UseItem'에 대한 포인터를 삭제했습니다. 소멸자가 호출되지 않습니다.
-C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\roguelike\EnemyStruct.h(37): message : 'UseItem' 선언을 참조하십시오.
-C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\roguelike\Enemy.cpp(126,24): warning C4150: 불완전한 형식 'UseItem'에 대한 포인터를 삭제했습니다. 소멸자가 호출되지 않습니다.
-C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\roguelike\EnemyStruct.h(37): message : 'UseItem' 선언을 참조하십시오.
-  RogueLike.vcxproj -> C:\Users\qkrtn\Documents\GitHub\myProject\Debug\RogueLike.exe
+C:\Users\user\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(16,17): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(18,25): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\Effect.h(12,1): warning C4099: 'FireBall': 처음에는 'struct'을(를) 사용하여 형식 이름을 표시했는데 이제는 'class'을(를) 사용하여 표시합니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\Effect.h(11): message : 'FireBall' 선언을 참조하십시오.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\Enemy.cpp(102,24): warning C4150: 불완전한 형식 'UseItem'에 대한 포인터를 삭제했습니다. 소멸자가 호출되지 않습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\EnemyStruct.h(37): message : 'UseItem' 선언을 참조하십시오.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\Enemy.cpp(133,24): warning C4150: 불완전한 형식 'UseItem'에 대한 포인터를 삭제했습니다. 소멸자가 호출되지 않습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\roguelike\EnemyStruct.h(37): message : 'UseItem' 선언을 참조하십시오.
+  RogueLike.vcxproj -> C:\Users\user\Documents\GitHub\myProject\Debug\RogueLike.exe

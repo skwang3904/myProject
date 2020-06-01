@@ -11,9 +11,16 @@ void drawGolem(float dt);
 
 void testeg()
 {
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < 30; i++)
 	{
 		printf("i = %d\n",i);
+		createGolem();
+		freeGolem();
+	}
+
+	for (int i = 0; i < 30; i++)
+	{
+		printf("i = %d\n", i);
 		createGolem();
 		freeGolem();
 	}
@@ -21,7 +28,7 @@ void testeg()
 
 void createEnemy()
 {
-	//testeg();
+	testeg();
 	createGolem();
 }
 

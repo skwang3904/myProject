@@ -16,7 +16,7 @@ bool nextStage = false;
 void createStage()
 {
 	int i,j;
-	newRoomTile();
+	setRoomTile();
 
 	// monster init
 	for (i = 0; i < 1; i++)
@@ -30,15 +30,14 @@ void createStage()
 
 	for (i = 0; i < 1; i++)
 	{
-		for (j = 0; j < GOLEM_NUM; j++)
+		for (j = 0; j < GOLEM_ELETE_NUM; j++)
 		{
 			EnemyGolem* eg = &golemEletes[i][j];
 			eg->init(stage);
 		}
 	}
 
-
-	uint8 pcTile = pc->initPlayerPosition();
+	int pcTile = pc->initPlayerPosition();
 	setEnemyPosition(pcTile);
 	//setNextDoor(pcTile);
 

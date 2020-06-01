@@ -109,36 +109,33 @@ bool FireBall::hitFireBall(iRect& rt)
 
 void createEffect()
 {
-	iImage* imgFire = new iImage();
-	Texture* texFire;
+	iImage* img = new iImage();
 	for (int i = 0; i < 61; i++)
-	{
-		texFire = createImage("assets/effect/fireball/3/1_%d.png", i);
-		imgFire->addObject(texFire);
-		freeImage(texFire);
+	{		
+		Texture* tex = createImage("assets/effect/fireball/3/1_%d.png", i);
+		img->addObject(tex);
+		freeImage(tex);
 	}
 
-	imgFire->_aniDt = 0.04f;
-	imgFire->animation = true;
-	imgFire->_repeatNum = 0;
-	imgFire->lockAngle = true;
-	imgFireBall = imgFire;
+	img->_aniDt = 0.04f;
+	img->animation = true;
+	img->_repeatNum = 0;
+	img->lockAngle = true;
+	imgFireBall = img;
 
 	//----------------------------------------------------------------------------------------
 	
-	iImage* imgCharge = new iImage();
-	Texture* texCharge;
+	iImage* img1 = new iImage();
 	for (int i = 0; i < 20; i++)
-	{
-		texCharge = createImage("assets/effect/charge fire/6800%02d.png", i);
-		imgCharge->addObject(texCharge);
-		freeImage(texCharge);
+	{	
+		Texture* tex = createImage("assets/effect/charge fire/6800%02d.png", i);
+		img1->addObject(tex);
+		freeImage(tex);
 	}
 
-	imgCharge->_repeatNum = 1;
-	imgCharge->_aniDt = 0.1f;
-
-	imgChargeFire = imgCharge;
+	img1->_repeatNum = 1;
+	img1->_aniDt = 0.1f;
+	imgChargeFire = img1;
 }
 
 void freeEffect()

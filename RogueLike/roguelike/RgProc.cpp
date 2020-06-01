@@ -21,37 +21,38 @@ void memoryTest() // test
 	{
 		printf("i = %d\n", i);
 
-		//createEffect();
-		//createItemImg();
-		//createTileSet();
-		//loadRoomTile();
-		//newRoomTile();
-		//createEnemy();
+		createEffect();
+		createItemImg();
+		createTileSet();
+		loadRoomTile();
+		setRoomTile();
+		createEnemy();
 		//numberFont = new numFont();
 		//weapon = new Weapon();
+		//pc = new Player();
 
-		//pc->instance();
 		//int pcTile = pc->initPlayerPosition();
 		//setEnemyPosition(pcTile);
 
 		//createChest();
 
-		loadRgLoading();
-		loadPlayerUI();
+		//loadRgLoading();
+		//loadPlayerUI();
 
 
 
-		//freeEffect();
-		//freeItemImg();
-		//freeTileSet();
-		//freeRoomTile();
-		//freeEnemy();
+		freeEffect();
+		freeItemImg();
+		freeTileSet();
+		freeRoomTile();
+		freeEnemy();
 		//delete numberFont;
 		//delete weapon;
+		//delete pc;
 
 		//freeChest();
-		freeRgLoading();
-		freePlayerUI();
+		//freeRgLoading();
+		//freePlayerUI();
 
 	}
 }
@@ -60,19 +61,19 @@ void memoryTest() // test
 
 void loadRgProc()
 {
-	//memoryTest();
+	memoryTest();
 
 	createEffect();
 	createItemImg();
 
 	createTileSet();
 	loadRoomTile();
-	newRoomTile();
+
 
 	//--------------------------------------------------------
 	numberFont = new numFont();
 	weapon = new Weapon();
-	pc->instance();
+	pc = new Player();
 
 	createEnemy();
 
@@ -98,7 +99,7 @@ void freeRgProc()
 
 	delete numberFont;
 	delete weapon;
-	//delete pc;
+	delete pc;
 
 	freeEnemy();
 	freeTileSet();

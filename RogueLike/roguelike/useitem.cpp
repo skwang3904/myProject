@@ -149,52 +149,28 @@ void UseItem::paint(float dt)
 
 void createItemImg()
 {
-    //수정
-    const char* strPath[5] = {  };
+    const char* strPath[5] = {
+        "assets/item/potionRed.png",
+        "assets/item/coin.png",
+        "assets/item/gemRed.png",
+        "assets/item/gemGreen.png",
+        "assets/item/gemBlue.png",
+    };
+
     iImage* imgs[5];
+    for (int i = 0; i < 5; i++)
+    {
+        imgs[i] = new iImage();
+        Texture* tex = createImage(strPath[i]);
+        imgs[i]->addObject(tex);
+        freeImage(tex);
+    }
 
-   iImage* imgpotion = new iImage();
-   Texture* texpotion = createImage("assets/item/potionRed.png");
-   imgpotion->addObject(texpotion);
-   freeImage(texpotion);
-
-   imgPotion = imgpotion;
-
-   //----------------------------------------------------------------------------
-
-   iImage* imgMoney = new iImage();
-   Texture* texMoney = createImage("assets/item/coin.png");
-   imgMoney->addObject(texMoney);
-   freeImage(texMoney);
-
-   imgCoin = imgMoney;
-
-   //----------------------------------------------------------------------------
-
-   iImage* imgPower = new iImage();
-   Texture* texPower = createImage("assets/item/gemRed.png");
-   imgPower->addObject(texPower);
-   freeImage(texPower);
-
-   imgPowerUp = imgPower;
-
-   //----------------------------------------------------------------------------
-
-   iImage* imgAtkSU = new iImage();
-   Texture* texAtkSU = createImage("assets/item/gemGreen.png");
-   imgAtkSU->addObject(texAtkSU);
-   freeImage(texAtkSU);
-
-   imgAtkSpeedUp = imgAtkSU;
-
-   //----------------------------------------------------------------------------
-
-   iImage* imgMoveSU = new iImage();
-   Texture* texMoveSU = createImage("assets/item/gemBlue.png");
-   imgMoveSU->addObject(texMoveSU);
-   freeImage(texMoveSU);
-
-   imgMoveSpeedUp = imgMoveSU;
+   imgPotion =      imgs[0];
+   imgCoin =        imgs[1];
+   imgPowerUp =     imgs[2];
+   imgAtkSpeedUp =  imgs[3];
+   imgMoveSpeedUp = imgs[4];
 }
 
 void freeItemImg()

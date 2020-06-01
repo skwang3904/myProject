@@ -11,14 +11,14 @@ void drawGolem(float dt);
 
 void testeg()
 {
-	for (int i = 0; i < 30; i++)
+	for (int i = 0; i < 300; i++)
 	{
 		printf("i = %d\n",i);
 		createGolem();
 		freeGolem();
 	}
 
-	for (int i = 0; i < 30; i++)
+	for (int i = 0; i < 300; i++)
 	{
 		printf("i = %d\n", i);
 		createGolem();
@@ -89,18 +89,18 @@ void freeGolem()
 		{
 			EnemyGolem* eg = &golems[i][j];
 			for (int k = 0; k < GOLEM_IMG_NUM; k++)
-			{
-					delete eg->img[k];
-			}
-
+				delete eg->img[k];
 			free(eg->img);
 
 			if (eg->effectImg)
 				delete eg->effectImg;
 
-			for (int k = 0; k < 5; k++)
-				delete eg->items[k];
-			free(eg->items);
+			if (eg->items)
+			{
+				for (int k = 0; k < 5; k++)
+					delete eg->items[k];
+				free(eg->items);
+			}
 
 			if (eg->projectile)
 			{
@@ -121,17 +121,18 @@ void freeGolem()
 		{
 			EnemyGolem* eg = &golemEletes[i][j];
 			for (int k = 0; k < GOLEM_IMG_NUM; k++)
-			{
 				delete eg->img[k];
-			}
 			free(eg->img);
 
 			if (eg->effectImg)
 				delete eg->effectImg;
 
-			for (int k = 0; k < 5; k++)
-				delete eg->items[k];
-			free(eg->items);
+			if (eg->items)
+			{
+				for (int k = 0; k < 5; k++)
+					delete eg->items[k];
+				free(eg->items);
+			}
 
 			if (eg->projectile)
 			{

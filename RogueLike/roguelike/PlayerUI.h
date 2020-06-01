@@ -27,7 +27,6 @@ bool keyPopMiniMap(iKeyState stat, iPoint point);
 
 /////////////////////////////////////////////////////////
 
-#define CombatMenu_Pos iPointMake(1600, 400)
 void createPopCombatMenu();
 void freePopCombatMenu();
 void showPopCombatMenu(bool show);

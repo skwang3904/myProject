@@ -78,55 +78,56 @@ void createPopHP()
 	iPopup* pop = new iPopup(iPopupStyleNone);
 	popHP = pop;
 
-	iImage* imgIconBar = new iImage();
-	iImage* imgheart = new iImage();
-	iImage* imgBarBG = new iImage();
-	iImage* imgBar = new iImage();
-	iImage* imgBarFillGreen = new iImage();
-	iImage* imgBarFillRed = new iImage();
-	imgHPgageGreen = imgBarFillGreen;
-	imgHPgageRed = imgBarFillRed;
-
-	Texture* texIconBar = createImage("assets/PlayerUI/Icon Bar.png");
-	Texture* texheart = createImage("assets/PlayerUI/heart.png");
-	Texture* texBarBG = createImage("assets/PlayerUI/Bar_BG.png");
-	Texture* texBar = createImage("assets/PlayerUI/Bar.png");
-	Texture* texBarFillGreen = createImage("assets/PlayerUI/Bar_Fill_Green.png");
-	Texture* texBarFillRed = createImage("assets/PlayerUI/Bar_Fill_Red.png");
-	
-	imgIconBar->addObject(texIconBar);
-	imgheart->addObject(texheart);
+	const char* strPath[6] = {
+		"assets/PlayerUI/Icon Bar.png",
+		"assets/PlayerUI/heart.png",
+		"assets/PlayerUI/Bar_BG.png",
+		"assets/PlayerUI/Bar.png",
+		"assets/PlayerUI/Bar_Fill_Green.png",
+		"assets/PlayerUI/Bar_Fill_Red.png",
+	};
 
 	iPoint iconPoint = iPointMake(100, 30);
-	imgIconBar->position = iconPoint;
-	imgheart->position = imgIconBar->position + iPointMake((imgIconBar->tex->width - imgheart->tex->width) / 2,
-		(imgIconBar->tex->height - imgheart->tex->height) / 2 + 5);
-
-	imgBarBG->addObject(texBarBG);
-	imgBar->addObject(texBar);
-	imgBarFillGreen->addObject(texBarFillGreen);
-	imgBarFillRed->addObject(texBarFillRed);
-
 	iPoint barPoint = iconPoint + iPointMake(140, 0);
-	imgBarBG->position = barPoint;
-	imgBar->position = imgBarBG->position + iPointMake((imgBarBG->tex->width - imgBar->tex->width)/2,
-		(imgBarBG->tex->height - imgBar->tex->height) / 2);
-	imgBarFillGreen->position = imgBar->position;
-	imgBarFillRed->position = imgBar->position;
+	iImage* imgs[6];
+	for (int i = 0; i < 6; i++)
+	{
+		imgs[i] = new iImage();
+		Texture* tex = createImage(strPath[i]);
+		imgs[i]->addObject(tex);
+		freeImage(tex);
 
-	pop->addObject(imgIconBar);
-	pop->addObject(imgheart);
-	pop->addObject(imgBarBG);
-	pop->addObject(imgBar);
-	pop->addObject(imgBarFillGreen);
-	pop->addObject(imgBarFillRed);
+		if (i == 0)
+		{
+			imgs[i]->position = iconPoint;
+		}
+		else if (i == 1)
+		{
+			imgs[i]->position = imgs[0]->position + iPointMake((imgs[0]->tex->width - imgs[1]->tex->width) / 2,
+				(imgs[0]->tex->height - imgs[1]->tex->height) / 2 + 5);
+		}
+		else if (i == 2)
+		{
+			imgs[i]->position = barPoint;
+		}
+		else if (i == 3)
+		{
+			imgs[i]->position = imgs[2]->position + iPointMake((imgs[2]->tex->width - imgs[3]->tex->width) / 2,
+				(imgs[2]->tex->height - imgs[3]->tex->height) / 2);
+		}
+		else if (i == 4)
+		{
+			imgs[i]->position = imgs[3]->position;
+			imgHPgageGreen = imgs[i];
+		}
+		else if (i == 5)
+		{
+			imgs[i]->position = imgs[3]->position;
+			imgHPgageRed = imgs[i];
+		}
 
-	freeImage(texIconBar);
-	freeImage(texheart);
-	freeImage(texBarBG);
-	freeImage(texBar);
-	freeImage(texBarFillGreen);
-	freeImage(texBarFillRed);
+		pop->addObject(imgs[i]);
+	}
 }
 
 void freePopHP()
@@ -246,7 +247,6 @@ void createPopMiniMap()
 	texMiniMap = createTexture(devSize.width, devSize.height);
 	iImage* img = new iImage();
 	imgMiniMap = img;
-
 	img->addObject(texMiniMap);
 	freeImage(texMiniMap);
 
@@ -285,12 +285,6 @@ void drawPopMiniMap(float dt)
 			minitile = MINIMAPTILE;
 		}
 	}
-
-	//if (prevTileNum != pc->tileNumber)
-	//{
-	//	//imgMiniMap = refreshMiniMap();
-	//	prevTileNum = pc->tileNumber;
-	//}
 
 	refreshMiniMap();
 	popMiniMap->paint(dt);
@@ -383,13 +377,14 @@ void createPopCombatMenu()
 	imgCombatMenu->addObject(texCombatMenu);
 	freeImage(texCombatMenu);
 
-	imgCombatMenu->position = CombatMenu_Pos;
+	iPoint p = iPointMake(1600, 400);
+	imgCombatMenu->position = p;
 	pop->addObject(imgCombatMenu);
 
 	for (int i = 1; i < 8; i++)
 	{
 		iImage* imgCombatMenu1 = imgCombatMenu->copy();
-		imgCombatMenu1->position = CombatMenu_Pos +iPointMake(150 * (i % 2), 150 * (i / 2));
+		imgCombatMenu1->position = p + iPointMake(150 * (i % 2), 150 * (i / 2));
 		pop->addObject(imgCombatMenu1);
 	}
 
@@ -407,7 +402,7 @@ void createPopCombatMenu()
 
 	imgCombatInfo = new iImage();
 	imgCombatInfo->tex = setCombatInfo(0);
-	imgCombatInfo->position = CombatMenu_Pos + iPointMake(-350, 0);
+	imgCombatInfo->position = p + iPointMake(-350, 0);
 
 	imgButten->position = imgCombatInfo->position + iPointMake(250, 0);
 
@@ -476,7 +471,7 @@ bool keyPopCombatMenu(iKeyState stat, iPoint point)
 	{
 		for (int i = 0; i < pc->weaponArray->count; i++)
 		{
-			iPoint	p = CombatMenu_Pos + iPointMake(150 * (i % 2), 150 * (i / 2));
+			iPoint	p = iPointMake(1600 + 150 * (i % 2),400 + 150 * (i / 2));
 			iRect rt = iRectMake(p.x, p.y, 128, 128);
 			if (containPoint(point, rt))
 			{
@@ -502,63 +497,37 @@ bool keyPopCombatMenu(iKeyState stat, iPoint point)
 //---------------------------------------------------------------------------
 
 iPopup* popItem;
-//iImage* coinimgtest;
 
 void createPopItem()
 {
 	iPopup* pop = new iPopup(iPopupStyleNone);
 	popItem = pop;
 
-	iImage* imgHP = new iImage();
-	Texture* texHP = createImage("assets/icons/hp.png");
+	const char* strPath[5] = {
+		"assets/icons/hp.png",
+		"assets/icons/Money.png",
+		"assets/icons/attackDmg.png",
+		"assets/icons/attackSpeed.png",
+		"assets/icons/moveSpeed.png",
+	};
 
-	iImage* imgCoin = new iImage();
-	Texture* texCoin = createImage("assets/icons/Money.png");
+	for (int i = 0; i < 5; i++)
+	{
+		iImage* img = new iImage();
+		Texture* tex = createImage(strPath[i]);
+		img->addObject(tex);
+		freeImage(tex);
 
-	iImage* imgAtkDmg = new iImage();
-	Texture* texAtkDmg = createImage("assets/icons/attackDmg.png");
+		img->position = iPointMake(20, 170 + 100 * i);
+		img->ratio = 0.25f;
 
-	iImage* imgAtkSpeed = new iImage();
-	Texture* texAtkSpeed = createImage("assets/icons/attackSpeed.png");
-
-	iImage* imgMoveSpeed = new iImage();
-	Texture* texMoveSpeed = createImage("assets/icons/moveSpeed.png");
-
-	imgHP->addObject(texHP);
-	imgCoin->addObject(texCoin);
-	imgAtkDmg->addObject(texAtkDmg);
-	imgAtkSpeed->addObject(texAtkSpeed);
-	imgMoveSpeed->addObject(texMoveSpeed);
-
-	freeImage(texHP);
-	freeImage(texCoin);
-	freeImage(texAtkDmg);
-	freeImage(texAtkSpeed);
-	freeImage(texMoveSpeed);
-
-	imgHP->position =		iPointMake(20, 170);
-	imgCoin->position =		iPointMake(20, 270);
-	imgAtkDmg->position =	iPointMake(20, 370);
-	imgAtkSpeed->position =	iPointMake(20, 470);
-	imgMoveSpeed->position = iPointMake(20, 570);
-
-	imgHP->ratio = 0.25f;
-	imgCoin->ratio = 0.25f;
-	imgAtkDmg->ratio = 0.25f;
-	imgAtkSpeed->ratio = 0.25f;
-	imgMoveSpeed->ratio = 0.25f;
-
-	pop->addObject(imgHP);
-	pop->addObject(imgCoin);
-	pop->addObject(imgAtkDmg);
-	pop->addObject(imgAtkSpeed);
-	pop->addObject(imgMoveSpeed);
+		pop->addObject(img);
+	}
 }
 
 void freePopItem()
 {
 	delete popItem;
-	//delete coinimgtest;
 }
 
 void showPopItem(bool show)

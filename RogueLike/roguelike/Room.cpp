@@ -14,11 +14,13 @@ void loadRoomTile()
 
 	for (int i = 0; i < TILEOFF_NUM; i++)
 		maps[i] = (MapTile*)malloc(sizeof(MapTile) * 1);
+
+	setRoomTile();
 }
 
 bool randomOffCheck[TILEOFF_NUM];
 int conectCount = 0;
-void newRoomTile()
+void setRoomTile()
 {
 	int m[MAPTILE_NUM];
 	conectCount = 0;
@@ -439,7 +441,7 @@ void wallCheck(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float half
 void findMoveTile(MapTile* tile, iPoint& moveTileNum);
 bool fallCheck(MapTile* tile, float dt)
 {
-	// 임시 - 낭떨어지에 진입시 가장 가까이있는 타일로 이동  - 어색함
+	// 임시 - 낭떨어지에 진입시 가장 가까이있는 타일로 이동 
 	// 라이프 감소
 	// 잠시 무적
 	if (tile->rgTile == NULL)

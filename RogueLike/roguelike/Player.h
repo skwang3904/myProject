@@ -28,21 +28,16 @@ enum CharAction;
 
 class Player
 {
-private:
-	Player();
-
 public:
+	Player();
 	virtual ~Player();
 
-	static void instance();
-	void initPlayerStat();
-	uint8 initPlayerPosition();
 	void createPlayerImage();
+	void initPlayerStat();
+	int initPlayerPosition();
 
 	bool actionCheck(bool key);
 	void drawPlayer(float dt);
-
-	void showHpBar(float dt);
 
 	void combatDraw(float dt);
 	void rootCombat(bool key);

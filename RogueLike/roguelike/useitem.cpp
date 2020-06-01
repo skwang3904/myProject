@@ -149,6 +149,10 @@ void UseItem::paint(float dt)
 
 void createItemImg()
 {
+    //수정
+    const char* strPath[5] = {  };
+    iImage* imgs[5];
+
    iImage* imgpotion = new iImage();
    Texture* texpotion = createImage("assets/item/potionRed.png");
    imgpotion->addObject(texpotion);

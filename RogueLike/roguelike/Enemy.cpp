@@ -28,7 +28,7 @@ void testeg()
 
 void createEnemy()
 {
-	testeg();
+	//testeg();
 	createGolem();
 }
 

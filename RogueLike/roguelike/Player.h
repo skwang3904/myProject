@@ -32,12 +32,14 @@ public:
 	Player();
 	virtual ~Player();
 
-	void createPlayerImage();
 	void initPlayerStat();
-	int initPlayerPosition();
+	uint8 initPlayerPosition();
+	void createPlayerImage();
 
 	bool actionCheck(bool key);
 	void drawPlayer(float dt);
+
+	void showHpBar(float dt);
 
 	void combatDraw(float dt);
 	void rootCombat(bool key);

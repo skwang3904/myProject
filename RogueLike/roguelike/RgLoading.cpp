@@ -119,25 +119,31 @@ void createPopNextStage()
 	iPopup* pop = new iPopup(iPopupStyleAlpha);
 	popNextStage = pop;
 
-	iImage* imgLoadingBarBG = new iImage();
-	iImage* imgLoadingBarFill = new iImage();
-	imgLoadingBar = imgLoadingBarFill;
+	const char* strPath[2] = {
+		"assets/loading/LoadingBar_BG.png",
+		"assets/loading/LoadingBar_Fill.png"
+	};
+	iImage* imgs[2];
+	for (int i = 0; i < 2; i++)
+	{
+		iImage* img = new iImage();
+		Texture* tex = createImage(strPath[i]);
+		img->addObject(tex);
+		freeImage(tex);
 
-	Texture* texLoadingBarBG = createImage("assets/loading/LoadingBar_BG.png");
-	Texture* texLoadingBarFill = createImage("assets/loading/LoadingBar_Fill.png");
-
-	imgLoadingBarBG->addObject(texLoadingBarBG);
-	imgLoadingBarFill->addObject(texLoadingBarFill);
-
-	freeImage(texLoadingBarBG);
-	freeImage(texLoadingBarFill);
-
-	imgLoadingBarBG->position = iPointMake(100,100);
-	imgLoadingBarFill->position = imgLoadingBarBG->position 
-		+ iPointMake((imgLoadingBarBG->tex->width - imgLoadingBarFill->tex->width) / 2, 170);
-	
-	pop->addObject(imgLoadingBarBG);
-	pop->addObject(imgLoadingBarFill);
+		if (i == 0)
+		{
+			img->position = iPointMake(100, 100);
+			imgs[0] = img;
+		}
+		else// if (i == 1)
+		{
+			img->position = imgs[0]->position +
+							iPointMake((imgs[0]->tex->width - tex->width) / 2, 170);
+			imgLoadingBar = img;
+		}
+		pop->addObject(img);
+	}
 	pop->openPosition = iPointMake(200,50);
 	pop->closePosition = pop->openPosition;
 	pop->_showDt = 0.5f;

@@ -78,7 +78,12 @@ void iImage::replaceAtIndex(int index, Texture* tex)
 	if (t->retainCount > 1)
 		t->retainCount--;
 	else
+	{
 		glDeleteTextures(1, &t->texID);
+#ifdef _DEBUG
+		texNum--;
+#endif // _DEBUG
+	}
 	memcpy(t, tex, sizeof(Texture));
 	free(tex);
 #endif
@@ -177,6 +182,12 @@ iRect iImage::touchRect(iPoint p)
 						tex->width, tex->height);
 	return rt;
 }
+
+iPoint iImage::center(iPoint off)
+{
+	return position + iPointMake(tex->width / 2, tex->height / 2);
+}
+
 
 iImage* iImage::copy()
 {

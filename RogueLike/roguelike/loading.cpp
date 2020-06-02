@@ -15,13 +15,13 @@ void setLoading(int gamestat, Loading_Method free, Loading_Method load)
 	methodFree = free;
 	methodLoad = load;
 	loadingDt = 0.0f;
-	loadingCheck = true;
 }
 
 bool getLoading()
 {
 	return loadingDt < _loadingDt;
 }
+
 
 void drawLoading(float dt)
 {
@@ -51,10 +51,7 @@ void drawLoading(float dt)
 		alpha = 7.0f - (loadingDt - 0.5f) / 0.5f;
 		printf("%.2f\n" , alpha);
 		if (loadingDt > 4.0f)
-		{
 			loadingDt = _loadingDt;
-			loadingCheck = false;
-		}
 	}
 
 	setRGBA(0, 0, 0, alpha);

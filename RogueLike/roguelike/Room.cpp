@@ -15,12 +15,12 @@ void loadRoomTile()
 	for (int i = 0; i < TILEOFF_NUM; i++)
 		maps[i] = (MapTile*)malloc(sizeof(MapTile) * 1);
 
-	setRoomTile();
+	newRoomTile();
 }
 
 bool randomOffCheck[TILEOFF_NUM];
 int conectCount = 0;
-void setRoomTile()
+void newRoomTile()
 {
 	int m[MAPTILE_NUM];
 	conectCount = 0;
@@ -254,9 +254,10 @@ void passTileAnimation(float dt)
 				else if (maps[i]->rgTile[j] == WALLTILE)setRGBA(WALLTILE_RGBA);
 				else if (maps[i]->rgTile[j] == FALLTILE)setRGBA(FALLTILE_RGBA);
 				setRGBA(0, 0, 0, 0.7f);
-				fillRect(maps[i]->tileOff.x + pc->camPosition.x + setPos.x + RGTILE_Width * (j % RGTILE_X),
-					maps[i]->tileOff.y + pc->camPosition.y + setPos.y + RGTILE_Height * (j / RGTILE_X),
-					RGTILE_Width, RGTILE_Height);
+				iPoint p = maps[i]->tileOff + pc->camPosition + setPos +
+							iPointMake(	RGTILE_Width * (j % RGTILE_X),
+										RGTILE_Height * (j / RGTILE_X));
+				fillRect(p.x, p.y, RGTILE_Width, RGTILE_Height);
 			}
 		}
 	}
@@ -441,7 +442,7 @@ void wallCheck(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float half
 void findMoveTile(MapTile* tile, iPoint& moveTileNum);
 bool fallCheck(MapTile* tile, float dt)
 {
-	// 임시 - 낭떨어지에 진입시 가장 가까이있는 타일로 이동 
+	// 임시 - 낭떨어지에 진입시 가장 가까이있는 타일로 이동  - 어색함
 	// 라이프 감소
 	// 잠시 무적
 	if (tile->rgTile == NULL)

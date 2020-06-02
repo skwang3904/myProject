@@ -14,6 +14,12 @@
 #define RANGE_NUM 0
 #define TOTAL_WP_NUM MELEE_NUM + RANGE_NUM
 
+#define NOMALSWORD	0
+#define NOMALSPEAR	1
+#define NOMALCYCLON	2
+
+#define RANGEWEAPON MELEE_NUM + 0
+
 typedef void (*Method_Combat)(float dt, iPoint dropP);
 
 struct PlayerWP {

@@ -16,7 +16,7 @@ bool nextStage = false;
 void createStage()
 {
 	int i,j;
-	setRoomTile();
+	newRoomTile();
 
 	// monster init
 	for (i = 0; i < 1; i++)
@@ -37,7 +37,8 @@ void createStage()
 		}
 	}
 
-	int pcTile = pc->initPlayerPosition();
+
+	uint8 pcTile = pc->initPlayerPosition();
 	setEnemyPosition(pcTile);
 	//setNextDoor(pcTile);
 

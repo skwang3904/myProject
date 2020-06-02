@@ -2,11 +2,6 @@
 
 #include "iStd.h"
 
-void loadPlayerUI();
-void freePlayerUI();
-void drawPlayerUI(float dt);
-bool keyPlayerUI(iKeyState stat, iPoint point);
-
 /////////////////////////////////////////////////////////
 
 extern iPopup* popHP;
@@ -27,6 +22,7 @@ bool keyPopMiniMap(iKeyState stat, iPoint point);
 
 /////////////////////////////////////////////////////////
 
+#define CombatMenu_Pos iPointMake(1600, 400)
 void createPopCombatMenu();
 void freePopCombatMenu();
 void showPopCombatMenu(bool show);

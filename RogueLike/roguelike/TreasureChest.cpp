@@ -18,94 +18,6 @@ iImage* imgCommonChest;
 iImage* imgRareChest;
 iImage* imgUniqueChest;
 
-void basicChestImg()
-{
-	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(100, 100);
-	g->init(size);
-
-	setRGBA(0.5f, 1, 0.5f, 1);
-	g->fillRect(0,0,size.width,size.height, 10);
-	
-	Texture* tex = g->getTexture();
-	iImage* img = new iImage();
-	img->addObject(tex);
-	freeImage(tex);
-
-	imgBasicChest = img;
-}
-
-void commonChestImg()
-{
-	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(100, 100);
-	g->init(size);
-
-	setRGBA(0.5f, 1, 0.5f, 1);
-	g->fillRect(0, 0, size.width, size.height, 30);
-
-	Texture* tex = g->getTexture();
-	iImage* img = new iImage();
-	img->addObject(tex);
-	freeImage(tex);
-
-	imgCommonChest = img;
-}
-
-void rareChestImg()
-{
-	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(100, 100);
-	g->init(size);
-
-	setRGBA(0.5f, 1, 0.5f, 1);
-	g->fillRect(0, 0, size.width, size.height, 50);
-
-	Texture* tex = g->getTexture();
-	iImage* img = new iImage();
-	img->addObject(tex);
-	freeImage(tex);
-
-	imgRareChest = img;
-}
-
-void uniqueChestImg()
-{
-	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(100, 100);
-	g->init(size);
-
-	setRGBA(0.5f, 1, 0.5f, 1);
-	g->fillRect(0, 0, size.width, size.height, 70);
-
-	Texture* tex = g->getTexture();
-	iImage* img = new iImage();
-	img->addObject(tex);
-	freeImage(tex);
-
-	imgUniqueChest = img;
-}
-
-//------------------------------------------------------------------------------
-
-void createChestImg()
-{
-	basicChestImg();
-	commonChestImg();
-	rareChestImg();
-	uniqueChestImg();
-}
-
-void freeChestImg()
-{
-	delete imgBasicChest;
-	delete imgCommonChest;
-	delete imgRareChest;
-	delete imgUniqueChest;
-}
-
-//------------------------------------------------------------------------------
-
 void openChestBasic(Chest* me);
 
 Chest::Chest(ChestType ct)
@@ -122,53 +34,26 @@ Chest::Chest(ChestType ct)
 			break;
 		}
 	}
-	
-	items = (UseItem**)malloc(sizeof(UseItem*) * 3);	
-	switch (ct)
-	{
-	case basic:
-	{
-		for (int i = 0; i < 3; i++)
-		{
-			img = imgBasicChest->copy();
-			items[i] = new UseItem(coin);
-		}
-		break;
-	}
-	case common:
-	{
-		for (int i = 0; i < 3; i++)
-		{
-			img = imgCommonChest->copy();
-			items[i] = new UseItem(healing);
-		}
-		break;
-	}
-	case rare:
-	{
-		for (int i = 0; i < 3; i++)
-		{
-			img = imgRareChest->copy();
-			items[i] = new UseItem(powerUp);
-		}
-		break;
-	}
-	case unique:
-	{
-		for (int i = 0; i < 3; i++)
-		{
-			img = imgUniqueChest->copy();
-			items[i] = new UseItem(coin);
-		}
-		break;
-	}
-	default:
-		break;
-	}
+
+	struct TmpType {
+		iImage* img;
+		itemType it;
+	};
+	TmpType tt[4] = {
+		{imgBasicChest, coin},
+		{imgCommonChest, healing },
+		{imgRareChest, powerUp},
+		{imgUniqueChest, coin }
+	};
+	TmpType* t = &tt[ct];
+
+	img = t->img->copy();
+
+	items = (UseItem**)malloc(sizeof(UseItem*) * 3);
+	for (int i = 0; i < 3; i++)
+		items[i] = new UseItem(t->it);
 
 	touchRect = iRectMake(pos.x, pos.y, img->tex->width, img->tex->height);
-
-	weapons = NULL;
 
 	open = false;
 	openMethod = openChestBasic;
@@ -229,7 +114,27 @@ void Chest::paint(float dt)
 
 void createChest()
 {
-	createChestImg();
+	iGraphics* g = iGraphics::instance();
+	iImage* imgs[4];
+	for(int i=0; i<4; i++)
+	{
+		iSize size = iSizeMake(100, 100);
+		g->init(size);
+
+		setRGBA(0.5f, 1, 0.5f, 1);
+		g->fillRect(0, 0, size.width, size.height, 10 + 20 * i);
+
+		Texture* tex = g->getTexture();
+		iImage* img = new iImage();
+		img->addObject(tex);
+		freeImage(tex);
+		imgs[i] = img;
+	}
+	imgBasicChest = imgs[0];
+	imgCommonChest = imgs[1];
+	imgRareChest = imgs[2];
+	imgUniqueChest = imgs[3];
+
 	basicChect = new Chest(basic);
 	CommonChect = new Chest(common);
 	RareChect = new Chest(rare);
@@ -238,7 +143,11 @@ void createChest()
 
 void freeChest()
 {
-	freeChestImg();
+	delete imgBasicChest;
+	delete imgCommonChest;
+	delete imgRareChest;
+	delete imgUniqueChest;
+
 	delete basicChect;
 	delete CommonChect;
 	delete RareChect;

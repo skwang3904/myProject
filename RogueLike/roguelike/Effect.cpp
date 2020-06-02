@@ -109,33 +109,34 @@ bool FireBall::hitFireBall(iRect& rt)
 
 void createEffect()
 {
-	iImage* img = new iImage();
+	iImage* imgFire = new iImage();
 	for (int i = 0; i < 61; i++)
-	{		
+	{
 		Texture* tex = createImage("assets/effect/fireball/3/1_%d.png", i);
-		img->addObject(tex);
+		imgFire->addObject(tex);
 		freeImage(tex);
 	}
 
-	img->_aniDt = 0.04f;
-	img->animation = true;
-	img->_repeatNum = 0;
-	img->lockAngle = true;
-	imgFireBall = img;
+	imgFire->_aniDt = 0.04f;
+	imgFire->animation = true;
+	imgFire->_repeatNum = 0;
+	imgFire->lockAngle = true;
+	imgFireBall = imgFire;
 
 	//----------------------------------------------------------------------------------------
 	
-	iImage* img1 = new iImage();
+	iImage* imgCharge = new iImage();
 	for (int i = 0; i < 20; i++)
-	{	
+	{
 		Texture* tex = createImage("assets/effect/charge fire/6800%02d.png", i);
-		img1->addObject(tex);
+		imgCharge->addObject(tex);
 		freeImage(tex);
 	}
 
-	img1->_repeatNum = 1;
-	img1->_aniDt = 0.1f;
-	imgChargeFire = img1;
+	imgCharge->_repeatNum = 1;
+	imgCharge->_aniDt = 0.1f;
+
+	imgChargeFire = imgCharge;
 }
 
 void freeEffect()

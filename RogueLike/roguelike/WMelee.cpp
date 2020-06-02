@@ -43,47 +43,48 @@ void meleeWeapon::init(
 
 void createMeleeWeapon()
 {
-	const char* strPath[3] = {
-	"assets/weapon/hammer%d.png",
-	"assets/weapon/upg_spear%d.png",
-	"assets/weapon/upg_axeDouble%d.png",
-	};
-	iImage* imgs[3];
-	for (int i = 0; i < 3; i++)
+	nomalHammer = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
+	iImage* imgHammer = new iImage();
+
+	//-----------------------------------------------------------
+
+	nomalSpear = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
+	iImage* imgSpear = new iImage();
+
+	//-----------------------------------------------------------
+
+	nomalCyclone = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
+	iImage* imgCyclon= new iImage();
+
+	//-----------------------------------------------------------
+
+	for (int i = 0; i < 2; i++)
 	{
-		imgs[i] = new iImage();
-		for (int j = 0; j < 2; j++)
-		{
-			Texture* tex = createImage(strPath[i], j);
-			imgs[i]->addObject(tex);
-			freeImage(tex);
-		}
+		Texture* texHammer = createImage("assets/weapon/hammer%d.png",i);
+		Texture* texSpear = createImage("assets/weapon/upg_spear%d.png",i);
+		Texture* texCyclon = createImage("assets/weapon/upg_axeDouble%d.png",i);
+		
+		imgHammer->addObject(texHammer);
+		imgSpear->addObject(texSpear);
+		imgCyclon->addObject(texCyclon);
+
+		freeImage(texHammer);
+		freeImage(texSpear);
+		freeImage(texCyclon);
 	}
 
 	//info, img, ismelee, attackDmg, attackSpeed, widthReach, heightReach, holeAngle
-
 	char swordInfo[32] = "Hammer\nHammer\nHammer\nHammer";
-	nomalHammer = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
-	nomalHammer->init(swordInfo, imgs[0], 30, 0.3f, 30.0f, 60.0f, -30.0f);
-
-	//-----------------------------------------------------------
-
 	char spearInfo[64] = "Spear\nSpear\nSpear\nSpear\nSpear";
-	nomalSpear = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
-	nomalSpear->init(spearInfo, imgs[1], 30, 0.2f, 10.0f, 70.0f, -45.0f);
-
-
-	//-----------------------------------------------------------
-
 	char cycleonInfo[32] = "Cyclone";
-	nomalCyclone = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
-	nomalCyclone->init(cycleonInfo, imgs[2], 30, 0.5f, 30.0f, 50.0f, -70.0f);
 
-	//-----------------------------------------------------------
+	nomalHammer->init(swordInfo, imgHammer, 30, 0.3f, 30.0f, 60.0f, -30.0f);
+	nomalSpear->init(spearInfo, imgSpear, 30, 0.2f, 10.0f, 70.0f, -45.0f);
+	nomalCyclone->init(cycleonInfo, imgCyclon, 30, 0.5f, 30.0f, 50.0f, -70.0f);
 
-	PWP[0] = { nomalHammer,nomalHammerMethod };
-	PWP[1] = { nomalSpear,nomalSpearMethod };
-	PWP[2] = {  nomalCyclone,nomalCycloneMethod };
+	PWP[NOMALSWORD] = { nomalHammer,nomalHammerMethod };
+	PWP[NOMALSPEAR] = { nomalSpear,nomalSpearMethod };
+	PWP[NOMALCYCLON] = {  nomalCyclone,nomalCycloneMethod };
 
 	for (int i = 0; i < MELEE_NUM; i++)
 	{

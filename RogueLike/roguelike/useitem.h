@@ -15,6 +15,8 @@ enum itemType{
 	powerUp,
 	atkSpeedUp,
 	moveSpeedUp,
+
+	itemTypeMax
 };
 
 class UseItem 
@@ -31,6 +33,7 @@ public:
 	//습득시 애니메이션
 
 public:
+	itemType type;
 	iImage* img;
 
 	bool alive;
@@ -44,7 +47,6 @@ public:
 	iPoint drawitemPos;
 	iRect touchItem;
 
-	itemType type;
 };
 
  //----------------------------------------------------------------------------

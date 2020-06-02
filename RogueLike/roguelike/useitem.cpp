@@ -12,43 +12,14 @@ iImage* imgMoveSpeedUp;
 #define ANIDT 2.0f
 UseItem::UseItem(itemType it)
 {
-    switch (it)
-    {
-    case coin:
-    {
-        img = imgCoin->copy();
-        break;
-    }
-    case healing:
-    {
-        img = imgPotion->copy();
-        break;
-    }
-    case powerUp:
-    {
-        img = imgPowerUp->copy();
-        break;
-    }
-    case atkSpeedUp:
-    {
-        img = imgAtkSpeedUp->copy();
-        break;
-    }
-    case moveSpeedUp:
-    {
-        img = imgMoveSpeedUp->copy();
-        break;
-    }
-    default:
-    {
-        img = imgPotion->copy();
-        break;
-    }
-    }
+    type = it;
+    iImage* imgs[itemTypeMax] = {
+        imgCoin, imgPotion, imgPowerUp, imgAtkSpeedUp, imgMoveSpeedUp
+    };
+    img = imgs[it]->copy();
 
     alive = false;
     value = 0.0f;
-    type = it;
 
     sp = iPointZero;
     aniHeight = 50.0f;
@@ -153,24 +124,23 @@ void createItemImg()
         "assets/item/potionRed.png",
         "assets/item/coin.png",
         "assets/item/gemRed.png",
-        "assets/item/gemGreen.png",
-        "assets/item/gemBlue.png",
+        "assets/item/gemRed.png",
+        "assets/item/gemRed.png"
     };
-
     iImage* imgs[5];
     for (int i = 0; i < 5; i++)
     {
-        imgs[i] = new iImage();
+        iImage* img = new iImage();
         Texture* tex = createImage(strPath[i]);
-        imgs[i]->addObject(tex);
+        img->addObject(tex);
         freeImage(tex);
+        imgs[i] = img;
     }
-
-   imgPotion =      imgs[0];
-   imgCoin =        imgs[1];
-   imgPowerUp =     imgs[2];
-   imgAtkSpeedUp =  imgs[3];
-   imgMoveSpeedUp = imgs[4];
+    imgPotion = imgs[0];
+    imgCoin = imgs[1];
+    imgPowerUp = imgs[2];
+    imgAtkSpeedUp = imgs[3];
+    imgMoveSpeedUp = imgs[4];
 }
 
 void freeItemImg()

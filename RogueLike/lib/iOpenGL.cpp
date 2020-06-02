@@ -183,6 +183,10 @@ void applyTexParameters()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, texParam.wrapT);
 }
 
+#ifdef _DEBUG
+int texNum = 0;
+#endif // _DEBUG
+
 Texture* createImageWithRGBA(GLubyte* rgba, GLuint width, GLuint height)
 {
 	GLuint texID;
@@ -204,6 +208,9 @@ Texture* createImageWithRGBA(GLubyte* rgba, GLuint width, GLuint height)
 	tex->potHeight = potHeight;
 	tex->retainCount = 1;
 
+#ifdef _DEBUG
+	texNum++;
+#endif // _DEBUG
 	return tex;
 }
 

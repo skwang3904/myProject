@@ -26,3 +26,7 @@ Texture* createImageWithRGBA(GLubyte* rgba, GLuint width, GLuint height);
 	1. compile : header file include (*.obj, *.o)
 	2. link : .lib include (archive *.obj, make lib or exe)
 */
+
+#ifdef _DEBUG
+extern int texNum;
+#endif // _DEBUG

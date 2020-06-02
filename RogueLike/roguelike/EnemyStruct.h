@@ -96,8 +96,17 @@ struct EnemyGolem {
 void createGolemImg();
 void freeGolemImg();
 
-void golemImg();
-void golemEleteImg();
-
 extern EnemyGolem** golems;
 extern EnemyGolem** golemEletes;
+
+struct EnemyImgInfo {
+	const char* strPath;
+	int imgNum;
+	int repeatNum;
+	bool lastFrame;
+	float aniDt;
+};
+
+extern EnemyImgInfo eii[GOLEM_IMG_NUM + GOLEM_ELETE_IMG_NUM];
+
+

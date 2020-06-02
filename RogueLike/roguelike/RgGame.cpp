@@ -56,21 +56,25 @@ void freeRgGame()
 	freeAudio();
 }
 
+bool bCall = false;
+void pauseGame(bool call)
+{
+	bCall = call;
+}
 
 void drawRgGame(float dt)
 {
+	float _dt = dt;
+	if (bCall)
+		dt = 0.0f;
+
 	switch (gamestat) {
 	case gs_intro:	drawRgIntro(dt);	break;
 	case gs_menu:	drawRgMenu(dt);		break;
-	case gs_proc:	
-	{
-		drawRgProc(dt);		
-
-		break;
-	}
+	case gs_proc:	drawRgProc(dt);		break;
 	}
 
-	drawLoading(dt);
+	drawLoading(_dt);
 }
 
 void keyRgGame(iKeyState stat, iPoint point)
@@ -86,3 +90,5 @@ void keyRgGame(iKeyState stat, iPoint point)
 	case gs_proc:	keyRgProc(stat, point);		break;
 	}
 }
+
+

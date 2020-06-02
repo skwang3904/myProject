@@ -1,9 +1,9 @@
 #include "RgProc.h"
 
+#include "loading.h"
+
 #include "Room.h"
 #include "Stage.h"
-
-#include "loading.h"
 
 #include "Weapon.h"
 
@@ -17,35 +17,82 @@
 #include "useitem.h"
 #include "TreasureChest.h"
 
-//--------------------------------------------------------
-
 void loadRgProc()
 {
-
 	createEffect();
-	createItemImg();
 
 	createTileSet();
 	loadRoomTile();
-
-
-	//--------------------------------------------------------
 	numberFont = new numFont();
 	weapon = new Weapon();
 	pc = new Player();
 
+	createItemImg();// createEnemy + createChest
 	createEnemy();
 
 	int pcTile = pc->initPlayerPosition();
 	setEnemyPosition(pcTile);
-
 	createChest();
-	
+
 	//--------------------------------------------------------
 	// pop
-
 	loadRgLoading();
-	loadPlayerUI();
+	createPopHP();
+	createPopMiniMap();
+	createPopCombatMenu();
+	createPopItem();
+	createPopStageNum();
+
+	showPopHP(true);
+	showPopCombatMenu(true);
+	showPopMiniMap(true);
+	showPopItem(true);
+	showPopStageNum(true);
+#if 1
+	for (int i = 0; i < 1000000; i++)
+	{
+		printf("%d\n", i);
+		printf("00000000 = %d\n", texNum);
+		freeEffect();
+		freeTileSet();
+		freeRoomTile();
+
+		delete numberFont;
+		delete weapon;
+		delete pc;
+
+		freeItemImg();
+		freeEnemy();
+		freeChest();
+
+		freeRgLoading();
+		freePopHP();
+		freePopMiniMap();
+		freePopCombatMenu();
+		freePopItem();
+		freePopStageNum();
+
+
+
+		createEffect();
+		createTileSet();
+		loadRoomTile();
+		numberFont = new numFont();
+		weapon = new Weapon();
+		pc = new Player();
+		createItemImg();
+		createEnemy();
+		createChest();
+
+		loadRgLoading();
+		createPopHP();
+		createPopMiniMap();
+		createPopCombatMenu();
+		createPopItem();
+		createPopStageNum();
+		printf("11111111 = %d\n", texNum);
+	}
+#endif
 
 	stage++;
 }
@@ -53,8 +100,6 @@ void loadRgProc()
 void freeRgProc()
 {
 	freeEffect();
-	freeItemImg();
-
 	freeTileSet();
 	freeRoomTile();
 
@@ -62,18 +107,18 @@ void freeRgProc()
 	delete weapon;
 	delete pc;
 
+	freeItemImg();
 	freeEnemy();
-
 	freeChest();
+
 	//--------------------------------------------------------
 	// pop
-
 	freeRgLoading();
-	freePlayerUI();
-
-	//--------------------------------------------------------
-	// test
-
+	freePopHP();
+	freePopMiniMap();
+	freePopCombatMenu();
+	freePopItem();
+	freePopStageNum();
 }
 
 void curtainTile() // 화면가리개
@@ -92,10 +137,6 @@ void curtainTile() // 화면가리개
 
 void drawRgProc(float dt)
 {
-	setRGBA(0, 0, 0, 1);
-	fillRect(0, 0, devSize.width, devSize.height);
-	setRGBA(1, 1, 1, 1);
-
 	drawRoomTile(dt);
 	passTileAnimation(dt);
 	if (passAni)
@@ -103,8 +144,8 @@ void drawRgProc(float dt)
 
 
 	drawNextDoor(dt);
-	if (nextStage)
-		return;
+	//if (nextStage)
+	//	return;
 
 	if (pc->hp < 0.1f)
 	{
@@ -124,20 +165,32 @@ void drawRgProc(float dt)
 	//curtainTile();
 	//drawPlayerUI(dt);
 	curtainTile();
-	if (getLoading() == false)
+	if(getLoading()==false)
 	{
-		drawPlayerUI(dt);
+		//drawPlayerUI(dt);
+		drawPopHP(dt);
+		drawPopMiniMap(dt);
+		drawPopCombatMenu(dt);
+		drawPopItem(dt);
+		drawPopStageNum(dt);
+
+		numberFont->drawFont(devSize.width / 2 + 200, 30, TOP | LEFT, 1, 1, 1, "%d", stage);
 
 		if (nextStage)
 			nextStageAni(dt);
 	}
+
 	//--------------------------------------------------------
 	// test
 }
 
 void keyRgProc(iKeyState stat, iPoint point)
 {
-	if (keyPlayerUI(stat, point))
+	if (keyPopHP(stat, point) ||
+		keyPopCombatMenu(stat, point) ||
+		keyPopMiniMap(stat, point) ||
+		keyPopItem(stat, point) ||
+		keyPopStageNum(stat, point))
 		return;
 
 	switch (stat)

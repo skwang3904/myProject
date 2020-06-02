@@ -88,10 +88,9 @@ void drawLib(Method_Paint method)
 
     // --------------------
     fbo->bind();
+    fbo->clear(0, 0, 0, 1);
 
-    glClearColor(0, 0, 0, 1);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+    setRGBA(1, 1, 1, 1);
     method(delta);
     keyDown = 0;
 
@@ -125,17 +124,6 @@ void drawLib(Method_Paint method)
 			0, 0, tex->width, tex->height, VCENTER | HCENTER,
 			1.0f, 1.0f, 2, 0, REVERSE_HEIGHT);
     }
-
-
-	//--------------------------------------------------------
-	// pop
-
-    if (gamestat == gs_proc)
-    {
-        if (bShowRgLoading(NextStage))
-            return;
-    }
-
 #if 0// minimap
     drawImage(tex, devSize.width - 50, devSize.height - 50,
         0, 0, tex->width, tex->height, BOTTOM | RIGHT,
@@ -433,6 +421,9 @@ Texture* createTexture(int width, int height, bool rgba32f)
     tex->potHeight = height;
     tex->retainCount = 1;
 
+#ifdef _DEBUG
+    texNum++;
+#endif // _DEBUG
     return tex;
 }
 
@@ -742,6 +733,9 @@ void freeImage(Texture* tex)
         return;
     }
     glDeleteTextures(1, &tex->texID);
+#ifdef _DEBUG
+    texNum--;
+#endif // _DEBUG
     free(tex);
 }
 

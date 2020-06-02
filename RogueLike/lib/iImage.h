@@ -22,6 +22,7 @@ public:
 	void startAnimation(IMAGE_METHOD m=0);
 
 	iRect touchRect(iPoint p=iPointMake(0,0));
+	iPoint center(iPoint off=iPointMake(0,0));
 
 	iImage* copy();
 

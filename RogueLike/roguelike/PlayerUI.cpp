@@ -8,65 +8,6 @@
 
 #include "EnemyStruct.h"
 
-void testui() // test
-{
-	for (int i = 0; i < 1000; i++)
-	{
-		printf("i  = %d\n", i);
-		createPopMiniMap();
-		freePopMiniMap();
-	}
-
-}
-//------------------------
-
-void loadPlayerUI()
-{
-	createPopHP();
-	//testui();
-	createPopMiniMap();
-	createPopCombatMenu();
-	createPopItem();
-	createPopStageNum();
-
-	showPopHP(true);
-	showPopCombatMenu(true);
-	showPopMiniMap(true);
-	showPopItem(true);
-	showPopStageNum(true);
-}
-
-void freePlayerUI()
-{
-	freePopHP();
-	freePopMiniMap();
-	freePopCombatMenu();
-	freePopItem();
-	freePopStageNum();
-}
-
-void drawPlayerUI(float dt)
-{
-	drawPopHP(dt);
-	drawPopMiniMap(dt);
-	drawPopCombatMenu(dt);
-	drawPopItem(dt);
-	drawPopStageNum(dt);
-
-	numberFont->drawFont(devSize.width / 2 + 200, 30, TOP | LEFT, 1, 1, 1, "%d", stage);
-}
-
-bool keyPlayerUI(iKeyState stat, iPoint point)
-{
-	if (keyPopHP(stat, point) ||
-		keyPopCombatMenu(stat, point) ||
-		keyPopMiniMap(stat, point) ||
-		keyPopItem(stat, point) ||
-		keyPopStageNum(stat, point))
-		return true;
-	return false;
-}
-
 /////////////////////////////////////////////////////////
 
 iPopup* popHP;
@@ -84,50 +25,27 @@ void createPopHP()
 		"assets/PlayerUI/Bar_BG.png",
 		"assets/PlayerUI/Bar.png",
 		"assets/PlayerUI/Bar_Fill_Green.png",
-		"assets/PlayerUI/Bar_Fill_Red.png",
+		"assets/PlayerUI/Bar_Fill_Red.png"
 	};
-
-	iPoint iconPoint = iPointMake(100, 30);
-	iPoint barPoint = iconPoint + iPointMake(140, 0);
 	iImage* imgs[6];
+	iImage* img;
+	Texture* tex;
 	for (int i = 0; i < 6; i++)
 	{
-		imgs[i] = new iImage();
-		Texture* tex = createImage(strPath[i]);
-		imgs[i]->addObject(tex);
+		tex = createImage(strPath[i]);
+		img = new iImage();
+		img->addObject(tex);
 		freeImage(tex);
-
-		if (i == 0)
-		{
-			imgs[i]->position = iconPoint;
-		}
-		else if (i == 1)
-		{
-			imgs[i]->position = imgs[0]->position + iPointMake((imgs[0]->tex->width - imgs[1]->tex->width) / 2,
-				(imgs[0]->tex->height - imgs[1]->tex->height) / 2 + 5);
-		}
-		else if (i == 2)
-		{
-			imgs[i]->position = barPoint;
-		}
-		else if (i == 3)
-		{
-			imgs[i]->position = imgs[2]->position + iPointMake((imgs[2]->tex->width - imgs[3]->tex->width) / 2,
-				(imgs[2]->tex->height - imgs[3]->tex->height) / 2);
-		}
-		else if (i == 4)
-		{
-			imgs[i]->position = imgs[3]->position;
-			imgHPgageGreen = imgs[i];
-		}
-		else if (i == 5)
-		{
-			imgs[i]->position = imgs[3]->position;
-			imgHPgageRed = imgs[i];
-		}
-
-		pop->addObject(imgs[i]);
+		if (i == 0)			img->position = iPointMake(100, 30);
+		else if (i == 1)	img->position = imgs[0]->center() - iPointMake(tex->width / 2, tex->height / 2 + 5);
+		else if (i == 2)	img->position = imgs[0]->position + iPointMake(140, 30);
+		else if (i == 3)	img->position = imgs[2]->center() - iPointMake(tex->width / 2, tex->height / 2 + 5);
+		else				img->position = imgs[3]->position;
+		pop->addObject(img);
+		imgs[i] = img;
 	}
+	imgHPgageGreen = imgs[4];
+	imgHPgageRed = imgs[5];
 }
 
 void freePopHP()
@@ -247,6 +165,7 @@ void createPopMiniMap()
 	texMiniMap = createTexture(devSize.width, devSize.height);
 	iImage* img = new iImage();
 	imgMiniMap = img;
+
 	img->addObject(texMiniMap);
 	freeImage(texMiniMap);
 
@@ -285,6 +204,12 @@ void drawPopMiniMap(float dt)
 			minitile = MINIMAPTILE;
 		}
 	}
+
+	//if (prevTileNum != pc->tileNumber)
+	//{
+	//	//imgMiniMap = refreshMiniMap();
+	//	prevTileNum = pc->tileNumber;
+	//}
 
 	refreshMiniMap();
 	popMiniMap->paint(dt);
@@ -372,44 +297,40 @@ void createPopCombatMenu()
 	iPopup* pop = new iPopup(iPopupStyleNone);
 	popCombatMenu = pop;
 
-	iImage* imgCombatMenu = new iImage();
-	Texture* texCombatMenu = createImage("assets/PlayerUI/inven button1.png");
-	imgCombatMenu->addObject(texCombatMenu);
-	freeImage(texCombatMenu);
-
-	iPoint p = iPointMake(1600, 400);
-	imgCombatMenu->position = p;
-	pop->addObject(imgCombatMenu);
+	iImage* img = new iImage();
+	Texture* tex = createImage("assets/PlayerUI/inven button1.png");
+	img->addObject(tex);
+	freeImage(tex);
+	img->position = CombatMenu_Pos;
+	pop->addObject(img);
 
 	for (int i = 1; i < 8; i++)
 	{
-		iImage* imgCombatMenu1 = imgCombatMenu->copy();
-		imgCombatMenu1->position = p + iPointMake(150 * (i % 2), 150 * (i / 2));
-		pop->addObject(imgCombatMenu1);
+		iImage* tmp = img->copy();
+		tmp->position = CombatMenu_Pos +iPointMake(150 * (i % 2), 150 * (i / 2));
+		pop->addObject(tmp);
 	}
 
 	//---------------------------------------------------------------------------
 	// info
-	iPopup* popInfo = new iPopup(iPopupStyleNone);
-	popCombatInfo = popInfo;
+	pop = new iPopup(iPopupStyleNone);
+	popCombatInfo = pop;
 
-	iImage* imgButten = new iImage();
-	imgInfoButten = imgButten;
+	img = new iImage();
+	img->addObject(setCombatInfo(0));
+	img->position = CombatMenu_Pos + iPointMake(-350, 0);
+	pop->addObject(img);
+	imgCombatInfo = img;
 
-	Texture* texButten = createImage("assets/PlayerUI/check button.png");
-	imgButten->addObject(texButten);
-	freeImage(texButten);
+	img = new iImage();
+	tex = createImage("assets/PlayerUI/check button.png");
+	img->addObject(tex);
+	freeImage(tex);
+	img->position = imgCombatInfo->position + iPointMake(250, 0);
+	pop->addObject(img);
+	imgInfoButten = img;
 
-	imgCombatInfo = new iImage();
-	imgCombatInfo->tex = setCombatInfo(0);
-	imgCombatInfo->position = p + iPointMake(-350, 0);
-
-	imgButten->position = imgCombatInfo->position + iPointMake(250, 0);
-
-	popInfo->addObject(imgCombatInfo);
-	popInfo->addObject(imgButten);
-
-	popInfo->_showDt = 0.01f;
+	pop->_showDt = 0.01f;
 }
 
 void freePopCombatMenu()
@@ -471,7 +392,7 @@ bool keyPopCombatMenu(iKeyState stat, iPoint point)
 	{
 		for (int i = 0; i < pc->weaponArray->count; i++)
 		{
-			iPoint	p = iPointMake(1600 + 150 * (i % 2),400 + 150 * (i / 2));
+			iPoint	p = CombatMenu_Pos + iPointMake(150 * (i % 2), 150 * (i / 2));
 			iRect rt = iRectMake(p.x, p.y, 128, 128);
 			if (containPoint(point, rt))
 			{
@@ -497,6 +418,7 @@ bool keyPopCombatMenu(iKeyState stat, iPoint point)
 //---------------------------------------------------------------------------
 
 iPopup* popItem;
+//iImage* coinimgtest;
 
 void createPopItem()
 {
@@ -508,8 +430,10 @@ void createPopItem()
 		"assets/icons/Money.png",
 		"assets/icons/attackDmg.png",
 		"assets/icons/attackSpeed.png",
-		"assets/icons/moveSpeed.png",
+		"assets/icons/moveSpeed.png"
 	};
+	iPoint pos[5] = { {20, 170}, {20, 270}, {20, 370}, {20, 470}, {20, 570}, };
+	float ratio[5] = { 0.25f,0.25f,0.25f,0.25f,0.25f, };
 
 	for (int i = 0; i < 5; i++)
 	{
@@ -517,10 +441,8 @@ void createPopItem()
 		Texture* tex = createImage(strPath[i]);
 		img->addObject(tex);
 		freeImage(tex);
-
-		img->position = iPointMake(20, 170 + 100 * i);
-		img->ratio = 0.25f;
-
+		img->position = pos[i];
+		img->ratio = ratio[i];
 		pop->addObject(img);
 	}
 }
@@ -528,6 +450,7 @@ void createPopItem()
 void freePopItem()
 {
 	delete popItem;
+	//delete coinimgtest;
 }
 
 void showPopItem(bool show)
@@ -571,8 +494,6 @@ void createPopStageNum()
 	iPopup* pop = new iPopup(iPopupStyleNone);
 	popStageNum = pop;
 
-	iImage* img = new iImage();
-
 	iGraphics* g = iGraphics::instance();
 	iSize size = iSizeMake(400, 100);
 	g->init(size);
@@ -588,9 +509,9 @@ void createPopStageNum()
 	g->drawString(size.width / 2, size.height / 2, VCENTER | HCENTER, "STAGE");
 
 	Texture* tex = g->getTexture();
+	iImage* img = new iImage();
 	img->addObject(tex);
 	freeImage(tex);
-
 	img->position = iPointMake(devSize.width / 2 -100, 0);
 	pop->addObject(img);
 }

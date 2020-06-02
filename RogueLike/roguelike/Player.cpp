@@ -25,98 +25,11 @@ Player::~Player()
 	delete weaponArray;
 
 	for (int i = 0; i < 10; i++)
-		delete img[i];
+	{
+		if (img[i])
+			delete img[i];
+	}
 	free(img);
-}
-
-void Player::createPlayerImage()
-{
-	iImage* imgRight = new iImage();
-	Texture** texsRight = createDivideImage(10, 1, "assets/char/CharBodyR.png");	// 좌우 10개
-	for (int i = 0; i < 10; i++)
-	{
-		imgRight->addObject(texsRight[i]);
-		freeImage(texsRight[i]);
-	}
-	free(texsRight);
-	imgRight->animation = true;
-	imgRight->_aniDt = 0.05f;
-	imgRight->_repeatNum = 0;
-
-	iImage* imgDown = new iImage();
-	Texture** texsDown = createDivideImage(10, 1, "assets/char/CharBodyUD.png");	// 상하 10개
-	for (int i = 0; i < 10; i++)
-	{
-		imgDown->addObject(texsDown[i]);
-		freeImage(texsDown[i]);
-	}
-	free(texsDown);
-	imgDown->animation = true;
-	imgDown->_aniDt = 0.05f;
-	imgDown->_repeatNum = 0;
-
-	iImage* imgHead[4];																// 머리 상하좌우
-	Texture** texsHead = createDivideImage(8, 1, "assets/char/CharHead.png");		// 머리 4방향 각 2개
-	for (int i = 0; i < 4; i++)
-	{
-		imgHead[i] = new iImage();
-		for (int j = 0; j < 2; j++)
-		{
-			imgHead[i]->addObject(texsHead[2 * i + j]);
-			freeImage(texsHead[2 * i + j]);
-		}
-	}
-	free(texsHead);
-
-	iImage* imgFall = new iImage();
-	Texture** texsFall = createDivideImage(4, 1, "assets/char/CharJump.png");		// 낙하모션 4개
-	for (int i = 0; i < 4; i++)
-	{
-		imgFall->addObject(texsFall[i]);
-		freeImage(texsFall[i]);
-	}
-	free(texsFall);
-	imgFall->_aniDt = 0.15f; // img 4개
-	imgFall->_repeatNum = 1;
-	imgFall->_selectedDt = imgFall->_aniDt * 4.0f;
-	imgFall->selectedScale = 0.5f;
-
-	iImage* imgEvasion = new iImage();
-	Texture** texsEvasion = createDivideImage(4, 1, "assets/char/CharJump.png");	// 회피모션 4개
-	for (int i = 0; i < 4; i++)
-	{
-		imgEvasion->addObject(texsEvasion[i]);
-		freeImage(texsEvasion[i]);
-	}
-	free(texsEvasion);
-	imgEvasion->_aniDt = EVASION_DURATION / 4.0f;
-	imgEvasion->_repeatNum = 1;
-
-	img = (iImage**)malloc(sizeof(iImage*) * 10);
-
-	// 0, 1 몸 정지모션
-	img[0] = new iImage(); img[0]->addObject(imgRight->tex);
-	img[1] = new iImage(); img[1]->addObject(imgDown->tex);
-
-	// 2, 3 몸 애니메이션
-	img[2] = imgRight;
-	img[3] = imgDown;
-
-	// 4 머리 애니메이션
-	img[4] = imgHead[3];	//left
-	img[5] = imgHead[1];	//right
-	img[6] = imgHead[2];	//up
-	img[7] = imgHead[0];	//down
-
-	img[8] = imgFall;
-
-	img[9] = imgEvasion;
-
-	for (int i = 0; i < 10; i++)
-	{
-		if (img[i] == NULL)
-			printf("player img[%d] error", i);
-	}
 }
 
 void Player::initPlayerStat()
@@ -156,7 +69,7 @@ void Player::initPlayerStat()
 	coin = 0;
 }
 
-int Player::initPlayerPosition()
+uint8 Player::initPlayerPosition()
 {
 	uint8 pcTile = 0;
 	for (int i = 0; i < TILEOFF_NUM; i++)
@@ -173,6 +86,99 @@ int Player::initPlayerPosition()
 		}
 	}
 	return tileNumber;
+}
+
+void Player::createPlayerImage()
+{
+	iImage* imgRight = new iImage();
+	Texture** texs = createDivideImage(10, 1, "assets/char/CharBodyR.png");	// 좌우 10개
+	for (int i = 0; i < 10; i++)
+	{
+		imgRight->addObject(texs[i]);
+		freeImage(texs[i]);
+	}
+	free(texs);
+	imgRight->startAnimation();
+	imgRight->_aniDt = 0.05f;
+	imgRight->_repeatNum = 0;
+
+	iImage* imgDown = new iImage();
+	texs = createDivideImage(10, 1, "assets/char/CharBodyUD.png");	// 상하 10개
+	for (int i = 0; i < 10; i++)
+	{
+		imgDown->addObject(texs[i]);
+		freeImage(texs[i]);
+	}
+	free(texs);
+	imgDown->startAnimation();
+	imgDown->_aniDt = 0.05f;
+	imgDown->_repeatNum = 0;
+
+	iImage** imgHead = (iImage**)malloc(sizeof(iImage*) * 4);			// 머리 상하좌우
+	texs = createDivideImage(8, 1, "assets/char/CharHead.png");		// 머리 4방향 각 2개
+	for (int i = 0; i < 4; i++)
+	{
+		imgHead[i] = new iImage();
+		for (int j = 0; j < 2; j++)
+		{
+			imgHead[i]->addObject(texs[2 * i + j]);
+			freeImage(texs[2 * i + j]);
+		}
+	}
+	free(texs);
+
+	iImage* imgFall = new iImage();
+	texs = createDivideImage(4, 1, "assets/char/CharJump.png");		// 낙하모션 4개
+	for (int i = 0; i < 4; i++)
+	{
+		imgFall->addObject(texs[i]);
+		freeImage(texs[i]);
+	}
+	free(texs);
+	imgFall->_aniDt = 0.15f; // img 4개
+	imgFall->_repeatNum = 1;
+	imgFall->_selectedDt = imgFall->_aniDt * 4.0f;
+	imgFall->selectedScale = 0.5f;
+
+	iImage* imgEvasion = new iImage();
+	texs = createDivideImage(4, 1, "assets/char/CharJump.png");	// 회피모션 4개
+	for (int i = 0; i < 4; i++)
+	{
+		imgEvasion->addObject(texs[i]);
+		freeImage(texs[i]);
+	}
+	free(texs);
+	imgEvasion->_aniDt = EVASION_DURATION / 4.0f;
+	imgEvasion->_repeatNum = 1;
+	//imgEvasion->_selectedDt = imgEvasion->_aniDt * 4.0f;
+	//imgEvasion->angle = 720.0f;
+
+	img = (iImage**)malloc(sizeof(iImage*) * 10);
+	// 0, 1 몸 정지모션
+	img[0] = new iImage(); img[0]->addObject(imgRight->tex);
+	img[1] = new iImage(); img[1]->addObject(imgDown->tex);
+
+	// 2, 3 몸 애니메이션
+	img[2] = imgRight;
+	img[3] = imgDown;
+
+	// 4 머리 애니메이션
+	img[4] = imgHead[3];	//left
+	img[5] = imgHead[1];	//right
+	img[6] = imgHead[2];	//up
+	img[7] = imgHead[0];	//down
+	free(imgHead);
+
+	img[8] = imgFall;
+
+	img[9] = imgEvasion;
+#if _DEBUG
+	for (int i = 0; i < 10; i++)
+	{
+		if (img[i] == NULL)
+			printf("player imgChar[%d] error", i);
+	}
+#endif
 }
 
 bool Player::actionCheck(bool key)
@@ -217,6 +223,15 @@ void Player::drawPlayer(float dt)
 	dropCombat(dt, getKeyDown(keyboard_o));
 }
 
+void Player::showHpBar(float dt) // 임시
+{
+	setRGBA(0, 0, 0, 1);
+	fillRect(drawPos.x, drawPos.y - 30, HALF_OF_TEX_WIDTH * 2, 15);
+	setRGBA(0, 1, 0, 1);
+	fillRect(drawPos.x, drawPos.y - 30, HALF_OF_TEX_WIDTH * 2 * hp / _hp, 15);
+	setRGBA(1, 1, 1, 1);
+}
+
 void Player::combatDraw(float dt)
 {
 	pwp->method(dt, iPointZero);
@@ -238,10 +253,10 @@ void Player::rootCombat(bool key)
 				if (containRect(touchPlayer, mw->hitBox))
 				{
 					weaponArray->addObject(pwa);
-					pwpCount = weaponArray->count - 1;
 					pwp = pwa;
 					pwa->pos = iPointZero;
 					pwa->drop = false;
+					pwpCount = weaponArray->count - 1;
 					break;
 				}
 			}
@@ -405,11 +420,10 @@ void Player::paint(float dt)
 
 	wallCheck(false, tile, pc->playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
 
-	iImage* imgHead = img[headNum];
-	imgHead->setTexAtIndex(pc->act == attacking ? true : false);
+	img[headNum]->setTexAtIndex(pc->act == attacking ? true : false);
 	drawPos = playerPosition + camPosition + setPos;
 
-	//히트박스-------------------------------
+	//히트박스 표시-------------------------------
 	drawtouchPlayer();
 
 	if (mv.x)
@@ -420,10 +434,13 @@ void Player::paint(float dt)
 	else if (mv.y)
 		img[2 * ani + 1]->paint(dt, drawPos);
 
-	drawImage(imgHead->tex, drawPos.x + HALF_OF_TEX_WIDTH, drawPos.y + 3,
-		0, 0, imgHead->tex->width, imgHead->tex->height,
+	drawImage(img[headNum]->tex, drawPos.x + HALF_OF_TEX_WIDTH, drawPos.y + 3,
+		0, 0, img[headNum]->tex->width, img[headNum]->tex->height,
 		VCENTER | HCENTER, 1.0f, 1.0f,
-		imgHead->location, imgHead->angle, REVERSE_NONE);
+		img[headNum]->location, img[headNum]->angle, REVERSE_NONE);
+
+
+
 }
 
 bool Player::evasionPlayer(MapTile* tile, float dt)
@@ -453,10 +470,33 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 		iPoint mp = evasV * (EVASION_DISTANCE * dt);
 		wallCheck(false, tile, playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
 
+		//drawPos = playerPosition + camPosition + setPos;
 		iPoint dp = playerPosition + iPointMake(0,-30) + camPosition + setPos;
 		iPoint p = iPointMake(dp.x - HALF_OF_TEX_WIDTH/2,
 			dp.y - HALF_OF_TEX_HEIGHT);
 		
+		//if (evasV.x < 0)
+		//{
+		//	img[9]->reverseRotate = false;
+		//	img[9]->location = 2;
+		//}
+		//else if (evasV.x > 0)
+		//{
+		//	img[9]->reverseRotate = true;
+		//	img[9]->location = 2;
+		//}
+		//if (evasV.y < 0)
+		//{
+		//	img[9]->reverseRotate = false;
+		//	img[9]->location = 1;
+		//}
+		//else if (evasV.y > 0)
+		//{
+		//	img[9]->reverseRotate = true;
+		//	img[9]->location = 1;
+		//}
+		//img[9]->selected = true;
+
 		//히트박스 표시-------------------------------
 		drawtouchPlayer();
 
@@ -464,6 +504,7 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 		
 		return true;
 	}
+
 	else if (img[Player_imgEvasion]->animation == false)
 	{
 		act = idle;

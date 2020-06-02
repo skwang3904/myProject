@@ -7,7 +7,7 @@
 */
 
 void loadRoomTile();
-void setRoomTile();
+void newRoomTile();
 void freeRoomTile();
 void drawRoomTile(float dt);
 

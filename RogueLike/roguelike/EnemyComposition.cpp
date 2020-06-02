@@ -25,7 +25,7 @@ iPoint enemyPos[16] = {
 {RGTILE_Width * 25, RGTILE_Height * 18}, 
 };
 
-void setEnemyPosition(int pcTile)
+void setEnemyPosition(uint8 pcTile)
 {
 	int i, j, num = 0;
 	int activeTile[MAPTILE_NUM];

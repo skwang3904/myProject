@@ -56,7 +56,7 @@ void freeRgGame()
 	freeAudio();
 }
 
-void curtainTile();
+
 void drawRgGame(float dt)
 {
 	switch (gamestat) {
@@ -65,14 +65,7 @@ void drawRgGame(float dt)
 	case gs_proc:	
 	{
 		drawRgProc(dt);		
-		curtainTile();
-		if (loadingCheck == false)
-		{
-			drawPlayerUI(dt);
 
-			if (nextStage)
-				nextStageAni(dt);
-		}
 		break;
 	}
 	}
@@ -92,19 +85,4 @@ void keyRgGame(iKeyState stat, iPoint point)
 	case gs_menu:	keyRgMenu(stat, point);		break;
 	case gs_proc:	keyRgProc(stat, point);		break;
 	}
-}
-
-
-void curtainTile() // 화면가리개
-{
-	setRGBA(0, 0, 0, 1);
-	fillRect(0, 0,
-		devSize.width, (devSize.height - RGTILE_Y * RGTILE_Height) / 2.0f);
-	fillRect((devSize.width + RGTILE_X * RGTILE_Width) / 2.0f, 0,
-		(devSize.width - RGTILE_X * RGTILE_Width) / 2.0f, devSize.height);
-	fillRect(0, (devSize.height + RGTILE_Y * RGTILE_Height) / 2.0f,
-		devSize.width, (devSize.height - RGTILE_Y * RGTILE_Height) / 2.0f);
-	fillRect(0, 0,
-		(devSize.width - RGTILE_X * RGTILE_Width) / 2.0f, devSize.height);
-	setRGBA(1, 1, 1, 1);
 }

@@ -3,6 +3,8 @@
 #include "Room.h"
 #include "Stage.h"
 
+#include "loading.h"
+
 #include "Weapon.h"
 
 #include "Enemy.h"
@@ -15,54 +17,10 @@
 #include "useitem.h"
 #include "TreasureChest.h"
 
-void memoryTest() // test
-{
-	pc = new Player();
-	for (int i = 0; i < 3000; i++)
-	{
-		printf("i = %d\n", i);
-
-		createEffect();
-		createItemImg();
-		createTileSet();
-		loadRoomTile();
-		setRoomTile();
-		//createEnemy();
-		//numberFont = new numFont();
-		//weapon = new Weapon();
-		//pc = new Player();
-
-		//int pcTile = pc->initPlayerPosition();
-		//setEnemyPosition(pcTile);
-
-		createChest();
-
-		loadRgLoading();
-		loadPlayerUI();
-
-
-
-		freeEffect();
-		freeItemImg();
-		freeTileSet();
-		freeRoomTile();
-		//freeEnemy();
-		//delete numberFont;
-		//delete weapon;
-		//delete pc;
-
-		freeChest();
-		freeRgLoading();
-		freePlayerUI();
-
-	}
-}
-//--------------------------------------------------------
 //--------------------------------------------------------
 
 void loadRgProc()
 {
-	memoryTest();
 
 	createEffect();
 	createItemImg();
@@ -83,7 +41,6 @@ void loadRgProc()
 
 	createChest();
 	
-
 	//--------------------------------------------------------
 	// pop
 
@@ -119,6 +76,20 @@ void freeRgProc()
 
 }
 
+void curtainTile() // 화면가리개
+{
+	setRGBA(0, 0, 0, 1);
+	fillRect(0, 0,
+		devSize.width, (devSize.height - RGTILE_Y * RGTILE_Height) / 2.0f);
+	fillRect((devSize.width + RGTILE_X * RGTILE_Width) / 2.0f, 0,
+		(devSize.width - RGTILE_X * RGTILE_Width) / 2.0f, devSize.height);
+	fillRect(0, (devSize.height + RGTILE_Y * RGTILE_Height) / 2.0f,
+		devSize.width, (devSize.height - RGTILE_Y * RGTILE_Height) / 2.0f);
+	fillRect(0, 0,
+		(devSize.width - RGTILE_X * RGTILE_Width) / 2.0f, devSize.height);
+	setRGBA(1, 1, 1, 1);
+}
+
 void drawRgProc(float dt)
 {
 	setRGBA(0, 0, 0, 1);
@@ -152,7 +123,14 @@ void drawRgProc(float dt)
 
 	//curtainTile();
 	//drawPlayerUI(dt);
+	curtainTile();
+	if (getLoading() == false)
+	{
+		drawPlayerUI(dt);
 
+		if (nextStage)
+			nextStageAni(dt);
+	}
 	//--------------------------------------------------------
 	// test
 }

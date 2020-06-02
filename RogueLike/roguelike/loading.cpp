@@ -2,7 +2,6 @@
 
 #include "RgGame.h"
 
-bool loadingCheck;
 int _gamestat;
 Loading_Method methodFree;
 Loading_Method methodLoad;
@@ -17,6 +16,11 @@ void setLoading(int gamestat, Loading_Method free, Loading_Method load)
 	methodLoad = load;
 	loadingDt = 0.0f;
 	loadingCheck = true;
+}
+
+bool getLoading()
+{
+	return loadingDt < _loadingDt;
 }
 
 void drawLoading(float dt)

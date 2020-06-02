@@ -6,5 +6,6 @@ extern bool loadingCheck;
 
 typedef void (*Loading_Method)();
 void setLoading(int gamestat, Loading_Method free, Loading_Method load);
+bool getLoading();
 void drawLoading(float dt);
 bool keyLoading(iKeyState stat, iPoint point);

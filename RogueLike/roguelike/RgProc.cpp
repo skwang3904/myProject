@@ -162,8 +162,6 @@ void drawRgProc(float dt)
 	//--------------------------------------------------------
 	// pop
 
-	//curtainTile();
-	//drawPlayerUI(dt);
 	curtainTile();
 	if(getLoading()==false)
 	{

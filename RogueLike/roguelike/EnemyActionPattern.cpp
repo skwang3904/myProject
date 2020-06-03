@@ -31,25 +31,12 @@ void IdleEyeBlink(EnemyGolem* enm, float dt)
 	img[0]->reverse = e->reverse;
 	img[1]->reverse = e->reverse;
 	iPoint p = e->drawGolemPos;
-#if 1
+
 	if (img[0]->animation == false && img[1]->animation == false)
 		img[random() % 2]->startAnimation();
 
 	if (img[0]->animation)	img[0]->paint(dt, p);
 	else					img[1]->paint(dt, p);
-#elif 0
-	int n = 1;
-	if (img[n]->animation == false)
-	{
-		img[n]->startAnimation();
-	}
-	img[n]->ratio = 1.0;
-	img[n]->imgRatioX = 1.0f;
-	img[n]->imgRatioY = 1.0f;
-	img[n]->reverse = 0;
-	img[n]->selectedDt = 0.0f;
-	img[n]->paint(dt, p);
-#endif
 }
 
 //----------------------------------------------------------------------------------------
@@ -59,9 +46,7 @@ void commonHurt(EnemyGolem* enm, float dt)
 {
 	EnemyGolem* e = enm;
 	if (e->act != hurt)
-	{
 		return;
-	}
 
 	iImage** img = e->img;
 	Texture* tex = img[0]->tex;

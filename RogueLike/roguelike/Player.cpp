@@ -150,8 +150,6 @@ void Player::createPlayerImage()
 	free(texs);
 	imgEvasion->_aniDt = EVASION_DURATION / 4.0f;
 	imgEvasion->_repeatNum = 1;
-	//imgEvasion->_selectedDt = imgEvasion->_aniDt * 4.0f;
-	//imgEvasion->angle = 720.0f;
 
 	img = (iImage**)malloc(sizeof(iImage*) * 10);
 	// 0, 1 몸 정지모션
@@ -438,9 +436,6 @@ void Player::paint(float dt)
 		0, 0, img[headNum]->tex->width, img[headNum]->tex->height,
 		VCENTER | HCENTER, 1.0f, 1.0f,
 		img[headNum]->location, img[headNum]->angle, REVERSE_NONE);
-
-
-
 }
 
 bool Player::evasionPlayer(MapTile* tile, float dt)
@@ -475,28 +470,6 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 		iPoint p = iPointMake(dp.x - HALF_OF_TEX_WIDTH/2,
 			dp.y - HALF_OF_TEX_HEIGHT);
 		
-		//if (evasV.x < 0)
-		//{
-		//	img[9]->reverseRotate = false;
-		//	img[9]->location = 2;
-		//}
-		//else if (evasV.x > 0)
-		//{
-		//	img[9]->reverseRotate = true;
-		//	img[9]->location = 2;
-		//}
-		//if (evasV.y < 0)
-		//{
-		//	img[9]->reverseRotate = false;
-		//	img[9]->location = 1;
-		//}
-		//else if (evasV.y > 0)
-		//{
-		//	img[9]->reverseRotate = true;
-		//	img[9]->location = 1;
-		//}
-		//img[9]->selected = true;
-
 		//히트박스 표시-------------------------------
 		drawtouchPlayer();
 

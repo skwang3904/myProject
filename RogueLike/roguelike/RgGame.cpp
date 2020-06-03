@@ -25,11 +25,11 @@ void loadRgGame()
 	// sound // itunes로 변환해서 사용
 	AudioInfo ai[6] = {
 	{"assets/snd/swing.wav", false, 0.4f},
-	{"assets/snd/jump.wav", false, 0.2f},
+	{"assets/snd/jump.wav", false, 0.1f},
 	{"assets/snd/falling.wav", false, 0.3f},
 	{"assets/snd/enemy-hit.wav", false, 1.0f},
 	{"assets/snd/killEnemy.wav", false, 0.3f},
-	{"assets/snd/legacy-loop.wav", true, 0.1f},
+	{"assets/snd/legacy-loop.wav", true, 0.15f},
 	};
 
 	loadAudio(ai, 6);

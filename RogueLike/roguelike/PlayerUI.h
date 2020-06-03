@@ -39,7 +39,6 @@ bool keyPopItem(iKeyState stat, iPoint point);
 
 /////////////////////////////////////////////////////////
 
-void changeStageNum();
 void createPopStageNum();
 void freePopStageNum();
 void showPopStageNum(bool show);

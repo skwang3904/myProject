@@ -25,3 +25,15 @@ void rangeWeapon::init(
 	hitBox = iRectZero;
 	attackEnemy = false;
 }
+
+void createRangeWeapon()
+{
+}
+
+void weaponPosAndRt(rangeWeapon* rw, iPoint& wcp, iPoint& centerP, iRect& rt)
+{
+}
+
+void draw(rangeWeapon* rw, float dt, iPoint dropP)
+{
+}

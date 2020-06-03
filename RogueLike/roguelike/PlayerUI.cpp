@@ -27,7 +27,7 @@ void createPopHP()
 		"assets/PlayerUI/Bar_Fill_Green.png",
 		"assets/PlayerUI/Bar_Fill_Red.png"
 	};
-	iImage* imgs[6];
+	iImage** imgs = (iImage**)malloc(sizeof(iImage*) * 6);
 	iImage* img;
 	Texture* tex;
 	for (int i = 0; i < 6; i++)
@@ -46,6 +46,8 @@ void createPopHP()
 	}
 	imgHPgageGreen = imgs[4];
 	imgHPgageRed = imgs[5];
+
+	free(imgs);
 }
 
 void freePopHP()
@@ -94,7 +96,7 @@ bool keyPopHP(iKeyState stat, iPoint point)
 	return false;
 }
 
-/////////////////////////////////////////////////////////
+//---------------------------------------------------------------------------
 
 iPopup* popMiniMap;
 Texture* texMiniMap;
@@ -102,11 +104,10 @@ iImage* imgMiniMap;
 
 #define MINIMAPTILE 40
 static int minitile = MINIMAPTILE;
-static uint8 prevTileNum = 0;
 void refreshMiniMap()
 {
 	fbo->bind(texMiniMap);
-	fbo->clear(0, 0, 0, 1);
+	fbo->clear(0, 0, 0, 0);
 
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
@@ -176,7 +177,6 @@ void createPopMiniMap()
 	pop->openPosition = iPointMake(devSize.width - minitile * (TILEOFF_SQRT + 5), 100);
 	pop->closePosition = pop->openPosition;
 
-	prevTileNum = pc->tileNumber;
 }
 
 void freePopMiniMap()
@@ -204,12 +204,6 @@ void drawPopMiniMap(float dt)
 			minitile = MINIMAPTILE;
 		}
 	}
-
-	//if (prevTileNum != pc->tileNumber)
-	//{
-	//	//imgMiniMap = refreshMiniMap();
-	//	prevTileNum = pc->tileNumber;
-	//}
 
 	refreshMiniMap();
 	popMiniMap->paint(dt);
@@ -419,7 +413,6 @@ bool keyPopCombatMenu(iKeyState stat, iPoint point)
 //---------------------------------------------------------------------------
 
 iPopup* popItem;
-//iImage* coinimgtest;
 
 void createPopItem()
 {
@@ -451,7 +444,6 @@ void createPopItem()
 void freePopItem()
 {
 	delete popItem;
-	//delete coinimgtest;
 }
 
 void showPopItem(bool show)
@@ -461,7 +453,7 @@ void showPopItem(bool show)
 
 void cointest()
 {
-	numberFont->drawFont(150, 200, TOP | LEFT, 1, 1, 1, "%d", pc->hp);
+	numberFont->drawFont(150, 200, TOP | LEFT, 1, 1, 1, "%.0f", pc->hp);
 	numberFont->drawFont(150, 300, TOP | LEFT, 1, 1, 1, "%d", pc->coin);
 	numberFont->drawFont(150, 400, TOP | LEFT, 1, 1, 1, "%.0f", pc->attackDmg);
 	numberFont->drawFont(150, 500, TOP | LEFT, 1, 1, 1, "%.1f", pc->attackSpeed);

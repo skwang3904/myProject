@@ -272,11 +272,11 @@ bool nomalSworadAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	wcp = iPointRotate(centerP, wcp, attAngleRate - attAngle);
 	wcp += pc->combatV * rangeRate;
 	rt.origin = wcp - iPointMake(rt.size.width/2.0f, rt.size.height/2.0f);
+	wcp += SET_DRAW_OFF;
 	mw->hitBox = rt;
 
-	wcp += SET_DRAW_OFF;
 	rt.origin += SET_DRAW_OFF;
-	setRGBA(0, 1, 0, 1);
+	setRGBA(0, 1, 0, 0.5f);
 	fillRect(rt);
 	setRGBA(1, 1, 1, 1);
 
@@ -371,11 +371,11 @@ bool nomalSpearAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	iPoint wcp = iPointRotate(centerP, mw->combatPosition, attAngleRate - attAngle / 2);
 	wcp += pc->combatV * rangeRate;
 	rt.origin = wcp - iPointMake(rt.size.width / 2, rt.size.height / 2);
+	wcp += SET_DRAW_OFF;
 	mw->hitBox = rt;
 
-	wcp += SET_DRAW_OFF;
 	rt.origin += SET_DRAW_OFF;
-	setRGBA(0, 1, 0, 1);
+	setRGBA(0, 1, 0, 0.5f);
 	fillRect(rt);
 	setRGBA(1, 1, 1, 1);
 
@@ -477,12 +477,11 @@ bool nomalCycloneAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	wcp = iPointRotate(cycCenter, cycCp, attAngleRate);
 	wcp += pc->combatV * rangeRate;
 	rt.origin = wcp - iPointMake(rt.size.width / 2, rt.size.height / 2);
+	wcp += SET_DRAW_OFF;
 	mw->hitBox = rt;
 
-
-	wcp += SET_DRAW_OFF;
 	rt.origin += SET_DRAW_OFF;
-	setRGBA(0, 1, 0, 1);
+	setRGBA(0, 1, 0, 0.5f);
 	fillRect(rt);
 	setRGBA(1, 1, 1, 1);
 

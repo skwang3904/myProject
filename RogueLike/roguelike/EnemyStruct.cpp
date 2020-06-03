@@ -41,10 +41,6 @@ void EnemyGolem::init(int stage)
 
 			effectImg = NULL;
 			projectile = NULL;
-			//effectImg = imgChargeFire->copy();
-			//projectile = (FireBall**)malloc(sizeof(FireBall*) * FIREBALL_NUM);
-			//for (int i = 0; i < FIREBALL_NUM; i++)
-			//	projectile[i] = new FireBall();
 		}
 
 
@@ -113,6 +109,8 @@ void EnemyGolem::init(int stage)
 	act = idle;
 
 	touchGolem = iRectZero;
+	golemPos = iPointZero;
+	drawGolemPos = iPointZero;
 
 	showHp = false;
 	showHpTime = 0.0f;
@@ -159,7 +157,7 @@ void EnemyGolem::paint(float dt)
 		tex->width * ratio,
 		tex->height * ratio);
 
-	drawGolemPos = golemPos + pc->camPosition + setPos;
+	drawGolemPos = golemPos + SET_DRAW_OFF;
 	touchGolem = rt;
 
 	rt.origin += SET_DRAW_OFF;
@@ -201,6 +199,7 @@ void EnemyGolem::paint(float dt)
 			audioPlay(SND_ENEMY_DEAD);
 			img[4]->startAnimation();
 			methodead(this);
+			img[4]->reverse = reverse;
 		}
 
 		img[4]->paint(dt, drawGolemPos);

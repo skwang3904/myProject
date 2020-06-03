@@ -76,7 +76,7 @@ struct EnemyGolem {
 	void takeDmgEffect(float dt);
 
 	uint8 reverse;
-	iPoint ATV = iPointZero;
+	iPoint ATV;
 
 	Method_Idle_Pattern methodIdle;
 	Method_Walk_Pattern methodWalk;

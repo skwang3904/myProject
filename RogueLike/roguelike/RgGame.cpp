@@ -34,7 +34,7 @@ void loadRgGame()
 
 	loadAudio(ai, 6);
 
-	//audioPlay(5);
+	audioPlay(5);
 }
 
 void freeRgGame()

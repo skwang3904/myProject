@@ -80,9 +80,7 @@ void iStrTex::setString(const char* szFormat, ...)
 #else
 	if (tex)
 	{
-#ifdef _DEBUG
-		texNum--;
-#endif // _DEBUG
+
 		glDeleteTextures(1, &tex->texID);
 	}
 	else

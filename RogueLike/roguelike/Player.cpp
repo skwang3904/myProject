@@ -172,7 +172,7 @@ void Player::createPlayerImage()
 	img[8] = imgFall;
 
 	img[9] = imgEvasion;
-#if _DEBUG
+#if 0
 	for (int i = 0; i < 10; i++)
 	{
 		if (img[i] == NULL)

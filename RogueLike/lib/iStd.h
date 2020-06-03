@@ -25,7 +25,7 @@
 
 #include "iOpenAL.h"
 
-#if _DEBUG
+#if 1
 #pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
 #define xprintf printf
 

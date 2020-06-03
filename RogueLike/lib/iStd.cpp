@@ -421,9 +421,6 @@ Texture* createTexture(int width, int height, bool rgba32f)
     tex->potHeight = height;
     tex->retainCount = 1;
 
-#ifdef _DEBUG
-    texNum++;
-#endif // _DEBUG
     return tex;
 }
 
@@ -733,9 +730,7 @@ void freeImage(Texture* tex)
         return;
     }
     glDeleteTextures(1, &tex->texID);
-#ifdef _DEBUG
-    texNum--;
-#endif // _DEBUG
+
     free(tex);
 }
 

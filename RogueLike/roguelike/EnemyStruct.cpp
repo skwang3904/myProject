@@ -53,6 +53,7 @@ void EnemyGolem::init(int stage)
 		meleeAtkSpeed = GOLEM_MELEE_ATKTIME - ((stage) * GOLEM_MELEE_ATKTIME * 0.1f);
 		rangeAtkSpeed = GOLEM_RANGE_ATKTIME;
 		moveSpeed = 50.0f + ((stage) * 50);
+
 		meleeReach = 100.0f;
 		rangeReach = 300.0f;
 		ratio = GOLEM_RATIO;
@@ -149,7 +150,7 @@ void EnemyGolem::paint(float dt)
 	}
 
 	Texture* tex = img[0]->tex;
-	iRect rt = iRectMake(golemPos.x + tex->width * ratio * 0.25,
+	iRect rt = iRectMake(golemPos.x + tex->width * ratio * 0.25f,
 		golemPos.y + tex->height * ratio * 0.25f,
 		tex->width * ratio * 0.5f,
 		tex->height * ratio * 0.75f);
@@ -287,7 +288,7 @@ void createGolemImg()
 		img->_repeatNum = e->repeatNum;
 		img->_aniDt = e->aniDt;
 		img->lastFrame = e->lastFrame;
-		img->ratio = (i<GOLEM_IMG_NUM ? GOLEM_RATIO : GOLEM_ELETE_RATIO);
+		img->ratio = (i < GOLEM_IMG_NUM ? GOLEM_RATIO : GOLEM_ELETE_RATIO);
 
 		imgG[i] = img;
 	}

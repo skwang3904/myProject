@@ -80,9 +80,6 @@ void iImage::replaceAtIndex(int index, Texture* tex)
 	else
 	{
 		glDeleteTextures(1, &t->texID);
-#ifdef _DEBUG
-		texNum--;
-#endif // _DEBUG
 	}
 	memcpy(t, tex, sizeof(Texture));
 	free(tex);

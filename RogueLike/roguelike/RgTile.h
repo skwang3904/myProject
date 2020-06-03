@@ -24,9 +24,6 @@
 #define WALLTILE_RGBA	0.5, 0.5, 0.5, 1
 #define FALLTILE_RGBA	0, 0, 0.3, 1
 
-#define SETPOS_POSITION iPointMake( devSize.width/ 2 - RGTILE_X * RGTILE_Width / 2,\
-						 devSize.height / 2 - RGTILE_Y * RGTILE_Height / 2)
-
 #define MAPTILE_NUM 10
 #define TILEOFF_NUM 25 // 제곱수
 #define TILEOFF_SQRT 5

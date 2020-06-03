@@ -68,7 +68,7 @@ void drawPopHP(float dt)
 	if (prevHP != pc->hp)
 	{
 		delta += dt;
-		imgHPgageGreen->imgRatioX = linear(delta / 2.0f, prevHP, pc->hp) / pc->_hp;
+		imgHPgageGreen->imgRatioX = linear(delta / 2, prevHP, pc->hp) / pc->_hp;
 		
 		if (delta > 2.0f)
 		{
@@ -195,7 +195,7 @@ void drawPopMiniMap(float dt)
 	{
 		if (minitile == MINIMAPTILE)
 		{
-			imgMiniMap->position = iPointMake(-1.0f * (devSize.width / 2.0f) - minitile * TILEOFF_SQRT, 100);
+			imgMiniMap->position = iPointMake(-1.0f * (devSize.width / 2) - minitile * TILEOFF_SQRT, 100);
 			minitile = 150;
 		}
 		else if (minitile == 150)
@@ -291,6 +291,7 @@ Texture* setCombatInfo(int i)
 
 void createPopCombatMenu()
 {
+	iPoint p = iPointMake(1600, 400);
 	//---------------------------------------------------------------------------
 	// menu
 
@@ -301,13 +302,13 @@ void createPopCombatMenu()
 	Texture* tex = createImage("assets/PlayerUI/inven button1.png");
 	img->addObject(tex);
 	freeImage(tex);
-	img->position = CombatMenu_Pos;
+	img->position = p;
 	pop->addObject(img);
 
 	for (int i = 1; i < 8; i++)
 	{
 		iImage* tmp = img->copy();
-		tmp->position = CombatMenu_Pos +iPointMake(150 * (i % 2), 150 * (i / 2));
+		tmp->position = p +iPointMake(150 * (i % 2), 150 * (i / 2));
 		pop->addObject(tmp);
 	}
 
@@ -318,7 +319,7 @@ void createPopCombatMenu()
 
 	img = new iImage();
 	img->addObject(setCombatInfo(0));
-	img->position = CombatMenu_Pos + iPointMake(-350, 0);
+	img->position = p + iPointMake(-350, 0);
 	pop->addObject(img);
 	imgCombatInfo = img;
 
@@ -392,7 +393,7 @@ bool keyPopCombatMenu(iKeyState stat, iPoint point)
 	{
 		for (int i = 0; i < pc->weaponArray->count; i++)
 		{
-			iPoint	p = CombatMenu_Pos + iPointMake(150 * (i % 2), 150 * (i / 2));
+			iPoint	p = p + iPointMake(150 * (i % 2), 150 * (i / 2));
 			iRect rt = iRectMake(p.x, p.y, 128, 128);
 			if (containPoint(point, rt))
 			{

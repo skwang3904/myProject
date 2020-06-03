@@ -19,14 +19,13 @@
 
 void loadRgProc()
 {
-	createEffect();
-
 	createTileSet();
 	loadRoomTile();
 	numberFont = new numFont();
 	weapon = new Weapon();
 	pc = new Player();
 
+	createEffect();
 	createItemImg();// createEnemy + createChest
 	createEnemy();
 
@@ -48,58 +47,12 @@ void loadRgProc()
 	showPopMiniMap(true);
 	showPopItem(true);
 	showPopStageNum(true);
-#if 1
-	for (int i = 0; i < 1000000; i++)
-	{
-		printf("%d\n", i);
-		printf("00000000 = %d\n", texNum);
-		freeEffect();
-		freeTileSet();
-		freeRoomTile();
-
-		delete numberFont;
-		delete weapon;
-		delete pc;
-
-		freeItemImg();
-		freeEnemy();
-		freeChest();
-
-		freeRgLoading();
-		freePopHP();
-		freePopMiniMap();
-		freePopCombatMenu();
-		freePopItem();
-		freePopStageNum();
-
-
-
-		createEffect();
-		createTileSet();
-		loadRoomTile();
-		numberFont = new numFont();
-		weapon = new Weapon();
-		pc = new Player();
-		createItemImg();
-		createEnemy();
-		createChest();
-
-		loadRgLoading();
-		createPopHP();
-		createPopMiniMap();
-		createPopCombatMenu();
-		createPopItem();
-		createPopStageNum();
-		printf("11111111 = %d\n", texNum);
-	}
-#endif
 
 	stage++;
 }
 
 void freeRgProc()
 {
-	freeEffect();
 	freeTileSet();
 	freeRoomTile();
 
@@ -107,6 +60,7 @@ void freeRgProc()
 	delete weapon;
 	delete pc;
 
+	freeEffect();
 	freeItemImg();
 	freeEnemy();
 	freeChest();
@@ -125,13 +79,13 @@ void curtainTile() // 화면가리개
 {
 	setRGBA(0, 0, 0, 1);
 	fillRect(0, 0,
-		devSize.width, (devSize.height - RGTILE_Y * RGTILE_Height) / 2.0f);
-	fillRect((devSize.width + RGTILE_X * RGTILE_Width) / 2.0f, 0,
-		(devSize.width - RGTILE_X * RGTILE_Width) / 2.0f, devSize.height);
-	fillRect(0, (devSize.height + RGTILE_Y * RGTILE_Height) / 2.0f,
-		devSize.width, (devSize.height - RGTILE_Y * RGTILE_Height) / 2.0f);
+		devSize.width, (devSize.height - RGTILE_Y * RGTILE_Height) / 2);
+	fillRect((devSize.width + RGTILE_X * RGTILE_Width) / 2, 0,
+		(devSize.width - RGTILE_X * RGTILE_Width) / 2, devSize.height);
+	fillRect(0, (devSize.height + RGTILE_Y * RGTILE_Height) / 2,
+		devSize.width, (devSize.height - RGTILE_Y * RGTILE_Height) / 2);
 	fillRect(0, 0,
-		(devSize.width - RGTILE_X * RGTILE_Width) / 2.0f, devSize.height);
+		(devSize.width - RGTILE_X * RGTILE_Width) / 2, devSize.height);
 	setRGBA(1, 1, 1, 1);
 }
 

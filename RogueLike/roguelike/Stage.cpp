@@ -133,7 +133,7 @@ void drawNextDoor(float dt)
 	if (nextStage || nextDoor == 255)
 		return;
 
-	iPoint p = pc->camPosition + maps[nextDoor]->tileOff + setPos + RGTILE_CENTER;
+	iPoint p = maps[nextDoor]->tileOff + SET_DRAW_OFF + RGTILE_CENTER;
 
 	setRGBA(0, 0.5, 1, 1);
 	fillRect(p.x-25, p.y-25, 50, 50); // 문 디자인

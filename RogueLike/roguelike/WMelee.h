@@ -25,7 +25,6 @@ struct meleeWeapon {
 
 	void init(
 		const char* info,
-		iImage* iImg,
 		float iAttackDmg,
 		float iAttackSpeed,
 		float iWidthReach,
@@ -38,8 +37,4 @@ void freeMeleeWeapon();
 
 void weaponPosAndRt(meleeWeapon* mw, iPoint& wcp, iPoint& centerP, iRect& rt);
 
-void draw(meleeWeapon* mw, float dt, iPoint dropP);
-
-//void nomalHammerMethod(float dt, iPoint dropP);
-//void nomalSpearMethod(float dt, iPoint dropP);
-//void nomalCycloneMethod(float dt, iPoint dropP);
+void draw(meleeWeapon* mw, float dt, iPoint dropP); // weapon으로 이사할것

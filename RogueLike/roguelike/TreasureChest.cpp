@@ -28,7 +28,7 @@ Chest::Chest(ChestType ct)
 		if (maps[a]->rgTile != NULL && a != pc->tileNumber)
 		{
 			pos = maps[a]->tileOff + RGTILE_CENTER;
-			drawPos = pos + pc->camPosition + setPos;
+			drawPos = pos + SET_DRAW_OFF;
 			tileNumber = a;
 
 			break;
@@ -88,7 +88,7 @@ void Chest::paint(float dt)
 	if (openAni(dt))
 		return;
 
-	drawPos = pos + pc->camPosition + setPos;
+	drawPos = pos + SET_DRAW_OFF;
 	img->paint(dt, drawPos);
 	
 	//if( ? ) open = true;
@@ -180,10 +180,10 @@ void openChestBasic(Chest* me)
 		iPoint p = iPointMake(-100 + 100 * i, 0);
 		ui->sp = me->pos + cp;
 		ui->itemPos = me->pos + cp + p;
-		ui->drawitemPos = ui->itemPos + pc->camPosition + setPos;
+		ui->drawitemPos = ui->itemPos + SET_DRAW_OFF;
 
-		ui->touchItem = iRectMake(ui->itemPos.x + tex->width * 0.25f,
-			ui->itemPos.y + tex->height * 0.25f,
-			tex->width * 0.5f, tex->height * 0.5f);
+		ui->touchItem = iRectMake(ui->itemPos.x + tex->width / 4,
+			ui->itemPos.y + tex->height / 4,
+			tex->width / 2, tex->height / 2);
 	}
 }

@@ -17,7 +17,6 @@ void nomalCycloneMethod(float dt, iPoint dropP);
 
 void meleeWeapon::init(
 	const char* info,
-	iImage* iImg,
 	float iAttackDmg,
 	float iAttackSpeed,
 	float iWidthReach,
@@ -26,7 +25,6 @@ void meleeWeapon::init(
 {
 	infoImg = infoFromMW(info);
 	infomation = info;
-	img = iImg;
 
 	attackDmg = iAttackDmg;
 	attackSpeed = _attackSpeed = iAttackSpeed;
@@ -44,47 +42,50 @@ void meleeWeapon::init(
 void createMeleeWeapon()
 {
 	nomalHammer = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
-	iImage* imgHammer = new iImage();
-
-	//-----------------------------------------------------------
-
 	nomalSpear = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
-	iImage* imgSpear = new iImage();
-
-	//-----------------------------------------------------------
-
 	nomalCyclone = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
-	iImage* imgCyclon= new iImage();
 
-	//-----------------------------------------------------------
+	meleeWeapon* mw[3] = {
+		nomalHammer,
+		nomalSpear,
+		nomalCyclone,
+	};
 
-	for (int i = 0; i < 2; i++)
+	// asset 2가지 =  장착할때 이미지 + UI에 표시될 이미지
+	const char* strPath[3] = {
+		"assets/weapon/hammer%d.png",
+		"assets/weapon/upg_spear%d.png",
+		"assets/weapon/upg_axeDouble%d.png",
+	};
+
+	for (int i = 0; i < 3; i++)
 	{
-		Texture* texHammer = createImage("assets/weapon/hammer%d.png",i);
-		Texture* texSpear = createImage("assets/weapon/upg_spear%d.png",i);
-		Texture* texCyclon = createImage("assets/weapon/upg_axeDouble%d.png",i);
-		
-		imgHammer->addObject(texHammer);
-		imgSpear->addObject(texSpear);
-		imgCyclon->addObject(texCyclon);
-
-		freeImage(texHammer);
-		freeImage(texSpear);
-		freeImage(texCyclon);
+		iImage* img = new iImage();
+		for (int j = 0; j < 2; j++)
+		{
+			Texture* tex = createImage(strPath[i], j);
+			img->addObject(tex);
+			freeImage(tex);
+		}
+		mw[i]->img = img;
 	}
 
-	//info, img, ismelee, attackDmg, attackSpeed, widthReach, heightReach, holeAngle
+	//info, ismelee, attackDmg, attackSpeed, widthReach, heightReach, holeAngle
 	char swordInfo[32] = "Hammer\nHammer\nHammer\nHammer";
+	mw[0]->init(swordInfo, 30, 0.3f, 30.0f, 60.0f, -30.0f);
+
 	char spearInfo[64] = "Spear\nSpear\nSpear\nSpear\nSpear";
+	mw[1]->init(spearInfo, 30, 0.2f, 10.0f, 70.0f, -45.0f);
+
 	char cycleonInfo[32] = "Cyclone";
+	mw[2]->init(cycleonInfo, 30, 0.5f, 30.0f, 50.0f, -70.0f);
 
-	nomalHammer->init(swordInfo, imgHammer, 30, 0.3f, 30.0f, 60.0f, -30.0f);
-	nomalSpear->init(spearInfo, imgSpear, 30, 0.2f, 10.0f, 70.0f, -45.0f);
-	nomalCyclone->init(cycleonInfo, imgCyclon, 30, 0.5f, 30.0f, 50.0f, -70.0f);
+	//-----------------------------------------------------------
+	// PWP
 
-	PWP[NOMALSWORD] = { nomalHammer,nomalHammerMethod };
-	PWP[NOMALSPEAR] = { nomalSpear,nomalSpearMethod };
-	PWP[NOMALCYCLON] = {  nomalCyclone,nomalCycloneMethod };
+	PWP[0] = { mw[0],nomalHammerMethod };
+	PWP[1] = { mw[1],nomalSpearMethod };
+	PWP[2] = { mw[2],nomalCycloneMethod };
 
 	for (int i = 0; i < MELEE_NUM; i++)
 	{
@@ -112,6 +113,7 @@ void freeMeleeWeapon()
 void draw(meleeWeapon* mw, float dt, iPoint dropP)
 {
 	Texture* tex = mw->img->tex;
+	iPoint setp = SET_DRAW_OFF;
 	if (pc->pwp->wp == mw)
 	{
 		iPoint centerP = mw->combatPosition;
@@ -119,29 +121,30 @@ void draw(meleeWeapon* mw, float dt, iPoint dropP)
 		iRect rt;
 		weaponPosAndRt(mw, mw->combatPosition, centerP, rt);
 
-		drawImage(tex, 
-			pc->camPosition.x + setPos.x + centerP.x ,
-			pc->camPosition.y + setPos.y + centerP.y ,
-			0, 0,	tex->width, tex->height,
+
+		drawImage(tex,
+			setp.x + centerP.x,
+			setp.y + centerP.y,
+			0, 0, tex->width, tex->height,
 			VCENTER | HCENTER, 1.0f, 1.0f, 2, pc->combatAngleV + mw->holdAngle, REVERSE_NONE);
 	}
 	else
 	{
 		iPoint p = dropP;
-		drawImage(tex, 
-			pc->camPosition.x + setPos.x + p.x, 
-			pc->camPosition.y + setPos.y + p.y,
+		drawImage(tex,
+			setp.x + p.x,
+			setp.y + p.y,
 			0, 0, tex->width, tex->height,
 			VCENTER | HCENTER, 1.2f, 1.2f, 2, 90, REVERSE_NONE);
 
 		mw->hitBox = getHitBoxRect(tex,
-			 p.x,
-			 p.y,
-			0, 0,	tex->width, tex->height,
+			p.x,
+			p.y,
+			0, 0, tex->width, tex->height,
 			VCENTER | HCENTER, 1.5f, 1.5f, 2, 90);
 
 		iRect mt = mw->hitBox;
-		mt.origin += pc->camPosition + setPos;
+		mt.origin += SET_DRAW_OFF;
 		setRGBA(0, 1, 0, 1);
 		drawRect(mt);
 		setRGBA(1, 1, 1, 1);
@@ -157,42 +160,42 @@ void weaponPosAndRt(meleeWeapon* mw, iPoint& wcp, iPoint& centerP, iRect& rt)
 	float angle = pc->combatAngleV;
 	if (mv.x < 0)
 	{
-		wcp.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH + tex->height / 10.0f;
-		wcp.y = pc->playerPosition.y + tex->width / 10.0f;
+		wcp.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH + tex->height / 10;
+		wcp.y = pc->playerPosition.y + tex->width / 10;
 		centerP.x = wcp.x - tex->height / 2;
 		centerP.y = wcp.y;
 
 		rt.size.width = size.height;
 		rt.size.height = size.width;
-		angle = 90.0f;
+		angle = 90;
 	}
 	else if (mv.x > 0)
 	{
-		wcp.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH - tex->height / 10.0f;
-		wcp.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT * 2.0f - tex->width / 10.0f;
+		wcp.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH - tex->height / 10;
+		wcp.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT * 2 - tex->width / 10;
 		centerP.x = wcp.x + tex->height / 2;
 		centerP.y = wcp.y;
 
 		rt.size.width = size.height;
 		rt.size.height = size.width;
-		angle = 270.0f;
+		angle = 270;
 	}
 
 	if (mv.y < 0)
 	{
-		wcp.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH * 2.0f - tex->width / 5.0f;
-		wcp.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT + tex->height / 10.0f;
+		wcp.x = pc->playerPosition.x + HALF_OF_TEX_WIDTH * 2 - tex->width / 5;
+		wcp.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT + tex->height / 10;
 		centerP.x = wcp.x;
 		centerP.y = wcp.y - tex->height / 2;
 
 		rt.size.width = size.width;
 		rt.size.height = size.height;
-		angle = 0.0f;
+		angle = 0;
 	}
 	else if (mv.y > 0)
 	{
-		wcp.x = pc->playerPosition.x + tex->width / 5.0f;
-		wcp.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT - tex->height / 10.0f;
+		wcp.x = pc->playerPosition.x + tex->width / 5;
+		wcp.y = pc->playerPosition.y + HALF_OF_TEX_HEIGHT - tex->height / 10;
 		centerP.x = wcp.x;
 		centerP.y = wcp.y + tex->height / 2;
 
@@ -271,8 +274,8 @@ bool nomalSworadAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	rt.origin = wcp - iPointMake(rt.size.width/2.0f, rt.size.height/2.0f);
 	mw->hitBox = rt;
 
-	wcp += pc->camPosition + setPos;
-	rt.origin += pc->camPosition + setPos;
+	wcp += SET_DRAW_OFF;
+	rt.origin += SET_DRAW_OFF;
 	setRGBA(0, 1, 0, 1);
 	fillRect(rt);
 	setRGBA(1, 1, 1, 1);
@@ -367,11 +370,11 @@ bool nomalSpearAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 
 	iPoint wcp = iPointRotate(centerP, mw->combatPosition, attAngleRate - attAngle / 2);
 	wcp += pc->combatV * rangeRate;
-	rt.origin = wcp - iPointMake(rt.size.width / 2.0f, rt.size.height / 2.0f);
+	rt.origin = wcp - iPointMake(rt.size.width / 2, rt.size.height / 2);
 	mw->hitBox = rt;
 
-	wcp += pc->camPosition + setPos;
-	rt.origin += pc->camPosition + setPos;
+	wcp += SET_DRAW_OFF;
+	rt.origin += SET_DRAW_OFF;
 	setRGBA(0, 1, 0, 1);
 	fillRect(rt);
 	setRGBA(1, 1, 1, 1);
@@ -473,12 +476,12 @@ bool nomalCycloneAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 
 	wcp = iPointRotate(cycCenter, cycCp, attAngleRate);
 	wcp += pc->combatV * rangeRate;
-	rt.origin = wcp - iPointMake(rt.size.width / 2.0f, rt.size.height / 2.0f);
+	rt.origin = wcp - iPointMake(rt.size.width / 2, rt.size.height / 2);
 	mw->hitBox = rt;
 
 
-	wcp += pc->camPosition + setPos;
-	rt.origin += pc->camPosition + setPos;
+	wcp += SET_DRAW_OFF;
+	rt.origin += SET_DRAW_OFF;
 	setRGBA(0, 1, 0, 1);
 	fillRect(rt);
 	setRGBA(1, 1, 1, 1);

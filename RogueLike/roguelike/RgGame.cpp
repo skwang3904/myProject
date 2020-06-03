@@ -8,15 +8,9 @@
 #include "Stage.h"
 #include "PlayerUI.h"
 
-int gamestat;
 
 void loadRgGame()
 {
-	//for (int i = 0; i < 100; i++) //test
-	//{
-	//	loadRgProc();
-	//	freeRgProc();
-	//}
 
 #if 1
 	loadRgProc();
@@ -24,8 +18,6 @@ void loadRgGame()
 #else
 	loadRgIntro();
 	gamestat = gs_intro;
-
-	//loadRgProc();
 
 #endif
 

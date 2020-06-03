@@ -196,12 +196,15 @@ void drawRoomTile(float dt)
 		{
 			for (int j = 0; j < num; j++)
 			{
-				if (maps[i]->rgTile[j] == MOVETILE) setRGBA(MOVETILE_RGBA);
-				else if (maps[i]->rgTile[j] == WALLTILE)setRGBA(WALLTILE_RGBA);
-				else if (maps[i]->rgTile[j] == FALLTILE)setRGBA(FALLTILE_RGBA);
-				fillRect(maps[i]->tileOff.x + pc->camPosition.x + setPos.x + RGTILE_Width * (j % RGTILE_X),
-					maps[i]->tileOff.y + pc->camPosition.y + setPos.y + RGTILE_Height * (j / RGTILE_X),
-					RGTILE_Width, RGTILE_Height);
+				int* tile = maps[i]->rgTile;
+				if (tile[j] == MOVETILE) setRGBA(MOVETILE_RGBA);
+				else if (tile[j] == WALLTILE)setRGBA(WALLTILE_RGBA);
+				else if (tile[j] == FALLTILE)setRGBA(FALLTILE_RGBA);
+
+				iPoint p = maps[i]->tileOff + SET_DRAW_OFF +
+							iPointMake(	RGTILE_Width * (j % RGTILE_X), 
+										RGTILE_Height * (j / RGTILE_X));
+				fillRect(p.x, p.y, RGTILE_Width, RGTILE_Height);
 
 				//setRGBA(1, 0, 0, 1);
 				//drawRect(maps[i]->tileOff.x + pc->camPosition.x + setPos.x + RGTILE_Width * (j % RGTILE_X) + 2,
@@ -214,6 +217,7 @@ void drawRoomTile(float dt)
 }
 
 bool passAni = false;
+#define _passAniDt 0.2f
 void passTileAnimation(float dt)
 {
 	static iPoint prevCamOff = iPointMake(-1, -1);
@@ -254,7 +258,7 @@ void passTileAnimation(float dt)
 				else if (maps[i]->rgTile[j] == WALLTILE)setRGBA(WALLTILE_RGBA);
 				else if (maps[i]->rgTile[j] == FALLTILE)setRGBA(FALLTILE_RGBA);
 				setRGBA(0, 0, 0, 0.7f);
-				iPoint p = maps[i]->tileOff + pc->camPosition + setPos +
+				iPoint p = maps[i]->tileOff + SET_DRAW_OFF +
 							iPointMake(	RGTILE_Width * (j % RGTILE_X),
 										RGTILE_Height * (j / RGTILE_X));
 				fillRect(p.x, p.y, RGTILE_Width, RGTILE_Height);

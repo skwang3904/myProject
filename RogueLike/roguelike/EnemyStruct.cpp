@@ -161,8 +161,8 @@ void EnemyGolem::paint(float dt)
 	drawGolemPos = golemPos + pc->camPosition + setPos;
 	touchGolem = rt;
 
-	rt.origin += pc->camPosition + setPos;
-	rt1.origin += pc->camPosition + setPos;
+	rt.origin += SET_DRAW_OFF;
+	rt1.origin += SET_DRAW_OFF;
 	setRGBA(0, 0, 0, 1);
 	drawRect(rt);
 	setRGBA(1, 0, 1, 1);

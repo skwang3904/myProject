@@ -64,7 +64,7 @@ void FireBall::paint(float dt)
 	if (duration > alive_duration || containPoint(posFireBall, limitRect) == false)
 		alive = false;
 
-	iPoint p = iPointMake(img->tex->width / 2.0f, img->tex->height / 2.0f);
+	iPoint p = iPointMake(img->tex->width / 2, img->tex->height / 2);
 	iPoint posFB = posFireBall + p;
 	iPoint mp = v * speed * dt;
 	projectileReflect(tileNumber, v, posFB, mp);
@@ -72,15 +72,14 @@ void FireBall::paint(float dt)
 	setAngle();
 
 	touchPos = posFireBall + p;
-	iPoint test = pc->camPosition + setPos;
+	iPoint test = SET_DRAW_OFF;
 	setRGBA(1, 0, 0, 1);
 	fillRect(touchPos.x + test.x, touchPos.y + test.y, 10, 10);
 	setRGBA(1, 1, 1, 1);
 
-	drawFireBallPos = (posFireBall) + pc->camPosition + setPos;
+	drawFireBallPos = (posFireBall) + SET_DRAW_OFF;
 	img->paint(dt, drawFireBallPos);
 }
-
 
 void FireBall::setAngle()
 {
@@ -101,7 +100,7 @@ bool FireBall::hitFireBall(iRect& rt)
 	if (alive == false)
 		return false;
 
-	iPoint p = posFireBall + iPointMake(img->tex->width / 2.0f, img->tex->height / 2.0f);
+	iPoint p = posFireBall + iPointMake(img->tex->width / 2, img->tex->height / 2);
 	if (containPoint(p, rt))
 		return true;
 	return false;

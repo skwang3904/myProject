@@ -23,7 +23,7 @@ void IdleEyeBlink(EnemyGolem* enm, float dt)
 	iImage** img = e->img;
 	Texture* tex = img[0]->tex;
 
-	iPoint gp = iPointMake(tex->width * e->ratio / 2.0f, tex->height * e->ratio / 2.0f);
+	iPoint gp = iPointMake(tex->width * e->ratio / 2, tex->height * e->ratio / 2);
 
 	e->reverse = (pc->playerPosition.x + HALF_OF_TEX_WIDTH < e->golemPos.x + gp.x ?
 		REVERSE_WIDTH : REVERSE_NONE);
@@ -53,7 +53,7 @@ void commonHurt(EnemyGolem* enm, float dt)
 	iImage** img = e->img;
 	Texture* tex = img[0]->tex;
 
-	iPoint gp = iPointMake(tex->width * e->ratio / 2.0f, tex->height * e->ratio / 2.0f);
+	iPoint gp = iPointMake(tex->width * e->ratio / 2, tex->height * e->ratio / 2);
 
 	e->reverse = (pc->playerPosition.x + HALF_OF_TEX_WIDTH < e->golemPos.x + gp.x ?
 		REVERSE_WIDTH : REVERSE_NONE);
@@ -77,7 +77,7 @@ void WalkToPlayer(EnemyGolem* enm, float dt)
 	EnemyGolem* e = enm;
 	iImage** img = e->img;
 	Texture* tex = img[0]->tex;
-	iPoint gp = iPointMake(tex->width * e->ratio / 2.0f, tex->height * e->ratio / 2.0f);
+	iPoint gp = iPointMake(tex->width * e->ratio / 2, tex->height * e->ratio / 2);
 	iPoint v = (pc->playerPosition + HALF_OF_TEX_POINT)
 		- (e->golemPos + gp);
 
@@ -113,8 +113,8 @@ bool commonAttack(EnemyGolem* enm, float dt)
 	if (e->act == rangeAtk)
 		return false;
 
-	iPoint et = iPointMake(e->img[0]->tex->width * e->ratio / 2.0f,
-		e->img[0]->tex->height * e->ratio / 2.0f);
+	iPoint et = iPointMake(e->img[0]->tex->width * e->ratio / 2,
+		e->img[0]->tex->height * e->ratio / 2);
 
 	iPoint v = (pc->playerPosition + HALF_OF_TEX_POINT)
 		- (e->golemPos + et);
@@ -157,7 +157,7 @@ bool commonAttack(EnemyGolem* enm, float dt)
 		setLineWidth(10);
 		setRGBA(1, 0, 0, 1);
 		drawLine(e->drawGolemPos + et,
-			e->ATV + pc->camPosition + setPos);
+			e->ATV + SET_DRAW_OFF);
 		setLineWidth(1);
 		setRGBA(1, 1, 1, 1);
 
@@ -200,8 +200,8 @@ bool rangeAttack(EnemyGolem* enm, float dt)
 {
 	EnemyGolem* e = enm;
 	Texture* tex = e->img[0]->tex;
-	iPoint et = iPointMake(tex->width * e->ratio / 2.0f,
-		tex->height * e->ratio / 2.0f);
+	iPoint et = iPointMake(tex->width * e->ratio / 2,
+		tex->height * e->ratio / 2);
 
 	iPoint v = (pc->playerPosition + HALF_OF_TEX_POINT)
 		- (e->golemPos + et);
@@ -248,7 +248,7 @@ bool rangeAttack(EnemyGolem* enm, float dt)
 		float speed = 0.0f;
 		float timer = 0.0f;
 		float duration = 0.0f;
-		iPoint fv = e->golemPos - fbp / 2.0f + iPointMake(et.x, 0);
+		iPoint fv = e->golemPos - fbp / 2 + iPointMake(et.x, 0);
 		iPoint vv = iPointZero;
 		for (i = 0; i < a; i++)
 		{
@@ -258,7 +258,7 @@ bool rangeAttack(EnemyGolem* enm, float dt)
 			timer = 0;
 			speed = 200.0f + random() % 300;
 			//speed = 100.0f;
-			vv = iPointMake(1.0f - (random() % 200) / 100.0f, 1.0f - (random() % 200) / 100.0f);
+			vv = iPointMake(1.0f - (random() % 200) / 100, 1.0f - (random() % 200) / 100);
 
 			if (e->projectile[i]->alive == false)
 				e->projectile[i]->init(duration, timer, speed, e->tileNumber, vv, fv);

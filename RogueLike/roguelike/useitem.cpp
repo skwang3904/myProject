@@ -86,7 +86,7 @@ bool UseItem::animation(float dt)
     iPoint a = easeIn(aniDt / ANIDT, sp, itemPos);
     a += iPointMake(0, h);
     
-    drawitemPos = a + pc->camPosition + setPos;
+    drawitemPos = a + SET_DRAW_OFF;
     img->paint(dt, drawitemPos);
 
     return true;
@@ -98,14 +98,14 @@ void UseItem::paint(float dt)
         return;
 
     iRect rt = touchItem;
-    rt.origin += pc->camPosition + setPos;
+    rt.origin += SET_DRAW_OFF;
     setRGBA(1, 0, 0, 0.5f);
     fillRect(rt);
     setRGBA(1, 1, 1, 1);
 
     img->paint(dt, drawitemPos);
 
-    drawitemPos = itemPos + pc->camPosition + setPos;
+    drawitemPos = itemPos + SET_DRAW_OFF;
 
     iPoint p = pc->playerPosition + HALF_OF_TEX_POINT;
     
@@ -164,17 +164,17 @@ void golemItems(EnemyGolem* enm)
 
         ui->alive = true;
         ui->aniDt = 0.0f;
-        ui->value = 10;
+        ui->value = 10.0f;
 
-		iPoint et = iPointMake(enm->img[0]->tex->width / 4.0f * enm->ratio,
-			enm->img[0]->tex->height / 2.0f  * enm->ratio);
+		iPoint et = iPointMake(enm->img[0]->tex->width / 4 * enm->ratio,
+			enm->img[0]->tex->height / 2  * enm->ratio);
         iPoint p = iPointMake(-100 + 50 * i, 0);
         ui->sp = enm->golemPos + et;
         ui->itemPos = enm->golemPos + et + p;
-        ui->drawitemPos = ui->itemPos + (pc->camPosition + setPos);
+        ui->drawitemPos = ui->itemPos + SET_DRAW_OFF;
 
-        ui->touchItem = iRectMake(ui->itemPos.x + tex->width * 0.25f, 
-            ui->itemPos.y + tex->height * 0.25f,
-            tex->width * 0.5f, tex->height * 0.5f);
+        ui->touchItem = iRectMake(ui->itemPos.x + tex->width / 4, 
+            ui->itemPos.y + tex->height / 4,
+            tex->width / 2, tex->height / 2);
     }
 }

@@ -5,6 +5,7 @@
 #include "EnemyStruct.h"
 #include "Effect.h"
 
+#include "Effect.h"
 #include "useitem.h"
 
 void createGolem();

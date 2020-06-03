@@ -342,7 +342,7 @@ void Player::drawtouchPlayer()
 	touchPlayer = rt;
 
 	setRGBA(0, 0, 0, 0.5f);
-	rt.origin += pc->camPosition + setPos;
+	rt.origin += SET_DRAW_OFF;
 	fillRect(rt);
 	setRGBA(1, 1, 1, 1);
 

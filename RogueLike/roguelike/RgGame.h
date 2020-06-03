@@ -2,14 +2,6 @@
 
 #include "iStd.h"
 
-// 실행되는 코드 모음
-
-#define gs_intro	1
-#define gs_menu		2
-#define gs_proc		3
-
-extern int gamestat;
-
 void loadRgGame();
 void freeRgGame();
 void drawRgGame(float dt);

@@ -44,6 +44,8 @@ void createStage()
 	stage++;
 }
 
+// 직접 문을 그릴때 사용
+// 현재 사용X
 void setNextDoor(uint8 pcTile)
 {
 	int i, j, num = 0;
@@ -64,7 +66,6 @@ void setNextDoor(uint8 pcTile)
 
 	if (i == TILEOFF_NUM - 1 && activeTile[0] == -1)
 	{
-
 		for (i = 0; i < TILEOFF_NUM; i++)
 		{
 			if (maps[i]->rgTile == Tile2way3 || maps[i]->rgTile == Tile2way4 ||
@@ -90,31 +91,27 @@ void setNextDoor(uint8 pcTile)
 
 void nextStageAni(float dt)
 {
-	static bool stagetest = false;
-	static bool stageAni = false;
-	if (stageAni == false)
+	if (pc->img[Player_imgFall]->animation == false && nextDoor != 255)
 	{
 		pc->img[Player_imgFall]->startAnimation();
 		pc->img[Player_imgFall]->selected = true;
-		stageAni = true;
 		nextDoor = 255;
 	}
 	
-	if (pc->img[Player_imgFall]->animation == true)
+	if (pc->img[Player_imgFall]->animation)
 	{
 		iPoint p = pc->playerPosition + SET_DRAW_OFF - iPointMake(HALF_OF_TEX_WIDTH / 2, HALF_OF_TEX_HEIGHT / 2);
-		pc->img[Player_imgFall]->paint(dt,p);
+		pc->img[Player_imgFall]->paint(dt, p);
 		return;
 	}
 	
-	if (stagetest == false)
+	static bool stage = false;
+	if (stage == false)
 	{
-		pc->img[Player_imgFall]->selected = false;
-
 		createStage();
-
 		showRgLoading(true, NextStage);
-		stagetest = true;
+
+		stage = true;
 	}
 
 	drawRgLoading(dt, NextStage);
@@ -122,14 +119,14 @@ void nextStageAni(float dt)
 	if (bShowRgLoading(NextStage) == false)
 	{
 		nextStage = false;
-		stagetest = false;
-		stageAni = false;
+
+		stage = false;
 	}
 }
 
 void drawNextDoor(float dt)
 {
-	if (nextStage || nextDoor == 255)
+	if (nextStage || (nextDoor != pc->tileNumber))
 		return;
 
 	iPoint p = maps[nextDoor]->tileOff + SET_DRAW_OFF + RGTILE_CENTER;
@@ -143,9 +140,6 @@ void drawNextDoor(float dt)
 
 void containDoor(iPoint p)
 {
-	if (nextDoor != pc->tileNumber)
-		return;
-
 	iPoint dp = maps[nextDoor]->tileOff + RGTILE_CENTER;
 	iRect drt = iRectMake(dp.x - 25, dp.y - 25, 50, 50);
 

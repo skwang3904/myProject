@@ -48,6 +48,7 @@ public:
 
 	void paint(float dt);
 	bool evasionPlayer(MapTile* tile, float dt);
+	bool fallCheck(MapTile* tile, float dt);
 
 	void setPlayerTile();
 

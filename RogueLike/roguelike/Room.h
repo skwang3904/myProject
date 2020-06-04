@@ -27,4 +27,3 @@ bool passAni();
 
 void wallCheck(bool checkFall, MapTile* tile, iPoint& pos,iPoint mp, 
 				float halfOfTexW, float halfOfTexH);
-bool fallCheck(MapTile* tile, float dt);

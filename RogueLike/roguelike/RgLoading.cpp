@@ -160,6 +160,7 @@ void showPopNextStage(bool show)
 	popNextStage->show(show);
 }
 
+#define _nextStageloadingTime 1.0f
 void drawPopNextStage(float dt)
 {
 	setRGBA(0, 0, 0, 1);
@@ -168,16 +169,16 @@ void drawPopNextStage(float dt)
 
 	nextStageLoadingTime += dt;
 	float f = nextStageLoadingTime / _nextStageloadingTime;
-	if (f < 0.3f) f = 0.3f;
-	else if (f < 0.5f) f = 0.6f;
-	else if (f < 1.2f) f = 0.8f;
+	if (f < 0.3f) f = 0.2f;
+	else if (f < 0.5f) f = 0.5f;
+	else if (f < 0.7f) f = 0.8f;
 	else  f = 1.0f;
 
 	imgLoadingBar->imgRatioX = f;
 
 	popNextStage->paint(dt);
 
-	if (nextStageLoadingTime > _nextStageloadingTime + 2.0f)
+	if (nextStageLoadingTime > _nextStageloadingTime)
 		popNextStage->show(false);
 }
 

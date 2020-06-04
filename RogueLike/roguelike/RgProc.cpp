@@ -94,13 +94,21 @@ void drawRgProc(float dt)
 {
 	drawRoomTile(dt);
 	passTileAnimation(dt);
+	curtainTile();
 	if (passAni())
 		return;
 
+	if (nextStage)
+	{
+		nextStageAni(dt);
+		return;
+	}
 
 	drawNextDoor(dt);
 	//if (nextStage)
 	//	return;
+	if (getLoading())
+		return;
 
 	if (pc->hp < 0.1f)
 	{
@@ -118,20 +126,13 @@ void drawRgProc(float dt)
 	// pop
 
 	curtainTile();
-	if(getLoading()==false)
-	{
-		//drawPlayerUI(dt);
-		drawPopHP(dt);
-		drawPopMiniMap(dt);
-		drawPopCombatMenu(dt);
-		drawPopItem(dt);
-		drawPopStageNum(dt);
+	drawPopHP(dt);
+	drawPopMiniMap(dt);
+	drawPopCombatMenu(dt);
+	drawPopItem(dt);
+	drawPopStageNum(dt);
 
-		numberFont->drawFont(devSize.width / 2 + 200, 30, TOP | LEFT, 1, 1, 1, "%d", stage);
-
-		if (nextStage)
-			nextStageAni(dt);
-	}
+	numberFont->drawFont(devSize.width / 2 + 200, 30, TOP | LEFT, 1, 1, 1, "%d", stage);
 
 	//--------------------------------------------------------
 	// test

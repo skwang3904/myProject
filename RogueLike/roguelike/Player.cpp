@@ -81,7 +81,6 @@ void Player::initPlayerPosition()
 		if (maps[a]->rgTile != NULL)
 		{
 			playerPosition = maps[a]->tileOff + RGTILE_CENTER;
-
 			camPosition = iPointZero - maps[a]->tileOff;
 			tileNumber = a;
 			break;
@@ -171,7 +170,7 @@ void Player::createPlayerImage()
 	img[8] = imgFall;
 
 	img[9] = imgEvasion;
-#if 0
+#if 1
 	for (int i = 0; i < 10; i++)
 	{
 		if (img[i] == NULL)
@@ -224,7 +223,7 @@ void Player::drawPlayer(float dt)
 
 void Player::showHpBar(float dt) // 임시
 {
-	iPoint drawPos = playerPosition + camPosition + setPos;
+	iPoint drawPos = playerPosition + SET_DRAW_OFF;
 	setRGBA(0, 0, 0, 1);
 	fillRect(drawPos.x, drawPos.y - 30, HALF_OF_TEX_WIDTH * 2, 15);
 	setRGBA(0, 1, 0, 1);
@@ -421,7 +420,7 @@ void Player::paint(float dt)
 	wallCheck(false, tile, pc->playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
 
 	img[headNum]->setTexAtIndex(pc->act == attacking ? true : false);
-	iPoint drawPos = playerPosition + camPosition + setPos;
+	iPoint drawPos = playerPosition + SET_DRAW_OFF;
 
 	//히트박스 표시-------------------------------
 	drawtouchPlayer();
@@ -467,8 +466,7 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 		iPoint mp = evasV * (EVASION_DISTANCE * dt);
 		wallCheck(false, tile, playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
 
-		//drawPos = playerPosition + camPosition + setPos;
-		iPoint dp = playerPosition + iPointMake(0,-30) + camPosition + setPos;
+		iPoint dp = playerPosition + iPointMake(0,-30) + SET_DRAW_OFF;
 		iPoint p = iPointMake(dp.x - HALF_OF_TEX_WIDTH/2,
 			dp.y - HALF_OF_TEX_HEIGHT);
 		
@@ -489,4 +487,165 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 	}
 	
 	return false;
+}
+
+void findMoveTile(MapTile* tile, iPoint& moveTileNum);
+bool Player::fallCheck(MapTile* tile, float dt)
+{
+	// 임시 - 낭떨어지에 진입시 가장 가까이있는 타일로 이동  - 어색함
+	// 라이프 감소
+	// 잠시 무적
+	if (tile->rgTile == NULL)
+		return false;
+
+	MapTile* t = tile;
+
+	int x = (int)(pc->playerPosition.x - t->tileOff.x + HALF_OF_TEX_WIDTH) / RGTILE_Width;
+	int y = (int)(pc->playerPosition.y - t->tileOff.y + HALF_OF_TEX_HEIGHT) / RGTILE_Height;
+	iPoint moveTileNum = iPointZero;
+	if (t->rgTile[RGTILE_X * y + x] == FALLTILE)
+	{
+		if (pc->act != falling)
+		{
+			pc->img[Player_imgFall]->startAnimation();
+			pc->img[Player_imgFall]->selected = true;
+			findMoveTile(t, moveTileNum);
+
+			audioPlay(SND_FALL);
+		}
+
+		if (pc->img[Player_imgFall]->animation == false)
+		{
+			pc->img[Player_imgFall]->selected = false;
+			pc->act = idle;
+			pc->playerPosition = moveTileNum;
+
+			return false;
+		}
+
+		pc->act = falling;
+		iPoint p = pc->playerPosition - t->tileOff + setPos
+			- iPointMake(HALF_OF_TEX_WIDTH / 2, HALF_OF_TEX_HEIGHT / 2);
+
+		pc->img[Player_imgFall]->selected = true;
+		pc->img[Player_imgFall]->paint(dt, p);
+
+		return true;
+	}
+
+	return false;
+}
+
+float findMoveTile(MapTile* tile, int x, int y)
+{	// 수정 필요
+	float min = 0xffff;
+	MapTile* t = tile;
+	if (t->rgTile[RGTILE_X * y + x] != MOVETILE)
+		return min;
+
+	float distance = iPointLength(
+		(pc->playerPosition + iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT))
+		- t->tileOff + iPointMake(RGTILE_Width * x + RGTILE_Width / 2,
+			RGTILE_Height * y + RGTILE_Height / 2));
+
+	if (min > distance)
+		return distance;
+	return min;
+}
+
+void findMoveTile(MapTile* tile, iPoint& moveTileNum)
+{
+	MapTile* t = tile;
+	int x = (int)(pc->playerPosition.x - t->tileOff.x + HALF_OF_TEX_WIDTH) / RGTILE_Width;
+	int y = (int)(pc->playerPosition.y - t->tileOff.y + HALF_OF_TEX_HEIGHT) / RGTILE_Height;
+
+	float minD = 0xffff;
+	float dis;
+
+	int pcX = x;
+	int pcY = y;
+
+	for (int i = 0; ; i++)
+	{
+		// x-1, y-1,	x, y-1,		x+1, y-1
+		// x-1, y					x+1, y
+		// x-1, y+1		x, y+1		x+1, y+1
+
+		dis = findMoveTile(tile, x - i, y - i);
+		if (dis < minD)
+		{
+			minD = dis;
+			pcX = x - i;
+			pcY = y - i;
+		}
+		dis = findMoveTile(tile, x - i, y);
+		if (dis < minD)
+		{
+			minD = dis;
+			pcX = x - i;
+			pcY = y;
+		}
+		dis = findMoveTile(tile, x - i, y + i);
+		if (dis < minD)
+		{
+			minD = dis;
+			pcX = x - i;
+			pcY = y + i;
+		}
+
+		dis = findMoveTile(tile, x, y - i);
+		if (dis < minD)
+		{
+			minD = dis;
+			pcX = x;
+			pcY = y - i;
+		}
+		dis = findMoveTile(tile, x, y + i);
+		if (dis < minD)
+		{
+			minD = dis;
+			pcX = x;
+			pcY = y + i;
+		}
+
+		dis = findMoveTile(tile, x + i, y - i);
+		if (dis < minD)
+		{
+			minD = dis;
+			pcX = x + i;
+			pcY = y - i;
+		}
+		dis = findMoveTile(tile, x + i, y);
+		if (dis < minD)
+		{
+			minD = dis;
+			pcX = x + i;
+			pcY = y;
+		}
+
+		dis = findMoveTile(tile, x + i, y + i);
+		if (dis < minD)
+		{
+			minD = dis;
+			pcX = x + i;
+			pcY = y + i;
+		}
+
+		if (minD != 0xffff)
+			break;
+	}
+
+	iPoint p = iPointMake(t->tileOff.x + RGTILE_Width * pcX,
+		t->tileOff.y + RGTILE_Height * pcY);
+
+	if (p.x < pc->playerPosition.x + HALF_OF_TEX_WIDTH)
+		p -= iPointMake(HALF_OF_TEX_WIDTH, 0);
+	else
+		p += iPointMake(HALF_OF_TEX_WIDTH, 0);
+	if (p.y < pc->playerPosition.y + HALF_OF_TEX_HEIGHT)
+		p -= iPointMake(0, HALF_OF_TEX_HEIGHT);
+	else
+		p += iPointMake(HALF_OF_TEX_HEIGHT, 0);
+
+	moveTileNum = p;
 }

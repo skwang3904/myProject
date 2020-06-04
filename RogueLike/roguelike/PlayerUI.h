@@ -22,7 +22,6 @@ bool keyPopMiniMap(iKeyState stat, iPoint point);
 
 /////////////////////////////////////////////////////////
 
-
 void createPopCombatMenu();
 void freePopCombatMenu();
 void showPopCombatMenu(bool show);

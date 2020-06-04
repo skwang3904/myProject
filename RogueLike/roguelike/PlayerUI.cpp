@@ -388,7 +388,7 @@ bool keyPopCombatMenu(iKeyState stat, iPoint point)
 	{
 		for (int i = 0; i < pc->weaponArray->count; i++)
 		{
-			iPoint	p = p + iPointMake(150 * (i % 2), 150 * (i / 2));
+			iPoint	p = iPointMake(1600 + 150 * (i % 2), 400 + 150 * (i / 2));
 			iRect rt = iRectMake(p.x, p.y, 128, 128);
 			if (containPoint(point, rt))
 			{

@@ -170,13 +170,6 @@ void Player::createPlayerImage()
 	img[8] = imgFall;
 
 	img[9] = imgEvasion;
-#if 1
-	for (int i = 0; i < 10; i++)
-	{
-		if (img[i] == NULL)
-			printf("player imgChar[%d] error", i);
-	}
-#endif
 }
 
 bool Player::actionCheck(bool key)
@@ -186,7 +179,7 @@ bool Player::actionCheck(bool key)
 	return false;
 }
 
-void Player::drawPlayer(float dt)
+void Player::paint(float dt)
 {
 	if (hp <= 0.0f)
 	{
@@ -195,7 +188,7 @@ void Player::drawPlayer(float dt)
 	}
 
 	sort->init();
-	sort->add(pc->playerPosition.y + HALF_OF_TEX_HEIGHT/2.0f);
+	sort->add(pc->playerPosition.y + HALF_OF_TEX_HEIGHT / 2.0f);
 	if (pc->pwp->isMelee)
 	{
 		meleeWeapon* mw = (meleeWeapon*)pc->pwp->wp;
@@ -211,7 +204,7 @@ void Player::drawPlayer(float dt)
 	for (int i = 0; i < sort->sdNum; i++) // 수정필요
 	{
 		if (sort->get(i) == 0)
-			paint(dt);
+			drawPlayer(dt);
 		else
 			combatDraw(dt);
 	}
@@ -219,16 +212,6 @@ void Player::drawPlayer(float dt)
 	choseWeapon(getKeyDown(keyboard_tab));
 	rootCombat(getKeyDown(keyboard_i));
 	dropCombat(dt, getKeyDown(keyboard_o));
-}
-
-void Player::showHpBar(float dt) // 임시
-{
-	iPoint drawPos = playerPosition + SET_DRAW_OFF;
-	setRGBA(0, 0, 0, 1);
-	fillRect(drawPos.x, drawPos.y - 30, HALF_OF_TEX_WIDTH * 2, 15);
-	setRGBA(0, 1, 0, 1);
-	fillRect(drawPos.x, drawPos.y - 30, HALF_OF_TEX_WIDTH * 2 * hp / _hp, 15);
-	setRGBA(1, 1, 1, 1);
 }
 
 void Player::combatDraw(float dt)
@@ -269,9 +252,7 @@ void Player::rootCombat(bool key)
 
 void Player::dropCombat(float dt, bool key)
 {
-	if (weaponArray->count < 2)
-		return;
-	if (actionCheck(key))
+	if (weaponArray->count < 2 || actionCheck(key))
 		return;
 	
 	int i, j, k;
@@ -344,10 +325,9 @@ void Player::drawtouchPlayer()
 	rt.origin += SET_DRAW_OFF;
 	fillRect(rt);
 	setRGBA(1, 1, 1, 1);
-
 }
 
-void Player::paint(float dt)
+void Player::drawPlayer(float dt)
 {
 	iPoint v = iPointZero;
 	iPoint mv = pc->combatV;
@@ -444,7 +424,7 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 	// 회피
 	// 회피중 무적
 
-	if (getKeyDown(keyboard_space) && act != evasion && act != attacking)
+	if (getKeyDown(keyboard_space) && act == idle)
 	{
 		if (viewVector != iPointZero)
 		{
@@ -461,7 +441,7 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 		return false;
 
 
-	if (img[Player_imgEvasion]->animation == true)
+	if (img[Player_imgEvasion]->animation)
 	{	
 		iPoint mp = evasV * (EVASION_DISTANCE * dt);
 		wallCheck(false, tile, playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
@@ -477,8 +457,7 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 		
 		return true;
 	}
-
-	else if (img[Player_imgEvasion]->animation == false)
+	else //if (img[Player_imgEvasion]->animation == false)
 	{
 		act = idle;
 		evasV = iPointZero;
@@ -487,70 +466,6 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 	}
 	
 	return false;
-}
-
-void findMoveTile(MapTile* tile, iPoint& moveTileNum);
-bool Player::fallCheck(MapTile* tile, float dt)
-{
-	// 임시 - 낭떨어지에 진입시 가장 가까이있는 타일로 이동  - 어색함
-	// 라이프 감소
-	// 잠시 무적
-	if (tile->rgTile == NULL)
-		return false;
-
-	MapTile* t = tile;
-
-	int x = (int)(pc->playerPosition.x - t->tileOff.x + HALF_OF_TEX_WIDTH) / RGTILE_Width;
-	int y = (int)(pc->playerPosition.y - t->tileOff.y + HALF_OF_TEX_HEIGHT) / RGTILE_Height;
-	iPoint moveTileNum = iPointZero;
-	if (t->rgTile[RGTILE_X * y + x] == FALLTILE)
-	{
-		if (pc->act != falling)
-		{
-			pc->img[Player_imgFall]->startAnimation();
-			pc->img[Player_imgFall]->selected = true;
-			findMoveTile(t, moveTileNum);
-
-			audioPlay(SND_FALL);
-		}
-
-		if (pc->img[Player_imgFall]->animation == false)
-		{
-			pc->img[Player_imgFall]->selected = false;
-			pc->act = idle;
-			pc->playerPosition = moveTileNum;
-
-			return false;
-		}
-
-		pc->act = falling;
-		iPoint p = pc->playerPosition - t->tileOff + setPos
-			- iPointMake(HALF_OF_TEX_WIDTH / 2, HALF_OF_TEX_HEIGHT / 2);
-
-		pc->img[Player_imgFall]->selected = true;
-		pc->img[Player_imgFall]->paint(dt, p);
-
-		return true;
-	}
-
-	return false;
-}
-
-float findMoveTile(MapTile* tile, int x, int y)
-{	// 수정 필요
-	float min = 0xffff;
-	MapTile* t = tile;
-	if (t->rgTile[RGTILE_X * y + x] != MOVETILE)
-		return min;
-
-	float distance = iPointLength(
-		(pc->playerPosition + iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT))
-		- t->tileOff + iPointMake(RGTILE_Width * x + RGTILE_Width / 2,
-			RGTILE_Height * y + RGTILE_Height / 2));
-
-	if (min > distance)
-		return distance;
-	return min;
 }
 
 void findMoveTile(MapTile* tile, iPoint& moveTileNum)
@@ -648,4 +563,67 @@ void findMoveTile(MapTile* tile, iPoint& moveTileNum)
 		p += iPointMake(HALF_OF_TEX_HEIGHT, 0);
 
 	moveTileNum = p;
+}
+
+bool Player::fallCheck(MapTile* tile, float dt)
+{
+	// 임시 - 낭떨어지에 진입시 가장 가까이있는 타일로 이동  - 어색함
+	// 라이프 감소
+	// 잠시 무적
+	if (tile->rgTile == NULL)
+		return false;
+
+	MapTile* t = tile;
+
+	int x = (int)(pc->playerPosition.x - t->tileOff.x + HALF_OF_TEX_WIDTH) / RGTILE_Width;
+	int y = (int)(pc->playerPosition.y - t->tileOff.y + HALF_OF_TEX_HEIGHT) / RGTILE_Height;
+	iPoint moveTileNum = iPointZero;
+	if (t->rgTile[RGTILE_X * y + x] == FALLTILE)
+	{
+		if (pc->act != falling)
+		{
+			pc->img[Player_imgFall]->startAnimation();
+			pc->img[Player_imgFall]->selected = true;
+			findMoveTile(t, moveTileNum);
+
+			audioPlay(SND_FALL);
+		}
+
+		if (pc->img[Player_imgFall]->animation == false)
+		{
+			pc->img[Player_imgFall]->selected = false;
+			pc->act = idle;
+			pc->playerPosition = moveTileNum;
+
+			return false;
+		}
+
+		pc->act = falling;
+		iPoint p = pc->playerPosition - t->tileOff + setPos
+			- iPointMake(HALF_OF_TEX_WIDTH / 2, HALF_OF_TEX_HEIGHT / 2);
+
+		pc->img[Player_imgFall]->selected = true;
+		pc->img[Player_imgFall]->paint(dt, p);
+
+		return true;
+	}
+
+	return false;
+}
+
+float findMoveTile(MapTile* tile, int x, int y)
+{	// 수정 필요
+	float min = 0xffff;
+	MapTile* t = tile;
+	if (t->rgTile[RGTILE_X * y + x] != MOVETILE)
+		return min;
+
+	float distance = iPointLength(
+		(pc->playerPosition + iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT))
+		- t->tileOff + iPointMake(RGTILE_Width * x + RGTILE_Width / 2,
+			RGTILE_Height * y + RGTILE_Height / 2));
+
+	if (min > distance)
+		return distance;
+	return min;
 }

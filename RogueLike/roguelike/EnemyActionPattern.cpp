@@ -151,7 +151,7 @@ bool commonAttack(EnemyGolem* enm, float dt)
 		e->act = idle;
 	}
 
-	if (e->giveDmg == true && e->giveDmgTime
+	if (e->giveDmg && e->giveDmgTime
 		> 0.0f - e->meleeAtkSpeed * 0.4f && e->giveDmgTime < 0.0f - e->meleeAtkSpeed * 0.3f)
 	{
 		setLineWidth(10);

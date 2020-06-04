@@ -35,7 +35,7 @@ FireBall::~FireBall()
 
 void FireBall::init(float d, float firetime, float firespeed, int tileNum, iPoint& vlen, iPoint& pos)
 {
-	if (alive == true)
+	if (alive)
 		return;
 
 	alive = true;

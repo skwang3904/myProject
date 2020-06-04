@@ -9,7 +9,7 @@ iImage* imgPowerUp;
 iImage* imgAtkSpeedUp;
 iImage* imgMoveSpeedUp;
 
-#define ANIDT 2.0f
+#define ANIDT 0.5f
 UseItem::UseItem(itemType it)
 {
     type = it;
@@ -26,7 +26,6 @@ UseItem::UseItem(itemType it)
     aniDt = ANIDT;
 
     itemPos = iPointZero;
-    drawitemPos = iPointZero;
     touchItem = iRectZero;
 }
 
@@ -86,7 +85,7 @@ bool UseItem::animation(float dt)
     iPoint a = easeIn(aniDt / ANIDT, sp, itemPos);
     a += iPointMake(0, h);
     
-    drawitemPos = a + SET_DRAW_OFF;
+    iPoint drawitemPos = a + SET_DRAW_OFF;
     img->paint(dt, drawitemPos);
 
     return true;
@@ -103,9 +102,8 @@ void UseItem::paint(float dt)
     fillRect(rt);
     setRGBA(1, 1, 1, 1);
 
+    iPoint drawitemPos = itemPos + SET_DRAW_OFF;
     img->paint(dt, drawitemPos);
-
-    drawitemPos = itemPos + SET_DRAW_OFF;
 
     iPoint p = pc->playerPosition + HALF_OF_TEX_POINT;
     
@@ -171,7 +169,6 @@ void golemItems(EnemyGolem* enm)
         iPoint p = iPointMake(-100 + 50 * i, 0);
         ui->sp = enm->golemPos + et;
         ui->itemPos = enm->golemPos + et + p;
-        ui->drawitemPos = ui->itemPos + SET_DRAW_OFF;
 
         ui->touchItem = iRectMake(ui->itemPos.x + tex->width / 4, 
             ui->itemPos.y + tex->height / 4,

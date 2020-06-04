@@ -56,7 +56,7 @@ void setRoomTile()
 		memset(m, -1, sizeof(int) * MAPTILE_NUM);
 		for (int i = 0; i < MAPTILE_NUM; i++)
 		{
-			if (m[i] == -1 || randomOffCheck[m[i]] == true)
+			if (m[i] == -1 || randomOffCheck[m[i]])
 				m[i] = random() % TILEOFF_NUM;
 
 			if (randomOffCheck[m[i]] == false)
@@ -79,7 +79,7 @@ void setRoomTile()
 					break;
 				}
 			}
-			if (exist == true)
+			if (exist)
 				maps[m[k]]->rgTile = Tile4way1;
 		}
 
@@ -115,7 +115,7 @@ void setRoomTile()
 
 void connectCheck(ConnectTile* c, int& count)
 {
-	if (c->visit == true || c->value == false)
+	if (c->visit || c->value == false)
 		return;
 
 	c->visit = true;
@@ -132,7 +132,7 @@ void connectCheck(ConnectTile* c, int& count)
 
 bool path(ConnectTile* c)
 {
-	if (c->value == true)
+	if (c->value)
 		return true;
 	return false;
 }

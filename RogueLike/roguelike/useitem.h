@@ -44,7 +44,7 @@ public:
 	float aniDt;
 
 	iPoint itemPos;
-	iPoint drawitemPos;
+	//iPoint drawitemPos;
 	iRect touchItem;
 
 };

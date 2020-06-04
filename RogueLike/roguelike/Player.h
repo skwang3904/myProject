@@ -36,23 +36,21 @@ public:
 	void initPlayerStat();
 	void initPlayerPosition();
 
+	void paint(float dt);
 	bool actionCheck(bool key);
-	void drawPlayer(float dt);
-
-	void showHpBar(float dt);
 
 	void combatDraw(float dt);
 	void rootCombat(bool key);
 	void dropCombat(float dt, bool key);
 	void choseWeapon(bool key);
 
-	void paint(float dt);
-	bool evasionPlayer(MapTile* tile, float dt);
-	bool fallCheck(MapTile* tile, float dt);
-
 	void setPlayerTile();
 
 	void drawtouchPlayer();
+	void drawPlayer(float dt);
+
+	bool evasionPlayer(MapTile* tile, float dt);
+	bool fallCheck(MapTile* tile, float dt);
 
 public:
 	iImage** img;

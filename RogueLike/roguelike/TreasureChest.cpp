@@ -180,7 +180,6 @@ void openChestBasic(Chest* me)
 		iPoint p = iPointMake(-100 + 100 * i, 0);
 		ui->sp = me->pos + cp;
 		ui->itemPos = me->pos + cp + p;
-		ui->drawitemPos = ui->itemPos + SET_DRAW_OFF;
 
 		ui->touchItem = iRectMake(ui->itemPos.x + tex->width / 4,
 			ui->itemPos.y + tex->height / 4,

@@ -105,10 +105,6 @@ void drawRgProc(float dt)
 	}
 
 	drawNextDoor(dt);
-	//if (nextStage)
-	//	return;
-	if (getLoading())
-		return;
 
 	if (pc->hp < 0.1f)
 	{
@@ -119,9 +115,10 @@ void drawRgProc(float dt)
 	drawEnemy(dt);
 
 	weapon->drawWeapon(dt);
-	pc->drawPlayer(dt);
+	pc->paint(dt);
 
 	drawChest(dt);
+
 	//--------------------------------------------------------
 	// pop
 
@@ -141,8 +138,8 @@ void drawRgProc(float dt)
 void keyRgProc(iKeyState stat, iPoint point)
 {
 	if (keyPopHP(stat, point) ||
-		keyPopCombatMenu(stat, point) ||
 		keyPopMiniMap(stat, point) ||
+		keyPopCombatMenu(stat, point) ||
 		keyPopItem(stat, point) ||
 		keyPopStageNum(stat, point))
 		return;

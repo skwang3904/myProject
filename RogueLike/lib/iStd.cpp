@@ -1,10 +1,5 @@
 #include "iStd.h"
 
-#include "../roguelike/RgGame.h"
-#include "../roguelike/PlayerUI.h"
-#include "../roguelike/RgProc.h"
-
-
 uint8 float2uint8(float f)
 {
     return f * 0xFF;
@@ -211,6 +206,7 @@ void zoomLib(iPoint point, float rate)
     zoomDt = 0.0f;
 }
 
+iFBO* fbo = NULL;
 iFBO::iFBO(int width, int height)
 {
     // renderBuffer(depthBuffer)
@@ -240,7 +236,6 @@ iFBO::iFBO(int width, int height)
     listNum = 0;
 }
 
-iFBO* fbo = NULL;
 iFBO::~iFBO()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

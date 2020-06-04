@@ -33,7 +33,7 @@ FireBall::~FireBall()
 	delete img;
 }
 
-void FireBall::init(float d, float firetime, float firespeed, uint8 tileNum, iPoint& vlen, iPoint& pos)
+void FireBall::init(float d, float firetime, float firespeed, int tileNum, iPoint& vlen, iPoint& pos)
 {
 	if (alive == true)
 		return;
@@ -88,7 +88,7 @@ void FireBall::setAngle()
 	img->angle = iPointAngle(v1, v2, v);
 }
 
-void FireBall::setlimitRect(uint8 tileNum)
+void FireBall::setlimitRect(int tileNum)
 {
 	iPoint p = maps[tileNum]->tileOff;
 
@@ -151,7 +151,7 @@ void drawEffect(float dt)
 
 //----------------------------------------------------------------------------------------
 
-void projectileReflect(uint8 tile, iPoint& v, iPoint& pos, iPoint& mp)
+void projectileReflect(int tile, iPoint& v, iPoint& pos, iPoint& mp)
 {
 	MapTile* t = maps[tile];
 

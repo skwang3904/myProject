@@ -1,6 +1,6 @@
 #pragma once
 
-// 타일 모음
+// 타일 정보 모음
 
 #include "iStd.h"
 
@@ -32,8 +32,8 @@ struct MapTile {
 	int* rgTile;
 	iPoint tileOff;
 };
+
 extern iPoint* tileOffSet;
-extern iPoint setPos;
 
 void createTileSet();
 void freeTileSet();

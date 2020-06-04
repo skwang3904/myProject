@@ -1,7 +1,6 @@
 #include "rgArray.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "iStd.h"
 
 rgArray::rgArray(RGARRAY_METHOD m)
 {

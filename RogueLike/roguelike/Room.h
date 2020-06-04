@@ -7,7 +7,7 @@
 */
 
 void loadRoomTile();
-void newRoomTile();
+void setRoomTile();
 void freeRoomTile();
 void drawRoomTile(float dt);
 
@@ -19,11 +19,12 @@ struct ConnectTile {
 };
 extern ConnectTile ct[TILEOFF_NUM];
 
-extern bool passAni;
-void passTileAnimation(float dt);
-
 struct MapTile;
 extern MapTile** maps;
+
+void passTileAnimation(float dt);
+bool passAni();
+
 void wallCheck(bool checkFall, MapTile* tile, iPoint& pos,iPoint mp, 
 				float halfOfTexW, float halfOfTexH);
 bool fallCheck(MapTile* tile, float dt);

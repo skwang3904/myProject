@@ -116,14 +116,15 @@ void refreshMiniMap()
 			if (i == pc->tileNumber) setRGBA(0, 1, 0, 1); // 플레이어 표시
 			else setRGBA(0.8, 0.8, 0.8, 1);
 
-			fillRect(minitile * (i % TILEOFF_SQRT), minitile * (i / TILEOFF_SQRT), minitile, minitile);
+			iPoint mp = iPointMake(minitile * (i % TILEOFF_SQRT), minitile * (i / TILEOFF_SQRT));
+			fillRect(mp.x, mp.y, minitile, minitile);
 			setRGBA(0, 0, 0, 1);
-			drawRect(minitile * (i % TILEOFF_SQRT), minitile * (i / TILEOFF_SQRT), minitile, minitile);
+			drawRect(mp.x, mp.y, minitile, minitile);
 
 			if (i == nextDoor) // 다음스테이지 표시
 			{
 				setRGBA(0, 0, 1, 1);
-				fillRect(minitile * (i % TILEOFF_SQRT) + 10,  minitile * (i / TILEOFF_SQRT) + 10,
+				fillRect(mp.x + 10, mp.y + 10,
 					minitile - 20, minitile - 20);
 			}
 
@@ -137,8 +138,8 @@ void refreshMiniMap()
 						iPoint p = iPointMake((fabsf(eg->golemPos.x - tileOffSet[i].x) / (RGTILE_X * RGTILE_Width)),
 							(fabsf(eg->golemPos.y - tileOffSet[i].y) / (RGTILE_Y * RGTILE_Height)));
 						setRGBA(1, 0.5, 0, 1);
-						fillRect(minitile * (i % TILEOFF_SQRT) + minitile * p.x,
-							minitile * (i / TILEOFF_SQRT) + minitile * p.y,
+						fillRect(mp.x + minitile * p.x,
+							mp.y + minitile * p.y,
 							5, 5);
 					}
 				}
@@ -148,7 +149,7 @@ void refreshMiniMap()
 			if (a == i && golemEletes[0][0].hp > 0.0f)
 			{
 				setRGBA(1, 0, 0, 1);
-				fillRect(minitile * (i % TILEOFF_SQRT) + 10, minitile * (i / TILEOFF_SQRT) + 10,
+				fillRect(mp.x + 10, mp.y + 10,
 					minitile - 20, minitile - 20);
 			}
 		}

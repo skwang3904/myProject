@@ -187,6 +187,7 @@
     <ClInclude Include="roguelike\Player.h" />
     <ClInclude Include="roguelike\PlayerUI.h" />
     <ClInclude Include="roguelike\RgGame.h" />
+    <ClInclude Include="roguelike\RgHeader.h" />
     <ClInclude Include="roguelike\RgIntro.h" />
     <ClInclude Include="roguelike\RgLoading.h" />
     <ClInclude Include="roguelike\RgMenu.h" />

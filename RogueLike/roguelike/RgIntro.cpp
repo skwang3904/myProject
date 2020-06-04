@@ -1,7 +1,9 @@
 #include "RgIntro.h"
 
+#include "RgProc.h"
 #include "RgGame.h"
 #include "loading.h"
+
 
 void loadRgIntro()
 {

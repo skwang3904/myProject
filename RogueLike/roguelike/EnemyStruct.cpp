@@ -110,7 +110,6 @@ void EnemyGolem::init(int stage)
 
 	touchGolem = iRectZero;
 	golemPos = iPointZero;
-	drawGolemPos = iPointZero;
 
 	showHp = false;
 	showHpTime = 0.0f;
@@ -157,7 +156,7 @@ void EnemyGolem::paint(float dt)
 		tex->width * ratio,
 		tex->height * ratio);
 
-	drawGolemPos = golemPos + SET_DRAW_OFF;
+	iPoint drawGolemPos = golemPos + SET_DRAW_OFF;
 	touchGolem = rt;
 
 	rt.origin += SET_DRAW_OFF;
@@ -226,7 +225,7 @@ void EnemyGolem::drawShowHp(float dt)
 		showHp = false;
 		showHpTime = 0.0f;
 	}
-
+	iPoint drawGolemPos = golemPos + SET_DRAW_OFF;
 	iRect rt = iRectMake(drawGolemPos.x + img[0]->tex->width * ratio * 0.25f, drawGolemPos.y,
 		img[0]->tex->width * ratio * 0.5f, 30);
 	setRGBA(0, 0, 0, 1);

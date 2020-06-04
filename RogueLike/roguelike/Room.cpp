@@ -5,8 +5,19 @@
 ConnectTile ct[TILEOFF_NUM];
 MapTile** maps;
 
-void connectCheck(ConnectTile* c);
+
+struct passTile {
+	iPoint prevCamOff;
+	iPoint sp;
+	iPoint tp;
+	float passAniDt;
+};
+static passTile pt;
+#define _passAniDt 0.2f
+
+void connectCheck(ConnectTile* c, int& count);
 void pathTileCheck(ConnectTile* c);
+
 
 void loadRoomTile()
 {
@@ -15,15 +26,19 @@ void loadRoomTile()
 	for (int i = 0; i < TILEOFF_NUM; i++)
 		maps[i] = (MapTile*)malloc(sizeof(MapTile) * 1);
 
-	newRoomTile();
+	pt.prevCamOff = pc->camPosition;
+	pt.sp = iPointZero;
+	pt.tp = iPointZero;
+	pt.passAniDt = _passAniDt;
+
+	setRoomTile();
 }
 
-bool randomOffCheck[TILEOFF_NUM];
-int conectCount = 0;
-void newRoomTile()
+void setRoomTile()
 {
 	int m[MAPTILE_NUM];
-	conectCount = 0;
+	bool randomOffCheck[TILEOFF_NUM];
+	int conectCount = 0;
 	while (conectCount < MAPTILE_NUM)
 	{
 		for (int i = 0; i < TILEOFF_NUM; i++)
@@ -81,7 +96,7 @@ void newRoomTile()
 		for (int i = 0; i < TILEOFF_NUM; i++)
 		{
 			ConnectTile* c = &ct[i];
-			connectCheck(c);
+			connectCheck(c, conectCount);
 
 			if (conectCount == MAPTILE_NUM)
 				break;
@@ -101,21 +116,21 @@ void newRoomTile()
 	}
 }
 
-void connectCheck(ConnectTile* c)
+void connectCheck(ConnectTile* c, int& count)
 {
 	if (c->visit == true || c->value == false)
 		return;
 
 	c->visit = true;
-	conectCount++;
+	count++;
 
 	int index = c->index;
 	int x = c->index % TILEOFF_SQRT;
 	int y = c->index / TILEOFF_SQRT;
-	if (x > 0)					connectCheck(&ct[c->index- 1]);
-	if (x < TILEOFF_SQRT - 1)	connectCheck(&ct[c->index+ 1]);
-	if (y > 0)					connectCheck(&ct[c->index- TILEOFF_SQRT]);
-	if (y < TILEOFF_SQRT - 1)	connectCheck(&ct[c->index+ TILEOFF_SQRT]);
+	if (x > 0)					connectCheck(&ct[c->index- 1], count);
+	if (x < TILEOFF_SQRT - 1)	connectCheck(&ct[c->index+ 1], count);
+	if (y > 0)					connectCheck(&ct[c->index- TILEOFF_SQRT], count);
+	if (y < TILEOFF_SQRT - 1)	connectCheck(&ct[c->index+ TILEOFF_SQRT], count);
 }
 
 bool path(ConnectTile* c)
@@ -216,36 +231,27 @@ void drawRoomTile(float dt)
 	setRGBA(1, 1, 1, 1);
 }
 
-bool passAni = false;
-#define _passAniDt 0.2f
 void passTileAnimation(float dt)
 {
-	static iPoint prevCamOff = iPointMake(-1, -1);
-	static float passAniDt = _passAniDt;
-	static iPoint sp = iPointZero;
-	static iPoint ep = iPointZero;
+	passTile* t = &pt;
 
-	if (prevCamOff == iPointMake(-1, -1))
-		prevCamOff = pc->camPosition;
-
-	if (prevCamOff == pc->camPosition && passAniDt == _passAniDt)
+	if (t->prevCamOff == pc->camPosition)// && t->passAniDt == _passAniDt)
 		return;
 
 	if (nextStage)
 	{
-		prevCamOff = pc->camPosition;
+		t->prevCamOff = pc->camPosition;
 		return;
 	}
 
-	if (passAni == false)
+	if (t->passAniDt == _passAniDt)
 	{
-		sp = prevCamOff;
-		ep = pc->camPosition;
-		passAniDt = 0.0f;
-		passAni = true;
+		t->sp = t->prevCamOff;
+		t->tp = pc->camPosition;
+		t->passAniDt = 0.0f;
 	}
 
-	pc->camPosition = sp + (ep - sp) * passAniDt / _passAniDt;
+	pc->camPosition = t->sp + (t->tp - t->sp) * t->passAniDt / _passAniDt;
 
 	int num = RGTILE_X * RGTILE_Y;
 	for (int i = 0; i < TILEOFF_NUM; i++)
@@ -266,15 +272,19 @@ void passTileAnimation(float dt)
 		}
 	}
 	setRGBA(1, 1, 1, 1);
-	passAniDt += dt;
-	if (passAniDt > _passAniDt)
+	t->passAniDt += dt;
+	if (t->passAniDt > _passAniDt)
 	{
-		passAni = false;
-		passAniDt = _passAniDt;
-		prevCamOff = ep;
-		pc->camPosition = ep;
+		t->passAniDt = _passAniDt;
+		t->prevCamOff = t->tp;
+		pc->camPosition = t->tp;
 		return;
 	}
+}
+
+bool passAni()
+{
+	return pt.passAniDt < _passAniDt;
 }
 
 void wallCheck2(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float halfOfTexW, float halfOfTexH)

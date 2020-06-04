@@ -2,12 +2,11 @@
 
 #include "Room.h"
 
-#include "Enemy.h"
 #include "EnemyStruct.h"
 #include "EnemyComposition.h"
 
 #include "PlayerUI.h"
-#include "RgLoading.h"
+
 
 uint8 stage = 0;
 uint8 nextDoor = 255;
@@ -16,7 +15,7 @@ bool nextStage = false;
 void createStage()
 {
 	int i,j;
-	newRoomTile();
+	setRoomTile();
 
 	// monster init
 	for (i = 0; i < 1; i++)
@@ -38,8 +37,8 @@ void createStage()
 	}
 
 
-	uint8 pcTile = pc->initPlayerPosition();
-	setEnemyPosition(pcTile);
+	pc->initPlayerPosition();
+	setEnemyPosition(pc->tileNumber);
 	//setNextDoor(pcTile);
 
 	stage++;
@@ -103,7 +102,7 @@ void nextStageAni(float dt)
 	
 	if (pc->img[Player_imgFall]->animation == true)
 	{
-		iPoint p = pc->drawPos - iPointMake(HALF_OF_TEX_WIDTH / 2, HALF_OF_TEX_HEIGHT / 2);
+		iPoint p = pc->playerPosition + SET_DRAW_OFF - iPointMake(HALF_OF_TEX_WIDTH / 2, HALF_OF_TEX_HEIGHT / 2);
 		pc->img[Player_imgFall]->paint(dt,p);
 		return;
 	}

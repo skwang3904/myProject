@@ -26,5 +26,3 @@ public:
 	int count;
 	IARRAY_METHOD method;
 };
-
-

@@ -32,9 +32,9 @@ public:
 	Player();
 	virtual ~Player();
 
-	void initPlayerStat();
-	uint8 initPlayerPosition();
 	void createPlayerImage();
+	void initPlayerStat();
+	void initPlayerPosition();
 
 	bool actionCheck(bool key);
 	void drawPlayer(float dt);
@@ -69,7 +69,6 @@ public:
 
 	iPoint camPosition;
 	iPoint playerPosition;
-	iPoint drawPos;
 	iPoint viewVector;
 	int headNum;
 	iPoint evasV;
@@ -86,6 +85,7 @@ public:
 	uint16 coin;
 };
 extern Player* pc;
+extern iPoint setPos;
 
 /*
 	// 0, 1 몸 정지모션

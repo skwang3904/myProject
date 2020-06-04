@@ -30,13 +30,13 @@ void IdleEyeBlink(EnemyGolem* enm, float dt)
 
 	img[0]->reverse = e->reverse;
 	img[1]->reverse = e->reverse;
-	iPoint p = e->drawGolemPos;
+	iPoint egdp = e->golemPos + SET_DRAW_OFF;
 
 	if (img[0]->animation == false && img[1]->animation == false)
 		img[random() % 2]->startAnimation();
 
-	if (img[0]->animation)	img[0]->paint(dt, p);
-	else					img[1]->paint(dt, p);
+	if (img[0]->animation)	img[0]->paint(dt, egdp);
+	else					img[1]->paint(dt, egdp);
 }
 
 //----------------------------------------------------------------------------------------
@@ -56,13 +56,13 @@ void commonHurt(EnemyGolem* enm, float dt)
 	e->reverse = (pc->playerPosition.x + HALF_OF_TEX_WIDTH < e->golemPos.x + gp.x ?
 		REVERSE_WIDTH : REVERSE_NONE);
 
-	iPoint p = e->drawGolemPos;
+	iPoint egdp = e->golemPos + SET_DRAW_OFF;
 
 	if (img[6]->animation == false)
 		img[6]->startAnimation();
 
 	img[6]->reverse = e->reverse;
-	img[6]->paint(dt, p);
+	img[6]->paint(dt, egdp);
 	if (img[6]->animation == false)
 		e->act = idle;
 }
@@ -97,8 +97,9 @@ void WalkToPlayer(EnemyGolem* enm, float dt)
 	wallCheck(true, maps[e->tileNumber], dummy, mp, gp.x, gp.y * 1.5f);
 	e->golemPos = dummy - gp;
 
+	iPoint egdp = e->golemPos + SET_DRAW_OFF;
 	img[2]->reverse = e->reverse;
-	img[2]->paint(dt, e->drawGolemPos);
+	img[2]->paint(dt, egdp);
 }
 
 //----------------------------------------------------------------------------------------
@@ -138,8 +139,9 @@ bool commonAttack(EnemyGolem* enm, float dt)
 	}
 
 	e->giveDmgTime += dt;
+	iPoint egdp = e->golemPos + SET_DRAW_OFF;
 	e->img[3]->reverse = e->reverse;
-	e->img[3]->paint(dt, e->drawGolemPos);
+	e->img[3]->paint(dt, egdp);
 
 	if (e->giveDmgTime > 0.0f)
 	{
@@ -154,7 +156,7 @@ bool commonAttack(EnemyGolem* enm, float dt)
 	{
 		setLineWidth(10);
 		setRGBA(1, 0, 0, 1);
-		drawLine(e->drawGolemPos + et,
+		drawLine(egdp + et,
 			e->ATV + SET_DRAW_OFF);
 		setLineWidth(1);
 		setRGBA(1, 1, 1, 1);
@@ -270,14 +272,15 @@ bool rangeAttack(EnemyGolem* enm, float dt)
 		e->effectImg->startAnimation();
 	}
 
+	iPoint egdp = e->golemPos + SET_DRAW_OFF;
 	e->giveDmgTime += dt;
 	e->img[5]->reverse = e->reverse;
 	if ((e->img[5]->frame < 6))
-		e->img[5]->paint(dt * 2.0f, e->drawGolemPos);
+		e->img[5]->paint(dt * 2.0f, egdp);
 	else
 	{
-		e->effectImg->paint(dt, e->drawGolemPos - cfp/2.0f + iPointMake(et.x, 0));
-		e->img[5]->paint(dt * 0.75f, e->drawGolemPos);
+		e->effectImg->paint(dt, egdp - cfp/2.0f + iPointMake(et.x, 0));
+		e->img[5]->paint(dt * 0.75f, egdp);
 	}
 
 	if (e->giveDmgTime > 0.0f)

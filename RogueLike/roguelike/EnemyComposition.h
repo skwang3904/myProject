@@ -3,4 +3,4 @@
 #include "iStd.h"
 // 방에 배치할 몬스터구성
 
-void setEnemyPosition(uint8 pcTile);
+void setEnemyPosition(int pcTile);

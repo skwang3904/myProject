@@ -1,6 +1,7 @@
 #include "RgProc.h"
 
 #include "loading.h"
+#include "RgLoading.h"
 
 #include "Room.h"
 #include "Stage.h"
@@ -29,8 +30,6 @@ void loadRgProc()
 	createItemImg();// createEnemy + createChest
 	createEnemy();
 
-	int pcTile = pc->initPlayerPosition();
-	setEnemyPosition(pcTile);
 	createChest();
 
 	//--------------------------------------------------------
@@ -77,15 +76,17 @@ void freeRgProc()
 
 void curtainTile() // 화면가리개
 {
+	iPoint p = iPointMake(RGTILE_X * RGTILE_Width, RGTILE_Y * RGTILE_Height);
+	iSize size = devSize;
 	setRGBA(0, 0, 0, 1);
-	fillRect(0, 0,
-		devSize.width, (devSize.height - RGTILE_Y * RGTILE_Height) / 2);
-	fillRect((devSize.width + RGTILE_X * RGTILE_Width) / 2, 0,
-		(devSize.width - RGTILE_X * RGTILE_Width) / 2, devSize.height);
-	fillRect(0, (devSize.height + RGTILE_Y * RGTILE_Height) / 2,
-		devSize.width, (devSize.height - RGTILE_Y * RGTILE_Height) / 2);
-	fillRect(0, 0,
-		(devSize.width - RGTILE_X * RGTILE_Width) / 2, devSize.height);
+	fillRect(0, 0, 
+		size.width, (size.height - p.y) / 2);
+	fillRect((size.width + p.x) / 2, 0, 
+		(size.width - p.x) / 2, size.height);
+	fillRect(0, (size.height + p.y) / 2, 
+		size.width, (size.height - p.y) / 2);
+	fillRect(0, 0, 
+		(size.width - p.x) / 2, size.height);
 	setRGBA(1, 1, 1, 1);
 }
 
@@ -93,7 +94,7 @@ void drawRgProc(float dt)
 {
 	drawRoomTile(dt);
 	passTileAnimation(dt);
-	if (passAni)
+	if (passAni())
 		return;
 
 

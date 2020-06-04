@@ -1,12 +1,9 @@
 #include "Enemy.h"
 
-#include "Stage.h"
+#include "Effect.h"
 
+#include "EnemyComposition.h"
 #include "EnemyStruct.h"
-#include "Effect.h"
-
-#include "Effect.h"
-#include "useitem.h"
 
 void createGolem();
 void freeGolem();
@@ -62,6 +59,8 @@ void createGolem()
 			eg->init();
 		}
 	}
+
+	setEnemyPosition(pc->tileNumber);
 }
 
 

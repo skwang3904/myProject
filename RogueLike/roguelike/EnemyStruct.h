@@ -51,7 +51,6 @@ struct EnemyGolem {
 
 	int tileNumber;
 	iPoint golemPos;
-	iPoint drawGolemPos;
 
 	EnemyType enmtype;
 	CharAction act;

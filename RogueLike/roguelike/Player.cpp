@@ -1,7 +1,6 @@
 #include "Player.h"
 
 #include "Room.h"
-#include "Stage.h"
 
 #include "Weapon.h"
 #include "WMelee.h"
@@ -9,6 +8,7 @@
 
 Player* pc;
 iSort* sort;
+iPoint setPos;
 
 Player::Player()
 {
@@ -17,6 +17,10 @@ Player::Player()
 
 	createPlayerImage();
 	initPlayerStat();
+	initPlayerPosition();
+
+	setPos = iPointMake(devSize.width / 2 - RGTILE_X * RGTILE_Width / 2.0f,
+	devSize.height / 2 - RGTILE_Y * RGTILE_Height / 2.0f);
 }
 
 Player::~Player()
@@ -51,7 +55,6 @@ void Player::initPlayerStat()
 
 	playerPosition = iPointZero;
 	camPosition = iPointZero;
-	drawPos = setPos;
 
 	viewVector = iPointMake(0, 1);
 	headNum = 7;
@@ -69,7 +72,7 @@ void Player::initPlayerStat()
 	coin = 0;
 }
 
-uint8 Player::initPlayerPosition()
+void Player::initPlayerPosition()
 {
 	uint8 pcTile = 0;
 	for (int i = 0; i < TILEOFF_NUM; i++)
@@ -80,12 +83,10 @@ uint8 Player::initPlayerPosition()
 			playerPosition = maps[a]->tileOff + RGTILE_CENTER;
 
 			camPosition = iPointZero - maps[a]->tileOff;
-			drawPos = playerPosition + camPosition + setPos;
 			tileNumber = a;
 			break;
 		}
 	}
-	return tileNumber;
 }
 
 void Player::createPlayerImage()
@@ -223,6 +224,7 @@ void Player::drawPlayer(float dt)
 
 void Player::showHpBar(float dt) // 임시
 {
+	iPoint drawPos = playerPosition + camPosition + setPos;
 	setRGBA(0, 0, 0, 1);
 	fillRect(drawPos.x, drawPos.y - 30, HALF_OF_TEX_WIDTH * 2, 15);
 	setRGBA(0, 1, 0, 1);
@@ -419,7 +421,7 @@ void Player::paint(float dt)
 	wallCheck(false, tile, pc->playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
 
 	img[headNum]->setTexAtIndex(pc->act == attacking ? true : false);
-	drawPos = playerPosition + camPosition + setPos;
+	iPoint drawPos = playerPosition + camPosition + setPos;
 
 	//히트박스 표시-------------------------------
 	drawtouchPlayer();

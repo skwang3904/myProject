@@ -17,6 +17,7 @@ iImage::iImage()
 	aniDt = 0.0f;
 	_aniDt = 0.08f;
 	frame = 0;
+	lastFrame = false;
 	repeatNum = 0;
 	_repeatNum = 0;// inf
 	method = NULL;

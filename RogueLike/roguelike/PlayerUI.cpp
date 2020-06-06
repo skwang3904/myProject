@@ -133,7 +133,7 @@ void refreshMiniMap()
 			{
 				for (int j = 0; j < GOLEM_NUM; j++) // 몬스터표시
 				{
-					MonsterData* eg = &golems[j][k];
+					MonsterData* eg = golems[j];
 					if (eg->tileNumber == i)
 					{
 						iPoint p = iPointMake((fabsf(eg->enemyPos.x - tileOffSet[i].x) / (RGTILE_X * RGTILE_Width)),
@@ -146,8 +146,8 @@ void refreshMiniMap()
 				}
 			}
 
-			int a = golemEletes[0][0].tileNumber;
-			if (a == i && golemEletes[0][0].hp > 0.0f)
+			int a = golemEletes[0]->tileNumber;
+			if (a == i && golemEletes[0]->hp > 0.0f)
 			{
 				setRGBA(1, 0, 0, 1);
 				fillRect(mp.x + 10, mp.y + 10,

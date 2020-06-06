@@ -29,8 +29,8 @@ public:
 	MonsterData();
 	virtual ~MonsterData();
 
-	virtual void init();
-	virtual void paint(float dt);
+	virtual void init() {};
+	virtual void paint(float dt) {};
 	virtual void drawShowHP(float dt);
 	virtual void takeDmgEnemy(float dt, float dmg);
 	virtual void takeDmgEffect(float dt);

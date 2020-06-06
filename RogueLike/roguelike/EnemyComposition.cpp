@@ -71,7 +71,7 @@ void setEnemyPosition(int pcTile)
 			if (index == -1)
 				index = random() % 16;
 
-			MonsterData* enm = &golems[4 * i + j][0];
+			MonsterData* enm = golems[4 * i + j];
 			enm->enemyPos = maps[check[i]]->tileOff + 
 				enemyPos[index];
 
@@ -91,7 +91,7 @@ void setEnemyPosition(int pcTile)
 				maps[check[j]]->rgTile== Tile1way3 ||
 				maps[check[j]]->rgTile== Tile1way4)
 			{
-				MonsterData* enm = &golemEletes[0][0];
+				MonsterData* enm = golemEletes[0];
 				enm->enemyPos = maps[check[j]]->tileOff +
 					RGTILE_CENTER;
 				elete = true;

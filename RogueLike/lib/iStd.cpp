@@ -732,7 +732,7 @@ void freeImage(Texture* tex)
 
 void drawImageLikeCircle(Texture* tex, int x, int y, float rate)
 {
-#define DEGREE 360//360
+#define DEGREE 45//360
     float position[DEGREE][6];
     float coordinate[DEGREE][6];
     short indices[DEGREE][3];

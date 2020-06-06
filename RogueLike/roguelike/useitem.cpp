@@ -123,8 +123,8 @@ void createItemImg()
         "assets/item/potionRed.png",
         "assets/item/coin.png",
         "assets/item/gemRed.png",
-        "assets/item/gemRed.png",
-        "assets/item/gemRed.png"
+        "assets/item/gemGreen.png",
+        "assets/item/gemBlue.png"
     };
     iImage* imgs[5];
     for (int i = 0; i < 5; i++)

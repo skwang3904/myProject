@@ -55,14 +55,6 @@ MonsterData::~MonsterData()
 	free(img);
 }
 
-void MonsterData::init()
-{
-}
-
-void MonsterData::paint(float dt)
-{
-}
-
 void MonsterData::drawShowHP(float dt)
 {
 	showHpTime += dt;
@@ -139,24 +131,24 @@ void EGolem::beginEGolem()
 	// 임시 공통사용 아이템
 	init();
 
-	UseItem ui[itemTypeMax] = { coin, healing, powerUp, atkSpeedUp, moveSpeedUp };
+	itemType it[itemTypeMax] = { coin, healing, powerUp, atkSpeedUp, moveSpeedUp };
 	items = (UseItem**)malloc(sizeof(UseItem*) * itemTypeMax);
 	for (int i = 0; i < itemTypeMax; i++)
-		items[i] = new UseItem(ui[i]);
-
+		items[i] = new UseItem(it[i]);
 }
 
 void EGolem::init()
 {
+	uint8 s = stage;
 	switch (enmtype)
 	{
 	case golemNomal:
 	{
-		hp = _hp = 50 + stage * 30;
-		attackDmg = 5 + stage * 3;
-		meleeAtkSpeed = GOLEM_MELEE_ATKTIME - stage * GOLEM_MELEE_ATKTIME * 0.05f;
-		rangeAtkSpeed = GOLEM_RANGE_ATKTIME - stage * GOLEM_RANGE_ATKTIME * 0.05f;
-		moveSpeed = 100 + stage * 20;
+		hp = _hp = 50 + s * 30;
+		attackDmg = 5 + s * 3;
+		meleeAtkSpeed = GOLEM_MELEE_ATKTIME - s * GOLEM_MELEE_ATKTIME * 0.05f;
+		rangeAtkSpeed = GOLEM_RANGE_ATKTIME - s * GOLEM_RANGE_ATKTIME * 0.05f;
+		moveSpeed = 100 + s * 20;
 
 		meleeReach = 100;
 		rangeReach = 200;
@@ -177,11 +169,11 @@ void EGolem::init()
 	}
 	case golemElete:
 	{
-		hp = _hp = 100 + stage * 50;
-		attackDmg = 10 + stage * 5;
-		meleeAtkSpeed = GOLEM_ELETE_MELEE_ATKTIME - stage * GOLEM_ELETE_MELEE_ATKTIME * 0.05f;
-		rangeAtkSpeed = GOLEM_ELETE_RANGE_ATKTIME - stage * GOLEM_ELETE_RANGE_ATKTIME * 0.05f;
-		moveSpeed = 150 + stage * 20;
+		hp = _hp = 100 + s * 50;
+		attackDmg = 10 + s * 5;
+		meleeAtkSpeed = GOLEM_ELETE_MELEE_ATKTIME - s * GOLEM_ELETE_MELEE_ATKTIME * 0.05f;
+		rangeAtkSpeed = GOLEM_ELETE_RANGE_ATKTIME - s * GOLEM_ELETE_RANGE_ATKTIME * 0.05f;
+		moveSpeed = 150 + s * 20;
 
 		meleeReach = 150;
 		rangeReach = 300;

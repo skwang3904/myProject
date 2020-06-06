@@ -7,7 +7,7 @@
 - 소모아이템
 - 체력회복 /
 */
-struct EnemyGolem;
+
 
 enum itemType{
 	coin = 0,
@@ -54,4 +54,5 @@ public:
 void createItemImg();
 void freeItemImg();
 
-void golemItems(EnemyGolem* enm);
+class MonsterData;
+void golemItems(MonsterData* enm);

@@ -7,6 +7,7 @@
 #include "WMelee.h"
 
 #include "EnemyStruct.h"
+#include "EnemyData.h"
 
 /////////////////////////////////////////////////////////
 
@@ -132,11 +133,11 @@ void refreshMiniMap()
 			{
 				for (int j = 0; j < GOLEM_NUM; j++) // 몬스터표시
 				{
-					EnemyGolem* eg = &golems[k][j];
+					MonsterData* eg = &golems[j][k];
 					if (eg->tileNumber == i)
 					{
-						iPoint p = iPointMake((fabsf(eg->golemPos.x - tileOffSet[i].x) / (RGTILE_X * RGTILE_Width)),
-							(fabsf(eg->golemPos.y - tileOffSet[i].y) / (RGTILE_Y * RGTILE_Height)));
+						iPoint p = iPointMake((fabsf(eg->enemyPos.x - tileOffSet[i].x) / (RGTILE_X * RGTILE_Width)),
+							(fabsf(eg->enemyPos.y - tileOffSet[i].y) / (RGTILE_Y * RGTILE_Height)));
 						setRGBA(1, 0.5, 0, 1);
 						fillRect(mp.x + minitile * p.x,
 							mp.y + minitile * p.y,

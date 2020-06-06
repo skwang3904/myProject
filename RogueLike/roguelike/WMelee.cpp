@@ -4,6 +4,7 @@
 #include "Room.h"
 
 #include "EnemyStruct.h"
+#include "EnemyData.h"
 
 #include "Weapon.h"
 
@@ -215,8 +216,8 @@ void hitMonster(meleeWeapon* mw, float dt)
 	{
 		for (int j = 0; j < GOLEM_NUM; j++)
 		{
-			EnemyGolem* eg = &golems[i][j];
-			if (containRect(mw->hitBox, eg->touchGolem))
+			MonsterData* eg = golems[j];
+			if (containRect(mw->hitBox, eg->touchEnemy))
 				eg->takeDmgEnemy(dt, dmg);
 		}
 	}
@@ -225,8 +226,8 @@ void hitMonster(meleeWeapon* mw, float dt)
 	{
 		for (int j = 0; j < GOLEM_ELETE_NUM; j++)
 		{
-			EnemyGolem* eg = &golemEletes[i][j];
-			if (containRect(mw->hitBox, eg->touchGolem))
+			MonsterData* eg = &golemEletes[i][j];
+			if (containRect(mw->hitBox, eg->touchEnemy))
 				eg->takeDmgEnemy(dt, dmg);
 		}
 	}

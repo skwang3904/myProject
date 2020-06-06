@@ -29,7 +29,6 @@ void loadRgProc()
 	createEffect();
 	createItemImg();// createEnemy + createChest
 	createEnemy();
-
 	createChest();
 
 	//--------------------------------------------------------

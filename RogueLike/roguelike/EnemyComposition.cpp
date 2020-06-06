@@ -3,6 +3,7 @@
 #include "Room.h"
 #include "Stage.h"
 
+#include "EnemyData.h"
 #include "EnemyStruct.h"
 
 
@@ -65,13 +66,13 @@ void setEnemyPosition(int pcTile)
 		}
 
 		int index = -1;
-		for (j = 0; j < 5; j++)
+		for (j = 0; j < 4; j++)
 		{
 			if (index == -1)
 				index = random() % 16;
 
-			EnemyGolem* enm = &golems[0][5 * i + j];
-			enm->golemPos = maps[check[i]]->tileOff + 
+			MonsterData* enm = &golems[4 * i + j][0];
+			enm->enemyPos = maps[check[i]]->tileOff + 
 				enemyPos[index];
 
 			index -= 1 + (random() % 3);
@@ -90,8 +91,8 @@ void setEnemyPosition(int pcTile)
 				maps[check[j]]->rgTile== Tile1way3 ||
 				maps[check[j]]->rgTile== Tile1way4)
 			{
-				EnemyGolem* enm = &golemEletes[0][0];
-				enm->golemPos = maps[check[j]]->tileOff +
+				MonsterData* enm = &golemEletes[0][0];
+				enm->enemyPos = maps[check[j]]->tileOff +
 					RGTILE_CENTER;
 				elete = true;
 				enm->tileNumber = check[j];

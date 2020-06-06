@@ -2,6 +2,7 @@
 
 #include "Room.h"
 #include "EnemyStruct.h"
+#include "EnemyData.h"
 
 iImage* imgPotion;
 iImage* imgCoin;
@@ -102,8 +103,8 @@ void UseItem::paint(float dt)
     fillRect(rt);
     setRGBA(1, 1, 1, 1);
 
-    iPoint drawitemPos = itemPos + SET_DRAW_OFF;
-    img->paint(dt, drawitemPos);
+    iPoint drawPos = itemPos + SET_DRAW_OFF;
+    img->paint(dt, drawPos);
 
     iPoint p = pc->playerPosition + HALF_OF_TEX_POINT;
     
@@ -153,7 +154,7 @@ void freeItemImg()
 //----------------------------------------------------------------------------
 // golem drops
 
-void golemItems(EnemyGolem* enm)
+void golemItems(MonsterData* enm)
 {
     for (int i = 0; i < 3; i++)
     {
@@ -167,8 +168,8 @@ void golemItems(EnemyGolem* enm)
 		iPoint et = iPointMake(enm->img[0]->tex->width / 4 * enm->ratio,
 			enm->img[0]->tex->height / 2  * enm->ratio);
         iPoint p = iPointMake(-100 + 50 * i, 0);
-        ui->sp = enm->golemPos + et;
-        ui->itemPos = enm->golemPos + et + p;
+        ui->sp = enm->enemyPos + et;
+        ui->itemPos = enm->enemyPos + et + p;
 
         ui->touchItem = iRectMake(ui->itemPos.x + tex->width / 4, 
             ui->itemPos.y + tex->height / 4,

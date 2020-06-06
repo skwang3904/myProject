@@ -421,9 +421,6 @@ void Player::drawPlayer(float dt)
 
 bool Player::evasionPlayer(MapTile* tile, float dt)
 {
-	// 회피
-	// 회피중 무적
-
 	if (getKeyDown(keyboard_space) && act == idle)
 	{
 		if (viewVector != iPointZero)
@@ -439,7 +436,6 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 
 	if (act != evasion)
 		return false;
-
 
 	if (img[Player_imgEvasion]->animation)
 	{	
@@ -466,6 +462,23 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 	}
 	
 	return false;
+}
+
+float findMoveTile(MapTile* tile, int x, int y)
+{	// 수정 필요
+	float min = 0xffff;
+	MapTile* t = tile;
+	if (t->rgTile[RGTILE_X * y + x] != MOVETILE)
+		return min;
+
+	float distance = iPointLength(
+		(pc->playerPosition + iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT))
+		- t->tileOff + iPointMake(RGTILE_Width * x + RGTILE_Width / 2,
+			RGTILE_Height * y + RGTILE_Height / 2));
+
+	if (min > distance)
+		return distance;
+	return min;
 }
 
 void findMoveTile(MapTile* tile, iPoint& moveTileNum)
@@ -609,21 +622,4 @@ bool Player::fallCheck(MapTile* tile, float dt)
 	}
 
 	return false;
-}
-
-float findMoveTile(MapTile* tile, int x, int y)
-{	// 수정 필요
-	float min = 0xffff;
-	MapTile* t = tile;
-	if (t->rgTile[RGTILE_X * y + x] != MOVETILE)
-		return min;
-
-	float distance = iPointLength(
-		(pc->playerPosition + iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT))
-		- t->tileOff + iPointMake(RGTILE_Width * x + RGTILE_Width / 2,
-			RGTILE_Height * y + RGTILE_Height / 2));
-
-	if (min > distance)
-		return distance;
-	return min;
 }

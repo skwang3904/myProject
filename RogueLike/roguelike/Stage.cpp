@@ -3,6 +3,7 @@
 #include "Room.h"
 
 #include "EnemyStruct.h"
+#include "EnemyData.h"
 #include "EnemyComposition.h"
 
 #include "PlayerUI.h"
@@ -22,8 +23,8 @@ void createStage()
 	{
 		for (j = 0; j < GOLEM_NUM; j++)
 		{
-			EnemyGolem* eg = &golems[i][j];
-			eg->init(stage);
+			MonsterData* eg = &golems[i][j];
+			eg->init();
 		}
 	}
 
@@ -31,8 +32,8 @@ void createStage()
 	{
 		for (j = 0; j < GOLEM_ELETE_NUM; j++)
 		{
-			EnemyGolem* eg = &golemEletes[i][j];
-			eg->init(stage);
+			MonsterData* eg = &golemEletes[i][j];
+			eg->init();
 		}
 	}
 

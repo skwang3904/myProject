@@ -12,6 +12,9 @@
 iImage** imgGolem;
 iImage** imgGolemElete;
 
+MonsterData** totalMonster = NULL;
+int monsterNum = 0;
+
 MonsterData::MonsterData()
 {
 	iImage** tmp = NULL;
@@ -215,7 +218,6 @@ void EGolem::init()
 
 	hit = false;
 	ATV = iPointZero;
-	
 }
 
 void EGolem::paint(float dt)
@@ -291,7 +293,7 @@ void EGolem::paint(float dt)
 			enemyPos = iPointZero;
 			touchEnemy = iRectZero;
 			act = dead;
-			if (this == &golemEletes[0][0])
+			if (this == golemEletes[0])
 				nextDoor = tileNumber;
 			tileNumber = 0;
 		}

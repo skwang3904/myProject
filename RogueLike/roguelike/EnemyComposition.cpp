@@ -6,7 +6,7 @@
 #include "EnemyData.h"
 #include "EnemyStruct.h"
 
-
+//타일마다 포지션 만들어 넣어야함
 iPoint enemyPos[16] = {
 {RGTILE_Width * 3,  RGTILE_Height * 3},
 {RGTILE_Width * 3,  RGTILE_Height * 6},
@@ -26,11 +26,12 @@ iPoint enemyPos[16] = {
 {RGTILE_Width * 25, RGTILE_Height * 18}, 
 };
 
-void setEnemyPosition(int pcTile)
+void setEnemyPosition()
 {
 	int i, j, num = 0;
+	int tile = pc->tileNumber;
 	int activeTile[MAPTILE_NUM];
-	int check[MAPTILE_NUM];
+	int randomTile[MAPTILE_NUM];
 
 	for (i = 0; i < TILEOFF_NUM; i++)
 	{
@@ -51,15 +52,15 @@ void setEnemyPosition(int pcTile)
 		bool exist = false;
 		for (int k = 0; k < i; k++)
 		{
-			if (check[k] == t)
+			if (randomTile[k] == t)
 			{
 				exist = true;
 				break;
 			}
 		}
 
-		check[i] = t;
-		if (exist || check[i] == pcTile)
+		randomTile[i] = t;
+		if (exist || randomTile[i] == tile)
 		{
 			i--;
 			continue;
@@ -72,13 +73,13 @@ void setEnemyPosition(int pcTile)
 				index = random() % 16;
 
 			MonsterData* enm = golems[4 * i + j];
-			enm->enemyPos = maps[check[i]]->tileOff + 
+			enm->enemyPos = maps[randomTile[i]]->tileOff + 
 				enemyPos[index];
 
 			index -= 1 + (random() % 3);
 			if (index < 0)
 				index = 15;
-			enm->tileNumber = check[i];
+			enm->tileNumber = randomTile[i];
 		}
 	}
 
@@ -86,16 +87,16 @@ void setEnemyPosition(int pcTile)
 	{
 		for (j = 0; j < n; j++)
 		{
-			if (maps[check[j]]->rgTile== Tile1way1 ||
-				maps[check[j]]->rgTile== Tile1way2 ||
-				maps[check[j]]->rgTile== Tile1way3 ||
-				maps[check[j]]->rgTile== Tile1way4)
+			if (maps[randomTile[j]]->rgTile== Tile1way1 ||
+				maps[randomTile[j]]->rgTile== Tile1way2 ||
+				maps[randomTile[j]]->rgTile== Tile1way3 ||
+				maps[randomTile[j]]->rgTile== Tile1way4)
 			{
 				MonsterData* enm = golemEletes[0];
-				enm->enemyPos = maps[check[j]]->tileOff +
+				enm->enemyPos = maps[randomTile[j]]->tileOff +
 					RGTILE_CENTER;
 				elete = true;
-				enm->tileNumber = check[j];
+				enm->tileNumber = randomTile[j];
 				break;
 			}
 		}

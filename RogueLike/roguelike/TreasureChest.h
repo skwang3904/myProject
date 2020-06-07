@@ -26,6 +26,7 @@ public:
 public:
 	iImage* img;
 
+	bool alive;
 	bool open;
 
 	int tileNumber;

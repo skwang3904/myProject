@@ -39,7 +39,7 @@ void createStage()
 
 
 	pc->initPlayerPosition();
-	setEnemyPosition(pc->tileNumber);
+	setEnemyPosition();
 	//setNextDoor(pcTile);
 
 	stage++;

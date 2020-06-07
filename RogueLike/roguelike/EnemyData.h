@@ -4,7 +4,6 @@
 
 class MonsterData;
 class UseItem;
-struct FireBall;
 typedef void (*Method_Idle_Pattern)(MonsterData* enm, float dt);
 typedef void (*Method_Walk_Pattern)(MonsterData* enm, float dt);
 typedef void (*Method_Hurt_Pattern)(MonsterData* enm, float dt);
@@ -81,7 +80,8 @@ public:
 
 	Method_Item methodead = 0;
 };
-
+extern MonsterData** totalMonster;
+extern int monsterNum;
 
 //----------------------------------------------------------------------------------------
 
@@ -125,3 +125,6 @@ extern EGolem** golemEletes;
 
 void createGolemImg();
 void freeGolemImg();
+
+//----------------------------------------------------------------------------------------
+

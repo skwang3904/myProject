@@ -37,13 +37,14 @@ Chest::Chest(ChestType ct)
 
 	struct TmpType {
 		iImage* img;
+		Method_OpenChest open;
 		itemType it;
 	};
 	TmpType tt[4] = {
-		{imgBasicChest, coin},
-		{imgCommonChest, healing },
-		{imgRareChest, powerUp},
-		{imgUniqueChest, coin }
+		{imgBasicChest, openChestBasic, coin},
+		{imgCommonChest, openChestBasic, healing },
+		{imgRareChest, openChestBasic, powerUp},
+		{imgUniqueChest, openChestBasic, coin },
 	};
 	TmpType* t = &tt[ct];
 
@@ -55,6 +56,7 @@ Chest::Chest(ChestType ct)
 
 	touchRect = iRectMake(pos.x, pos.y, img->tex->width, img->tex->height);
 
+	alive = true;
 	open = false;
 	openMethod = openChestBasic;
 }
@@ -75,17 +77,29 @@ bool Chest::openAni(float dt)
 	// 오픈 애니메이션
 	// 다 열리면 드랍
 	// 드랍 아이템
+
+	static float delta = 0.0f;
+	setRGBA(1, 1, 1, 1.0f - (delta / 3.0f));
+	img->paint(dt, drawPos);
+	setRGBA(1, 1, 1, 1);
+
+	delta += dt;
+	if (delta > 3.0f)
+	{
+		delta = 0.0f;
+		alive = false;
+		openMethod(this);
+
+	}
 	return true;
 }
 
 void Chest::paint(float dt)
 {
 	for (int i = 0; i < 3; i++)
-	{
 		items[i]->paint(dt);
-	}
 
-	if (openAni(dt))
+	if (alive == false || openAni(dt))
 		return;
 
 	drawPos = pos + SET_DRAW_OFF;
@@ -93,22 +107,21 @@ void Chest::paint(float dt)
 	
 	//if( ? ) open = true;
 
-	if (pc->pwp->isMelee)
+	if (tileNumber == pc->tileNumber)
 	{
-		meleeWeapon* mw = (meleeWeapon*)pc->pwp->wp;
-		if (pc->act == attacking && mw->attackSpeed > -0.1f)
+		if (pc->pwp->isMelee)
 		{
-			if (containRect(mw->hitBox, touchRect))
+			meleeWeapon* mw = (meleeWeapon*)pc->pwp->wp;
+			if (pc->act == attacking && mw->attackSpeed > -0.1f)
 			{
-				open = true;
-				printf("Chest Open\n");
-				openMethod(this);
+				if (containRect(mw->hitBox, touchRect))
+					open = true;
 			}
 		}
-	}
-	else
-	{
-		;
+		else
+		{
+			;
+		}
 	}
 }
 

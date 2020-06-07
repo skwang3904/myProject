@@ -64,9 +64,9 @@ void Player::initPlayerStat()
 
 	touchPlayer = iRectZero;
 
-	weaponArray->addObject(&PWP[0]);
-	pwp = &PWP[0];
-	PWP[0].drop = false;
+	weaponArray->addObject(&PWP[2]);
+	pwp = &PWP[2];
+	PWP[2].drop = false;
 	pwpCount = 1;
 
 	coin = 0;
@@ -216,6 +216,8 @@ void Player::paint(float dt)
 
 void Player::combatDraw(float dt)
 {
+	if (act == evasion || act == falling)
+		return;
 	pwp->method(dt, iPointZero);
 }
 
@@ -332,50 +334,47 @@ void Player::drawPlayer(float dt)
 	iPoint v = iPointZero;
 	iPoint mv = pc->combatV;
 
-	if (act == idle)
+	if (getKeyStat(keyboard_left)) //이동방향, 머리방향
 	{
-		if (getKeyStat(keyboard_left)) //이동방향, 머리방향
-		{
-			v.x = -1;
-			headNum = 4;
+		v.x = -1;
+		headNum = 4;
 
-			mv.x = -1;
-			mv.y = 0;
-		}
-		else if (getKeyStat(keyboard_right))
-		{
-			v.x = 1;
-			headNum = 5;
-
-			mv.x = 1;
-			mv.y = 0;
-		}
-		if (getKeyStat(keyboard_up))
-		{
-			v.y = -1;
-			headNum = 6;
-
-			mv.x = 0;
-			mv.y = -1;
-		}
-		else if (getKeyStat(keyboard_down))
-		{
-			v.y = 1;
-			headNum = 7;
-
-			mv.x = 0;
-			mv.y = 1;
-		}
-		viewVector = v;
-
-		if (mv != iPointZero);
-		pc->combatV = mv;
+		mv.x = -1;
+		mv.y = 0;
 	}
+	else if (getKeyStat(keyboard_right))
+	{
+		v.x = 1;
+		headNum = 5;
+
+		mv.x = 1;
+		mv.y = 0;
+	}
+	if (getKeyStat(keyboard_up))
+	{
+		v.y = -1;
+		headNum = 6;
+
+		mv.x = 0;
+		mv.y = -1;
+	}
+	else if (getKeyStat(keyboard_down))
+	{
+		v.y = 1;
+		headNum = 7;
+
+		mv.x = 0;
+		mv.y = 1;
+	}
+	viewVector = v;
+
+	if (mv != iPointZero);
+	pc->combatV = mv;
 
 	bool ani = (v != iPointZero);
-	if(ani)
+	if (ani)
 		v /= iPointLength(v);
-	iPoint mp = v * (moveSpeed * dt);
+	iPoint mp = v * (moveSpeed * dt) * (act == attacking ? 0.1f : 1.0f);
 
 	iPoint t = maps[tileNumber]->tileOff;
 	float x = playerPosition.x + HALF_OF_TEX_WIDTH;
@@ -388,7 +387,7 @@ void Player::drawPlayer(float dt)
 		setPlayerTile();
 		return;
 	}
-	
+
 	MapTile* tile = maps[tileNumber];
 	if (act != evasion)
 		if (fallCheck(tile, dt))

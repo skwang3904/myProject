@@ -1,9 +1,7 @@
 #include "WMelee.h"
 
-
 #include "Room.h"
 
-#include "EnemyStruct.h"
 #include "EnemyData.h"
 
 #include "Weapon.h"
@@ -28,7 +26,8 @@ void meleeWeapon::init(
 	infomation = info;
 
 	attackDmg = iAttackDmg;
-	attackSpeed = _attackSpeed = iAttackSpeed;
+	attackSpeed = 0.0f;
+	_attackSpeed = iAttackSpeed;
 	widthReach = iWidthReach;
 	heightReach = iHeightReach;
 	holdAngle = iHoldAngle;
@@ -118,10 +117,8 @@ void draw(meleeWeapon* mw, float dt, iPoint dropP)
 	if (pc->pwp->wp == mw)
 	{
 		iPoint centerP = mw->combatPosition;
-
 		iRect rt;
 		weaponPosAndRt(mw, mw->combatPosition, centerP, rt);
-
 
 		drawImage(tex,
 			setp.x + centerP.x,
@@ -212,47 +209,29 @@ void weaponPosAndRt(meleeWeapon* mw, iPoint& wcp, iPoint& centerP, iRect& rt)
 void hitMonster(meleeWeapon* mw, float dt)
 {
 	float dmg = pc->attackDmg + mw->attackDmg;
-	for (int i = 0; i < 1; i++) //enemy
+	for (int i = 0; i < monsterNum; i++)
 	{
-		for (int j = 0; j < GOLEM_NUM; j++)
-		{
-			MonsterData* eg = golems[j];
-			if (containRect(mw->hitBox, eg->touchEnemy))
-				eg->takeDmgEnemy(dt, dmg);
-		}
-	}
-
-	for (int i = 0; i < 1; i++)
-	{
-		for (int j = 0; j < GOLEM_ELETE_NUM; j++)
-		{
-			MonsterData* eg = &golemEletes[i][j];
-			if (containRect(mw->hitBox, eg->touchEnemy))
-				eg->takeDmgEnemy(dt, dmg);
-		}
+		MonsterData* t = totalMonster[i];
+		if (containRect(mw->hitBox, t->touchEnemy))
+			t->takeDmgEnemy(dt, dmg);
 	}
 }
 
 //------------------------------------------------------------------------------------
 // 무기종류, 시간, 공격중인지,공격하는데 걸리는시간, 찌르는 거리, 휘두르는 각도, 배율X, 배율Y,
-bool nomalSworadAttack(meleeWeapon* mw, float dt, bool att, float attTime,
+bool nomalHammerAttack(meleeWeapon* mw, float dt, float attTime,
 	float iRange, float iAngle, float iRatioX, float iRatioY)
 {
-	if (pc->pwp->wp != mw)
+	if (pc->act != attacking)
 		return false;
 
-	if (mw->attackEnemy == false && pc->act != attacking)
-		return false;
-
-	//weaponPosition(mw, dt, mw->combatPosition);
-
-	static float delta = 0.0f;
+	mw->attackSpeed += dt;
+	float atkSpeed = mw->attackSpeed;
 	float d = 0.0f;
-
-	if (delta / attTime < 0.6f) 		d = 0.0f;
-	else if (delta / attTime < 0.65f)	d = 0.3f;
-	else if (delta / attTime < 0.7f)	d = 0.6f;
-	else								d = 1.0f;
+	if (atkSpeed / attTime < 0.6f) 		d = 0.0f;
+	else if (atkSpeed / attTime < 0.65f)	d = 0.3f;
+	else if (atkSpeed / attTime < 0.7f)	d = 0.6f;
+	else										d = 1.0f;
 
 	float range = iRange;
 	float rangeRate = linear(d, 0, range);
@@ -269,7 +248,6 @@ bool nomalSworadAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	iRect rt = iRectZero;
 
 	weaponPosAndRt(mw, wcp,centerP, rt);
-
 	wcp = iPointRotate(centerP, wcp, attAngleRate - attAngle);
 	wcp += pc->combatV * rangeRate;
 	rt.origin = wcp - iPointMake(rt.size.width/2.0f, rt.size.height/2.0f);
@@ -289,18 +267,13 @@ bool nomalSworadAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 		2, attAngleRate - attAngle + pc->combatAngleV + mw->holdAngle, REVERSE_NONE);
 
 	if (d > 0.5f)
-	{
 		hitMonster(mw, dt);
-	}
 
-	delta += dt;
-	if (delta > attTime)
+	if (atkSpeed > attTime)
 	{
-		delta = 0.0f;
 		pc->act = idle;
 		mw->attackEnemy = false;
-
-		draw(mw, dt, iPointZero);
+		mw->attackSpeed = 0.0f;
 		return false;
 	}
 
@@ -309,49 +282,40 @@ bool nomalSworadAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 
 void nomalHammerMethod(float dt, iPoint dropP)
 {
-	if (pc->act == evasion || pc->act == falling)
-		return;
-
 	meleeWeapon* mw = nomalHammer;
-
-	float ats = mw->_attackSpeed * pc->attackSpeed;
-	if (getKeyDown(keyboard_j) && pc->pwp->wp == mw && mw->attackSpeed == 0 && pc->act == idle)
+	if (dropP == iPointZero)
 	{
-		pc->act = attacking;
-		mw->attackEnemy = true;
-		mw->attackSpeed -= ats;
-		audioPlay(SND_SWING);
+		float ats = mw->_attackSpeed * pc->attackSpeed;
+		if (getKeyDown(keyboard_j) && pc->pwp->wp == mw && pc->act == idle)
+		{
+			pc->act = attacking;
+			audioPlay(SND_SWING);
+		}
+
+		if (nomalHammerAttack(mw, dt, ats, 0.0f, 70.0f, 1.5f, 1.0f))
+			return;
+		draw(mw, dt, dropP);
 	}
+	else
+		draw(mw, dt, dropP);
 
-	mw->attackSpeed += dt;
-	if (mw->attackSpeed > 0.0f)
-		mw->attackSpeed = (int)0;
-
-	if (nomalSworadAttack(mw, dt, mw->attackEnemy, ats, 0.0f, 45.0f, 1.0f, 1.0f))
-		return;
-
-	draw(mw, dt, dropP);
 }
 
 //------------------------------------------------------------------------------------------
 
-bool nomalSpearAttack(meleeWeapon* mw, float dt, bool att, float attTime,
+bool nomalSpearAttack(meleeWeapon* mw, float dt, float attTime,
 	float iRange, float iAngle, float iRatioX, float iRatioY)
 {
-	if (pc->pwp->wp != mw)
+	if (pc->act != attacking)
 		return false;
 
-	if (mw->attackEnemy == false && pc->act != attacking)
-		return false;
-
-	//weaponPosition(mw, dt, mw->combatPosition);
-
-	static float delta = 0.0f;
+	mw->attackSpeed += dt;
+	float atkSpeed = mw->attackSpeed;
 	float d = 0.0f;
 
-	if (delta / attTime < 0.5f) 		d = 0.0f;
-	//else if (delta / attTime < 0.6f)	d = 0.3f;
-	//else if (delta / attTime < 0.9f)	d = 0.6f;
+	if (atkSpeed / attTime < 0.5f) 		d = 0.0f;
+	//else if (atkSpeed / attTime < 0.6f)	d = 0.3f;
+	//else if (atkSpeed / attTime < 0.9f)	d = 0.6f;
 	else								d = 1.0f;
 
 	float range = iRange;
@@ -368,7 +332,6 @@ bool nomalSpearAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	iRect rt = iRectZero;
 
 	weaponPosAndRt(mw, mw->combatPosition, centerP, rt);
-
 	iPoint wcp = iPointRotate(centerP, mw->combatPosition, attAngleRate - attAngle / 2);
 	wcp += pc->combatV * rangeRate;
 	rt.origin = wcp - iPointMake(rt.size.width / 2, rt.size.height / 2);
@@ -388,18 +351,13 @@ bool nomalSpearAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 		2, attAngleRate - attAngle / 2 + pc->combatAngleV + mw->holdAngle, REVERSE_NONE);
 
 	if (d > 0.5f)
-	{
 		hitMonster(mw, dt);
-	}
 
-	delta += dt;
-	if (delta > attTime)
+	if (atkSpeed > attTime)
 	{
-		delta = 0.0f;
 		pc->act = idle;
 		mw->attackEnemy = false;
-
-		draw(mw, dt, iPointZero);
+		mw->attackSpeed = 0.0f;
 		return false;
 	}
 
@@ -408,53 +366,45 @@ bool nomalSpearAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 
 void nomalSpearMethod(float dt, iPoint dropP)
 {
-	if (pc->act == evasion || pc->act == falling)
-		return;
-
 	meleeWeapon* mw = nomalSpear;
-
-	float ats = mw->_attackSpeed * pc->attackSpeed;
-	if (getKeyDown(keyboard_j) && pc->pwp->wp == mw && mw->attackSpeed == 0 && pc->act == idle)
+	if (dropP == iPointZero)
 	{
-		pc->act = attacking;
-		mw->attackEnemy = true;
-		mw->attackSpeed -= ats;
+		float ats = mw->_attackSpeed * pc->attackSpeed;
+		if (getKeyDown(keyboard_j) && pc->pwp->wp == mw && pc->act == idle)
+		{
+			pc->act = attacking;
+			audioPlay(SND_SWING);
+		}
+
+		if (nomalSpearAttack(mw, dt, ats, 100.0f, 0.0f, 1.5f, 1.0f))
+			return;
+		draw(mw, dt, dropP);
 	}
+	else
+		draw(mw, dt, dropP);
 
-	mw->attackSpeed += dt;
-	if (mw->attackSpeed > 0.0f)
-		mw->attackSpeed = (int)0;
-
-	if (nomalSpearAttack(mw, dt, mw->attackEnemy, ats, 50.0f, 0.0f, 1.0f, 1.0f))
-		return;
-
-	draw(mw, dt, dropP);
 }
 
 //------------------------------------------------------------------------------------
 
-bool nomalCycloneAttack(meleeWeapon* mw, float dt, bool att, float attTime,
+bool nomalCycloneAttack(meleeWeapon* mw, float dt, float attTime,
 	float iRange, int iCycleCount, float iRatioX, float iRatioY)
 {
-	if (pc->pwp->wp != mw )
+	if (pc->act != attacking)
 		return false;
 
-	if (mw->attackEnemy == false && pc->act != attacking)
-		return false;
-
-	//weaponPosition(mw, dt, mw->combatPosition);
-
-	static float delta = 0.0f;
+	mw->attackSpeed += dt;
+	float atkSpeed = mw->attackSpeed;
 
 	float range = iRange;
-	float rangeRate = linear(delta / attTime, 0, range);
+	float rangeRate = linear(atkSpeed / attTime, 0, range);
 
 	float attAngle = 360.0f;
 	int cCount = iCycleCount;
-	float attAngleRate = linear(delta / attTime, 0, attAngle * cCount);
+	float attAngleRate = linear(atkSpeed / attTime, 0, attAngle * cCount);
 
 	float ratioX = iRatioX; // 수정필요
-	float ratioRate = linear(delta / attTime, 1.0, iRatioX);
+	float ratioRate = linear(atkSpeed / attTime, 1.0, iRatioX);
 
 	Texture* tex = mw->img->tex;
 	iPoint wcp = pc->playerPosition + iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
@@ -510,14 +460,11 @@ bool nomalCycloneAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 	pc->img[6]->angle += -45;
 	pc->img[7]->angle += -45;
 
-	delta += dt;
-	if (delta > attTime )
+	if (atkSpeed > attTime )
 	{
-		delta = 0.0f;
 		pc->act = idle;
 		mw->attackEnemy = false;
-
-		draw(mw, dt, iPointZero);
+		mw->attackSpeed = 0.0f;
 
 		for (int i = 0; i < 8; i++)
 		{
@@ -537,25 +484,21 @@ bool nomalCycloneAttack(meleeWeapon* mw, float dt, bool att, float attTime,
 
 void nomalCycloneMethod(float dt, iPoint dropP)
 {
-	if (pc->act == evasion || pc->act == falling)
-		return;
-
 	meleeWeapon* mw = nomalCyclone;
-
-	float ats = mw->_attackSpeed * pc->attackSpeed;
-	if (getKeyStat(keyboard_j) && pc->pwp->wp == mw && mw->attackSpeed == 0 && pc->act == idle)
+	if (dropP == iPointZero)
 	{
-		pc->act = attacking;
-		mw->attackEnemy = true;
-		mw->attackSpeed -= ats;
+		float ats = mw->_attackSpeed * pc->attackSpeed;
+		if (getKeyDown(keyboard_j) && pc->pwp->wp == mw && pc->act == idle)
+		{
+			pc->act = attacking;
+			audioPlay(SND_SWING);
+		}
+
+		if (nomalCycloneAttack(mw, dt, ats, 0.0f, 2, 1.0f, 1.0f))
+			return;
+		draw(mw, dt, dropP);
 	}
+	else
+		draw(mw, dt, dropP);
 
-	mw->attackSpeed += dt;
-	if (mw->attackSpeed > 0.0f)
-		mw->attackSpeed = (int)0;
-
-	if (nomalCycloneAttack(mw, dt, mw->attackEnemy, ats, 0.0f, 2, 1.0f, 1.0f))
-		return;
-
-	draw(mw, dt, dropP);
 }

@@ -183,7 +183,6 @@
     <ClInclude Include="roguelike\EnemyActionPattern.h" />
     <ClInclude Include="roguelike\EnemyComposition.h" />
     <ClInclude Include="roguelike\EnemyData.h" />
-    <ClInclude Include="roguelike\EnemyStruct.h" />
     <ClInclude Include="roguelike\loading.h" />
     <ClInclude Include="roguelike\Player.h" />
     <ClInclude Include="roguelike\PlayerUI.h" />
@@ -227,7 +226,6 @@
     <ClCompile Include="roguelike\EnemyActionPattern.cpp" />
     <ClCompile Include="roguelike\EnemyComposition.cpp" />
     <ClCompile Include="roguelike\EnemyData.cpp" />
-    <ClCompile Include="roguelike\EnemyStruct.cpp" />
     <ClCompile Include="roguelike\glew.c" />
     <ClCompile Include="roguelike\loading.cpp" />
     <ClCompile Include="roguelike\Player.cpp" />

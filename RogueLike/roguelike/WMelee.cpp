@@ -276,7 +276,6 @@ bool nomalHammerAttack(meleeWeapon* mw, float dt, float attTime,
 		mw->attackSpeed = 0.0f;
 		return false;
 	}
-
 	return true;
 }
 
@@ -360,7 +359,6 @@ bool nomalSpearAttack(meleeWeapon* mw, float dt, float attTime,
 		mw->attackSpeed = 0.0f;
 		return false;
 	}
-
 	return true;
 }
 
@@ -382,7 +380,6 @@ void nomalSpearMethod(float dt, iPoint dropP)
 	}
 	else
 		draw(mw, dt, dropP);
-
 }
 
 //------------------------------------------------------------------------------------
@@ -407,13 +404,10 @@ bool nomalCycloneAttack(meleeWeapon* mw, float dt, float attTime,
 	float ratioRate = linear(atkSpeed / attTime, 1.0, iRatioX);
 
 	Texture* tex = mw->img->tex;
-	iPoint wcp = pc->playerPosition + iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
-	iPoint centerP = wcp;
+	iPoint centerP = mw->combatPosition;
 	iRect rt = iRectZero;
 
 	static bool cycle = false;
-	static iPoint cycCp = iPointZero;
-	static iPoint cycCenter = iPointZero;
 	static float cycAngle = 0.0f;
 
 	weaponPosAndRt(mw, mw->combatPosition, centerP, rt);
@@ -421,11 +415,15 @@ bool nomalCycloneAttack(meleeWeapon* mw, float dt, float attTime,
 	{
 		cycle = true;
 		cycAngle = pc->combatAngleV;
-		cycCp = wcp;
-		cycCenter = centerP;
 	}
 
-	wcp = iPointRotate(cycCenter, cycCp, attAngleRate);
+	if (pc->combatV.x < 0.0f) ;
+	else ;
+	if (pc->combatV.y < 0.0f) ;
+	else ;
+
+	iPoint playerCenter = pc->playerPosition + HALF_OF_TEX_POINT;
+	iPoint wcp = iPointRotate(centerP, playerCenter, attAngleRate);
 	wcp += pc->combatV * rangeRate;
 	rt.origin = wcp - iPointMake(rt.size.width / 2, rt.size.height / 2);
 	wcp += SET_DRAW_OFF;
@@ -494,7 +492,7 @@ void nomalCycloneMethod(float dt, iPoint dropP)
 			audioPlay(SND_SWING);
 		}
 
-		if (nomalCycloneAttack(mw, dt, ats, 0.0f, 2, 1.0f, 1.0f))
+		if (nomalCycloneAttack(mw, dt, 3.0f, 0.0f, 3, 1.0f, 1.0f))
 			return;
 		draw(mw, dt, dropP);
 	}

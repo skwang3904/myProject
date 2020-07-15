@@ -30,6 +30,7 @@
 
 struct MapTile {
 	int* rgTile;
+	Texture* tileTex;
 	iPoint tileOff;
 };
 

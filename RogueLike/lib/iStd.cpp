@@ -25,6 +25,8 @@ bool getKeyDown(uint32 key) { return keyDown & key; }
 uint32 getKeyStat() { return keyStat; }
 bool getKeyStat(uint32 key) { return keyStat & key; }
 
+iVBO* gVbo = NULL;
+Texture** texGdi;
 void loadLib(HDC hDC)
 {
     setupOpenGL(true, hDC);
@@ -59,15 +61,53 @@ void loadLib(HDC hDC)
     srand(time(NULL));
     void sRandom();
     sRandom();
+
+    gVbo = new iVBO();
+    gVbo->programID = getProgramID();
+
+    texGdi = (Texture**)malloc(sizeof(Texture*) * 2);
+
+    Texture* tex = createTexture(32, 32);
+    setTexture(CLAMP, MIPMAP);
+    fbo->bind(tex); //
+
+    iSize s = devSize;
+    iRect v = viewport;
+    devSize = iSizeMake(32, 32);
+    viewport = iRectMake(0, 0, 32, 32);
+
+    float m[16];
+    memcpy(m, mProjection->d(), sizeof(float) * 16);
+    mProjection->ortho(0, 32, 32, 0, -1000, 1000);
+
+    fillCircle(16, 16, 16);
+
+    memcpy(mProjection->d(), m, sizeof(float) * 16);
+    devSize = s;
+    viewport = v;
+
+    fbo->unbind(); //
+    texGdi[0] = tex;
+
+    tex = createTexture(32, 32);
+    fbo->bind(tex); //
+    fbo->clear(1, 1, 1, 1);
+    fbo->unbind(); //
+    texGdi[1] = tex;
+
 }
 
 void freeLib()
 {
-    freeImage(texFboForiPopup);
     delete fbo;
+    freeImage(texFboForiPopup);
     setupOpenGL(false, NULL);
 
     free(keys);
+
+    for (int i = 0; i < 2; i++)
+        freeImage(texGdi[i]);
+    free(texGdi);
 }
 
 iPoint zoomPosition;
@@ -94,7 +134,8 @@ void drawLib(Method_Paint method)
 
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+    
+    setRGBA(1, 1, 1, 1);
     Texture* tex = fbo->getTexture();
 
     if (zoomDt < _zoomDt)
@@ -119,11 +160,9 @@ void drawLib(Method_Paint method)
 			0, 0, tex->width, tex->height, VCENTER | HCENTER,
 			1.0f, 1.0f, 2, 0, REVERSE_HEIGHT);
     }
-#if 0// minimap
-    drawImage(tex, devSize.width - 50, devSize.height - 50,
-        0, 0, tex->width, tex->height, BOTTOM | RIGHT,
-        0.2f, 0.2f, 2, 0, REVERSE_HEIGHT);
-#endif
+
+
+
 }
 
 static void keyLib(uint32& key, iKeyState stat, int c)
@@ -205,6 +244,94 @@ void zoomLib(iPoint point, float rate)
     zoomRate = rate;
     zoomDt = 0.0f;
 }
+
+iVBO::iVBO(int qNum_)
+{
+    _qNum = qNum_;
+    qNum = 0;
+    q = (iQuad*)malloc(sizeof(iQuad) * _qNum);
+    indices = (short*)malloc(sizeof(short) * 6 * _qNum);
+
+    for (int i = 0; i < _qNum; i++)
+    {
+        iQuad* quad = &q[i];
+        quad->tl.p[2] = 0; quad->tl.p[3] = 1;
+        quad->tr.p[2] = 0; quad->tr.p[3] = 1;
+        quad->bl.p[2] = 0; quad->bl.p[3] = 1;
+        quad->br.p[2] = 0; quad->br.p[3] = 1;
+
+        quad->tl.uv = iPointMake(0, 0);
+        quad->tr.uv = iPointMake(1, 0);
+        quad->bl.uv = iPointMake(0, 1);
+        quad->br.uv = iPointMake(1, 1);
+
+        indices[6 * i + 0] = 4 * i + 0;
+        indices[6 * i + 1] = 4 * i + 1;
+        indices[6 * i + 2] = 4 * i + 2;
+        indices[6 * i + 3] = 4 * i + 1;
+        indices[6 * i + 4] = 4 * i + 2;
+        indices[6 * i + 5] = 4 * i + 3;
+    }
+
+    tex = NULL;
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(iQuad) * _qNum, NULL, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    programID = 0;
+}
+
+iVBO::~iVBO()
+{
+    free(q);
+    free(indices);
+
+    freeImage(tex);
+    glDeleteBuffers(1, &vbo);
+}
+
+void iVBO::paint(float dt)
+{
+    glUseProgram(programID);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(iQuad) * qNum, q);
+
+    GLuint positionAttr = glGetAttribLocation(programID, "position");
+    glEnableVertexAttribArray(positionAttr);
+    glVertexAttribPointer(positionAttr, 4, GL_FLOAT, GL_FALSE, sizeof(iVertex), (GLvoid*)0);
+
+    GLuint texCoordAttr = glGetAttribLocation(programID, "texCoord");
+    glEnableVertexAttribArray(texCoordAttr);
+    glVertexAttribPointer(texCoordAttr, 2, GL_FLOAT, GL_FALSE, sizeof(iVertex), (GLvoid*)offsetof(iVertex, uv));
+
+    GLuint colorAttr = glGetAttribLocation(programID, "color");
+    glEnableVertexAttribArray(colorAttr);
+    glVertexAttribPointer(colorAttr, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(iVertex), (GLvoid*)offsetof(iVertex, c));
+
+    GLuint tID = glGetUniformLocation(programID, "texBlend");
+    glUniform1i(tID, 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, tex->texID);
+
+    GLuint mProj = glGetUniformLocation(programID, "mProjection");
+    glUniformMatrix4fv(mProj, 1, GL_FALSE, mProjection->d());
+    GLuint mModelv = glGetUniformLocation(programID, "mModelview");
+    glUniformMatrix4fv(mModelv, 1, GL_FALSE, mModelview->d());
+
+    glDrawElements(GL_TRIANGLES, 6 * qNum, GL_UNSIGNED_SHORT, indices);
+
+    glDisableVertexAttribArray(positionAttr);
+    glDisableVertexAttribArray(texCoordAttr);
+    glDisableVertexAttribArray(colorAttr);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+}
+
 
 iFBO* fbo = NULL;
 iFBO::iFBO(int width, int height)
@@ -315,23 +442,158 @@ void getRGBA(float& r, float& g, float& b, float& a)
     a = _a;
 }
 
+static float _lineWidth = 1.0f;
 void setLineWidth(float lineWidth)
 {
-    glLineWidth(lineWidth);
+    _lineWidth = lineWidth;
+    //glLineWidth(lineWidth);
 }
+
+void drawLine2(float x1, float y1, float x2, float y2)
+{
+    GLuint proID = getProgramGdiID(iGdiID_drawLine);
+    glUseProgram(proID);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+
+    float lineWidth = _lineWidth;
+    float lw = lineWidth / 2.0f;
+
+    iPoint sp = iPointMake(x1, y1);
+    iPoint ep = iPointMake(x2, y2);
+    float theta = iPointAngle(iPointMake(1, 0), iPointZero, ep - sp);
+    float d = iPointDistance(sp, ep) / 2.0f;
+
+    float p[4][4] = {
+        {-d - lw, lw, 0, 1},       {d + lw, lw, 0, 1},
+        {-d - lw, -lw, 0, 1},      {d + lw, -lw, 0, 1}
+    };
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float) * 16, p);
+
+    GLuint positionAttr = glGetAttribLocation(proID, "position");
+    glEnableVertexAttribArray(positionAttr);
+    glVertexAttribPointer(positionAttr, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
+
+    GLuint mProj = glGetUniformLocation(proID, "mProjection");
+    glUniformMatrix4fv(mProj, 1, GL_FALSE, mProjection->d());
+
+    iMatrix mv;
+    mv.loadIdentity();
+    iPoint c = (sp + ep) / 2;
+    mv.translate(c.x, c.y, 0);
+    mv.rotate(0, 0, 1, theta);
+    GLuint mModelv = glGetUniformLocation(proID, "mModelview");
+    glUniformMatrix4fv(mModelv, 1, GL_FALSE, mv.d());
+
+    GLuint uColor = glGetUniformLocation(proID, "color");
+    glUniform4f(uColor, _r, _g, _b, _a);
+
+    GLuint uSp = glGetUniformLocation(proID, "sp");
+    sp.y = devSize.height - sp.y;
+    glUniform2fv(uSp, 1, (float*)&sp);
+
+    GLuint uEp = glGetUniformLocation(proID, "ep");
+    ep.y = devSize.height - ep.y;
+    glUniform2fv(uEp, 1, (float*)&ep);
+
+    GLuint uLineWidth = glGetUniformLocation(proID, "lineWidth");
+    glUniform1f(uLineWidth, lineWidth);
+
+    uint8 indices[6] = { 0,1,2 , 1,2,3 };
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
+
+
+    glDisableVertexAttribArray(positionAttr);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
 void drawLine(iPoint sp, iPoint ep)
 {
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
+#if 1 // cw
+    float theta = iPointAngle(iPointMake(1, 0), iPointZero, ep - sp);
 
-    iPoint position[2] = { sp, ep };
-    float color[2][4] = { {_r, _g, _b, _a}, {_r, _g, _b, _a} };
-    glVertexPointer(2, GL_FLOAT, 0, position);
-    glColorPointer(4, GL_FLOAT, 0, color);
-    glDrawArrays(GL_LINES, 0, 2);
+    float cosT = _cos(theta);
+    float sinT = _sin(theta);
+    // cos  -sin
+    // sin   cos
+    float lw = _lineWidth / 2.0f;
+    iPoint tl = iPointMake(-lw * cosT + lw * sinT, -lw * sinT - lw * cosT);
+    iPoint tc = iPointMake(lw * sinT, -lw * cosT);
+    iPoint tr = iPointMake(lw * cosT + lw * sinT, lw * sinT - lw * cosT);
 
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
+    iPoint bl = iPointMake(-lw * cosT - lw * sinT, -lw * sinT + lw * cosT);
+    iPoint bc = iPointMake(-lw * sinT, lw * cosT);
+    iPoint br = iPointMake(lw * cosT - lw * sinT, lw * sinT + lw * cosT);
+#else // ccw
+    float theta = 360 - iPointAngle(iPointMake(1, 0), iPointZero, ep - sp);
+
+    float cosT = _cos(theta);
+    float sinT = _sin(theta);
+    // cos    sin
+    // -sin   cos
+    float lw = _lineWidth / 2.0f;
+    iPoint tl = iPointMake(-lw * cosT - lw * sinT, lw * sinT - lw * cosT);
+    iPoint tc = iPointMake(-lw * sinT, -lw * cosT);
+    iPoint tr = iPointMake(lw * cosT - lw * sinT, -lw * sinT - lw * cosT);
+
+    iPoint bl = iPointMake(-lw * cosT + lw * sinT, lw * sinT + lw * cosT);
+    iPoint bc = iPointMake(lw * sinT, lw * cosT);
+    iPoint br = iPointMake(lw * cosT + lw * sinT, -lw * sinT + lw * cosT);
+#endif
+
+    gVbo->tex = texGdi[0];
+    gVbo->qNum = 3;
+    iColor4b c = iColor4bMake(_r * 255, _g * 255, _b * 255, _a * 255);
+
+    iQuad* q = &gVbo->q[0];
+    memcpy(&q->tl.p, &(sp + tl), sizeof(iPoint));
+    memcpy(&q->tr.p, &(sp + tc), sizeof(iPoint));
+    memcpy(&q->bl.p, &(sp + bl), sizeof(iPoint));
+    memcpy(&q->br.p, &(sp + bc), sizeof(iPoint));
+
+    q->tl.uv = iPointMake(0, 0);
+    q->tr.uv = iPointMake(0.5f, 0);
+    q->bl.uv = iPointMake(0, 1);
+    q->br.uv = iPointMake(0.5f, 1);
+
+    q->tl.c = c;
+    q->tr.c = c;
+    q->bl.c = c;
+    q->br.c = c;
+
+    q = &gVbo->q[1];
+    memcpy(&q->tl.p, &(sp + tc), sizeof(iPoint));
+    memcpy(&q->tr.p, &(ep + tc), sizeof(iPoint));
+    memcpy(&q->bl.p, &(sp + bc), sizeof(iPoint));
+    memcpy(&q->br.p, &(ep + bc), sizeof(iPoint));
+
+    q->tl.uv = iPointMake(0.5f, 0);
+    q->tr.uv = iPointMake(0.5f, 0);
+    q->bl.uv = iPointMake(0.5f, 1);
+    q->br.uv = iPointMake(0.5f, 1);
+
+    q->tl.c = c;
+    q->tr.c = c;
+    q->bl.c = c;
+    q->br.c = c;
+
+    q = &gVbo->q[2];
+    memcpy(&q->tl.p, &(ep + tc), sizeof(iPoint));
+    memcpy(&q->tr.p, &(ep + tr), sizeof(iPoint));
+    memcpy(&q->bl.p, &(ep + bc), sizeof(iPoint));
+    memcpy(&q->br.p, &(ep + br), sizeof(iPoint));
+
+    q->tl.uv = iPointMake(0.5f, 0);
+    q->tr.uv = iPointMake(1, 0);
+    q->bl.uv = iPointMake(0.5f, 1);
+    q->br.uv = iPointMake(1, 1);
+
+    q->tl.c = c;
+    q->tr.c = c;
+    q->bl.c = c;
+    q->br.c = c;
+
+    gVbo->programID = getProgramID();
+    gVbo->paint(0.0f);
 }
 
 void drawLine(float x0, float y0, float x1, float y1)
@@ -357,35 +619,222 @@ static void drawPoly(iPoint* poly, int num, bool fill)
     glDisableClientState(GL_COLOR_ARRAY);
 }
 
-void drawRect(float x, float y, float width, float height, float radius)
+void drawRect(iRect rt, float radius, float angle)
 {
-    iPoint p[4] = {
-        {x, y},                 // top|left
-        {x, y + height},        // bottom|left
-        {x + width, y + height},// bottom|right
-        {x + width, y}          // top|right
-    };
-    drawPoly(p, 4, false);
-}
-void drawRect(iRect rt, float radius)
-{
-    drawRect(rt.origin.x, rt.origin.y, rt.size.width, rt.size.height);
+    drawRect(rt.origin.x, rt.origin.y, rt.size.width, rt.size.height, radius, angle);
 }
 
-void fillRect(float x, float y, float width, float height, float radius)
+void drawRect(float x, float y, float width, float height, float radius, float angle)
 {
-    iPoint p[4] = {
-        {x, y},                 // top|left
-        {x, y + height},        // bottom|left
-        {x + width, y + height},// bottom|right
-        {x + width, y}          // top|right
+    GLuint proID = getProgramGdiID(iGdiID_drawRect);
+    glUseProgram(proID);
+
+    float w = width / 2.0f;
+    float h = height / 2.0f;
+    float lw = _lineWidth / 2.0f;
+
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    float p[4][4] = {
+        {-w - lw,  h + lw, 0, 1}, {w + lw,  h + lw, 0, 1},
+        {-w - lw, -h - lw, 0, 1}, {w + lw, -h - lw, 0, 1}
     };
-    drawPoly(p, 4, true);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float) * 16, p);
+
+    GLuint positionAttr = glGetAttribLocation(proID, "position");
+    glEnableVertexAttribArray(positionAttr);
+    glVertexAttribPointer(positionAttr, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
+
+    GLuint mProj = glGetUniformLocation(proID, "mProjection");
+    glUniformMatrix4fv(mProj, 1, GL_FALSE, mProjection->d());
+    iMatrix mv;
+    mv.loadIdentity();
+    mv.translate(x + w, y + h, 0);
+    GLuint mModelv = glGetUniformLocation(proID, "mModelview");
+    glUniformMatrix4fv(mModelv, 1, GL_FALSE, mv.d());
+
+    GLuint uColor = glGetUniformLocation(proID, "color");
+    glUniform4f(uColor, _r, _g, _b, _a);
+
+    GLuint uRect = glGetUniformLocation(proID, "rect");
+    glUniform4f(uRect, x, devSize.height - y, width, height);
+
+    GLuint uRadius = glGetUniformLocation(proID, "radius");
+    glUniform1f(uRadius, radius);
+
+    GLuint uLineWidth = glGetUniformLocation(proID, "lineWidth");
+    glUniform1f(uLineWidth, _lineWidth);
+
+    uint8 indices[6] = { 0,1,2 , 1,2,3 };
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
+
+    glDisableVertexAttribArray(positionAttr);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 }
 
-void fillRect(iRect rt, float radius)
+void fillRect(iRect rt, float radius, float angle)
 {
-    fillRect(rt.origin.x, rt.origin.y, rt.size.width, rt.size.height, radius);
+    fillRect(rt.origin.x, rt.origin.y, rt.size.width, rt.size.height, radius, angle);
+}
+
+void fillRect(float x, float y, float width, float height, float radius, float angle)
+{
+    if (radius == 0.0f)
+    {
+        Texture* t = texGdi[1];
+        drawImage(t, x, y,
+            0, 0, t->width, t->height,
+            TOP | LEFT, width / t->width, height / t->height,
+            2, angle);
+        return;
+    }
+
+    GLuint proID = getProgramGdiID(iGdiID_fillRect);
+    glUseProgram(proID);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+
+    float w = width / 2.0f;
+    float h = height / 2.0f;
+
+    float p[4][4] = {
+        {-w, h, 0, 1},  {w, h, 0, 1},
+        {-w, -h, 0, 1}, {w, -h, 0, 1}
+    };
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float) * 16, p);
+
+    GLuint positionAttr = glGetAttribLocation(proID, "position");
+    glEnableVertexAttribArray(positionAttr);
+    glVertexAttribPointer(positionAttr, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
+
+    GLuint mProj = glGetUniformLocation(proID, "mProjection");
+    glUniformMatrix4fv(mProj, 1, GL_FALSE, mProjection->d());
+    iMatrix mv;
+    mv.loadIdentity();
+    mv.translate(x + w, y + h, 0);
+    mv.rotate(0, 0, 1, angle);
+    GLuint mModelv = glGetUniformLocation(proID, "mModelview");
+    glUniformMatrix4fv(mModelv, 1, GL_FALSE, mv.d());
+
+    GLuint uColor = glGetUniformLocation(proID, "color");
+    glUniform4f(uColor, _r, _g, _b, _a);
+
+    GLuint uRect = glGetUniformLocation(proID, "rect");
+    glUniform4f(uRect, x, devSize.height - y, width, height);
+
+    GLuint uRadius = glGetUniformLocation(proID, "radius");
+    glUniform1f(uRadius, radius);
+
+    float radian = angle * M_PI / 180.0;
+    GLuint uRadian = glGetUniformLocation(proID, "radian");
+    glUniform1f(uRadian, radian);
+
+    uint8 indices[6] = { 0,1,2 , 1,2,3 };
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
+
+    glDisableVertexAttribArray(positionAttr);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void drawCircle(iPoint p, float radius)
+{
+    drawCircle(p.x, p.y, radius);
+}
+
+void drawCircle(float x, float y, float radius)
+{
+    GLuint proID = getProgramGdiID(iGdiID_drawCircle);
+    glUseProgram(proID);
+
+    float lw = _lineWidth/ 2.0f;
+
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    float p[4][4] = {
+        {-radius - lw, radius + lw, 0, 1}, {radius + lw, radius + lw, 0, 1},
+        {-radius - lw, -radius - lw, 0, 1}, {radius + lw, -radius - lw, 0, 1}
+    };
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float) * 16, p);
+
+    GLuint positionAttr = glGetAttribLocation(proID, "position");
+    glEnableVertexAttribArray(positionAttr);
+    glVertexAttribPointer(positionAttr, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
+
+    GLuint mProj = glGetUniformLocation(proID, "mProjection");
+    glUniformMatrix4fv(mProj, 1, GL_FALSE, mProjection->d());
+
+    iMatrix mv;
+    mv.loadIdentity();
+    mv.translate(x, y, 0);
+    GLuint mModelv = glGetUniformLocation(proID, "mModelview");
+    glUniformMatrix4fv(mModelv, 1, GL_FALSE, mv.d());
+
+
+    GLuint uCenter = glGetUniformLocation(proID, "center");
+    glUniform2f(uCenter, x, devSize.height - y);
+
+    GLuint uRadius = glGetUniformLocation(proID, "radius");
+    glUniform1f(uRadius, radius);
+
+    GLuint uColor = glGetUniformLocation(proID, "color");
+    glUniform4f(uColor, _r, _g, _b, _a);
+
+
+    GLuint uLineWidth = glGetUniformLocation(proID, "lineWidth");
+    glUniform1f(uLineWidth, _lineWidth);
+
+    uint8 indices[6] = { 0,1,2 , 1,2,3 };
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
+
+    glDisableVertexAttribArray(positionAttr);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+}
+
+void fillCircle(iPoint p, float radius)
+{
+    fillCircle(p.x, p.y, radius);
+}
+
+void fillCircle(float x, float y, float radius)
+{
+    GLuint proID = getProgramGdiID(iGdiID_fillCircle);
+    glUseProgram(proID);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    float p[4][4] = {
+        {-radius, radius, 0, 1},    {radius, radius, 0, 1},
+        {-radius, -radius, 0, 1},   {radius, -radius, 0, 1}
+
+    };
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float) * 16, p);
+
+    GLuint positionAttr = glGetAttribLocation(proID, "position");
+    glEnableVertexAttribArray(positionAttr);
+    glVertexAttribPointer(positionAttr, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
+
+    GLuint mProj = glGetUniformLocation(proID, "mProjection");
+    glUniformMatrix4fv(mProj, 1, GL_FALSE, mProjection->d());
+    
+    iMatrix mv;
+    mv.loadIdentity();
+    mv.translate(x, y, 0);
+    GLuint mModelv = glGetUniformLocation(proID, "mModelview");
+    glUniformMatrix4fv(mModelv, 1, GL_FALSE, mv.d());
+
+
+    GLuint uCenter = glGetUniformLocation(proID, "center");
+    glUniform2f(uCenter, x, devSize.height - y);
+
+    GLuint uRadius = glGetUniformLocation(proID, "radius");
+    glUniform1f(uRadius, radius);
+
+    GLuint uColor = glGetUniformLocation(proID, "color");
+    glUniform4f(uColor, _r, _g, _b, _a);
+
+    uint8 indices[6] = { 0,1,2 , 1,2,3 };
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
+
+    glDisableVertexAttribArray(positionAttr);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 Texture* createTexture(int width, int height, bool rgba32f)
@@ -823,90 +1272,73 @@ void drawImage(Texture* tex, int x, int y,
     case VCENTER | RIGHT:   x -= width;     y -= height / 2; break;
     case BOTTOM | LEFT:                     y -= height;     break;
     case BOTTOM | HCENTER:  x -= width / 2; y -= height;     break;
-    case BOTTOM | RIGHT:    x -= width;     y -= height;     break; }
-
-    iPoint position[4] = {
-        {x, y},             // top|left
-        {x, y+height},      // bottom|left,  
-        {x+width, y},       // top|right
-        {x+width, y+height} // bottom|right
-    };
-
-    iPoint coordinate[4] = {
-        {ix / tex->potWidth, iy / tex->potHeight},
-        {ix / tex->potWidth, (iy + ih) / tex->potHeight},
-        {(ix + iw) / tex->potWidth, iy / tex->potHeight},
-        {(ix + iw) / tex->potWidth, (iy + ih) / tex->potHeight}
-    };
-
-    float color[4][4] = {
-        {_r, _g, _b, _a},
-        {_r, _g, _b, _a},
-        {_r, _g, _b, _a },
-        {_r, _g, _b, _a} };
-    if (reverse == REVERSE_WIDTH)
-    {
-        iPoint t;
-        for (int i = 0; i < 2; i++)
-        {
-            t = position[i];
-            position[i] = position[i+2];
-            position[i+2] = t;
-        }
-    }
-    else if (reverse == REVERSE_HEIGHT)
-    {
-        iPoint t;
-        for (int i = 0; i < 2; i++)
-        {
-            t = position[2 * i];
-            position[2 * i] = position[2 * i + 1];
-            position[2 * i + 1] = t;
-        }
+    case BOTTOM | RIGHT:    x -= width;     y -= height;     break;
     }
 
-    glPushMatrix();
+    gVbo->qNum = 1;
+    iQuad* q = &gVbo->q[0];
+
+    q->tl.p[0] = x;         q->tl.p[1] = y;
+    q->tr.p[0] = x + width; q->tr.p[1] = y;
+    q->bl.p[0] = x;         q->bl.p[1] = y + height;
+    q->br.p[0] = x + width; q->br.p[1] = y + height;
+
+    q->tl.uv.x = ix / tex->potWidth;        q->tl.uv.y = iy / tex->potHeight;
+    q->tr.uv.x = (ix + iw) / tex->potWidth; q->tr.uv.y = iy / tex->potHeight;
+    q->bl.uv.x = ix / tex->potWidth;        q->bl.uv.y = (iy + ih) / tex->potHeight;
+    q->br.uv.x = (ix + iw) / tex->potWidth; q->br.uv.y = (iy + ih) / tex->potHeight;
+
+    iColor4b c = iColor4bMake(_r * 255.f, _g * 255.f, _b * 255.f, _a * 255.f);
+    q->tl.c = c;
+    q->tr.c = c;
+    q->bl.c = c;
+    q->br.c = c;
+
+    if (reverse & REVERSE_WIDTH)
+    {
+        float t = q->tl.p[0];
+        q->tl.p[0] = q->tr.p[0];
+        q->tr.p[0] = t;
+
+        t = q->bl.p[0];
+        q->bl.p[0] = q->br.p[0];
+        q->br.p[0] = t;
+    }
+    if (reverse & REVERSE_HEIGHT)
+    {
+        float t = q->tl.p[1];
+        q->tl.p[1] = q->bl.p[1];
+        q->bl.p[1] = t;
+
+        t = q->tr.p[1];
+        q->tr.p[1] = q->br.p[1];
+        q->br.p[1] = t;
+    }
+
+
+    float m[16];
+    memcpy(m, mModelview->d(), sizeof(float) * 16);
     if (degree)
     {
         iPoint t = iPointMake(x + width / 2, y + height / 2);
-        for (int i = 0; i < 4; i++)
-            position[i] -= t;
-        glTranslatef(t.x, t.y, 0);
+        q->tl.p[0] -= t.x;      q->tl.p[1] -= t.y;
+        q->tr.p[0] -= t.x;      q->tr.p[1] -= t.y;
+        q->bl.p[0] -= t.x;      q->bl.p[1] -= t.y;
+        q->br.p[0] -= t.x;      q->br.p[1] -= t.y;
+        mModelview->translate(t.x, t.y, 0);
 
-        float _xyz[3] = {0, 0, 0};
-        _xyz[xyz] = 1.0f;
+        float _xyz[3] = { 0, 0, 0 };
+        _xyz[xyz] = 1;
         while (degree > 360) degree -= 360;
         degree = 360 - degree;
-        glRotatef(degree, _xyz[0], _xyz[1], _xyz[2]);
+        mModelview->rotate(_xyz[0], _xyz[1], _xyz[2], degree);
     }
 
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, tex->texID);
+    gVbo->tex = tex;
+    gVbo->programID = getProgramID();
+    gVbo->paint(0.0f);
+    memcpy(mModelview->d(), m, sizeof(float) * 16);
 
-    glVertexPointer(2, GL_FLOAT, 0, position);
-    glTexCoordPointer(2, GL_FLOAT, 0, coordinate);
-    glColorPointer(4, GL_FLOAT, 0, color);
-
-#if 1
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-#elif 1
-    uint8 indices[4] = { 0, 1, 2, 3 };
-    glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, indices);
-#else
-    uint8 indices[6] = { 0, 1, 2,  1, 2, 3 };
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
-#endif
-
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    glPopMatrix();
 }
 
 

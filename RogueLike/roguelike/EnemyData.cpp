@@ -15,10 +15,11 @@ iImage** imgGolemElete;
 MonsterData** totalMonster = NULL;
 int monsterNum = 0;
 
-MonsterData::MonsterData()
+MonsterData::MonsterData(MonsterType mt)
 {
 	iImage** tmp = NULL;
 	int num = 0;
+	enmtype = mt;
 	switch (enmtype)
 	{
 	case golemNomal:
@@ -45,7 +46,7 @@ MonsterData::MonsterData()
 
 MonsterData::~MonsterData()
 {
-	int num = 0;
+	int num = -1;
 	switch (enmtype)
 	{
 	case golemNomal: num = GOLEM_IMG_NUM; break;
@@ -56,6 +57,10 @@ MonsterData::~MonsterData()
 	for (int i = 0; i < num; i++)
 		delete img[i];
 	free(img);
+
+	for (int i = 0; i < itemTypeMax; i++)
+		delete items[i];
+	free(items);
 }
 
 void MonsterData::drawShowHP(float dt)
@@ -115,23 +120,21 @@ void MonsterData::takeDmgEffect(float dt)
 EGolem** golems;
 EGolem** golemEletes;
 
-EGolem::EGolem(MonsterType mt)
+EGolem::EGolem(MonsterType mt) : MonsterData(mt)
 {
-	enmtype = mt;
-	beginEGolem();
+	init();
 }
 
 EGolem::~EGolem()
 {
 	// 임시 공통 사용
-	for (int i = 0; i < itemTypeMax; i++)
-		delete items[i];
-	free(items);	
+
 }
 
 void EGolem::beginEGolem()
 {
 	// 임시 공통사용 아이템
+	// 사용안하는 함수
 	init();
 
 	itemType it[itemTypeMax] = { coin, healing, powerUp, atkSpeedUp, moveSpeedUp };
@@ -218,10 +221,17 @@ void EGolem::init()
 
 	hit = false;
 	ATV = iPointZero;
+
+	itemType it[itemTypeMax] = { coin, healing, powerUp, atkSpeedUp, moveSpeedUp };
+	items = (UseItem**)malloc(sizeof(UseItem*) * itemTypeMax);
+	for (int i = 0; i < itemTypeMax; i++)
+		items[i] = new UseItem(it[i]);
 }
 
 void EGolem::paint(float dt)
 {
+	bool mapPos = (tileNumber == pc->tileNumber);
+
 	if (act == dying || act == dead)
 	{
 		for (int i = 0; i < GOLEM_ITEM_NUM; i++)
@@ -247,10 +257,12 @@ void EGolem::paint(float dt)
 	rt.origin += SET_DRAW_OFF;
 	rt1.origin += SET_DRAW_OFF;
 	setRGBA(0, 0, 0, 1);
+	setLineWidth(2);
 	drawRect(rt);
 	setRGBA(1, 0, 1, 1);
 	drawRect(rt1);
 	setRGBA(1, 1, 1, 1);
+	setLineWidth(1);
 
 	if (hp > 0.0f)
 	{
@@ -262,8 +274,6 @@ void EGolem::paint(float dt)
 
 		if (showHp)
 			drawShowHP(dt);
-
-		bool mapPos = (tileNumber == pc->tileNumber);
 		if (mapPos)
 		{
 			if ((methodRange(this, dt) == false) &&
@@ -319,17 +329,17 @@ golemImgInfo eii[GOLEM_IMG_NUM + GOLEM_ELETE_IMG_NUM] = {
 	{ "assets/monster/golem1/Hurt/Golem_01_Hurt_%03d.png",
 		12, 1, false, 0.08f},
 	////////////////////////////////////////////////////
-	{ "assets/monster/golemElete/Idle/Golem_03_Idle_0%02d.png",
+	{ "assets/monster/golemElete/Idle/Golem_03_Idle_%03d.png",
 		12, 1, false, 0.08f},
-	{ "assets/monster/golemElete/Idle Blink/Golem_03_Idle Blinking_0%02d.png",
+	{ "assets/monster/golemElete/Idle Blink/Golem_03_Idle Blinking_%03d.png",
 		12, 1, false, 0.08f},
-	{ "assets/monster/golemElete/Walking/Golem_03_Walking_0%02d.png",
+	{ "assets/monster/golemElete/Walking/Golem_03_Walking_%03d.png",
 		18, 0, false, 0.05f},
-	{ "assets/monster/golemElete/Attacking/Golem_03_Attacking_0%02d.png",
+	{ "assets/monster/golemElete/Attacking/Golem_03_Attacking_%03d.png",
 		12, 1, false, GOLEM_ELETE_MELEE_ATKTIME / 12.0f},
-	{ "assets/monster/golemElete/Dying/Golem_03_Dying_0%02d.png",
+	{ "assets/monster/golemElete/Dying/Golem_03_Dying_%03d.png",
 		15, 1, true, 0.07f},
-	{ "assets/monster/golemElete/Taunt/Golem_03_Taunt_0%02d.png",
+	{ "assets/monster/golemElete/Taunt/Golem_03_Taunt_%03d.png",
 		18, 1, false, GOLEM_ELETE_RANGE_ATKTIME / 18.0f},
 	{ "assets/monster/golemElete/Hurt/Golem_03_Hurt_%03d.png",
 		12, 1, false, 0.08f},

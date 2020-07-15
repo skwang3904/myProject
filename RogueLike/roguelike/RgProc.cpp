@@ -93,7 +93,7 @@ void drawRgProc(float dt)
 {
 	drawRoomTile(dt);
 	passTileAnimation(dt);
-	curtainTile();
+	//curtainTile();
 	if (passAni())
 		return;
 
@@ -121,7 +121,7 @@ void drawRgProc(float dt)
 	//--------------------------------------------------------
 	// pop
 
-	curtainTile();
+	//curtainTile();
 	drawPopHP(dt);
 	drawPopMiniMap(dt);
 	drawPopCombatMenu(dt);

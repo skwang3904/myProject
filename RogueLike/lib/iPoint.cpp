@@ -120,6 +120,11 @@ float iPointLength(iPoint p)
 	return sqrtf(p.x * p.x + p.y * p.y);
 }
 
+float iPointDistance(const iPoint& p0, const iPoint& p1)
+{
+	return sqrt((p1.x - p0.x) * (p1.x - p0.x) + (p1.y - p0.y) * (p1.y - p0.y));
+}
+
 iPoint iPointRotate(const iPoint& p, const iPoint& t, float degree)
 {
 	// 점 t를 기준점으로 p를 degree만큼 시계방향 회전
@@ -144,10 +149,10 @@ iPoint iPointRotate(const iPoint& p, const iPoint& t, float degree)
 }
 
 
-float iPointAngle(iPoint& v1, iPoint& v2, iPoint& v3)
+float iPointAngle(const iPoint& v1, const iPoint& v2, const iPoint& v3)
 {
-	iPoint v1p = v1 - v2;
-	iPoint v3p = v3 - v2;
+	iPoint v1p = iPointMake(v1.x - v2.x, v1.y - v2.y);
+	iPoint v3p = iPointMake(v3.x - v2.x, v3.y - v2.y);
 
 	float v1pLen = iPointLength(v1p);
 	float v3pLen = iPointLength(v3p);
@@ -159,10 +164,10 @@ float iPointAngle(iPoint& v1, iPoint& v2, iPoint& v3)
 	{
 		if (dot == 0.0f)
 			return 270.0f;
-		return 360 - (acos(x) * 180 / M_PI);
+		return  acos(x) * 180 / M_PI;
 	}
 
 	if (dot == 0.0f)
 		return 90.0f;
-	return acos(x) * 180 / M_PI;
+	return 360 - acos(x) * 180 / M_PI;
 }

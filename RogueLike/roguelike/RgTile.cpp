@@ -4,9 +4,6 @@ iPoint* tileOffSet;
 
 void createTileSet()
 {
-	//setPos = iPointMake(devSize.width / 2 - RGTILE_X * RGTILE_Width / 2,
-	//	devSize.height / 2 - RGTILE_Y * RGTILE_Height / 2);
-
 	tileOffSet = (iPoint*)malloc(sizeof(iPoint) * TILEOFF_NUM);
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{

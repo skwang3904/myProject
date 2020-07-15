@@ -163,6 +163,7 @@
     <ClInclude Include="lib\iFPS.h" />
     <ClInclude Include="lib\iGraphics.h" />
     <ClInclude Include="lib\iImage.h" />
+    <ClInclude Include="lib\iMatrix.h" />
     <ClInclude Include="lib\iOpenAL.h" />
     <ClInclude Include="lib\iOpenGL.h" />
     <ClInclude Include="lib\iPoint.h" />
@@ -208,6 +209,7 @@
     <ClCompile Include="lib\iFPS.cpp" />
     <ClCompile Include="lib\iGraphics.cpp" />
     <ClCompile Include="lib\iImage.cpp" />
+    <ClCompile Include="lib\iMatrix.cpp" />
     <ClCompile Include="lib\iOpenAL.cpp" />
     <ClCompile Include="lib\iOpenGL.cpp" />
     <ClCompile Include="lib\iPoint.cpp" />

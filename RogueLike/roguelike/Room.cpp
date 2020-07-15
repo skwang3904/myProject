@@ -9,7 +9,7 @@ void connectCheck(ConnectTile* c, int& count);
 void pathTileCheck(ConnectTile* c);
 
 struct passTile {
-	iPoint prevCamOff;
+	int tileNum;
 	iPoint sp;
 	iPoint tp;
 	float passAniDt;
@@ -24,7 +24,7 @@ void loadRoomTile()
 	for (int i = 0; i < TILEOFF_NUM; i++)
 		maps[i] = (MapTile*)malloc(sizeof(MapTile) * 1);
 
-	pt.prevCamOff = iPointMake(-1, -1);
+	pt.tileNum = -1;
 	pt.sp = iPointZero;
 	pt.tp = iPointZero;
 	pt.passAniDt = _passAniDt;
@@ -34,15 +34,17 @@ void loadRoomTile()
 
 void setRoomTile()
 {
+	int i, j;
 	bool randomOffCheck[TILEOFF_NUM];
 
 	int m[MAPTILE_NUM];
 	int conectCount = 0;
 	while (conectCount < MAPTILE_NUM)
 	{
-		for (int i = 0; i < TILEOFF_NUM; i++)
+		for (i = 0; i < TILEOFF_NUM; i++)
 		{
 			maps[i]->rgTile = NULL;
+			maps[i]->tileTex = NULL;
 			maps[i]->tileOff = tileOffSet[i];
 
 			ConnectTile* c = &ct[i];
@@ -54,7 +56,7 @@ void setRoomTile()
 
 		memset(randomOffCheck, false, sizeof(bool) * TILEOFF_NUM);
 		memset(m, -1, sizeof(int) * MAPTILE_NUM);
-		for (int i = 0; i < MAPTILE_NUM; i++)
+		for (i = 0; i < MAPTILE_NUM; i++)
 		{
 			if (m[i] == -1 || randomOffCheck[m[i]])
 				m[i] = random() % TILEOFF_NUM;
@@ -66,7 +68,7 @@ void setRoomTile()
 		}
 
 		int k = -1;
-		for (int i = 0; i < TILEOFF_NUM; i++)
+		for (i = 0; i < TILEOFF_NUM; i++)
 		{
 			// test
 			bool exist = false;
@@ -83,14 +85,14 @@ void setRoomTile()
 				maps[m[k]]->rgTile = Tile4way1;
 		}
 
-		for (int i = 0; i < TILEOFF_NUM; i++)
+		for (i = 0; i < TILEOFF_NUM; i++)
 		{
 			ConnectTile* c = &ct[i];
 			if (maps[i]->rgTile != NULL)
 				c->value = true;
 		}
 
-		for (int i = 0; i < TILEOFF_NUM; i++)
+		for (i = 0; i < TILEOFF_NUM; i++)
 		{
 			ConnectTile* c = &ct[i];
 			connectCheck(c, conectCount);
@@ -106,10 +108,49 @@ void setRoomTile()
 		}
 	}
 
-	for (int i = 0; i < TILEOFF_NUM; i++)
+	for (i = 0; i < TILEOFF_NUM; i++)
 	{
 		ConnectTile* c = &ct[i];
 		pathTileCheck(c);
+	}
+
+
+	for (i = 0; i < TILEOFF_NUM; i++)
+	{
+		if (maps[i]->rgTile == NULL)
+			continue;
+
+		iPoint p = iPointMake((RGTILE_X) * RGTILE_Width, (RGTILE_Y) * RGTILE_Height);
+		Texture* tex = createTexture(p.x, p.y);
+		fbo->bind(tex);
+
+		iSize d = devSize;
+		devSize = iSizeMake(p.x, p.y);
+		iRect v = viewport;
+		viewport = iRectMake(0, 0, p.x, p.y);
+		float m[16];
+		memcpy(m, mProjection->d(), sizeof(float) * 16);
+		mProjection->loadIdentity();
+		mProjection->ortho(0, p.x, p.y, 0, -1000, 1000);
+
+		int num = RGTILE_X * RGTILE_Y;
+		for (int j = 0; j < num; j++)
+		{
+			int* tile = maps[i]->rgTile;
+			if (tile[j] == WALLTILE)		setRGBA(WALLTILE_RGBA);
+			else if (tile[j] == FALLTILE)	setRGBA(FALLTILE_RGBA);
+			else							setRGBA(MOVETILE_RGBA);
+
+			p = iPointMake(RGTILE_Width * (j % RGTILE_X),
+					RGTILE_Height * (j / RGTILE_X));
+			fillRect(p.x, p.y, RGTILE_Width, RGTILE_Height);
+		}
+
+		memcpy(mProjection->d(), m, sizeof(float) * 16);
+		devSize = d;
+		viewport = v;
+		fbo->unbind();
+		maps[i]->tileTex = tex;
 	}
 }
 
@@ -130,13 +171,6 @@ void connectCheck(ConnectTile* c, int& count)
 	if (y < TILEOFF_SQRT - 1)	connectCheck(&ct[c->index+ TILEOFF_SQRT], count);
 }
 
-bool path(ConnectTile* c)
-{
-	if (c->value)
-		return true;
-	return false;
-}
-
 void pathTileCheck(ConnectTile* c)
 {
 	if (c->value == false)
@@ -151,10 +185,10 @@ void pathTileCheck(ConnectTile* c)
 	bool u = false;
 	bool d = false;
 
-	if (x > 0)					l = path(&ct[c->index - 1]);
-	if (x < TILEOFF_SQRT - 1)	r = path(&ct[c->index + 1]);
-	if (y > 0)					u = path(&ct[c->index - TILEOFF_SQRT]);
-	if (y < TILEOFF_SQRT - 1)	d = path(&ct[c->index + TILEOFF_SQRT]);
+	if (x > 0)					l = ct[c->index - 1].value;
+	if (x < TILEOFF_SQRT - 1)	r = ct[c->index + 1].value;
+	if (y > 0)					u = ct[c->index - TILEOFF_SQRT].value;
+	if (y < TILEOFF_SQRT - 1)	d = ct[c->index + TILEOFF_SQRT].value;
 
 	int pathNum = l + r + u + d;
 	switch (pathNum) {
@@ -194,26 +228,34 @@ void pathTileCheck(ConnectTile* c)
 void freeRoomTile()
 {
 	for (int i = 0; i < TILEOFF_NUM; i++)
+	{
+		if (maps[i]->tileTex)
+			freeImage(maps[i]->tileTex);
 		free(maps[i]);
+	}
 	free(maps);
 }
 
 void drawRoomTile(float dt)
 {
-	int num = RGTILE_X * RGTILE_Y;
 
+#if 0
+	int num = RGTILE_X * RGTILE_Y;
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
 		if (maps[i]->rgTile != NULL)
 		{
+			int* tile = maps[i]->rgTile;
+			setRGBA(MOVETILE_RGBA);
+			iPoint p = maps[i]->tileOff + SET_DRAW_OFF;
+			fillRect(p.x, p.y, RGTILE_X * RGTILE_Width, RGTILE_Y * RGTILE_Height);
 			for (int j = 0; j < num; j++)
 			{
-				int* tile = maps[i]->rgTile;
-				if (tile[j] == MOVETILE) setRGBA(MOVETILE_RGBA);
-				else if (tile[j] == WALLTILE)setRGBA(WALLTILE_RGBA);
+				if (tile[j] == WALLTILE)setRGBA(WALLTILE_RGBA);
 				else if (tile[j] == FALLTILE)setRGBA(FALLTILE_RGBA);
+				else				setRGBA(MOVETILE_RGBA);
 
-				iPoint p = maps[i]->tileOff + SET_DRAW_OFF +
+				p = maps[i]->tileOff + SET_DRAW_OFF +
 							iPointMake(	RGTILE_Width * (j % RGTILE_X), 
 										RGTILE_Height * (j / RGTILE_X));
 				fillRect(p.x, p.y, RGTILE_Width, RGTILE_Height);
@@ -225,33 +267,57 @@ void drawRoomTile(float dt)
 			}
 		}
 	}
-	setRGBA(1, 1, 1, 1);
+#elif 0
+	for (int i = 0; i < TILEOFF_NUM; i++)
+	{
+		if (maps[i]->tileTex)
+		{
+			Texture* tex = maps[i]->tileTex;
+			iPoint p = maps[i]->tileOff + SET_DRAW_OFF;
+			drawImage(tex, p.x, p.y, 
+				0,0, tex->width, tex->height,
+				TOP | LEFT,	1.0f,1.0f,
+				2,0,REVERSE_HEIGHT);
+		}
+	}
+#else
+	Texture* tex = maps[pc->tileNumber]->tileTex;
+	iPoint p = maps[pc->tileNumber]->tileOff + SET_DRAW_OFF;
+	drawImage(tex, p.x, p.y,
+		0, 0, tex->width, tex->height,
+		TOP | LEFT, 1.0f, 1.0f,
+		2, 0, REVERSE_HEIGHT);
+
+#endif
+	printf("%.2f,%.2f\n", pc->camPosition.x, pc->camPosition.y);
 }
 
 void passTileAnimation(float dt)
 {
 	passTile* t = &pt;
-	if (t->prevCamOff == iPointMake(-1, -1))
-		t->prevCamOff = pc->camPosition;
+	if (t->tileNum == -1)
+		t->tileNum = pc->tileNumber;
 
-	if (t->prevCamOff == pc->camPosition && t->passAniDt == _passAniDt)
+	if (t->tileNum == pc->tileNumber && t->passAniDt == _passAniDt)
 		return;
 
 	if (nextStage)
 	{
-		t->prevCamOff = pc->camPosition;
+		t->tileNum = pc->tileNumber;
 		return;
 	}
 
 	if (t->passAniDt == _passAniDt)
 	{
-		t->sp = t->prevCamOff;
-		t->tp = pc->camPosition;
+		t->sp = maps[t->tileNum]->tileOff * -1.0f;
+		t->tp = maps[pc->tileNumber]->tileOff * -1.0f;
 		t->passAniDt = 0.0f;
 	}
 
-	pc->camPosition = t->sp + (t->tp - t->sp) * t->passAniDt / _passAniDt;
+	pc->camPosition = linear(t->passAniDt / _passAniDt, t->sp, t->tp);
+	//t->sp + (t->tp - t->sp) * t->passAniDt / _passAniDt;
 
+#if 0
 	int num = RGTILE_X * RGTILE_Y;
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
@@ -268,14 +334,33 @@ void passTileAnimation(float dt)
 										RGTILE_Height * (j / RGTILE_X));
 				fillRect(p.x, p.y, RGTILE_Width, RGTILE_Height);
 			}
+#elif 0
+			Texture* tex = maps[i]->tileTex;
+			iPoint p = maps[i]->tileOff + SET_DRAW_OFF;
+			drawImage(tex, p.x, p.y,
+				0, 0, tex->width, tex->height,
+				TOP | LEFT, 1.0f, 1.0f,
+				2, 0, REVERSE_HEIGHT);
 		}
 	}
+#else
+	for (int i = 0; i < 2; i++)
+	{
+		int tn = (i == 0 ? t->tileNum : pc->tileNumber);
+		Texture* tex = maps[tn]->tileTex;
+		iPoint p = maps[tn]->tileOff + SET_DRAW_OFF;
+		drawImage(tex, p.x, p.y,
+			0, 0, tex->width, tex->height,
+			TOP | LEFT, 1.0f, 1.0f,
+			2, 0, REVERSE_HEIGHT);
+	}
+#endif
 	setRGBA(1, 1, 1, 1);
 	t->passAniDt += dt;
 	if (t->passAniDt > _passAniDt)
 	{
 		t->passAniDt = _passAniDt;
-		t->prevCamOff = t->tp;
+		t->tileNum = pc->tileNumber;
 		pc->camPosition = t->tp;
 		return;
 	}

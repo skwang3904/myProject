@@ -1,6 +1,14 @@
 #include "iOpenGL.h"
+#include "iStd.h"
 
 HGLRC hRC;
+
+iMatrix* mProjection;
+iMatrix* mModelview;
+
+void loadShader();
+void freeShader();
+
 void setupOpenGL(bool setup, HDC hDC)
 {
 	if (setup)
@@ -14,22 +22,78 @@ void setupOpenGL(bool setup, HDC hDC)
 		pfd.cColorBits = 32;
 		pfd.cDepthBits = 32;
 		pfd.iLayerType = PFD_MAIN_PLANE;
-		pfd.dwFlags =	PFD_DRAW_TO_WINDOW |
-						PFD_SUPPORT_OPENGL |
-						PFD_DOUBLEBUFFER;
+		pfd.dwFlags = PFD_DRAW_TO_WINDOW |
+			PFD_SUPPORT_OPENGL |
+			PFD_DOUBLEBUFFER;
 
 		int pixelFormat = ChoosePixelFormat(hDC, &pfd);
 		SetPixelFormat(hDC, pixelFormat, &pfd);
 
+#if 0
 		hRC = wglCreateContext(hDC);
 		wglMakeCurrent(hDC, hRC);
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0, 1024, 768, 0, -1000, 1000);
+
+		float m[16];
+		glGetFloatv(GL_PROJECTION_MATRIX, m);
+		printf("=============================glOrtho\n");
+		for (int i = 0; i < 16; i++)
+		{
+			printf("%f, ", m[i]);
+			if (i % 4 == 3)
+				printf("\n");
+		}
+		printf("============================= mProjection\n");
+
+		float* d = mProjection->d();
+		for (int i = 0; i < 16; i++)
+		{
+			printf("%f, ", d[i]);
+			if (i % 4 == 3)
+				printf("\n");
+		}
+
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+#endif		
+
+		if (wglewIsSupported("WGL_ARB_create_context"))
+		{
+			int attr[] = {
+				WGL_CONTEXT_MAJOR_VERSION_ARB, 3, // 3 : vbo, vao, pipeline
+				WGL_CONTEXT_MINOR_VERSION_ARB, 2,
+				WGL_CONTEXT_FLAGS_ARB, 0,
+				0,
+			};
+
+			hRC = wglCreateContextAttribsARB(hDC, NULL, attr);
+		}
+		else
+		{
+			hRC = wglCreateContext(hDC);
+		}
+		wglMakeCurrent(hDC, hRC);
+
+		mProjection = new iMatrix;
+		mModelview = new iMatrix;
 	}
 	else
 	{
+		freeShader();
+
+		delete mProjection;
+		delete mModelview;
+
 		wglMakeCurrent(NULL, NULL);
 		wglDeleteContext(hRC);
 	}
 }
+
 
 bool startGLEW()
 {
@@ -42,6 +106,8 @@ bool startGLEW()
 
 void initOpenGL()
 {
+	loadShader();
+
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
 	// GL_MODULATE / GL_BLEND_SRC
@@ -62,7 +128,179 @@ void initOpenGL()
 	glEnable(GL_SMOOTH);
 }
 
-#include "iStd.h"
+GLuint vertexBuffer, vertexObject;
+GLuint* programIDs;
+GLuint* programGDIs;
+GLuint programID;
+
+void loadShader()
+{
+	int i;
+
+	//vao
+	glGenVertexArrays(1, &vertexObject);
+	glBindVertexArray(vertexObject);
+
+	//vbo
+	glGenBuffers(1, &vertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(iVertex) * 4, NULL, GL_STATIC_DRAW);
+
+	programIDs = (GLuint*)malloc(sizeof(GLuint) * iBlendMax);
+
+	int length;
+	char* str = loadFile("assets/shader/std.vert", length);
+	GLuint vertexID = createShader(str, GL_VERTEX_SHADER);
+	free(str);
+
+	const char* strFragList[iBlendMax] = {
+		"alpha", "grey", "add"
+	};
+
+	for (i = 0; i < iBlendMax; i++)
+	{
+		char s[256];
+		sprintf(s, "assets/shader/%s.frag", strFragList[i]);
+		str = loadFile(s, length);
+		GLuint fragID = createShader(str, GL_FRAGMENT_SHADER);
+		free(str);
+
+		programIDs[i] = createProgramID(vertexID, fragID);
+		destroyShader(fragID);
+	}
+	destroyShader(vertexID);
+
+	setGLBlend(iBlendAlpha);
+
+	{
+		programGDIs = (GLuint*)malloc(sizeof(GLuint) * iGdiID_Max);
+
+		str = loadFile("assets/shader/gdi/gdi.vert", length);
+		vertexID = createShader(str, GL_VERTEX_SHADER);
+		free(str);
+
+		const char* strGdiList[iGdiID_Max] = {
+			"drawLine","drawRect","fillRect","drawCircle","fillCircle"
+		};
+
+		for (i = 0; i < iGdiID_Max; i++)
+		{
+			char s[256];
+			sprintf(s, "assets/shader/gdi/%s.frag", strGdiList[i]);
+			str = loadFile(s, length);
+			GLuint fragID = createShader(str, GL_FRAGMENT_SHADER);
+			free(str);
+
+			programGDIs[i] = createProgramID(vertexID, fragID);
+			destroyShader(fragID);
+		}
+		destroyShader(vertexID);
+	}
+}
+
+void freeShader()
+{
+	//vao
+	glDeleteVertexArrays(1, &vertexObject);
+
+	//vbo
+	glDeleteBuffers(1, &vertexBuffer);
+
+	for (int i = 0; i < iBlendMax; i++)
+		destroyProgram(programIDs[i]);
+	free(programIDs);
+}
+
+void checkShaderID(GLuint id)
+{
+	GLint result = GL_FALSE;
+	glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+
+	if (result != GL_TRUE)
+	{
+		int length = 0;
+		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+		char* s = (char*)calloc(sizeof(char), 1 + length);
+		glGetShaderInfoLog(id, length, NULL, s);
+
+		wchar_t* ws = utf8_to_utf16(s);
+		MessageBox(NULL, ws, TEXT("glCreateShader error"), MB_OK);
+		free(ws);
+		free(s);
+	}
+}
+
+GLuint createShader(const char* str, GLuint flag)
+{
+	GLuint id = glCreateShader(flag);
+	glShaderSource(id, 1, &str, NULL);
+	glCompileShader(id);
+
+	checkShaderID(id);
+
+	return id;
+}
+
+void destroyShader(GLuint id)
+{
+	glDeleteShader(id);
+}
+
+void checkProgramID(GLuint id)
+{
+	GLint result = GL_FALSE;
+	glGetProgramiv(id, GL_LINK_STATUS, &result);
+
+	if (result != GL_TRUE)
+	{
+		int length = 0;
+		glGetProgramiv(id, GL_INFO_LOG_LENGTH, &length);
+		char* s = (char*)calloc(sizeof(char), 1 + length);
+		glGetProgramInfoLog(id, length, NULL, s);
+
+		wchar_t* ws = utf8_to_utf16(s);
+		MessageBox(NULL, ws, TEXT("glCreateProgramID error"), MB_OK);
+		free(ws);
+		free(s);
+	}
+}
+
+GLuint createProgramID(GLuint vertID, GLuint fragID)
+{
+	GLuint id = glCreateProgram();
+	glAttachShader(id, vertID);
+	glAttachShader(id, fragID);
+
+	glLinkProgram(id);
+
+	glDetachShader(id, vertID);
+	glDetachShader(id, fragID);
+
+	checkProgramID(id);
+
+	return id;
+}
+
+void destroyProgram(GLuint programID)
+{
+	glDeleteProgram(programID);
+}
+
+void setGLBlend(iBlend blend)
+{
+	programID = programIDs[blend];
+}
+
+GLuint getProgramGdiID(iGdiID ids)
+{
+	return programGDIs[ids];
+}
+
+GLuint getProgramID()
+{
+	return programID;
+}
+
 extern int monitorSizeW, monitorSizeH;
 
 void checkOpenGL()
@@ -134,11 +372,10 @@ void reshapeOpenGL(int width, int height)
 
 	glViewport(viewport.origin.x, viewport.origin.y, viewport.size.width, viewport.size.height);
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, devSize.width, devSize.height, 0, -1000, 1000);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	mProjection->loadIdentity();
+	mProjection->ortho(0, devSize.width, devSize.height, 0, -1000, 1000);
+
+	mModelview->loadIdentity();
 }
 
 GLuint nextPOT(GLuint x)
@@ -158,6 +395,7 @@ struct xTexParam {
 	GLuint wrapS;
 	GLuint wrapT;
 };
+
 static xTexParam texParam = { GL_NEAREST, GL_NEAREST ,
 		GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE };
 

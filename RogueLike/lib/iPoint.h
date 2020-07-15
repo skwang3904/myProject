@@ -28,6 +28,7 @@ struct iPoint
 iPoint iPointMake(float x, float y);
 iPoint iPointVector(iPoint p);
 float iPointLength(iPoint p);
+float iPointDistance(const iPoint& p0, const iPoint& p1);
 iPoint iPointRotate(const iPoint& p, const iPoint& t, float degree);
+float iPointAngle(const iPoint& v1, const iPoint& v2, const iPoint& v3);
 
-float iPointAngle(iPoint& v1, iPoint& v2, iPoint& v3);

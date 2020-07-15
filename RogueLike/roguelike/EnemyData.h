@@ -25,7 +25,7 @@ class MonsterData
 	//3. 아이템드랍
 	//4. 기본스텟
 public:
-	MonsterData();
+	MonsterData(MonsterType mt);
 	virtual ~MonsterData();
 
 	virtual void init() {};

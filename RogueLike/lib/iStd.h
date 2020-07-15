@@ -50,6 +50,35 @@ bool getKeyStat(uint32 key);
 void resizeLib(int width, int height);
 void zoomLib(iPoint point, float rate);
 
+struct iVertex {
+    float p[4]; // [2] = 0, [3] = 1
+    iPoint uv;
+    iColor4b c;
+};
+
+struct iQuad {
+    iVertex tl, tr, bl, br;
+};
+
+class iVBO
+{
+public:
+    iVBO(int qNum_ = 1000);
+    virtual ~iVBO();
+
+    //void add(iPoint sp, iPoint tp);
+    void paint(float dt);
+
+public:
+    iQuad* q;
+    int qNum, _qNum;
+    short* indices;
+
+    Texture* tex;
+    GLuint vbo;
+    GLuint programID;//GLenum blendSrc, blendDst;
+};
+
 class iFBO
 {
 public:
@@ -82,13 +111,20 @@ void setRGBA(float r, float g, float b, float a);
 void getRGBA(float& r, float& g, float& b, float& a);
 
 void setLineWidth(float lineWidth);
-void drawLine(iPoint sp, iPoint ep);
+void drawLine2(float x1, float y1, float x2, float y2); // only draw shader
+void drawLine(iPoint sp, iPoint ep); // use texture
 void drawLine(float x0, float y0, float x1, float y1);
 
-void drawRect(float x, float y, float width, float height, float radius=0.0f);
-void drawRect(iRect rt, float radius = 0.0f);
-void fillRect(float x, float y, float width, float height, float radius=0.0f);
-void fillRect(iRect rt, float radius=0.0f);
+void drawRect(iRect rt, float radius = 0.0f, float angle = 0.0f);
+void drawRect(float x, float y, float width, float height, float radius = 0.0f, float angle = 0.0f);
+void fillRect(iRect rt, float radius = 0.0f, float angle = 0.0f);
+void fillRect(float x, float y, float width, float height, float radius = 0.0f, float angle = 0.0f);
+
+void drawCircle(iPoint p, float radius);
+void drawCircle(float x, float y, float radius);
+
+void fillCircle(iPoint p, float radius);
+void fillCircle(float x, float y, float radius);
 
 void saveImageFromRGBA(const char* path, uint8* rgba, int width, int height);
 uint8* bmp2rgba(Bitmap* bmp, int& width, int& height);

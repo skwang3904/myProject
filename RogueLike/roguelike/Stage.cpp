@@ -23,7 +23,7 @@ void createStage()
 	{
 		for (j = 0; j < GOLEM_NUM; j++)
 		{
-			MonsterData* eg = &golems[i][j];
+			MonsterData* eg = &golems[j][i];
 			eg->init();
 		}
 	}
@@ -32,7 +32,7 @@ void createStage()
 	{
 		for (j = 0; j < GOLEM_ELETE_NUM; j++)
 		{
-			MonsterData* eg = &golemEletes[i][j];
+			MonsterData* eg = &golemEletes[j][i];
 			eg->init();
 		}
 	}

@@ -5,6 +5,7 @@
 - 근접무기
 */
 
+struct Melee;
 struct meleeWeapon {
 	iImage* infoImg;
 	const char* infomation;
@@ -23,13 +24,24 @@ struct meleeWeapon {
 	iRect hitBox;
 	bool attackEnemy;
 
-	void init(
-		const char* info,
-		float iAttackDmg,
-		float iAttackSpeed,
-		float iWidthReach,
-		float iHeightReach,
-		float iHoldAngle);
+	void init(const char* info, Melee* m);
+};
+
+struct meleeStat {
+	float attackDmg;
+	float attackSpeed;
+	float widthReach;
+	float heightReach;
+	float holdAngle;
+};
+
+typedef void (*Method_Combat)(float dt, iPoint p);
+struct Melee {
+	meleeWeapon* mw;
+	Method_Combat method;
+	meleeStat stat;
+
+	const char* strImg;
 };
 
 void createMeleeWeapon();
@@ -37,4 +49,4 @@ void freeMeleeWeapon();
 
 void weaponPosAndRt(meleeWeapon* mw, iPoint& wcp, iPoint& centerP, iRect& rt);
 
-void draw(meleeWeapon* mw, float dt, iPoint dropP); // weapon으로 이사할것
+void draw(meleeWeapon* mw, float dt, iPoint dropP);

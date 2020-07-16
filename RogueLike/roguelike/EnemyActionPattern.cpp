@@ -173,7 +173,6 @@ bool commonAttack(MonsterData* enm, float dt)
 			float dot = min(max(p.x * n.x + p.y * n.y, 0.0f), len);
 			iPoint proj = n * dot;
 			float hitDis = iPointLength(p - proj);
-			printf("hitDis = %f\n", hitDis);
 
 			if (hitDis < e->meleeReach * 0.5f)
 			{

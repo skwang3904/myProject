@@ -5,15 +5,17 @@
 - 원거리 무기
 */
 
+class Arrow;
+struct Range;
 struct rangeWeapon {
 	iImage* infoImg;
 	const char* infomation;
 
 	iImage* img;
 
-	float attackDmg;
-	float attackSpeed;
-	float _attackSpeed;
+	float fireDmg;
+	float fireSpeed;
+	float _fireSpeed;
 	float widthReach;
 	float heightReach;
 
@@ -23,17 +25,29 @@ struct rangeWeapon {
 	iRect hitBox;
 	bool attackEnemy;
 
-	void init(
-		const char* info,
-		iImage* iImg,
-		float iAttackDmg,
-		float iAttackSpeed,
-		float iWidthReach,
-		float iHeightReach,
-		float iHoldAngle);
+	Arrow** arrow;
+	void init(const char* info, Range* r);
+};
+
+struct rangeStat {
+	float fireDmg;
+	float fireSpeed;
+	float widthReach;
+	float heightReach;
+	float holdAngle;
+};
+
+typedef void (*Method_Combat)(float dt, iPoint p);
+struct Range {
+	rangeWeapon* rw;
+	Method_Combat method;
+	rangeStat stat;
+
+	const char* strImg;
 };
 
 void createRangeWeapon();
+void freeRangeWeapon();
 
 void weaponPosAndRt(rangeWeapon* rw, iPoint& wcp, iPoint& centerP, iRect& rt);
 

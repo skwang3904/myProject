@@ -16,7 +16,7 @@ public:
 	FireBall();
 	~FireBall();
 
-	void init(float d, float firetime, float speed, int tileNum, iPoint& vlen, iPoint& pos);
+	void init(float d, float firetime, float firespeed, int tileNum, iPoint& vlen, iPoint& pos);
 	void paint(float dt);
 
 	void setAngle();
@@ -37,8 +37,39 @@ public:
 
 	iPoint v;
 	iPoint sp;
-	iPoint posFireBall;
-	iPoint drawFireBallPos;
+	iPoint position;
+	iPoint touchPos;
+
+	iRect limitRect;
+};
+
+class Arrow
+{
+public:
+	Arrow();
+	virtual ~Arrow();
+
+	void init(float d, float firetime, float firespeed, int tileNum, iPoint& vlen, iPoint& pos);
+	void paint(float dt);
+
+	void setAngle();
+	void setlimitRect(int tileNum);
+
+	bool hitArrow(iRect& rt);
+public:
+	iImage* img;
+
+	bool alive;
+	float dmg;
+	float speed;
+	float duration;
+	float timer;
+
+	int tileNumber;
+
+	iPoint v;
+	iPoint sp;
+	iPoint position;
 	iPoint touchPos;
 
 	iRect limitRect;

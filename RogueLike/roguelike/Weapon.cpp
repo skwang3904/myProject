@@ -3,13 +3,16 @@
 #include "Room.h"
 
 #include "WMelee.h"
+#include "WRange.h"
 
 Weapon* weapon;
-PlayerWP PWP[TOTAL_WP_NUM];
+PlayerWP* PWP;
 
 Weapon::Weapon()
 {
+	PWP = (PlayerWP*)malloc(sizeof(Player) * TOTAL_WP_NUM);
 	createMeleeWeapon();
+	createRangeWeapon();
 	
 	for (int i = 0; i < TOTAL_WP_NUM; i++) // 총 좌표수
 	{
@@ -27,6 +30,8 @@ Weapon::Weapon()
 Weapon::~Weapon()
 {
 	freeMeleeWeapon();
+	freeRangeWeapon();
+	free(PWP);
 }
 
 void Weapon::drawWeapon(float dt)

@@ -20,9 +20,10 @@
 
 void loadRgProc()
 {
+	numberFont = new numFont();
+
 	createTileSet();
 	loadRoomTile();
-	numberFont = new numFont();
 	weapon = new Weapon();
 	pc = new Player();
 
@@ -73,27 +74,11 @@ void freeRgProc()
 	freePopStageNum();
 }
 
-void curtainTile() // 화면가리개
-{
-	iPoint p = iPointMake(RGTILE_X * RGTILE_Width, RGTILE_Y * RGTILE_Height);
-	iSize size = devSize;
-	setRGBA(0, 0, 0, 1);
-	fillRect(0, 0, 
-		size.width, (size.height - p.y) / 2);
-	fillRect((size.width + p.x) / 2, 0, 
-		(size.width - p.x) / 2, size.height);
-	fillRect(0, (size.height + p.y) / 2, 
-		size.width, (size.height - p.y) / 2);
-	fillRect(0, 0, 
-		(size.width - p.x) / 2, size.height);
-	setRGBA(1, 1, 1, 1);
-}
-
 void drawRgProc(float dt)
 {
 	drawRoomTile(dt);
 	passTileAnimation(dt);
-	//curtainTile();
+
 	if (passAni())
 		return;
 
@@ -121,7 +106,6 @@ void drawRgProc(float dt)
 	//--------------------------------------------------------
 	// pop
 
-	//curtainTile();
 	drawPopHP(dt);
 	drawPopMiniMap(dt);
 	drawPopCombatMenu(dt);

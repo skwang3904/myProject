@@ -5,6 +5,7 @@
 
 #include "Weapon.h"
 #include "WMelee.h"
+#include "WRange.h"
 
 #include "EnemyStruct.h"
 #include "EnemyData.h"
@@ -107,6 +108,7 @@ iImage* imgMiniMap;
 static int minitile = MINIMAPTILE;
 void refreshMiniMap()
 {
+	// 수정할것 : 내 캐릭이 있을때만 업데이트
 	fbo->bind(texMiniMap);
 	fbo->clear(0, 0, 0, 0);
 
@@ -114,7 +116,7 @@ void refreshMiniMap()
 	{
 		if (ct[i].value)
 		{
-			if (i == pc->tileNumber) setRGBA(0, 1, 0, 1); // 플레이어 표시
+			if (i == pc->tileNumber) setRGBA(0, 1, 0, 1); // player
 			else setRGBA(0.8, 0.8, 0.8, 1);
 
 			iPoint mp = iPointMake(minitile * (i % TILEOFF_SQRT), minitile * (i / TILEOFF_SQRT));
@@ -122,16 +124,16 @@ void refreshMiniMap()
 			setRGBA(0, 0, 0, 1);
 			drawRect(mp.x, mp.y, minitile, minitile);
 
-			if (i == nextDoor) // 다음스테이지 표시
+			if (i == nextDoor) // stage
 			{
 				setRGBA(0, 0, 1, 1);
 				fillRect(mp.x + 10, mp.y + 10,
-					minitile - 20, minitile - 20);
+					minitile * 0.7f, minitile * 0.7f);
 			}
 
 			for (int k = 0; k < 1; k++)
 			{
-				for (int j = 0; j < GOLEM_NUM; j++) // 몬스터표시
+				for (int j = 0; j < GOLEM_NUM; j++) // common monster
 				{
 					MonsterData* eg = golems[j];
 					if (eg->tileNumber == i)
@@ -141,17 +143,17 @@ void refreshMiniMap()
 						setRGBA(1, 0.5, 0, 1);
 						fillRect(mp.x + minitile * p.x,
 							mp.y + minitile * p.y,
-							5, 5);
+							minitile * 0.1f, minitile * 0.1f);
 					}
 				}
 			}
 
-			int a = golemEletes[0]->tileNumber;
+			int a = golemEletes[0]->tileNumber; // stage boss
 			if (a == i && golemEletes[0]->hp > 0.0f)
 			{
 				setRGBA(1, 0, 0, 1);
 				fillRect(mp.x + 10, mp.y + 10,
-					minitile - 20, minitile - 20);
+					minitile * 0.7f, minitile * 0.7f);
 			}
 		}
 	}
@@ -257,16 +259,18 @@ void drawCombat(float dt)
 		}
 		else //range
 		{ 
-			//if (pw == pc->pwp)
-			//{
-			//	if (popCombatMenu->selected == i) setRGBA(0, 0, 1, 1);
-			//	else setRGBA(0, 1, 0, 1);
-			//	fillRect(p.x, p.y, mw->img->tex->width, pw->wp->img->tex->height);
-			//	setRGBA(1, 1, 1, 1);
-			//}
+			rangeWeapon* rw = (rangeWeapon*)pw->wp;
+			rw->img->setTexAtIndex(1);
+			if (pw == pc->pwp)
+			{
+				if (popCombatMenu->selected == i) setRGBA(0, 0, 1, 1);
+				else setRGBA(0, 1, 0, 1);
+				fillRect(p.x, p.y, rw->img->tex->width, rw->img->tex->height);
+				setRGBA(1, 1, 1, 1);
+			}
 
-			//drawImage(pw->mw->img->tex, p.x, p.y, TOP | LEFT);
-			//pw->mw->img->setTexAtIndex(0);
+			drawImage(rw->img->tex, p.x, p.y, TOP | LEFT);
+			rw->img->setTexAtIndex(0);
 		}
 	}
 }
@@ -281,7 +285,8 @@ Texture* setCombatInfo(int i)
 	}
 	else // range
 	{
-		return NULL;
+		rangeWeapon* rw = (rangeWeapon*)pw->wp;
+		return rw->infoImg->tex;
 	}
 }
 

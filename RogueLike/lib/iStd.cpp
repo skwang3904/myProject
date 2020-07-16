@@ -1317,9 +1317,9 @@ void drawImage(Texture* tex, int x, int y,
 
 
     float m[16];
-    memcpy(m, mModelview->d(), sizeof(float) * 16);
     if (degree)
     {
+        memcpy(m, mModelview->d(), sizeof(float) * 16);
         iPoint t = iPointMake(x + width / 2, y + height / 2);
         q->tl.p[0] -= t.x;      q->tl.p[1] -= t.y;
         q->tr.p[0] -= t.x;      q->tr.p[1] -= t.y;
@@ -1337,7 +1337,8 @@ void drawImage(Texture* tex, int x, int y,
     gVbo->tex = tex;
     gVbo->programID = getProgramID();
     gVbo->paint(0.0f);
-    memcpy(mModelview->d(), m, sizeof(float) * 16);
+    if(degree)
+        memcpy(mModelview->d(), m, sizeof(float) * 16);
 
 }
 

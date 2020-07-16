@@ -21,8 +21,7 @@ FireBall::FireBall()
 
 	v = iPointZero;
 	sp = iPointZero;
-	posFireBall = iPointZero;
-	drawFireBallPos = iPointZero;
+	position = iPointZero;
 
 	touchPos = iPointZero;
 	limitRect = iRectZero;
@@ -46,7 +45,7 @@ void FireBall::init(float d, float firetime, float firespeed, int tileNum, iPoin
 	setlimitRect(tileNum);
 	v = vlen / iPointLength(vlen);
 	sp = pos;
-	posFireBall = pos;
+	position = pos;
 }
 
 void FireBall::paint(float dt)
@@ -61,23 +60,23 @@ void FireBall::paint(float dt)
 	}
 
 	duration += dt;
-	if (duration > alive_duration || containPoint(posFireBall, limitRect) == false)
+	if (duration > alive_duration || containPoint(position, limitRect) == false)
 		alive = false;
 
 	iPoint p = iPointMake(img->tex->width / 2, img->tex->height / 2);
-	iPoint posFB = posFireBall + p;
+	iPoint posFB = position + p;
 	iPoint mp = v * speed * dt;
 	projectileReflect(tileNumber, v, posFB, mp);
-	posFireBall = posFB - p;
+	position = posFB - p;
 	setAngle();
 
-	touchPos = posFireBall + p;
+	touchPos = position + p;
 	iPoint test = SET_DRAW_OFF;
 	setRGBA(1, 0, 0, 1);
 	fillRect(touchPos.x + test.x, touchPos.y + test.y, 10, 10);
 	setRGBA(1, 1, 1, 1);
 
-	drawFireBallPos = (posFireBall) + SET_DRAW_OFF;
+	iPoint drawFireBallPos = position + SET_DRAW_OFF;
 	img->paint(dt, drawFireBallPos);
 }
 
@@ -100,53 +99,176 @@ bool FireBall::hitFireBall(iRect& rt)
 	if (alive == false)
 		return false;
 
-	iPoint p = posFireBall + iPointMake(img->tex->width / 2, img->tex->height / 2);
+	iPoint p = position + iPointMake(img->tex->width / 2, img->tex->height / 2);
 	if (containPoint(p, rt))
+	{
+		alive = false;
 		return true;
+	}
 	return false;
 }
 
+//----------------------------------------------------------------------------------------
+
+iImage* imgArrow;
+
+Arrow::Arrow()
+{
+	img = imgArrow->copy();
+
+	alive = false;
+	dmg = 0.0f;
+	speed = 300.0f;
+	duration = alive_duration;
+	timer = fire_timer;
+
+	tileNumber = 0;
+
+	v = iPointZero;
+	sp = iPointZero;
+	position = iPointZero;
+
+	touchPos = iPointZero;
+	limitRect = iRectZero;
+}
+
+Arrow::~Arrow()
+{
+	delete img;
+}
+
+void Arrow::init(float d, float firetime, float firespeed, int tileNum, iPoint& vlen, iPoint& pos)
+{
+	if (alive)
+		return;
+
+	alive = true;
+	duration = d;
+	timer = firetime;
+	speed = firespeed;
+	tileNumber = tileNum;
+	setlimitRect(tileNum);
+	v = vlen / iPointLength(vlen);
+	sp = pos;
+	position = pos;
+}
+
+void Arrow::paint(float dt)
+{
+	if (alive == false)
+		return;
+
+	if (timer < fire_timer)
+	{
+		timer += dt;
+		return;
+	}
+
+	duration += dt;
+	if (duration > alive_duration || containPoint(position, limitRect) == false)
+		alive = false;
+
+	iPoint p = iPointMake(img->tex->width / 2, img->tex->height / 2);
+	iPoint posFB = position + p;
+	iPoint mp = v * speed * dt;
+	projectileReflect(tileNumber, v, posFB, mp);
+	position = posFB - p;
+	setAngle();
+
+	touchPos = position + p;
+	iPoint test = SET_DRAW_OFF;
+	setRGBA(1, 0, 0, 1);
+	fillRect(touchPos.x + test.x, touchPos.y + test.y, 10, 10);
+	setRGBA(1, 1, 1, 1);
+
+	iPoint drawFireBallPos = position + SET_DRAW_OFF;
+	img->paint(dt, drawFireBallPos);
+}
+
+void Arrow::setAngle()
+{
+	iPoint v1 = iPointMake(1, 0);
+	iPoint v2 = iPointZero;
+	img->angle = iPointAngle(v1, v2, v);
+}
+
+void Arrow::setlimitRect(int tileNum)
+{
+	iPoint p = maps[tileNum]->tileOff;
+
+	limitRect = iRectMake(p.x, p.y, RGTILE_X * RGTILE_Width, RGTILE_Y * RGTILE_Height);
+}
+
+bool Arrow::hitArrow(iRect& rt)
+{
+	if (alive == false)
+		return false;
+
+	iPoint p = position + iPointMake(img->tex->width / 2, img->tex->height / 2);
+	if (containPoint(p, rt))
+	{
+		alive = false;
+		return true;
+	}
+	return false;
+}
+
+
 void createEffect()
 {
-	iImage* imgFire = new iImage();
-	for (int i = 0; i < 61; i++)
+	int i;
+	iImage* img = new iImage();
+	for (i = 0; i < 61; i++)
 	{
 		Texture* tex = createImage("assets/effect/fireball/3/1_%d.png", i);
-		imgFire->addObject(tex);
+		img->addObject(tex);
 		freeImage(tex);
 	}
 
-	imgFire->_aniDt = 0.04f;
-	imgFire->animation = true;
-	imgFire->_repeatNum = 0;
-	imgFire->lockAngle = true;
-	imgFireBall = imgFire;
+	img->_aniDt = 0.04f;
+	img->animation = true;
+	img->_repeatNum = 0;
+	img->lockAngle = true;
+	imgFireBall = img;
 
 	//----------------------------------------------------------------------------------------
 	
-	iImage* imgCharge = new iImage();
-	for (int i = 0; i < 20; i++)
+	img = new iImage();
+	for (i = 0; i < 20; i++)
 	{
 		Texture* tex = createImage("assets/effect/charge fire/6800%02d.png", i);
-		imgCharge->addObject(tex);
+		img->addObject(tex);
 		freeImage(tex);
 	}
 
-	imgCharge->_repeatNum = 1;
-	imgCharge->_aniDt = 0.1f;
+	img->_repeatNum = 1;
+	img->_aniDt = 0.1f;
 
-	imgChargeFire = imgCharge;
+	imgChargeFire = img;
+
+	//----------------------------------------------------------------------------------------
+
+	img = new iImage();
+	for (i = 0; i < 1; i++)
+	{
+		Texture* tex = createImage("assets/weapon/arrow.png");
+		img->addObject(tex);
+		freeImage(tex);
+	}
+
+	imgArrow = img;
 }
 
 void freeEffect()
 {
 	delete imgFireBall;
 	delete imgChargeFire;
+	delete imgArrow;
 }
 
 void drawEffect(float dt)
 {
-
+	
 }
 
 //----------------------------------------------------------------------------------------
@@ -267,3 +389,4 @@ void projectileReflect(int tile, iPoint& v, iPoint& pos, iPoint& mp)
 	}
 
 }
+

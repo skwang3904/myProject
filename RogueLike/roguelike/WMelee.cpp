@@ -7,30 +7,34 @@
 #include "Weapon.h"
 
 meleeWeapon* nomalHammer;
-meleeWeapon* nomalSpear;
-meleeWeapon* nomalCyclone;
-
 void nomalHammerMethod(float dt, iPoint dropP);
+meleeWeapon* nomalSpear;
 void nomalSpearMethod(float dt, iPoint dropP);
+meleeWeapon* nomalCyclone;
 void nomalCycloneMethod(float dt, iPoint dropP);
 
-void meleeWeapon::init(
-	const char* info,
-	float iAttackDmg,
-	float iAttackSpeed,
-	float iWidthReach,
-	float iHeightReach,
-	float iHoldAngle)
+void meleeWeapon::init(const char* info, Melee* m)
 {
+	// asset 2가지 =  장착할때 이미지 + UI에 표시될 이미지
+	iImage* img = new iImage();
+	for (int j = 0; j < 2; j++)
+	{
+		Texture* tex = createImage(m->strImg, j);
+		img->addObject(tex);
+		freeImage(tex);
+	}
+	m->mw->img = img;
+
 	infoImg = infoFromMW(info);
 	infomation = info;
 
-	attackDmg = iAttackDmg;
+	meleeStat* ms = &m->stat;
+	attackDmg = ms->attackDmg;
 	attackSpeed = 0.0f;
-	_attackSpeed = iAttackSpeed;
-	widthReach = iWidthReach;
-	heightReach = iHeightReach;
-	holdAngle = iHoldAngle;
+	_attackSpeed = ms->attackSpeed;
+	widthReach = ms->widthReach;
+	heightReach = ms->heightReach;
+	holdAngle = ms->holdAngle;
 
 	combatPosition = iPointZero;
 	hitBox = iRectZero;
@@ -41,54 +45,31 @@ void meleeWeapon::init(
 
 void createMeleeWeapon()
 {
-	nomalHammer = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
-	nomalSpear = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
-	nomalCyclone = (meleeWeapon*)malloc(sizeof(meleeWeapon) * 1);
+	nomalHammer = (meleeWeapon*)malloc(sizeof(meleeWeapon));
+	nomalSpear = (meleeWeapon*)malloc(sizeof(meleeWeapon));
+	nomalCyclone = (meleeWeapon*)malloc(sizeof(meleeWeapon));
 
-	meleeWeapon* mw[3] = {
-		nomalHammer,
-		nomalSpear,
-		nomalCyclone,
+	Melee melee[MELEE_NUM] = {
+	{nomalHammer,	nomalHammerMethod,	{30, 0.3f, 30.0f, 60.0f, -30.0f}, "assets/weapon/hammer%d.png"},
+	{nomalSpear,	nomalSpearMethod,	{30, 0.2f, 10.0f, 70.0f, -45.0f}, "assets/weapon/upg_spear%d.png"},
+	{nomalCyclone,	nomalCycloneMethod,	{30, 0.5f, 30.0f, 50.0f, -70.0f}, "assets/weapon/upg_axeDouble%d.png"},
 	};
 
-	// asset 2가지 =  장착할때 이미지 + UI에 표시될 이미지
-	const char* strPath[3] = {
-		"assets/weapon/hammer%d.png",
-		"assets/weapon/upg_spear%d.png",
-		"assets/weapon/upg_axeDouble%d.png",
+	const char* meleeInfo[MELEE_NUM] = {
+	"Hammer\nHammer\nHammer\nHammer",
+	"Spear\nSpear\nSpear\nSpear\nSpear",
+	"Cyclone",
 	};
-
-	for (int i = 0; i < 3; i++)
-	{
-		iImage* img = new iImage();
-		for (int j = 0; j < 2; j++)
-		{
-			Texture* tex = createImage(strPath[i], j);
-			img->addObject(tex);
-			freeImage(tex);
-		}
-		mw[i]->img = img;
-	}
-
-	//info, ismelee, attackDmg, attackSpeed, widthReach, heightReach, holeAngle
-	char swordInfo[32] = "Hammer\nHammer\nHammer\nHammer";
-	mw[0]->init(swordInfo, 30, 0.3f, 30.0f, 60.0f, -30.0f);
-
-	char spearInfo[64] = "Spear\nSpear\nSpear\nSpear\nSpear";
-	mw[1]->init(spearInfo, 30, 0.2f, 10.0f, 70.0f, -45.0f);
-
-	char cycleonInfo[32] = "Cyclone";
-	mw[2]->init(cycleonInfo, 30, 0.5f, 30.0f, 50.0f, -70.0f);
 
 	//-----------------------------------------------------------
 	// PWP
 
-	PWP[0] = { mw[0],nomalHammerMethod };
-	PWP[1] = { mw[1],nomalSpearMethod };
-	PWP[2] = { mw[2],nomalCycloneMethod };
-
 	for (int i = 0; i < MELEE_NUM; i++)
 	{
+		Melee* m = &melee[i];
+		m->mw->init(meleeInfo[i], m);
+		PWP[i].wp = m->mw;
+		PWP[i].method = m->method;
 		PWP[i].isMelee = true;
 		PWP[i].pos = iPointZero;
 		PWP[i].drop = true;
@@ -212,8 +193,11 @@ void hitMonster(meleeWeapon* mw, float dt)
 	for (int i = 0; i < monsterNum; i++)
 	{
 		MonsterData* t = totalMonster[i];
-		if (containRect(mw->hitBox, t->touchEnemy))
-			t->takeDmgEnemy(dt, dmg);
+		if (t->tileNumber == pc->tileNumber)
+		{
+			if (containRect(mw->hitBox, t->touchEnemy))
+				t->takeDmgEnemy(dt, dmg);
+		}
 	}
 }
 
@@ -297,7 +281,6 @@ void nomalHammerMethod(float dt, iPoint dropP)
 	}
 	else
 		draw(mw, dt, dropP);
-
 }
 
 //------------------------------------------------------------------------------------------
@@ -409,18 +392,20 @@ bool nomalCycloneAttack(meleeWeapon* mw, float dt, float attTime,
 
 	static bool cycle = false;
 	static float cycAngle = 0.0f;
+	static float cycHoldAngle = 0.0f;
 
 	weaponPosAndRt(mw, mw->combatPosition, centerP, rt);
 	if (cycle == false)
 	{
 		cycle = true;
 		cycAngle = pc->combatAngleV;
+		cycHoldAngle = mw->holdAngle;
 	}
 
-	if (pc->combatV.x < 0.0f) ;
-	else ;
-	if (pc->combatV.y < 0.0f) ;
-	else ;
+	//if (pc->combatV.x < 0.0f) attAngleRate += 90;
+	//else  attAngleRate += 270;
+	//if (pc->combatV.y < 0.0f)  attAngleRate += 180;
+	//else  ;
 
 	iPoint playerCenter = pc->playerPosition + HALF_OF_TEX_POINT;
 	iPoint wcp = iPointRotate(centerP, playerCenter, attAngleRate);
@@ -439,10 +424,10 @@ bool nomalCycloneAttack(meleeWeapon* mw, float dt, float attTime,
 		wcp.y,
 		0, 0, tex->width, tex->height,
 		VCENTER | HCENTER, ratioRate, ratioRate,
-		2, mw->holdAngle + attAngleRate + cycAngle, REVERSE_NONE);
+		2, cycHoldAngle + attAngleRate + cycAngle, REVERSE_NONE);
 
 	hitMonster(mw, dt);
-
+#if 0
 	for (int i = 0; i < 8; i++)
 	{
 		pc->img[i]->selected = true;
@@ -457,13 +442,13 @@ bool nomalCycloneAttack(meleeWeapon* mw, float dt, float attTime,
 	pc->img[5]->angle += -45;
 	pc->img[6]->angle += -45;
 	pc->img[7]->angle += -45;
-
+#endif
 	if (atkSpeed > attTime )
 	{
 		pc->act = idle;
 		mw->attackEnemy = false;
 		mw->attackSpeed = 0.0f;
-
+#if 0
 		for (int i = 0; i < 8; i++)
 		{
 			pc->img[i]->_repeatNum = 0;
@@ -472,6 +457,7 @@ bool nomalCycloneAttack(meleeWeapon* mw, float dt, float attTime,
 			pc->img[i]->angle = 0;
 			pc->img[i]->_aniDt = 0.05f;
 		}
+#endif
 
 		cycle = false;
 		return false;
@@ -492,7 +478,7 @@ void nomalCycloneMethod(float dt, iPoint dropP)
 			audioPlay(SND_SWING);
 		}
 
-		if (nomalCycloneAttack(mw, dt, 3.0f, 0.0f, 3, 1.0f, 1.0f))
+		if (nomalCycloneAttack(mw, dt, 1.5f, 0.0f, 1, 1.0f, 1.0f))
 			return;
 		draw(mw, dt, dropP);
 	}

@@ -4,6 +4,7 @@
 
 #include "Weapon.h"
 #include "WMelee.h"
+#include "WRange.h"
 
 
 Player* pc;
@@ -64,9 +65,9 @@ void Player::initPlayerStat()
 
 	touchPlayer = iRectZero;
 
-	weaponArray->addObject(&PWP[2]);
-	pwp = &PWP[2];
-	PWP[2].drop = false;
+	weaponArray->addObject(&PWP[MELEE_NUM]);
+	pwp = &PWP[MELEE_NUM];
+	PWP[MELEE_NUM].drop = false;
 	pwpCount = 1;
 
 	coin = 0;
@@ -197,7 +198,8 @@ void Player::paint(float dt)
 	else
 	{	
 		//range
-		//sort->add(pc->pwp->wp->combatPosition.y);
+		rangeWeapon* rw = (rangeWeapon*)pc->pwp->wp;
+		sort->add(rw->combatPosition.y);
 	}
 	sort->update();
 
@@ -247,7 +249,19 @@ void Player::rootCombat(bool key)
 		}
 		else //range
 		{
-			;
+			rangeWeapon* rw = (rangeWeapon*)pwa->wp;
+			if (pwa->drop)
+			{
+				if (containRect(touchPlayer, rw->hitBox))
+				{
+					weaponArray->addObject(pwa);
+					pwp = pwa;
+					pwa->pos = iPointZero;
+					pwa->drop = false;
+					pwpCount = weaponArray->count - 1;
+					break;
+				}
+			}
 		}
 	}
 }

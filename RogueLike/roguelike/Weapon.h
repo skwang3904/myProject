@@ -11,11 +11,10 @@
 // 무기 생성, 파괴, 무기 드랍포지션 등,
 
 #define MELEE_NUM 3
-#define RANGE_NUM 0
+#define RANGE_NUM 1
 #define TOTAL_WP_NUM MELEE_NUM + RANGE_NUM
 
 typedef void (*Method_Combat)(float dt, iPoint dropP);
-
 struct PlayerWP {
 	void* wp;
 	Method_Combat method;
@@ -24,7 +23,7 @@ struct PlayerWP {
 	iPoint pos;
 	bool drop;
 };
-extern PlayerWP PWP[TOTAL_WP_NUM];
+extern PlayerWP* PWP;
 
 //------------------------------------------------------------------------
 

@@ -15,7 +15,7 @@ struct passTile {
 	float passAniDt;
 };
 static passTile pt;
-#define _passAniDt 0.2f
+#define _passAniDt 0.1f
 
 void loadRoomTile()
 {
@@ -287,9 +287,7 @@ void drawRoomTile(float dt)
 		0, 0, tex->width, tex->height,
 		TOP | LEFT, 1.0f, 1.0f,
 		2, 0, REVERSE_HEIGHT);
-
 #endif
-	printf("%.2f,%.2f\n", pc->camPosition.x, pc->camPosition.y);
 }
 
 void passTileAnimation(float dt)

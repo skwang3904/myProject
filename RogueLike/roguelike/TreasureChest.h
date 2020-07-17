@@ -18,10 +18,12 @@ class Chest
 {
 public:
 	Chest(ChestType ct);
-	~Chest();
+	virtual ~Chest();
 
 	bool openAni(float dt);
 	void paint(float dt);
+
+	void setChest();
 
 public:
 	iImage* img;
@@ -31,7 +33,6 @@ public:
 
 	int tileNumber;
 	iPoint pos;
-	iPoint drawPos;
 	iRect touchRect;
 
 	UseItem** items;

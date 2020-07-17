@@ -111,20 +111,23 @@ void setRGBA(float r, float g, float b, float a);
 void getRGBA(float& r, float& g, float& b, float& a);
 
 void setLineWidth(float lineWidth);
+void setDrawAngle(float angle);
 void drawLine2(float x1, float y1, float x2, float y2); // only draw shader
 void drawLine(iPoint sp, iPoint ep); // use texture
 void drawLine(float x0, float y0, float x1, float y1);
 
-void drawRect(iRect rt, float radius = 0.0f, float angle = 0.0f);
-void drawRect(float x, float y, float width, float height, float radius = 0.0f, float angle = 0.0f);
-void fillRect(iRect rt, float radius = 0.0f, float angle = 0.0f);
-void fillRect(float x, float y, float width, float height, float radius = 0.0f, float angle = 0.0f);
+void drawRect(iRect rt, float radius = 0.0f);
+void drawRect(float x, float y, float width, float height, float radius = 0.0f);
+void fillRect(iRect rt, float radius = 0.0f);
+void fillRect(float x, float y, float width, float height, float radius = 0.0f);
 
 void drawCircle(iPoint p, float radius);
 void drawCircle(float x, float y, float radius);
-
 void fillCircle(iPoint p, float radius);
 void fillCircle(float x, float y, float radius);
+
+void drawEllipse(float x, float y, float width, float height);
+void fillEllipse(float x, float y, float width, float height);
 
 void saveImageFromRGBA(const char* path, uint8* rgba, int width, int height);
 uint8* bmp2rgba(Bitmap* bmp, int& width, int& height);
@@ -144,7 +147,6 @@ void drawImage(Texture* tex, int x, int y,
     int ix, int iy, int iw, int ih, int anc,
     float ratX, float ratY, int xyz, float degree,
     int reverse=REVERSE_NONE);
-
 
 iRect getHitBoxRect(Texture* tex, int x, int y,
     int ix, int iy, int iw, int ih, int anc,

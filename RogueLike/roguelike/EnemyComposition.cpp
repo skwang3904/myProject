@@ -69,17 +69,22 @@ void setEnemyPosition()
 		int index = -1;
 		for (j = 0; j < 4; j++)
 		{
+			if (4 * i + j >= GOLEM_NUM)
+				break;
 			if (index == -1)
 				index = random() % 16;
 
-			MonsterData* enm = golems[4 * i + j];
-			enm->enemyPos = maps[randomTile[i]]->tileOff + 
-				enemyPos[index];
+			if (maps[randomTile[i]]->state == MapState_Nomal)
+			{
+				MonsterData* enm = golems[4 * i + j];
+				enm->enemyPos = maps[randomTile[i]]->tileOff +
+					enemyPos[index];
 
-			index -= 1 + (random() % 3);
-			if (index < 0)
-				index = 15;
-			enm->tileNumber = randomTile[i];
+				index -= 1 + (random() % 3);
+				if (index < 0)
+					index = 15;
+				enm->tileNumber = randomTile[i];
+			}
 		}
 	}
 
@@ -87,17 +92,20 @@ void setEnemyPosition()
 	{
 		for (j = 0; j < n; j++)
 		{
-			if (maps[randomTile[j]]->rgTile== Tile1way1 ||
-				maps[randomTile[j]]->rgTile== Tile1way2 ||
-				maps[randomTile[j]]->rgTile== Tile1way3 ||
-				maps[randomTile[j]]->rgTile== Tile1way4)
+			if (maps[randomTile[j]]->state == MapState_Boss)
 			{
-				MonsterData* enm = golemEletes[0];
-				enm->enemyPos = maps[randomTile[j]]->tileOff +
-					RGTILE_CENTER;
-				elete = true;
-				enm->tileNumber = randomTile[j];
-				break;
+				if (maps[randomTile[j]]->rgTile == Tile1way1 ||
+					maps[randomTile[j]]->rgTile == Tile1way2 ||
+					maps[randomTile[j]]->rgTile == Tile1way3 ||
+					maps[randomTile[j]]->rgTile == Tile1way4)
+				{
+					MonsterData* enm = golemEletes[0];
+					enm->enemyPos = maps[randomTile[j]]->tileOff +
+						RGTILE_CENTER;
+					elete = true;
+					enm->tileNumber = randomTile[j];
+					break;
+				}
 			}
 		}
 	}

@@ -449,9 +449,15 @@ void setLineWidth(float lineWidth)
     //glLineWidth(lineWidth);
 }
 
+static float _angle = 0.0f;
+void setDrawAngle(float angle)
+{
+    _angle = angle;
+}
+
 void drawLine2(float x1, float y1, float x2, float y2)
 {
-    GLuint proID = getProgramGdiID(iGdiID_drawLine);
+    GLuint proID = getProgramGdiID(iGDIID_drawLine);
     glUseProgram(proID);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 
@@ -619,14 +625,14 @@ static void drawPoly(iPoint* poly, int num, bool fill)
     glDisableClientState(GL_COLOR_ARRAY);
 }
 
-void drawRect(iRect rt, float radius, float angle)
+void drawRect(iRect rt, float radius)
 {
-    drawRect(rt.origin.x, rt.origin.y, rt.size.width, rt.size.height, radius, angle);
+    drawRect(rt.origin.x, rt.origin.y, rt.size.width, rt.size.height, radius);
 }
 
-void drawRect(float x, float y, float width, float height, float radius, float angle)
+void drawRect(float x, float y, float width, float height, float radius)
 {
-    GLuint proID = getProgramGdiID(iGdiID_drawRect);
+    GLuint proID = getProgramGdiID(iGDIID_drawRect);
     glUseProgram(proID);
 
     float w = width / 2.0f;
@@ -672,12 +678,12 @@ void drawRect(float x, float y, float width, float height, float radius, float a
 
 }
 
-void fillRect(iRect rt, float radius, float angle)
+void fillRect(iRect rt, float radius)
 {
-    fillRect(rt.origin.x, rt.origin.y, rt.size.width, rt.size.height, radius, angle);
+    fillRect(rt.origin.x, rt.origin.y, rt.size.width, rt.size.height, radius);
 }
 
-void fillRect(float x, float y, float width, float height, float radius, float angle)
+void fillRect(float x, float y, float width, float height, float radius)
 {
     if (radius == 0.0f)
     {
@@ -685,11 +691,11 @@ void fillRect(float x, float y, float width, float height, float radius, float a
         drawImage(t, x, y,
             0, 0, t->width, t->height,
             TOP | LEFT, width / t->width, height / t->height,
-            2, angle);
+            2, _angle);
         return;
     }
 
-    GLuint proID = getProgramGdiID(iGdiID_fillRect);
+    GLuint proID = getProgramGdiID(iGDIID_fillRect);
     glUseProgram(proID);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 
@@ -711,7 +717,7 @@ void fillRect(float x, float y, float width, float height, float radius, float a
     iMatrix mv;
     mv.loadIdentity();
     mv.translate(x + w, y + h, 0);
-    mv.rotate(0, 0, 1, angle);
+    mv.rotate(0, 0, 1, _angle);
     GLuint mModelv = glGetUniformLocation(proID, "mModelview");
     glUniformMatrix4fv(mModelv, 1, GL_FALSE, mv.d());
 
@@ -724,7 +730,7 @@ void fillRect(float x, float y, float width, float height, float radius, float a
     GLuint uRadius = glGetUniformLocation(proID, "radius");
     glUniform1f(uRadius, radius);
 
-    float radian = angle * M_PI / 180.0;
+    float radian = _angle * M_PI / 180.0;
     GLuint uRadian = glGetUniformLocation(proID, "radian");
     glUniform1f(uRadian, radian);
 
@@ -742,7 +748,7 @@ void drawCircle(iPoint p, float radius)
 
 void drawCircle(float x, float y, float radius)
 {
-    GLuint proID = getProgramGdiID(iGdiID_drawCircle);
+    GLuint proID = getProgramGdiID(iGDIID_drawCircle);
     glUseProgram(proID);
 
     float lw = _lineWidth/ 2.0f;
@@ -796,7 +802,7 @@ void fillCircle(iPoint p, float radius)
 
 void fillCircle(float x, float y, float radius)
 {
-    GLuint proID = getProgramGdiID(iGdiID_fillCircle);
+    GLuint proID = getProgramGdiID(iGDIID_fillCircle);
     glUseProgram(proID);
 
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -835,6 +841,112 @@ void fillCircle(float x, float y, float radius)
 
     glDisableVertexAttribArray(positionAttr);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void drawEllipse(float x, float y, float width, float height)
+{
+    GLuint proID = getProgramGdiID(iGDIID_fillEllipse);
+    glUseProgram(proID);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+
+    float w = width / 2.0f;
+    float h = height / 2.0f;
+    float lw = _lineWidth / 2.0f;
+
+    float p[4][4] = {
+        {-w - lw,  h + lw, 0, 1},     {w + lw,  h + lw, 0, 1},
+        {-w - lw, -h - lw, 0, 1},     {w + lw, -h - lw, 0, 1}
+
+    };
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float) * 16, p);
+
+    GLuint positionAttr = glGetAttribLocation(proID, "position");
+    glEnableVertexAttribArray(positionAttr);
+    glVertexAttribPointer(positionAttr, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
+
+    GLuint mProj = glGetUniformLocation(proID, "mProjection");
+    glUniformMatrix4fv(mProj, 1, GL_FALSE, mProjection->d());
+    iMatrix mv;
+    mv.loadIdentity();
+    mv.translate(x, y, 0);
+    mv.rotate(0, 0, 1, _angle);
+    GLuint mModelv = glGetUniformLocation(proID, "mModelview");
+    glUniformMatrix4fv(mModelv, 1, GL_FALSE, mv.d());
+
+
+    GLuint uCenter = glGetUniformLocation(proID, "center");
+    glUniform2f(uCenter, x, devSize.height - y);
+
+    GLuint uSize = glGetUniformLocation(proID, "size");
+    glUniform2f(uSize, width, height);
+
+    float radian = _angle * M_PI / 180.0;
+    GLuint uRadian = glGetUniformLocation(proID, "radian");
+    glUniform1f(uRadian, radian);
+
+    GLuint uLineWidth = glGetUniformLocation(proID, "lineWidth");
+    glUniform1f(uLineWidth, _lineWidth);
+
+    GLuint uColor = glGetUniformLocation(proID, "color");
+    glUniform4f(uColor, _r, _g, _b, _a);
+
+    uint8 indices[6] = { 0,1,2 , 1,2,3 };
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
+
+    glDisableVertexAttribArray(positionAttr);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+}
+
+void fillEllipse(float x, float y, float width, float height)
+{
+    GLuint proID = getProgramGdiID(iGDIID_fillEllipse);
+    glUseProgram(proID);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+
+    float w = width / 2.0f;
+    float h = height / 2.0f;
+
+    float p[4][4] = {
+        {-w, h, 0, 1},      {w, h, 0, 1},
+        {-w, -h, 0, 1},     {w, -h, 0, 1}
+
+    };
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float) * 16, p);
+
+    GLuint positionAttr = glGetAttribLocation(proID, "position");
+    glEnableVertexAttribArray(positionAttr);
+    glVertexAttribPointer(positionAttr, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
+
+    GLuint mProj = glGetUniformLocation(proID, "mProjection");
+    glUniformMatrix4fv(mProj, 1, GL_FALSE, mProjection->d());
+    iMatrix mv;
+    mv.loadIdentity();
+    mv.translate(x, y, 0);
+    mv.rotate(0, 0, 1, _angle);
+    GLuint mModelv = glGetUniformLocation(proID, "mModelview");
+    glUniformMatrix4fv(mModelv, 1, GL_FALSE, mv.d());
+
+
+    GLuint uCenter = glGetUniformLocation(proID, "center");
+    glUniform2f(uCenter, x, devSize.height - y);
+
+    GLuint uSize = glGetUniformLocation(proID, "size");
+    glUniform2f(uSize, width, height);
+
+    float radian = _angle * M_PI / 180.0;
+    GLuint uRadian = glGetUniformLocation(proID, "radian");
+    glUniform1f(uRadian, radian);
+
+    GLuint uColor = glGetUniformLocation(proID, "color");
+    glUniform4f(uColor, _r, _g, _b, _a);
+
+    uint8 indices[6] = { 0,1,2 , 1,2,3 };
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices);
+
+    glDisableVertexAttribArray(positionAttr);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 }
 
 Texture* createTexture(int width, int height, bool rgba32f)

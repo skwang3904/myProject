@@ -6,7 +6,25 @@
 */
 
 class Arrow;
-struct Range;
+struct rangeWeapon;
+typedef void (*Method_Combat)(float dt, iPoint p);
+
+struct rangeStat {
+	float fireDmg;
+	float fireSpeed;
+	float widthReach;
+	float heightReach;
+	float holdAngle;
+};
+
+struct Range {
+	rangeWeapon* rw;
+	Method_Combat method;
+	rangeStat stat;
+
+	const char* strImg;
+};
+
 struct rangeWeapon {
 	iImage* infoImg;
 	const char* infomation;
@@ -29,22 +47,6 @@ struct rangeWeapon {
 	void init(const char* info, Range* r);
 };
 
-struct rangeStat {
-	float fireDmg;
-	float fireSpeed;
-	float widthReach;
-	float heightReach;
-	float holdAngle;
-};
-
-typedef void (*Method_Combat)(float dt, iPoint p);
-struct Range {
-	rangeWeapon* rw;
-	Method_Combat method;
-	rangeStat stat;
-
-	const char* strImg;
-};
 
 void createRangeWeapon();
 void freeRangeWeapon();

@@ -28,14 +28,16 @@ void destroyShader(GLuint id);
 GLuint createProgramID(GLuint vertID, GLuint fragID);
 void destroyProgram(GLuint programID);
 
-enum iGdiID{
-	iGdiID_drawLine = 0,
-	iGdiID_drawRect,
-	iGdiID_fillRect,
-	iGdiID_drawCircle,
-	iGdiID_fillCircle,
+enum iGDIID{
+	iGDIID_drawLine = 0,
+	iGDIID_drawRect,
+	iGDIID_fillRect,
+	iGDIID_drawCircle,
+	iGDIID_fillCircle,
+	iGDIID_drawEllipse,
+	iGDIID_fillEllipse,
 
-	iGdiID_Max
+	iGDIID_Max
 };
 
 enum iBlend {
@@ -46,7 +48,7 @@ enum iBlend {
 	iBlendMax
 };
 void setGLBlend(iBlend blend);
-GLuint getProgramGdiID(iGdiID ids);
+GLuint getProgramGdiID(iGDIID ids);
 GLuint getProgramID();
 
 GLuint nextPOT(GLuint x);

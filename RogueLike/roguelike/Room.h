@@ -1,6 +1,7 @@
 #pragma once
 
-#include "iStd.h"
+#include "iType.h"
+#include "RgTile.h"
 
 /*
 타일 상호작용
@@ -11,6 +12,22 @@ void setRoomTile();
 void freeRoomTile();
 void drawRoomTile(float dt);
 
+enum MapState {
+	MapState_Nomal = 0,
+	MapState_Boss,
+	MapState_Treasure,
+	MapState_Shop,
+};
+
+struct MapTile {
+	int* rgTile;
+	Texture* tileTex;
+	iPoint tileOff;
+	
+	MapState state;
+};
+extern MapTile** maps;
+
 struct ConnectTile {
 	int index; // 타일 넘버
 	bool value; //
@@ -18,9 +35,6 @@ struct ConnectTile {
 	iPoint tileOff;
 };
 extern ConnectTile ct[TILEOFF_NUM];
-
-struct MapTile;
-extern MapTile** maps;
 
 void passTileAnimation(float dt);
 bool passAni();

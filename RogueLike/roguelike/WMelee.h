@@ -5,7 +5,25 @@
 - 근접무기
 */
 
-struct Melee;
+struct meleeWeapon;
+typedef void (*Method_Combat)(float dt, iPoint p);
+
+struct meleeStat {
+	float attackDmg;
+	float attackSpeed;
+	float widthReach;
+	float heightReach;
+	float holdAngle;
+};
+
+struct Melee {
+	meleeWeapon* mw;
+	Method_Combat method;
+	meleeStat stat;
+
+	const char* strImg;
+};
+
 struct meleeWeapon {
 	iImage* infoImg;
 	const char* infomation;
@@ -27,22 +45,6 @@ struct meleeWeapon {
 	void init(const char* info, Melee* m);
 };
 
-struct meleeStat {
-	float attackDmg;
-	float attackSpeed;
-	float widthReach;
-	float heightReach;
-	float holdAngle;
-};
-
-typedef void (*Method_Combat)(float dt, iPoint p);
-struct Melee {
-	meleeWeapon* mw;
-	Method_Combat method;
-	meleeStat stat;
-
-	const char* strImg;
-};
 
 void createMeleeWeapon();
 void freeMeleeWeapon();

@@ -1,6 +1,7 @@
 #include "RgTile.h"
 
 iPoint* tileOffSet;
+iPoint setPos;
 
 void createTileSet()
 {
@@ -10,6 +11,9 @@ void createTileSet()
 		tileOffSet[i] = iPointMake(RGTILE_X * RGTILE_Width * (i % TILEOFF_SQRT) ,
 			RGTILE_Y * RGTILE_Height * (i / TILEOFF_SQRT));
 	}
+
+	setPos = iPointMake(devSize.width / 2 - RGTILE_X * RGTILE_Width / 2.0f,
+		devSize.height / 2 - RGTILE_Y * RGTILE_Height / 2.0f);
 }
 
 void freeTileSet()

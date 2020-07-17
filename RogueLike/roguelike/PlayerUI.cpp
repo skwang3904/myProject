@@ -108,7 +108,6 @@ iImage* imgMiniMap;
 static int minitile = MINIMAPTILE;
 void refreshMiniMap()
 {
-	// 수정할것 : 내 캐릭이 있을때만 업데이트
 	fbo->bind(texMiniMap);
 	fbo->clear(0, 0, 0, 0);
 
@@ -121,14 +120,14 @@ void refreshMiniMap()
 
 			iPoint mp = iPointMake(minitile * (i % TILEOFF_SQRT), minitile * (i / TILEOFF_SQRT));
 			fillRect(mp.x, mp.y, minitile, minitile);
-			setRGBA(0, 0, 0, 1);
+			setRGBA(0.3f, 0, 0, 1);
 			drawRect(mp.x, mp.y, minitile, minitile);
 
 			if (i == nextDoor) // stage
 			{
 				setRGBA(0, 0, 1, 1);
 				fillRect(mp.x + 10, mp.y + 10,
-					minitile * 0.7f, minitile * 0.7f);
+					minitile * 0.5f, minitile * 0.5f);
 			}
 
 			for (int k = 0; k < 1; k++)
@@ -153,7 +152,14 @@ void refreshMiniMap()
 			{
 				setRGBA(1, 0, 0, 1);
 				fillRect(mp.x + 10, mp.y + 10,
-					minitile * 0.7f, minitile * 0.7f);
+					minitile * 0.5f, minitile * 0.5f);
+			}
+
+			if (maps[i]->state == MapState_Treasure) // treasure
+			{
+				setRGBA(1, 1, 0, 1);
+				fillRect(mp.x + 10, mp.y + 10,
+					minitile * 0.5f, minitile * 0.5f);
 			}
 		}
 	}

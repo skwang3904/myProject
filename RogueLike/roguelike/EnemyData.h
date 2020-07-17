@@ -85,7 +85,7 @@ extern int monsterNum;
 
 //----------------------------------------------------------------------------------------
 
-#define GOLEM_NUM 50
+#define GOLEM_NUM 20
 #define GOLEM_ELETE_NUM 1
 #define ALLENEMY_NUM GOLEM_NUM + GOLEM_ELETE_NUM
 

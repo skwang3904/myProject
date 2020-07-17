@@ -6,10 +6,8 @@
 #include "WMelee.h"
 #include "WRange.h"
 
-
 Player* pc;
 iSort* sort;
-iPoint setPos;
 
 Player::Player()
 {
@@ -19,9 +17,6 @@ Player::Player()
 	createPlayerImage();
 	initPlayerStat();
 	initPlayerPosition();
-
-	setPos = iPointMake(devSize.width / 2 - RGTILE_X * RGTILE_Width / 2.0f,
-	devSize.height / 2 - RGTILE_Y * RGTILE_Height / 2.0f);
 }
 
 Player::~Player()
@@ -79,7 +74,7 @@ void Player::initPlayerPosition()
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
 		int a = random() % TILEOFF_NUM;
-		if (maps[a]->rgTile != NULL)
+		if (maps[a]->rgTile != NULL && maps[a]->state == MapState_Nomal)
 		{
 			playerPosition = maps[a]->tileOff + RGTILE_CENTER;
 			camPosition = iPointZero - maps[a]->tileOff;

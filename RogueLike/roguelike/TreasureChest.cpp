@@ -22,24 +22,13 @@ void openChestBasic(Chest* me);
 
 Chest::Chest(ChestType ct)
 {
-	for (int i = 0; i < TILEOFF_NUM; i++)
-	{
-		int a = random() % TILEOFF_NUM;
-		if (maps[a]->rgTile != NULL && a != pc->tileNumber)
-		{
-			pos = maps[a]->tileOff + RGTILE_CENTER;
-			drawPos = pos + SET_DRAW_OFF;
-			tileNumber = a;
-
-			break;
-		}
-	}
 
 	struct TmpType {
 		iImage* img;
 		Method_OpenChest open;
 		itemType it;
 	};
+
 	TmpType tt[4] = {
 		{imgBasicChest, openChestBasic, coin},
 		{imgCommonChest, openChestBasic, healing },
@@ -54,7 +43,9 @@ Chest::Chest(ChestType ct)
 	for (int i = 0; i < 3; i++)
 		items[i] = new UseItem(t->it);
 
-	touchRect = iRectMake(pos.x, pos.y, img->tex->width, img->tex->height);
+	tileNumber = -1;
+	pos = iPointZero;
+	touchRect = iRectZero;
 
 	alive = true;
 	open = false;
@@ -80,7 +71,7 @@ bool Chest::openAni(float dt)
 
 	static float delta = 0.0f;
 	setRGBA(1, 1, 1, 1.0f - (delta / 3.0f));
-	img->paint(dt, drawPos);
+	img->paint(dt, pos + SET_DRAW_OFF);
 	setRGBA(1, 1, 1, 1);
 
 	delta += dt;
@@ -102,11 +93,11 @@ void Chest::paint(float dt)
 	if (alive == false || openAni(dt))
 		return;
 
-	drawPos = pos + SET_DRAW_OFF;
-	img->paint(dt, drawPos);
+	img->paint(dt, pos + SET_DRAW_OFF);
 	
 	//if( ? ) open = true;
 
+	// 무기에 이사할것
 	if (tileNumber == pc->tileNumber)
 	{
 		if (pc->pwp->isMelee)
@@ -123,6 +114,22 @@ void Chest::paint(float dt)
 			;
 		}
 	}
+}
+
+void Chest::setChest()
+{
+	for (int i = 0; i < TILEOFF_NUM; i++)
+	{	
+		if (maps[i]->state == MapState_Treasure)
+		{
+			pos = maps[i]->tileOff + RGTILE_CENTER;
+			tileNumber = i;
+
+			break;
+		}
+	}
+
+	touchRect = iRectMake(pos.x, pos.y, img->tex->width, img->tex->height);
 }
 
 void createChest()
@@ -152,6 +159,11 @@ void createChest()
 	CommonChect = new Chest(common);
 	RareChect = new Chest(rare);
 	UniqueChect = new Chest(unique);
+
+	Chest* c[4] = { basicChect, CommonChect, RareChect, UniqueChect };
+
+	uint8 a = random() % 4;
+	c[a]->setChest();
 }
 
 void freeChest()

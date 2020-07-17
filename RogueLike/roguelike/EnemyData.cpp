@@ -251,7 +251,6 @@ void EGolem::paint(float dt)
 		tex->width * ratio,
 		tex->height * ratio);
 
-	iPoint drawPos = enemyPos + SET_DRAW_OFF;
 	touchEnemy = rt;
 
 	rt.origin += SET_DRAW_OFF;
@@ -296,7 +295,7 @@ void EGolem::paint(float dt)
 			img[4]->reverse = reverse;
 		}
 
-		img[4]->paint(dt, drawPos);
+		img[4]->paint(dt, enemyPos + SET_DRAW_OFF);
 
 		if (img[4]->animation == false)
 		{

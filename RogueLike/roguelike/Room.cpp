@@ -43,9 +43,11 @@ void setRoomTile()
 	{
 		for (i = 0; i < TILEOFF_NUM; i++)
 		{
-			maps[i]->rgTile = NULL;
-			maps[i]->tileTex = NULL;
-			maps[i]->tileOff = tileOffSet[i];
+			MapTile* m = maps[i];
+			m->rgTile = NULL;
+			m->tileTex = NULL;
+			m->tileOff = tileOffSet[i];
+			m->state = MapState_Nomal;
 
 			ConnectTile* c = &ct[i];
 			c->index = i;
@@ -114,6 +116,24 @@ void setRoomTile()
 		pathTileCheck(c);
 	}
 
+	for (i = 0; i < TILEOFF_NUM; i++) // 임시
+	{
+		if (maps[i]->rgTile)
+		{
+			maps[i]->state = MapState_Treasure;
+			break;
+		}
+	}
+
+	for (i = TILEOFF_NUM-1; i > -1; i--) // 임시
+	{
+		if (maps[i]->rgTile)
+		{
+			maps[i]->state = MapState_Boss;
+			break;
+		}
+
+	}
 
 	for (i = 0; i < TILEOFF_NUM; i++)
 	{
@@ -145,7 +165,7 @@ void setRoomTile()
 					RGTILE_Height * (j / RGTILE_X));
 			fillRect(p.x, p.y, RGTILE_Width, RGTILE_Height);
 		}
-
+		
 		memcpy(mProjection->d(), m, sizeof(float) * 16);
 		devSize = d;
 		viewport = v;
@@ -238,56 +258,13 @@ void freeRoomTile()
 
 void drawRoomTile(float dt)
 {
-
-#if 0
-	int num = RGTILE_X * RGTILE_Y;
-	for (int i = 0; i < TILEOFF_NUM; i++)
-	{
-		if (maps[i]->rgTile != NULL)
-		{
-			int* tile = maps[i]->rgTile;
-			setRGBA(MOVETILE_RGBA);
-			iPoint p = maps[i]->tileOff + SET_DRAW_OFF;
-			fillRect(p.x, p.y, RGTILE_X * RGTILE_Width, RGTILE_Y * RGTILE_Height);
-			for (int j = 0; j < num; j++)
-			{
-				if (tile[j] == WALLTILE)setRGBA(WALLTILE_RGBA);
-				else if (tile[j] == FALLTILE)setRGBA(FALLTILE_RGBA);
-				else				setRGBA(MOVETILE_RGBA);
-
-				p = maps[i]->tileOff + SET_DRAW_OFF +
-							iPointMake(	RGTILE_Width * (j % RGTILE_X), 
-										RGTILE_Height * (j / RGTILE_X));
-				fillRect(p.x, p.y, RGTILE_Width, RGTILE_Height);
-
-				//setRGBA(1, 0, 0, 1);
-				//drawRect(maps[i]->tileOff.x + pc->camPosition.x + setPos.x + RGTILE_Width * (j % RGTILE_X) + 2,
-				//	maps[i]->tileOff.y + pc->camPosition.y + setPos.y + RGTILE_Height * (j / RGTILE_X) + 2,
-				//	RGTILE_Width - 4, RGTILE_Height - 4);
-			}
-		}
-	}
-#elif 0
-	for (int i = 0; i < TILEOFF_NUM; i++)
-	{
-		if (maps[i]->tileTex)
-		{
-			Texture* tex = maps[i]->tileTex;
-			iPoint p = maps[i]->tileOff + SET_DRAW_OFF;
-			drawImage(tex, p.x, p.y, 
-				0,0, tex->width, tex->height,
-				TOP | LEFT,	1.0f,1.0f,
-				2,0,REVERSE_HEIGHT);
-		}
-	}
-#else
 	Texture* tex = maps[pc->tileNumber]->tileTex;
 	iPoint p = maps[pc->tileNumber]->tileOff + SET_DRAW_OFF;
 	drawImage(tex, p.x, p.y,
 		0, 0, tex->width, tex->height,
 		TOP | LEFT, 1.0f, 1.0f,
 		2, 0, REVERSE_HEIGHT);
-#endif
+
 }
 
 void passTileAnimation(float dt)
@@ -307,41 +284,13 @@ void passTileAnimation(float dt)
 
 	if (t->passAniDt == _passAniDt)
 	{
-		t->sp = maps[t->tileNum]->tileOff * -1.0f;
-		t->tp = maps[pc->tileNumber]->tileOff * -1.0f;
+		t->sp = iPointZero - maps[t->tileNum]->tileOff;
+		t->tp = iPointZero - maps[pc->tileNumber]->tileOff;
 		t->passAniDt = 0.0f;
 	}
 
-	pc->camPosition = linear(t->passAniDt / _passAniDt, t->sp, t->tp);
-	//t->sp + (t->tp - t->sp) * t->passAniDt / _passAniDt;
+	pc->camPosition = easeIn(t->passAniDt / _passAniDt, t->sp, t->tp);
 
-#if 0
-	int num = RGTILE_X * RGTILE_Y;
-	for (int i = 0; i < TILEOFF_NUM; i++)
-	{
-		if (maps[i]->rgTile != NULL)
-		{
-			for (int j = 0; j < num; j++)
-			{
-				if (maps[i]->rgTile[j] == MOVETILE) setRGBA(MOVETILE_RGBA);
-				else if (maps[i]->rgTile[j] == WALLTILE)setRGBA(WALLTILE_RGBA);
-				else if (maps[i]->rgTile[j] == FALLTILE)setRGBA(FALLTILE_RGBA);
-				setRGBA(0, 0, 0, 0.7f);
-				iPoint p = maps[i]->tileOff + SET_DRAW_OFF +
-							iPointMake(	RGTILE_Width * (j % RGTILE_X),
-										RGTILE_Height * (j / RGTILE_X));
-				fillRect(p.x, p.y, RGTILE_Width, RGTILE_Height);
-			}
-#elif 0
-			Texture* tex = maps[i]->tileTex;
-			iPoint p = maps[i]->tileOff + SET_DRAW_OFF;
-			drawImage(tex, p.x, p.y,
-				0, 0, tex->width, tex->height,
-				TOP | LEFT, 1.0f, 1.0f,
-				2, 0, REVERSE_HEIGHT);
-		}
-	}
-#else
 	for (int i = 0; i < 2; i++)
 	{
 		int tn = (i == 0 ? t->tileNum : pc->tileNumber);
@@ -352,8 +301,7 @@ void passTileAnimation(float dt)
 			TOP | LEFT, 1.0f, 1.0f,
 			2, 0, REVERSE_HEIGHT);
 	}
-#endif
-	setRGBA(1, 1, 1, 1);
+
 	t->passAniDt += dt;
 	if (t->passAniDt > _passAniDt)
 	{

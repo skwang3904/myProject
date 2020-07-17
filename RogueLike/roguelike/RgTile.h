@@ -28,12 +28,6 @@
 #define TILEOFF_NUM 25 // 제곱수
 #define TILEOFF_SQRT 5
 
-struct MapTile {
-	int* rgTile;
-	Texture* tileTex;
-	iPoint tileOff;
-};
-
 extern iPoint* tileOffSet;
 
 void createTileSet();

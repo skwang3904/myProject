@@ -173,17 +173,20 @@ void loadShader()
 	setGLBlend(iBlendAlpha);
 
 	{
-		programGDIs = (GLuint*)malloc(sizeof(GLuint) * iGdiID_Max);
+		programGDIs = (GLuint*)malloc(sizeof(GLuint) * iGDIID_Max);
 
 		str = loadFile("assets/shader/gdi/gdi.vert", length);
 		vertexID = createShader(str, GL_VERTEX_SHADER);
 		free(str);
 
-		const char* strGdiList[iGdiID_Max] = {
-			"drawLine","drawRect","fillRect","drawCircle","fillCircle"
+		const char* strGdiList[iGDIID_Max] = {
+			"drawLine",
+			"drawRect","fillRect",
+			"drawCircle","fillCircle",
+			"drawEllipse","fillEllipse",
 		};
 
-		for (i = 0; i < iGdiID_Max; i++)
+		for (i = 0; i < iGDIID_Max; i++)
 		{
 			char s[256];
 			sprintf(s, "assets/shader/gdi/%s.frag", strGdiList[i]);
@@ -291,7 +294,7 @@ void setGLBlend(iBlend blend)
 	programID = programIDs[blend];
 }
 
-GLuint getProgramGdiID(iGdiID ids)
+GLuint getProgramGdiID(iGDIID ids)
 {
 	return programGDIs[ids];
 }
@@ -420,7 +423,6 @@ void applyTexParameters()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, texParam.wrapS);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, texParam.wrapT);
 }
-
 
 Texture* createImageWithRGBA(GLubyte* rgba, GLuint width, GLuint height)
 {

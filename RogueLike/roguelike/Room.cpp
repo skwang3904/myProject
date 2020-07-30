@@ -140,6 +140,7 @@ void setRoomTile()
 		if (maps[i]->rgTile == NULL)
 			continue;
 
+		MapTile* m = &maps[i][0];
 		iPoint p = iPointMake((RGTILE_X) * RGTILE_Width, (RGTILE_Y) * RGTILE_Height);
 		Texture* tex = createTexture(p.x, p.y);
 		fbo->bind(tex);
@@ -148,15 +149,15 @@ void setRoomTile()
 		devSize = iSizeMake(p.x, p.y);
 		iRect v = viewport;
 		viewport = iRectMake(0, 0, p.x, p.y);
-		float m[16];
-		memcpy(m, mProjection->d(), sizeof(float) * 16);
+		float mat[16];
+		memcpy(mat, mProjection->d(), sizeof(float) * 16);
 		mProjection->loadIdentity();
 		mProjection->ortho(0, p.x, p.y, 0, -1000, 1000);
 
 		int num = RGTILE_X * RGTILE_Y;
-		for (int j = 0; j < num; j++)
+		for (j = 0; j < num; j++)
 		{
-			int* tile = maps[i]->rgTile;
+			int* tile = m->rgTile;
 			if (tile[j] == WALLTILE)		setRGBA(WALLTILE_RGBA);
 			else if (tile[j] == FALLTILE)	setRGBA(FALLTILE_RGBA);
 			else							setRGBA(MOVETILE_RGBA);
@@ -166,11 +167,45 @@ void setRoomTile()
 			fillRect(p.x, p.y, RGTILE_Width, RGTILE_Height);
 		}
 		
-		memcpy(mProjection->d(), m, sizeof(float) * 16);
+		memcpy(mProjection->d(), mat, sizeof(float) * 16);
 		devSize = d;
 		viewport = v;
 		fbo->unbind();
-		maps[i]->tileTex = tex;
+		m->tileTex = tex;
+
+		//---------------------------------
+
+		m->mapObj = (MapObject**)malloc(sizeof(MapObject*) * 3);
+		m->mapObjNum = 3;
+		for (j = 0; j < 3; j++)
+		{
+			m->mapObj[j] = (MapObject*)malloc(sizeof(MapObject));
+
+			iPoint po = iPointMake(RGTILE_Width, RGTILE_Height);
+			tex = createTexture(po.x, po.y);
+			fbo->bind(tex);
+
+			iSize d = devSize;
+			devSize = iSizeMake(po.x, po.y);
+			iRect v = viewport;
+			viewport = iRectMake(0, 0, po.x, po.y);
+			float mat[16];
+			memcpy(mat, mProjection->d(), sizeof(float) * 16);
+			mProjection->loadIdentity();
+			mProjection->ortho(0, po.x, po.y, 0, -1000, 1000);
+
+			setRGBA(1, 0, 0, 1);
+			fillRect(0, 0, po.x, po.y);
+
+			memcpy(mProjection->d(), mat, sizeof(float) * 16);
+			devSize = d;
+			viewport = v;
+			fbo->unbind();
+
+			m->mapObj[j]->objTex = tex;
+			m->mapObj[j]->objPos = iPointMake((3 + j * 2) * RGTILE_Width, (3 + j * 2) * RGTILE_Height);
+		}
+		
 	}
 }
 
@@ -250,7 +285,17 @@ void freeRoomTile()
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
 		if (maps[i]->tileTex)
+		{
 			freeImage(maps[i]->tileTex);
+
+			int num = maps[i]->mapObjNum;
+			for (int j = 0; j < num; j++)
+			{
+				freeImage(maps[i]->mapObj[j]->objTex);
+				free(maps[i]->mapObj[j]);
+			}
+			free(maps[i]->mapObj);
+		}
 		free(maps[i]);
 	}
 	free(maps);
@@ -265,6 +310,15 @@ void drawRoomTile(float dt)
 		TOP | LEFT, 1.0f, 1.0f,
 		2, 0, REVERSE_HEIGHT);
 
+	for (int i = 0; i < 3; i++)
+	{
+		tex = maps[pc->tileNumber]->mapObj[i]->objTex;
+		iPoint po = p + maps[pc->tileNumber]->mapObj[i]->objPos;
+		drawImage(tex, po.x, po.y,
+			0, 0, tex->width, tex->height,
+			TOP | LEFT, 1.0f, 1.0f,
+			2, 0, REVERSE_HEIGHT);
+	}
 }
 
 void passTileAnimation(float dt)

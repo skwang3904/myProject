@@ -89,8 +89,8 @@ void MonsterData::takeDmgEnemy(float dt, float dmg)
 		hp -= dmg;
 		takeDmg = true;
 		showHp = true;
-		if (act != meleeAtk && act != rangeAtk)
-			act = hurt;
+		if (act != Act_meleeAtk && act != Act_rangeAtk)
+			act = Act_hurt;
 
 		audioPlay(SND_ENEMY_HIT);
 	}
@@ -203,7 +203,7 @@ void EGolem::init()
 		break;
 	}
 
-	act = idle;
+	act = Act_idle;
 	reverse = REVERSE_NONE;
 
 	tileNumber = 0;
@@ -232,12 +232,12 @@ void EGolem::paint(float dt)
 {
 	bool mapPos = (tileNumber == pc->tileNumber);
 
-	if (act == dying || act == dead)
+	if (act == Act_dying || act == Act_dead)
 	{
 		for (int i = 0; i < GOLEM_ITEM_NUM; i++)
 			items[i]->paint(dt);
 
-		if (act == dead)
+		if (act == Act_dead)
 			return;
 	}
 
@@ -282,13 +282,13 @@ void EGolem::paint(float dt)
 			}
 		}
 		else
-			act = idle;
+			act = Act_idle;
 	}
 	else
 	{
-		if (act != dying)
+		if (act != Act_dying)
 		{
-			act = dying;
+			act = Act_dying;
 			audioPlay(SND_ENEMY_DEAD);
 			img[4]->startAnimation();
 			methodead(this);
@@ -301,7 +301,7 @@ void EGolem::paint(float dt)
 		{
 			enemyPos = iPointZero;
 			touchEnemy = iRectZero;
-			act = dead;
+			act = Act_dead;
 			if (this == golemEletes[0])
 				nextDoor = tileNumber;
 			tileNumber = 0;

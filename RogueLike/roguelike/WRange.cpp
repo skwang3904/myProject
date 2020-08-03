@@ -178,7 +178,7 @@ void nomalBowMethod(float dt, iPoint dropP)
 	if (dropP == iPointZero)
 	{
 		float fireSpd = rw->_fireSpeed;
-		if (getKeyDown(keyboard_j) && pc->pwp->wp == rw && pc->act == idle)
+		if (getKeyDown(keyboard_j) && pc->pwp->wp == rw && pc->act == Act_idle)
 		{
 			// fire
 			nomalBowFire();

@@ -46,7 +46,7 @@ void Player::initPlayerStat()
 
 	moveSpeed = 800.0f;
 
-	act = idle;
+	act = Act_idle;
 	tileNumber = -1;
 
 	playerPosition = iPointZero;
@@ -60,9 +60,10 @@ void Player::initPlayerStat()
 
 	touchPlayer = iRectZero;
 
-	weaponArray->addObject(&PWP[MELEE_NUM]);
-	pwp = &PWP[MELEE_NUM];
-	PWP[MELEE_NUM].drop = false;
+#define STARTWEAPON 0
+	weaponArray->addObject(&PWP[STARTWEAPON]);
+	pwp = &PWP[STARTWEAPON];
+	PWP[STARTWEAPON].drop = false;
 	pwpCount = 1;
 
 	coin = 0;
@@ -170,7 +171,7 @@ void Player::createPlayerImage()
 
 bool Player::actionCheck(bool key)
 {
-	if (key == false || pc->act != idle)
+	if (key == false || pc->act != Act_idle)
 		return true;
 	return false;
 }
@@ -213,7 +214,7 @@ void Player::paint(float dt)
 
 void Player::combatDraw(float dt)
 {
-	if (act == evasion || act == falling)
+	if (act == Act_evasion || act == Act_falling)
 		return;
 	pwp->method(dt, iPointZero);
 }
@@ -342,7 +343,7 @@ void Player::drawPlayer(float dt)
 {
 	iPoint v = iPointZero;
 	iPoint mv = pc->combatV;
-
+	if(act == Act_idle)
 	if (getKeyStat(keyboard_left)) //이동방향, 머리방향
 	{
 		v.x = -1;
@@ -383,7 +384,7 @@ void Player::drawPlayer(float dt)
 	bool ani = (v != iPointZero);
 	if (ani)
 		v /= iPointLength(v);
-	iPoint mp = v * (moveSpeed * dt) * (act == attacking ? 0.1f : 1.0f);
+	iPoint mp = v * (moveSpeed * dt) * (act == Act_attacking ? 0.1f : 1.0f);
 
 	iPoint t = maps[tileNumber]->tileOff;
 	float x = playerPosition.x + HALF_OF_TEX_WIDTH;
@@ -398,7 +399,7 @@ void Player::drawPlayer(float dt)
 	}
 
 	MapTile* tile = maps[tileNumber];
-	if (act != evasion)
+	if (act != Act_evasion)
 		if (fallCheck(tile, dt))
 			return;
 
@@ -407,7 +408,7 @@ void Player::drawPlayer(float dt)
 
 	wallCheck(false, tile, pc->playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
 
-	img[headNum]->setTexAtIndex(pc->act == attacking ? true : false);
+	img[headNum]->setTexAtIndex(pc->act == Act_attacking ? true : false);
 	iPoint drawPos = playerPosition + SET_DRAW_OFF;
 
 	//히트박스 표시-------------------------------
@@ -429,12 +430,12 @@ void Player::drawPlayer(float dt)
 
 bool Player::evasionPlayer(MapTile* tile, float dt)
 {
-	if (getKeyDown(keyboard_space) && act == idle)
+	if (getKeyDown(keyboard_space) && act == Act_idle)
 	{
 		if (viewVector != iPointZero)
 		{
 			img[Player_imgEvasion]->startAnimation();
-			act = evasion;
+			act = Act_evasion;
 
 			audioPlay(SND_JUMP);
 			
@@ -442,7 +443,7 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 		}
 	}
 
-	if (act != evasion)
+	if (act != Act_evasion)
 		return false;
 
 	if (img[Player_imgEvasion]->animation)
@@ -463,7 +464,7 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 	}
 	else //if (img[Player_imgEvasion]->animation == false)
 	{
-		act = idle;
+		act = Act_idle;
 		evasV = iPointZero;
 
 		return false;
@@ -601,7 +602,7 @@ bool Player::fallCheck(MapTile* tile, float dt)
 	iPoint moveTileNum = iPointZero;
 	if (t->rgTile[RGTILE_X * y + x] == FALLTILE)
 	{
-		if (pc->act != falling)
+		if (pc->act != Act_falling)
 		{
 			pc->img[Player_imgFall]->startAnimation();
 			pc->img[Player_imgFall]->selected = true;
@@ -613,13 +614,13 @@ bool Player::fallCheck(MapTile* tile, float dt)
 		if (pc->img[Player_imgFall]->animation == false)
 		{
 			pc->img[Player_imgFall]->selected = false;
-			pc->act = idle;
+			pc->act = Act_idle;
 			pc->playerPosition = moveTileNum;
 
 			return false;
 		}
 
-		pc->act = falling;
+		pc->act = Act_falling;
 		iPoint p = pc->playerPosition - t->tileOff + setPos
 			- iPointMake(HALF_OF_TEX_WIDTH / 2, HALF_OF_TEX_HEIGHT / 2);
 

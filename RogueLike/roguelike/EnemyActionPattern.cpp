@@ -20,7 +20,7 @@ void IdleEyeBlink(MonsterData* enm, float dt)
 {
 	MonsterData* e = enm;
 
-	if (e->act != idle)
+	if (e->act != Act_idle)
 		return;
 
 	iImage** img = e->img;
@@ -48,7 +48,7 @@ void IdleEyeBlink(MonsterData* enm, float dt)
 void commonHurt(MonsterData* enm, float dt)
 {
 	MonsterData* e = enm;
-	if (e->act != hurt)
+	if (e->act != Act_hurt)
 		return;
 
 	iImage** img = e->img;
@@ -67,7 +67,7 @@ void commonHurt(MonsterData* enm, float dt)
 	img[6]->reverse = e->reverse;
 	img[6]->paint(dt, egdp);
 	if (img[6]->animation == false)
-		e->act = idle;
+		e->act = Act_idle;
 }
 
 //----------------------------------------------------------------------------------------
@@ -84,14 +84,14 @@ void WalkToPlayer(MonsterData* enm, float dt)
 
 	if (iPointLength(v) > 500.0f)
 	{
-		e->act = idle;
+		e->act = Act_idle;
 		return;
 	}
 
-	if (e->act == hurt)
+	if (e->act == Act_hurt)
 		return;
 
-	e->act = walking;
+	e->act = Act_walking;
 	v /= iPointLength(v);
 	iPoint mp = v * e->moveSpeed * dt;
 
@@ -111,7 +111,7 @@ void WalkToPlayer(MonsterData* enm, float dt)
 bool commonAttack(MonsterData* enm, float dt)
 {
 	MonsterData* e = enm;
-	if (e->act == rangeAtk)
+	if (e->act == Act_rangeAtk)
 		return false;
 
 	iPoint et = iPointMake(e->img[0]->tex->width * e->ratio / 2,
@@ -120,7 +120,7 @@ bool commonAttack(MonsterData* enm, float dt)
 	iPoint v = (pc->playerPosition + HALF_OF_TEX_POINT)
 		- (e->enemyPos + et);
 
-	if (iPointLength(v) > e->meleeReach && e->act != meleeAtk)
+	if (iPointLength(v) > e->meleeReach && e->act != Act_meleeAtk)
 		return false;
 
 	//e->resetActAtAttack();
@@ -130,7 +130,7 @@ bool commonAttack(MonsterData* enm, float dt)
 
 		e->atkMotion = true;
 		e->atkMotionTime -= e->meleeAtkSpeed;
-		e->act = meleeAtk;
+		e->act = Act_meleeAtk;
 
 		e->ATV = v;
 		//float range = e->meleeReach;
@@ -150,7 +150,7 @@ bool commonAttack(MonsterData* enm, float dt)
 		e->atkMotion = false;
 		e->atkMotionTime = 0.0f;
 		e->hit = false;
-		e->act = idle;
+		e->act = Act_idle;
 	}
 
 	if (e->atkMotion &&
@@ -164,7 +164,7 @@ bool commonAttack(MonsterData* enm, float dt)
 		setLineWidth(1);
 		setRGBA(1, 1, 1, 1);
 
-		if (e->hit == false && pc->act != evasion && pc->act != falling)
+		if (e->hit == false && pc->act != Act_evasion && pc->act != Act_falling)
 		{
 			iPoint n = e->ATV - (e->enemyPos + et);
 			float len = iPointLength(n);

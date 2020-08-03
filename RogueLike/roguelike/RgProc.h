@@ -13,17 +13,17 @@
 #define SET_DRAW_OFF pc->camPosition + setPos
 
 enum CharAction {
-	idle = 0,
-	attacking,
-	meleeAtk,
-	rangeAtk,
+	Act_idle = 0,
+	Act_attacking,
+	Act_meleeAtk,
+	Act_rangeAtk,
 
-	falling,
-	evasion,
-	walking,
-	hurt,
-	dying,
-	dead,
+	Act_falling,
+	Act_evasion,
+	Act_walking,
+	Act_hurt,
+	Act_dying,
+	Act_dead,
 };
 
 void loadRgProc();

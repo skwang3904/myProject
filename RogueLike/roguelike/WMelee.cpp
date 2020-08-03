@@ -206,7 +206,7 @@ void hitMonster(meleeWeapon* mw, float dt)
 bool nomalHammerAttack(meleeWeapon* mw, float dt, float attTime,
 	float iRange, float iAngle, float iRatioX, float iRatioY)
 {
-	if (pc->act != attacking)
+	if (pc->act != Act_attacking)
 		return false;
 
 	mw->attackSpeed += dt;
@@ -255,7 +255,7 @@ bool nomalHammerAttack(meleeWeapon* mw, float dt, float attTime,
 
 	if (atkSpeed > attTime)
 	{
-		pc->act = idle;
+		pc->act = Act_idle;
 		mw->attackEnemy = false;
 		mw->attackSpeed = 0.0f;
 		return false;
@@ -269,9 +269,9 @@ void nomalHammerMethod(float dt, iPoint dropP)
 	if (dropP == iPointZero)
 	{
 		float ats = mw->_attackSpeed * pc->attackSpeed;
-		if (getKeyDown(keyboard_j) && pc->pwp->wp == mw && pc->act == idle)
+		if (getKeyDown(keyboard_j) && pc->pwp->wp == mw && pc->act == Act_idle)
 		{
-			pc->act = attacking;
+			pc->act = Act_attacking;
 			audioPlay(SND_SWING);
 		}
 
@@ -288,7 +288,7 @@ void nomalHammerMethod(float dt, iPoint dropP)
 bool nomalSpearAttack(meleeWeapon* mw, float dt, float attTime,
 	float iRange, float iAngle, float iRatioX, float iRatioY)
 {
-	if (pc->act != attacking)
+	if (pc->act != Act_attacking)
 		return false;
 
 	mw->attackSpeed += dt;
@@ -337,7 +337,7 @@ bool nomalSpearAttack(meleeWeapon* mw, float dt, float attTime,
 
 	if (atkSpeed > attTime)
 	{
-		pc->act = idle;
+		pc->act = Act_idle;
 		mw->attackEnemy = false;
 		mw->attackSpeed = 0.0f;
 		return false;
@@ -351,9 +351,9 @@ void nomalSpearMethod(float dt, iPoint dropP)
 	if (dropP == iPointZero)
 	{
 		float ats = mw->_attackSpeed * pc->attackSpeed;
-		if (getKeyDown(keyboard_j) && pc->pwp->wp == mw && pc->act == idle)
+		if (getKeyDown(keyboard_j) && pc->pwp->wp == mw && pc->act == Act_idle)
 		{
-			pc->act = attacking;
+			pc->act = Act_attacking;
 			audioPlay(SND_SWING);
 		}
 
@@ -370,7 +370,7 @@ void nomalSpearMethod(float dt, iPoint dropP)
 bool nomalCycloneAttack(meleeWeapon* mw, float dt, float attTime,
 	float iRange, int iCycleCount, float iRatioX, float iRatioY)
 {
-	if (pc->act != attacking)
+	if (pc->act != Act_attacking)
 		return false;
 
 	mw->attackSpeed += dt;
@@ -445,7 +445,7 @@ bool nomalCycloneAttack(meleeWeapon* mw, float dt, float attTime,
 #endif
 	if (atkSpeed > attTime )
 	{
-		pc->act = idle;
+		pc->act = Act_idle;
 		mw->attackEnemy = false;
 		mw->attackSpeed = 0.0f;
 #if 0
@@ -472,9 +472,9 @@ void nomalCycloneMethod(float dt, iPoint dropP)
 	if (dropP == iPointZero)
 	{
 		float ats = mw->_attackSpeed * pc->attackSpeed;
-		if (getKeyDown(keyboard_j) && pc->pwp->wp == mw && pc->act == idle)
+		if (getKeyDown(keyboard_j) && pc->pwp->wp == mw && pc->act == Act_idle)
 		{
-			pc->act = attacking;
+			pc->act = Act_attacking;
 			audioPlay(SND_SWING);
 		}
 

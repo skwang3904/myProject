@@ -323,7 +323,7 @@ void wallCheck(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float half
 	MapTile* t = tile;
 	if (tile->rgTile == NULL)
 		return;
-	bool evase = (pc->act == evasion);
+	bool evase = (pc->act == Act_evasion);
 	if (mp.x < 0)
 	{
 		int LX = pos.x - t->tileOff.x ;							LX /= RGTILE_Width;

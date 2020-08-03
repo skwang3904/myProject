@@ -19,16 +19,33 @@ enum MapState {
 	MapState_Shop,
 };
 
-struct MapTile {
-	int* rgTile;
-	Texture* tileTex;
+enum MapObjType {
+	MapObj_Nomal = 0,
+	MapObj_Broke,
+};
+
+struct MapObject
+{
+	Texture* objTex = NULL; // 오브젝트 애니메이션
+	iPoint objPos;
+	MapObjType type;
+};
+
+struct MapTile 
+{
+	MapState state;
+	int* rgTile; // 타일 설정
+	Texture* tileTex; // 맵 애니메이션용
+
 	iPoint tileOff;
 	
-	MapState state;
+	int mapObjNum;
+	MapObject** mapObj;
 };
 extern MapTile** maps;
 
-struct ConnectTile {
+struct ConnectTile
+{
 	int index; // 타일 넘버
 	bool value; //
 	bool visit;

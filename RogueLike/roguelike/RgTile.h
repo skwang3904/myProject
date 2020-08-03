@@ -16,9 +16,11 @@
 #define MOVETILE	1
 #define WALLTILE	2
 #define FALLTILE	3
+#define DOORTILE	4
 
 #define WW WALLTILE
 #define FF FALLTILE
+#define DR DOORTILE
 
 #define MOVETILE_RGBA	1, 1, 1, 1
 #define WALLTILE_RGBA	0.5, 0.5, 0.5, 1

@@ -12,31 +12,34 @@ void setRoomTile();
 void freeRoomTile();
 void drawRoomTile(float dt);
 
-enum MapState {
-	MapState_Nomal = 0,
-	MapState_Boss,
-	MapState_Treasure,
-	MapState_Shop,
+enum MapType {
+	MapType_Nomal = 0,
+	MapType_Boss,
+	MapType_Treasure,
+	MapType_Shop,
 };
 
 enum MapObjType {
 	MapObj_Nomal = 0,
+	MapObj_Door,
 	MapObj_Broke,
 };
 
 struct MapObject
 {
-	Texture* objTex = NULL; // 오브젝트 애니메이션
+	iImage* objImg = NULL; // 오브젝트 애니메이션
 	iPoint objPos;
+	int objTileNum;
+	int* objTile;
 	MapObjType type;
 };
 
 struct MapTile 
 {
-	MapState state;
-	int* rgTile; // 타일 설정
-	Texture* tileTex; // 맵 애니메이션용
+	MapType state;
 
+	int* rgTile; // 타일 설정
+	iImage* mapImg; // 맵 애니메이션용
 	iPoint tileOff;
 	
 	int mapObjNum;

@@ -74,7 +74,7 @@ void setEnemyPosition()
 			if (index == -1)
 				index = random() % 16;
 
-			if (maps[randomTile[i]]->state == MapState_Nomal)
+			if (maps[randomTile[i]]->state == MapType_Nomal)
 			{
 				MonsterData* enm = golems[4 * i + j];
 				enm->enemyPos = maps[randomTile[i]]->tileOff +
@@ -92,7 +92,7 @@ void setEnemyPosition()
 	{
 		for (j = 0; j < n; j++)
 		{
-			if (maps[randomTile[j]]->state == MapState_Boss)
+			if (maps[randomTile[j]]->state == MapType_Boss)
 			{
 				if (maps[randomTile[j]]->rgTile == Tile1way1 ||
 					maps[randomTile[j]]->rgTile == Tile1way2 ||

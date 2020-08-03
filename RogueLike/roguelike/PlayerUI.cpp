@@ -155,7 +155,7 @@ void refreshMiniMap()
 					minitile * 0.5f, minitile * 0.5f);
 			}
 
-			if (maps[i]->state == MapState_Treasure) // treasure
+			if (maps[i]->state == MapType_Treasure) // treasure
 			{
 				setRGBA(1, 1, 0, 1);
 				fillRect(mp.x + 10, mp.y + 10,

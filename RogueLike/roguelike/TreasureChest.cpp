@@ -120,7 +120,7 @@ void Chest::setChest()
 {
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{	
-		if (maps[i]->state == MapState_Treasure)
+		if (maps[i]->state == MapType_Treasure)
 		{
 			pos = maps[i]->tileOff + RGTILE_CENTER;
 			tileNumber = i;

@@ -183,7 +183,7 @@ iRect iImage::touchRect(iPoint p)
 
 iPoint iImage::center(iPoint off)
 {
-	return position + iPointMake(tex->width / 2.0f, tex->height / 2.0f);
+	return position + iPointMake(tex->width / 2.0f, tex->height / 2.0f) + off;
 }
 
 

@@ -35,7 +35,7 @@ void setEnemyPosition()
 
 	for (i = 0; i < TILEOFF_NUM; i++)
 	{
-		if (maps[i]->rgTile != NULL)
+		if (maps[i]->rgTile[0] != 0)
 		{
 			activeTile[num] = i;
 			num++;
@@ -94,18 +94,12 @@ void setEnemyPosition()
 		{
 			if (maps[randomTile[j]]->state == MapType_Boss)
 			{
-				if (maps[randomTile[j]]->rgTile == Tile1way1 ||
-					maps[randomTile[j]]->rgTile == Tile1way2 ||
-					maps[randomTile[j]]->rgTile == Tile1way3 ||
-					maps[randomTile[j]]->rgTile == Tile1way4)
-				{
-					MonsterData* enm = golemEletes[0];
-					enm->enemyPos = maps[randomTile[j]]->tileOff +
-						RGTILE_CENTER;
-					elete = true;
-					enm->tileNumber = randomTile[j];
-					break;
-				}
+				MonsterData* enm = golemEletes[0];
+				enm->enemyPos = maps[randomTile[j]]->tileOff +
+					RGTILE_CENTER;
+				elete = true;
+				enm->tileNumber = randomTile[j];
+				break;
 			}
 		}
 	}

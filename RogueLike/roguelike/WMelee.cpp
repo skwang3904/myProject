@@ -251,7 +251,25 @@ bool nomalHammerAttack(meleeWeapon* mw, float dt, float attTime,
 		2, attAngleRate - attAngle + pc->combatAngleV + mw->holdAngle, REVERSE_NONE);
 
 	if (d > 0.5f)
+	{
 		hitMonster(mw, dt);
+		MapTile* m = maps[pc->tileNumber];
+		for (int i = 0; i < m->mapObjNum; i++)
+		{
+			if (m->mapObj[i]->type == MapObj_Broke)
+			{
+				iRect rt = m->mapObj[i]->hitBox;
+				rt.origin += maps[pc->tileNumber]->tileOff;
+
+				if (containRect(rt, mw->hitBox))
+				{
+					m->mapObj[i]->objImg->setTexAtIndex(1);
+				}
+			}
+		}
+
+	}
+	
 
 	if (atkSpeed > attTime)
 	{

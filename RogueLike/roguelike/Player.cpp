@@ -75,7 +75,7 @@ void Player::initPlayerPosition()
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
 		int a = random() % TILEOFF_NUM;
-		if (maps[a]->rgTile != NULL && maps[a]->state == MapType_Nomal)
+		if (maps[a]->rgTile[0] != 0 && maps[a]->state == MapType_Nomal)
 		{
 			playerPosition = maps[a]->tileOff + RGTILE_CENTER;
 			camPosition = iPointZero - maps[a]->tileOff;

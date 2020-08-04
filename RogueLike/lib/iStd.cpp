@@ -245,6 +245,7 @@ void zoomLib(iPoint point, float rate)
     zoomDt = 0.0f;
 }
 
+GLuint vbe = NULL;
 iVBO::iVBO(int qNum_)
 {
     _qNum = qNum_;
@@ -272,6 +273,11 @@ iVBO::iVBO(int qNum_)
         indices[6 * i + 4] = 4 * i + 2;
         indices[6 * i + 5] = 4 * i + 3;
     }
+
+    glGenBuffers(1, &vbe);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbe);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(short) * 6 * _qNum, indices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     tex = NULL;
     glGenBuffers(1, &vbo);
@@ -320,7 +326,9 @@ void iVBO::paint(float dt)
     GLuint mModelv = glGetUniformLocation(programID, "mModelview");
     glUniformMatrix4fv(mModelv, 1, GL_FALSE, mModelview->d());
 
-    glDrawElements(GL_TRIANGLES, 6 * qNum, GL_UNSIGNED_SHORT, indices);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbe);
+    glDrawElements(GL_TRIANGLES, 6 * qNum, GL_UNSIGNED_SHORT, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     glDisableVertexAttribArray(positionAttr);
     glDisableVertexAttribArray(texCoordAttr);
@@ -329,7 +337,6 @@ void iVBO::paint(float dt)
     glBindTexture(GL_TEXTURE_2D, 0);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 }
 
 

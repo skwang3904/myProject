@@ -16,6 +16,7 @@ bool nextStage = false;
 void createStage()
 {
 	int i,j;
+	reSetTile();
 	setRoomTile();
 
 	// monster init

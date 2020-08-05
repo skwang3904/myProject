@@ -47,10 +47,7 @@ bool bShowRgLoading(loadingType type)
 	}
 	case NextStage:
 	{
-		if (popNextStage->bShow)
-			return true;
-		else
-			return false;
+		return popNextStage->bShow;
 	}
 
 	default:

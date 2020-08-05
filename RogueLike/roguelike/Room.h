@@ -7,6 +7,8 @@
 타일 상호작용
 */
 
+extern iImage* imgNextDoor;
+
 void loadRoomTile();
 void setRoomTile();
 void reSetTile();
@@ -28,7 +30,7 @@ enum MapObjType {
 
 struct MapObject
 {
-	iImage* objImg = NULL; // 오브젝트 애니메이션
+	iImage* objImg; // 오브젝트 애니메이션
 	iPoint objPos;
 
 	int objTileNum; //오브젝트가 사용하는 타일숫자
@@ -36,6 +38,7 @@ struct MapObject
 
 	MapObjType type;
 	iRect hitBox;
+
 };
 
 struct MapTile 

@@ -18,39 +18,94 @@ struct passTile {
 static passTile pt;
 #define _passAniDt 0.2f
 
+iImage* imgRoom;
+
+iImage* imgNextDoor;
+
 iImage* imgBarrel;
-iImage* imgDoorNomal;
+iImage* imgDoorNormal;
 
 void createObjImage()
 {
-	int i;
+	int i, j;
+
+	iImage* img = new iImage();
+	Texture* tex;
+	//-----------------------------------------------------------------------
+	// 맵 이미지
+	
+	iPoint p = iPointMake((RGTILE_X + 12) * RGTILE_Width, 
+		(RGTILE_Y + 9) * RGTILE_Height);
+	tex = createTexture(p.x, p.y);
+	fbo->bind(tex);
+	fbo->setSize(p.x, p.y);
+
+	Texture* texRoom = createImage("assets/object/room.png");
+	setRGBA(1, 1, 1, 0.8f);
+	drawImage(texRoom, 0, 0,
+		0, 0, texRoom->width, texRoom->height,
+		TOP | LEFT, p.x / texRoom->width, p.y / texRoom->height, 
+		2, 0);
+	freeImage(texRoom);
+	setRGBA(1, 1, 1, 1);
+
+	fbo->backSize();
+	fbo->unbind();
+
+	img->addObject(tex);
+	freeImage(tex);
+	imgRoom = img;
+	
+	//----------------------------------------------------------------------
+	// 다음스테이지 문
+
+	const char* strNextDoor[2] = {
+		"trapdoor_1", "trapdoor_2"
+	};
+
+	img = new iImage();
+	p = iPointMake(RGTILE_Width * 4, RGTILE_Height * 4);
+	for (i = 0; i < 2; i++)
+	{
+		tex = createTexture(p.x, p.y);
+		fbo->bind(tex);
+		fbo->setSize(p.x, p.y);
+
+		Texture* texND = createImage("assets/object/%s.png", strNextDoor[i]);
+		drawImage(texND, 0, 0,
+			0, 0, texND->width, texND->height,
+			TOP | LEFT, p.x / texND->width, p.y / texND->height,
+			2, 0);
+		freeImage(texND);
+		
+		fbo->backSize();
+		fbo->unbind();
+
+		img->addObject(tex);
+		freeImage(tex);
+	}
+
+	imgNextDoor = img;
+
+	//-----------------------------------------------------------------------
+	// 오브젝트 이미지 
 	const char* strBarrel[4] = {
 		"barrel_1", "barrel_2", "door_close_east", "door_open_east"
 	};
 
-	iImage* img = new iImage();
-	iPoint p = iPointMake(128, 157);
+	img = new iImage();
+	p = iPointMake(128, 157);
 	for (i = 0; i < 2; i++)
 	{
-		Texture* tex = createTexture(p.x, p.y);
+		tex = createTexture(p.x, p.y);
 		fbo->bind(tex);
-		iSize d = devSize;
-		devSize = iSizeMake(p.x, p.y);
-		iRect v = viewport;
-		viewport = iRectMake(0, 0, p.x, p.y);
-		float mat[16];
-		memcpy(mat, mProjection->d(), sizeof(float) * 16);
-		mProjection->loadIdentity();
-		mProjection->ortho(0, p.x, p.y, 0, -1000, 1000);
+		fbo->setSize(p.x, p.y);
 
 		Texture* texBar = createImage("assets/object/%s.png", strBarrel[i]);
 		drawImage(texBar, 0, 0, TOP | LEFT);
 		freeImage(texBar);
 
-		memcpy(mProjection->d(), mat, sizeof(float) * 16);
-		devSize = d;
-		viewport = v;
-
+		fbo->backSize();
 		fbo->unbind();
 
 		img->addObject(tex);
@@ -61,19 +116,26 @@ void createObjImage()
 	img = new iImage();
 	for (i = 0; i < 2; i++)
 	{
-		Texture* tex = createImage("assets/object/%s.png", strBarrel[i + 2]);
+		tex = createImage("assets/object/%s.png", strBarrel[i + 2]);
 		img->addObject(tex);
 		freeImage(tex);
 	}
-	imgDoorNomal = img;
+	imgDoorNormal = img;
 }
 
 void loadRoomTile()
 {
+	int i;
 	maps = (MapTile**)malloc(sizeof(MapTile*) * TILEOFF_NUM);
 
-	for (int i = 0; i < TILEOFF_NUM; i++)
+	for (i = 0; i < TILEOFF_NUM; i++)
 		maps[i] = (MapTile*)malloc(sizeof(MapTile) * 1);
+
+	for (i = 0; i < TILEOFF_NUM; i++)
+	{
+		MapTile* m = maps[i];
+		m->rgTile = (int*)calloc(sizeof(int), RGTILE_X * RGTILE_Y);
+	}
 
 	pt.tileNum = -1;
 	pt.sp = iPointZero;
@@ -96,8 +158,8 @@ void setRoomTile()
 		for (i = 0; i < TILEOFF_NUM; i++)
 		{
 			MapTile* m = maps[i];
-			m->rgTile = (int*)calloc(sizeof(int), RGTILE_X * RGTILE_Y);
 			m->mapImg = NULL;
+			memset(m->rgTile, 0x00, sizeof(int) * RGTILE_X * RGTILE_Y);
 			m->tileOff = tileOffSet[i];
 			m->state = MapType_Nomal;
 
@@ -145,6 +207,7 @@ void setRoomTile()
 				c->visit = false;
 			conectCount = 0;
 		}
+		
 	}
 
 	for (i = 0; i < TILEOFF_NUM; i++)
@@ -192,7 +255,7 @@ void setRoomTile()
 				mobj->objTileNum = 4;
 				mobj->objTile = (int*)calloc(sizeof(int), mobj->objTileNum);
 				for (int k = 0; k < mobj->objTileNum; k++)
-					mobj->objTile[k] = RGTILE_X * (3 + j * 3) + k / 2 + (3 + j * 3) + k % 2;
+					mobj->objTile[k] = RGTILE_X * (3 + j * 3 + k / 2) + (3 + j * 3) + k % 2;
 
 				mobj->type = MapObj_Nomal;
 				mobj->hitBox = iRectMake(mobj->objPos.x, mobj->objPos.y,
@@ -206,13 +269,13 @@ void setRoomTile()
 				img->reverse = REVERSE_HEIGHT;
 			}
 
-			else if (j == 2)
+			else if (j == 2) // 파괴되는 오브젝트 이미지
 			{
 				mobj->objPos = iPointMake((12 + j * 3) * RGTILE_Width, (12 + j * 3) * RGTILE_Height);
 				mobj->objTileNum = 4;
 				mobj->objTile = (int*)calloc(sizeof(int), mobj->objTileNum);
 				for (int k = 0; k < mobj->objTileNum; k++)
-					mobj->objTile[k] = RGTILE_X * (12 + j * 3) + k / 2 + (12 + j * 3) + k % 2;
+					mobj->objTile[k] = RGTILE_X * (12 + j * 3 + k / 2) + (12 + j * 3) + k % 2;
 
 				mobj->type = MapObj_Broke;
 				mobj->hitBox = iRectMake(mobj->objPos.x, mobj->objPos.y,
@@ -231,6 +294,7 @@ void setRoomTile()
 				iPoint drp = iPointZero;
 				bool check = false;
 				mobj->objImg = NULL;
+				mobj->objTile = NULL;
 				int angle = 0;
 				if (j == 3 && m->rgTile[RGTILE_X * (RGTILE_Y / 2)] == DR)
 				{
@@ -244,7 +308,8 @@ void setRoomTile()
 						mobj->objTile[k] = RGTILE_X * (RGTILE_Y / 2 - 2 + k);
 						m->rgTile[mobj->objTile[k]] = WALLTILE;
 					}
-					drp = iPointMake(0, RGTILE_Height * (RGTILE_Y / 2 - 2));
+					drp = iPointMake(0, RGTILE_Height * (RGTILE_Y / 2 - 2)) 
+						- iPointMake(RGTILE_Width * 4, RGTILE_Height);
 				}
 				if (j == 4 && m->rgTile[RGTILE_X * (RGTILE_Y / 2) + RGTILE_X - 1] == DR)
 				{
@@ -258,7 +323,8 @@ void setRoomTile()
 						mobj->objTile[k] = RGTILE_X * (RGTILE_Y / 2 - 2 + k) + RGTILE_X - 1;
 						m->rgTile[mobj->objTile[k]] = WALLTILE;
 					}
-					drp = iPointMake(RGTILE_Width * (RGTILE_X - 1), RGTILE_Height * (RGTILE_Y / 2 - 2));
+					drp = iPointMake(RGTILE_Width * (RGTILE_X - 1), RGTILE_Height * (RGTILE_Y / 2 - 2))
+						- iPointMake(0, RGTILE_Height);
 
 				}
 				if (j == 5 && m->rgTile[RGTILE_X / 2] == DR)
@@ -273,7 +339,8 @@ void setRoomTile()
 						mobj->objTile[k] = RGTILE_X / 2 - 2 + k;
 						m->rgTile[mobj->objTile[k]] = WALLTILE;
 					}
-					drp = iPointMake(RGTILE_Width * (RGTILE_X / 2 - 2), 0);
+					drp = iPointMake(RGTILE_Width * (RGTILE_X / 2 - 2), 0)
+						- iPointMake(RGTILE_Width, RGTILE_Height * 4);
 
 				}
 				if (j == 6 && m->rgTile[RGTILE_X * (RGTILE_Y - 1) + RGTILE_X / 2] == DR)
@@ -288,15 +355,16 @@ void setRoomTile()
 						mobj->objTile[k] = RGTILE_X * (RGTILE_Y - 1) + RGTILE_X / 2 - 2 + k;
 						m->rgTile[mobj->objTile[k]] = WALLTILE;
 					}
-					drp = iPointMake(RGTILE_Width * (RGTILE_X / 2 - 2), RGTILE_Height * (RGTILE_Y - 1));
+					drp = iPointMake(RGTILE_Width * (RGTILE_X / 2 - 2), RGTILE_Height * (RGTILE_Y - 1))
+						 - iPointMake(RGTILE_Width,0);
 				}
 
 				if (check)
 				{
-					mobj->objImg = imgDoorNomal->copy();
+					mobj->objImg = imgDoorNormal->copy();
 					img = mobj->objImg;
 
-					img->ratio = RGTILE_Height * 4.0f / img->tex->height;
+					img->ratio = RGTILE_Height * 4.0f / img->tex->height * 1.5f;
 					img->reverse = REVERSE_HEIGHT;
 					img->angle = angle;
 					img->lockAngle = true;
@@ -306,56 +374,16 @@ void setRoomTile()
 				}
 			}
 		}
+
 		//--------------------------------------------------------------------
-
-		img = new iImage();
-
 		// 맵 이미지 애니메이션
-		int kkk = 5;
-		for (int k = 0; k < kkk; k++)
-		{
-			iPoint p = iPointMake(RGTILE_X * RGTILE_Width, RGTILE_Y * RGTILE_Height);
-			Texture* tex = createTexture(p.x, p.y);
-			fbo->bind(tex);
 
-			iSize d = devSize;
-			devSize = iSizeMake(p.x, p.y);
-			iRect v = viewport;
-			viewport = iRectMake(0, 0, p.x, p.y);
-			float mat[16];
-			memcpy(mat, mProjection->d(), sizeof(float) * 16);
-			mProjection->loadIdentity();
-			mProjection->ortho(0, p.x, p.y, 0, -1000, 1000);
+		m->mapImg = imgRoom->copy();
+		img = m->mapImg;	
 
-			int num = RGTILE_X * RGTILE_Y;
-			for (int n = 0; n < num; n++)
-			{
-				int* tile = m->rgTile;
-
-				float a = fabsf((float)k / kkk - 0.5f);
-				if (tile[n] == WALLTILE || tile[n] == DOORTILE)		setRGBA(a, a, a, 1);
-				else if (tile[n] == FALLTILE)	setRGBA(FALLTILE_RGBA);
-				else							setRGBA(a + 0.5f, a + 0.5f, a + 0.5f, 1);
-
-				p = iPointMake(RGTILE_Width * (n % RGTILE_X),
-					RGTILE_Height * (n / RGTILE_X));
-				fillRect(p.x, p.y, RGTILE_Width, RGTILE_Height);
-			}
-
-			memcpy(mProjection->d(), mat, sizeof(float) * 16);
-			devSize = d;
-			viewport = v;
-			fbo->unbind();
-
-			img->addObject(tex);
-			freeImage(tex);
-		}
-		
 		img->reverse = REVERSE_HEIGHT;
-		img->animation = true;
-		img->_aniDt = 0.5f;
-
-		m->mapImg = img;
+		//img->animation = true;
+		//img->_aniDt = 0.5f;
 	}
 }
 
@@ -365,7 +393,21 @@ void reSetTile()
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
 		MapTile* m = maps[i];
-		memset(m->rgTile, 0x00, sizeof(int) * RGTILE_X * RGTILE_Y);
+		if (m->rgTile[0] == 0) continue;
+
+		delete m->mapImg;
+
+		for (int j = 0; j < m->mapObjNum; j++)
+		{
+			m->mapObj[j]->type = MapObj_Nomal;
+			delete m->mapObj[j]->objImg;
+
+			if(m->mapObj[j]->objTile)
+				free(m->mapObj[j]->objTile);
+
+			free(m->mapObj[j]);
+		}
+		free(m->mapObj);
 	}
 }
 
@@ -443,6 +485,10 @@ void pathTileCheck(ConnectTile* c)
 
 void freeRoomTile()
 {
+	delete imgRoom;
+	delete imgBarrel;
+	delete imgDoorNormal;
+
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
 		if (maps[i]->mapImg)
@@ -466,7 +512,6 @@ void freeRoomTile()
 	free(maps);
 }
 
-
 void drawObject(float dt)
 {
 	bool check = true;
@@ -481,22 +526,25 @@ void drawObject(float dt)
 		}
 	}
 	
-	int tmp = check ? 01 : WALLTILE;
-	for (int j = 0; j < 2; j++) // 나무통
 	{
-		MapObject* mobj = m->mapObj[j];
-		m->rgTile[mobj->objTile[0]] = tmp;
-		m->rgTile[mobj->objTile[0] + 1] = tmp;
-		m->rgTile[mobj->objTile[0] + RGTILE_X] = tmp;
-		m->rgTile[mobj->objTile[0] + RGTILE_X + 1] = tmp;
-	}
-
-	for (int j = 0; j < 4; j++)
-	{
-		MapObject* mobj = m->mapObj[j + 3];
-		for (int k = 0; k < mobj->objTileNum; k++)
+		int tmp = check ? 01 : WALLTILE;
+		for (int j = 0; j < 2; j++) // 나무통
 		{
-			m->rgTile[mobj->objTile[k]] = tmp;
+			MapObject* mobj = m->mapObj[j];
+
+			for (int k = 0; k < mobj->objTileNum; k++)
+			{
+				m->rgTile[mobj->objTile[k]] = tmp;
+			}
+		}
+
+		for (int j = 0; j < 4; j++)
+		{
+			MapObject* mobj = m->mapObj[j + 3];
+			for (int k = 0; k < mobj->objTileNum; k++)
+			{
+				m->rgTile[mobj->objTile[k]] = tmp;
+			}
 		}
 	}
 
@@ -517,11 +565,12 @@ void drawObject(float dt)
 void drawRoomTile(float dt)
 {
 	MapTile* m = maps[pc->tileNumber];
-	iPoint p = m->tileOff + SET_DRAW_OFF;
+	iPoint p = m->tileOff + SET_DRAW_OFF - iPointMake(RGTILE_Width * 6, RGTILE_Height * 4.5);
 
 	m->mapImg->paint(dt, p);
 
 	drawObject(dt);
+
 }
 
 void passTileAnimation(float dt)

@@ -24,7 +24,6 @@ public:
 
 public:
 	iFont* fontNum;
-	Texture* tex;
 };
 
 extern numFont* numberFont;

@@ -82,13 +82,12 @@ void drawRgProc(float dt)
 	if (passAni())
 		return;
 
+	drawNextDoor(dt);
 	if (nextStage)
 	{
 		nextStageAni(dt);
 		return;
 	}
-
-	drawNextDoor(dt);
 
 	if (pc->hp < 0.1f)
 	{

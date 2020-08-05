@@ -49,8 +49,9 @@ void createMeleeWeapon()
 	nomalSpear = (meleeWeapon*)malloc(sizeof(meleeWeapon));
 	nomalCyclone = (meleeWeapon*)malloc(sizeof(meleeWeapon));
 
+	// attackDmg, attackSpeed, widthReach, heightReach, holdAngle
 	Melee melee[MELEE_NUM] = {
-	{nomalHammer,	nomalHammerMethod,	{30, 0.3f, 30.0f, 60.0f, -30.0f}, "assets/weapon/hammer%d.png"},
+	{nomalHammer,	nomalHammerMethod,	{200, 0.3f, 30.0f, 60.0f, -30.0f}, "assets/weapon/hammer%d.png"},
 	{nomalSpear,	nomalSpearMethod,	{30, 0.2f, 10.0f, 70.0f, -45.0f}, "assets/weapon/upg_spear%d.png"},
 	{nomalCyclone,	nomalCycloneMethod,	{30, 0.5f, 30.0f, 50.0f, -70.0f}, "assets/weapon/upg_axeDouble%d.png"},
 	};

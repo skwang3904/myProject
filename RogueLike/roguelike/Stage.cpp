@@ -8,7 +8,6 @@
 
 #include "PlayerUI.h"
 
-
 uint8 stage = 0;
 uint8 nextDoor = 255;
 bool nextStage = false;
@@ -91,64 +90,68 @@ void setNextDoor(uint8 pcTile)
 	}
 }
 
+//  애니메이션 개선할것
+static bool stg = false;
 void nextStageAni(float dt)
 {
-	if (pc->img[Player_imgFall]->animation == false && nextDoor != 255)
-	{
-		pc->img[Player_imgFall]->startAnimation();
-		pc->img[Player_imgFall]->selected = true;
-		nextDoor = 255;
-	}
-	
-	if (pc->img[Player_imgFall]->animation)
-	{
-		iPoint p = pc->playerPosition + SET_DRAW_OFF - iPointMake(HALF_OF_TEX_WIDTH / 2, HALF_OF_TEX_HEIGHT / 2);
-		pc->img[Player_imgFall]->paint(dt, p);
-		return;
-	}
-	
-	static bool stage = false;
-	if (stage == false)
+	if (pc->img[Player_imgFall]->animation == false && stg == false)
 	{
 		createStage();
 		showRgLoading(true, NextStage);
-
-		stage = true;
+		stg = true;
 	}
 
-	drawRgLoading(dt, NextStage);
-
-	if (bShowRgLoading(NextStage) == false)
+	if (stg)
 	{
-		nextStage = false;
+		drawRgLoading(dt, NextStage);
 
-		stage = false;
+		if (bShowRgLoading(NextStage) == false)
+		{
+			nextStage = false;
+
+			imgNextDoor->setTexAtIndex(0);
+			stg = false;
+		}
+	}
+	else
+	{
+		iPoint p = pc->playerPosition + SET_DRAW_OFF
+			- iPointMake(HALF_OF_TEX_WIDTH / 2, HALF_OF_TEX_HEIGHT / 2);
+		pc->img[Player_imgFall]->paint(dt, p);
 	}
 }
 
 void drawNextDoor(float dt)
 {
-	if (nextStage || (nextDoor != pc->tileNumber))
+	if (nextDoor != pc->tileNumber)
 		return;
 
-	iPoint p = maps[nextDoor]->tileOff + SET_DRAW_OFF + RGTILE_CENTER;
+	iPoint p = maps[nextDoor]->tileOff + RGTILE_CENTER + SET_DRAW_OFF
+		- iPointMake(imgNextDoor->tex->width / 2, imgNextDoor->tex->height / 2);
 
-	setRGBA(0, 0.5, 1, 1);
-	fillRect(p.x-25, p.y-25, 50, 50); // 문 디자인
-	setRGBA(1, 1, 1, 1);
+	imgNextDoor->paint(dt, p);
 
-	containDoor(pc->playerPosition + iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT));
+	if(nextStage == false)
+		containDoor(pc->playerPosition + HALF_OF_TEX_POINT + SET_DRAW_OFF);
 }
 
 void containDoor(iPoint p)
 {
-	iPoint dp = maps[nextDoor]->tileOff + RGTILE_CENTER;
-	iRect drt = iRectMake(dp.x - 25, dp.y - 25, 50, 50);
+	iPoint dp = maps[nextDoor]->tileOff + RGTILE_CENTER + SET_DRAW_OFF;
+	iPoint touch = iPointMake(imgNextDoor->tex->width / 2, imgNextDoor->tex->height / 2);
+	iRect drt = iRectMake(dp.x - touch.x / 2, dp.y - touch.y / 2, touch.x, touch.y);
 
-	if (containPoint(p, drt))
+	if (golemEletes[0]->act == Act_dead)
 	{
-		nextStage = true;
-		audioPlay(SND_JUMP);
+		imgNextDoor->setTexAtIndex(1);
+
+		if (containPoint(p, drt))
+		{
+			nextStage = true;
+			pc->img[Player_imgFall]->startAnimation();
+			audioPlay(SND_JUMP);
+		}
+
 	}
 }
 

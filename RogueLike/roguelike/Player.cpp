@@ -8,7 +8,7 @@
 
 Player* pc;
 iSort* sort;
-
+// 캐릭터 이미지 수정
 Player::Player()
 {
 	sort = new iSort();
@@ -167,6 +167,9 @@ void Player::createPlayerImage()
 	img[8] = imgFall;
 
 	img[9] = imgEvasion;
+
+	for (int i = 0; i < 10; i++)
+		img[i]->ratio = 2.0f;
 }
 
 bool Player::actionCheck(bool key)
@@ -327,13 +330,13 @@ void Player::setPlayerTile()
 
 void Player::drawtouchPlayer()
 {
-	iRect rt = iRectMake(playerPosition.x,
-		playerPosition.y,
+	iRect rt = iRectMake(playerPosition.x + img[0]->tex->width / 2, 
+		playerPosition.y + img[0]->tex->height * 0.75f,
 		HALF_OF_TEX_WIDTH * 2.0f, HALF_OF_TEX_HEIGHT * 2.0f);
 
 	touchPlayer = rt;
 
-	setRGBA(0, 0, 0, 0.5f);
+	setRGBA(0, 1, 0, 0.5f);
 	rt.origin += SET_DRAW_OFF;
 	fillRect(rt);
 	setRGBA(1, 1, 1, 1);
@@ -406,7 +409,7 @@ void Player::drawPlayer(float dt)
 	if (evasionPlayer(tile, dt))
 		return;
 
-	wallCheck(false, tile, pc->playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
+	wallCheck(false, tile, pc->playerPosition, mp, HALF_OF_TEX_WIDTH * img[0]->ratio, HALF_OF_TEX_HEIGHT * img[0]->ratio);
 
 	img[headNum]->setTexAtIndex(pc->act == Act_attacking ? true : false);
 	iPoint drawPos = playerPosition + SET_DRAW_OFF;
@@ -422,10 +425,16 @@ void Player::drawPlayer(float dt)
 	else if (mv.y)
 		img[2 * ani + 1]->paint(dt, drawPos);
 
+#if 1
+	float dis = (img[2 * ani + 0]->tex->width - img[headNum]->tex->width) / 2;
+	drawPos += iPointMake(dis * img[headNum]->ratio, -img[headNum]->tex->height / 2 * img[headNum]->ratio);
+	img[headNum]->paint(dt, drawPos);
+#else
 	drawImage(img[headNum]->tex, drawPos.x + HALF_OF_TEX_WIDTH, drawPos.y + 3,
 		0, 0, img[headNum]->tex->width, img[headNum]->tex->height,
 		VCENTER | HCENTER, 1.0f, 1.0f,
 		img[headNum]->location, img[headNum]->angle, REVERSE_NONE);
+#endif
 }
 
 bool Player::evasionPlayer(MapTile* tile, float dt)

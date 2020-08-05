@@ -67,25 +67,15 @@ void loadLib(HDC hDC)
 
     texGdi = (Texture**)malloc(sizeof(Texture*) * 2);
 
-    Texture* tex = createTexture(32, 32);
+    iPoint p = iPointMake(32, 32);
+    Texture* tex = createTexture(p.x, p.y);
     setTexture(CLAMP, MIPMAP);
     fbo->bind(tex); //
-
-    iSize s = devSize;
-    iRect v = viewport;
-    devSize = iSizeMake(32, 32);
-    viewport = iRectMake(0, 0, 32, 32);
-
-    float m[16];
-    memcpy(m, mProjection->d(), sizeof(float) * 16);
-    mProjection->ortho(0, 32, 32, 0, -1000, 1000);
+    fbo->setSize(p.x, p.y);
 
     fillCircle(16, 16, 16);
 
-    memcpy(mProjection->d(), m, sizeof(float) * 16);
-    devSize = s;
-    viewport = v;
-
+    fbo->backSize();
     fbo->unbind(); //
     texGdi[0] = tex;
 
@@ -431,6 +421,30 @@ Texture* iFBO::getTexture()
 uint32 iFBO::bindingTexID()
 {
     return 0;
+}
+
+void iFBO::setSize(float w, float h)
+{
+    size = devSize;
+    view = viewport;
+    memcpy(m, mProjection->d(), sizeof(float) * 16);
+
+    devSize = iSizeMake(w, h);
+    viewport = iRectMake(0, 0, w, h);
+    mProjection->loadIdentity();
+    mProjection->ortho(0, w, h, 0, -1000, 1000);
+}
+
+void iFBO::backSize()
+{
+    devSize = size;
+    viewport = view;
+    
+    memcpy(mProjection->d(), m, sizeof(float) * 16);
+
+    memset(m, 0x00, sizeof(float) * 16);
+    size = iSizeZero;
+    view = iRectZero;
 }
 
 void setRGBA(float r, float g, float b, float a)

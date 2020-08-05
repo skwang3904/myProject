@@ -122,7 +122,7 @@ EGolem** golemEletes;
 
 EGolem::EGolem(MonsterType mt) : MonsterData(mt)
 {
-	init();
+	beginEGolem();
 }
 
 EGolem::~EGolem()
@@ -221,11 +221,6 @@ void EGolem::init()
 
 	hit = false;
 	ATV = iPointZero;
-
-	itemType it[itemTypeMax] = { coin, healing, powerUp, atkSpeedUp, moveSpeedUp };
-	items = (UseItem**)malloc(sizeof(UseItem*) * itemTypeMax);
-	for (int i = 0; i < itemTypeMax; i++)
-		items[i] = new UseItem(it[i]);
 }
 
 void EGolem::paint(float dt)
@@ -302,8 +297,6 @@ void EGolem::paint(float dt)
 			enemyPos = iPointZero;
 			touchEnemy = iRectZero;
 			act = Act_dead;
-			if (this == golemEletes[0])
-				nextDoor = tileNumber;
 			tileNumber = 0;
 		}
 	}

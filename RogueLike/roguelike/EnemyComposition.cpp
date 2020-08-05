@@ -99,6 +99,7 @@ void setEnemyPosition()
 					RGTILE_CENTER;
 				elete = true;
 				enm->tileNumber = randomTile[j];
+				nextDoor = randomTile[j];
 				break;
 			}
 		}

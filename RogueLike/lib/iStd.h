@@ -93,6 +93,9 @@ public:
     Texture* getTexture();
     uint32 bindingTexID();
 
+    void setSize(float w, float h);
+    void backSize();
+
 public:
     GLuint fbo;
 
@@ -103,6 +106,10 @@ public:
     GLint prevFbo;// multiple fbo 고려
     Texture** listTex;
     int listNum;
+
+    iSize size;
+    iRect view;
+    float m[16];
 };
 extern iFBO* fbo;
 

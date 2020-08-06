@@ -116,7 +116,7 @@ void nextStageAni(float dt)
 	else
 	{
 		iPoint p = pc->playerPosition + SET_DRAW_OFF
-			- iPointMake(HALF_OF_TEX_WIDTH / 2, HALF_OF_TEX_HEIGHT / 2);
+			- HALF_OF_TEX_POINT / 2.0f;
 		pc->img[Player_imgFall]->paint(dt, p);
 	}
 }

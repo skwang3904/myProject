@@ -56,6 +56,7 @@ void Player::initPlayerStat()
 	headNum = 7;
 	evasV = iPointZero;
 	combatV = iPointMake(0, 1);
+	combatPos = iPointZero;
 	combatAngleV = 270.0f;
 
 	touchPlayer = iRectZero;
@@ -83,6 +84,7 @@ void Player::initPlayerPosition()
 			break;
 		}
 	}
+	combatPos = playerPosition + iPointMake(0, img[0]->tex->height * img[0]->ratio / 2.0f);
 }
 
 void Player::createPlayerImage()
@@ -174,7 +176,7 @@ void Player::createPlayerImage()
 
 bool Player::actionCheck(bool key)
 {
-	if (key == false || pc->act != Act_idle)
+	if (key == false || act != Act_idle)
 		return true;
 	return false;
 }
@@ -188,17 +190,17 @@ void Player::paint(float dt)
 	}
 
 	sort->init();
-	sort->add(pc->playerPosition.y + HALF_OF_TEX_HEIGHT / 2.0f);
-	if (pc->pwp->isMelee)
+	sort->add(playerPosition.y + HALF_OF_TEX_HEIGHT / 2.0f);
+	if (pwp->isMelee)
 	{
-		meleeWeapon* mw = (meleeWeapon*)pc->pwp->wp;
-		sort->add(mw->combatPosition.y);
+		meleeWeapon* mw = (meleeWeapon*)pwp->wp;
+		sort->add(mw->centerPos.y);
 	}
 	else
 	{	
 		//range
-		rangeWeapon* rw = (rangeWeapon*)pc->pwp->wp;
-		sort->add(rw->combatPosition.y);
+		rangeWeapon* rw = (rangeWeapon*)pwp->wp;
+		sort->add(rw->centerPos.y);
 	}
 	sort->update();
 
@@ -301,38 +303,42 @@ void Player::choseWeapon(bool key)
 
 void Player::setPlayerTile()
 {
-	int n = tileNumber;
-	if (playerPosition.x + HALF_OF_TEX_WIDTH < maps[n]->tileOff.x)
+	iPoint size = HALF_OF_TEX_POINT * 2.0f;
+	iPoint p = playerPosition;
+	iPoint tile = maps[tileNumber]->tileOff;
+	if (p.x < tile.x)
 	{
-		tileNumber = n - 1;
-		playerPosition.x -= HALF_OF_TEX_WIDTH;
+		tileNumber--;
+		playerPosition.x -= size.x;
 	}
-	else if (playerPosition.x + HALF_OF_TEX_WIDTH > maps[n]->tileOff.x + RGTILE_X * RGTILE_Width - 1)
+	else if (p.x + size.x > tile.x + RGTILE_X * RGTILE_Width - 1)
 	{
-		tileNumber = n + 1;
-		playerPosition.x += HALF_OF_TEX_WIDTH;
+		tileNumber++;
+		playerPosition.x += size.x;
 	}
-	else if (playerPosition.y + HALF_OF_TEX_HEIGHT < maps[n]->tileOff.y)
+	else if (p.y < tile.y)
 	{
-		tileNumber = n - TILEOFF_SQRT;
-		playerPosition.y -= HALF_OF_TEX_HEIGHT;
+		tileNumber -= TILEOFF_SQRT;
+		playerPosition.y -= size.y;
 	}
-	else if (playerPosition.y + HALF_OF_TEX_HEIGHT > maps[n]->tileOff.y + RGTILE_Y * RGTILE_Height - 1)
+	else if (p.y + size.y > tile.y + RGTILE_Y * RGTILE_Height - 1)
 	{
-		tileNumber = n + TILEOFF_SQRT;
-		playerPosition.y += HALF_OF_TEX_HEIGHT;
+		tileNumber += TILEOFF_SQRT;
+		playerPosition.y += size.y;
 	}
 	else
 		printf("player setTile error\n");
+		//printf("%d\n ", tileNumber);
+
 
 	camPosition = iPointZero - maps[tileNumber]->tileOff;
 }
 
 void Player::drawtouchPlayer()
 {
-	iRect rt = iRectMake(playerPosition.x + img[0]->tex->width / 2, 
-		playerPosition.y + img[0]->tex->height * 0.75f,
-		HALF_OF_TEX_WIDTH * 2.0f, HALF_OF_TEX_HEIGHT * 2.0f);
+	iRect rt = iRectMake(playerPosition.x + img[0]->tex->width / 2.0f, 
+		playerPosition.y + img[0]->tex->height / 2.0f,
+		HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
 
 	touchPlayer = rt;
 
@@ -345,44 +351,50 @@ void Player::drawtouchPlayer()
 void Player::drawPlayer(float dt)
 {
 	iPoint v = iPointZero;
-	iPoint mv = pc->combatV;
-	if(act == Act_idle)
-	if (getKeyStat(keyboard_left)) //이동방향, 머리방향
+	iPoint comp = iPointZero;
+	int angle = 0;
+	if (act == Act_idle) 
 	{
-		v.x = -1;
-		headNum = 4;
+		if (getKeyStat(keyboard_left)) //이동방향, 머리방향
+		{
+			v.x = -1;
+			headNum = 4;
+			comp = iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT * 0.25f);
+			angle = 90;
+		}
+		else if (getKeyStat(keyboard_right))
+		{
+			v.x = 1;
+			headNum = 5;
+			comp = iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT * 0.75f);
+			angle = 270;
+		}
+		if (getKeyStat(keyboard_up))
+		{
+			v.y = -1;
+			headNum = 6;
+			comp = iPointMake(HALF_OF_TEX_WIDTH * 0.75f , HALF_OF_TEX_HEIGHT);
+			angle = 0;
 
-		mv.x = -1;
-		mv.y = 0;
-	}
-	else if (getKeyStat(keyboard_right))
-	{
-		v.x = 1;
-		headNum = 5;
-
-		mv.x = 1;
-		mv.y = 0;
-	}
-	if (getKeyStat(keyboard_up))
-	{
-		v.y = -1;
-		headNum = 6;
-
-		mv.x = 0;
-		mv.y = -1;
-	}
-	else if (getKeyStat(keyboard_down))
-	{
-		v.y = 1;
-		headNum = 7;
-
-		mv.x = 0;
-		mv.y = 1;
+		}
+		else if (getKeyStat(keyboard_down))
+		{
+			v.y = 1;
+			headNum = 7;
+			comp = iPointMake(HALF_OF_TEX_WIDTH * 0.25f, HALF_OF_TEX_HEIGHT);
+			angle = 180;
+		}
 	}
 	viewVector = v;
 
-	if (mv != iPointZero);
-	pc->combatV = mv;
+	if (v != iPointZero)
+	{
+		combatV = v;
+		if (combatV.y != 0)
+			combatV.x = 0;
+		combatAngleV = angle;
+		combatPos = playerPosition + comp;
+	}
 
 	bool ani = (v != iPointZero);
 	if (ani)
@@ -409,47 +421,46 @@ void Player::drawPlayer(float dt)
 	if (evasionPlayer(tile, dt))
 		return;
 
-	wallCheck(false, tile, pc->playerPosition, mp, HALF_OF_TEX_WIDTH * img[0]->ratio, HALF_OF_TEX_HEIGHT * img[0]->ratio);
+	iPoint size = HALF_OF_TEX_POINT / 2.0f;
+	iPoint playPos = playerPosition + size;
+	wallCheck(false, tile, playPos, mp, size.x, size.y);
+	playerPosition = playPos - (size );
 
-	img[headNum]->setTexAtIndex(pc->act == Act_attacking ? true : false);
+	img[headNum]->setTexAtIndex(act == Act_attacking ? true : false);
 	iPoint drawPos = playerPosition + SET_DRAW_OFF;
 
 	//히트박스 표시-------------------------------
 	drawtouchPlayer();
 
-	if (mv.x)
+	if (combatV.x)
 	{
-		img[2 * ani + 0]->reverse = (mv.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);
+		img[2 * ani + 0]->reverse = (combatV.x < 0 ? REVERSE_WIDTH : REVERSE_NONE);
 		img[2 * ani + 0]->paint(dt, drawPos);
 	}
-	else if (mv.y)
+	else if (combatV.y)
 		img[2 * ani + 1]->paint(dt, drawPos);
 
-#if 1
 	float dis = (img[2 * ani + 0]->tex->width - img[headNum]->tex->width) / 2;
 	drawPos += iPointMake(dis * img[headNum]->ratio, -img[headNum]->tex->height / 2 * img[headNum]->ratio);
 	img[headNum]->paint(dt, drawPos);
-#else
-	drawImage(img[headNum]->tex, drawPos.x + HALF_OF_TEX_WIDTH, drawPos.y + 3,
-		0, 0, img[headNum]->tex->width, img[headNum]->tex->height,
-		VCENTER | HCENTER, 1.0f, 1.0f,
-		img[headNum]->location, img[headNum]->angle, REVERSE_NONE);
-#endif
+}
+
+void endEvasion(iImage* me)
+{
+	pc->act = Act_idle;
+	pc->evasV = iPointZero;
 }
 
 bool Player::evasionPlayer(MapTile* tile, float dt)
 {
 	if (getKeyDown(keyboard_space) && act == Act_idle)
 	{
-		if (viewVector != iPointZero)
-		{
-			img[Player_imgEvasion]->startAnimation();
-			act = Act_evasion;
+		img[Player_imgEvasion]->startAnimation(endEvasion);
+		act = Act_evasion;
 
-			audioPlay(SND_JUMP);
-			
-			evasV = viewVector / iPointLength(viewVector);
-		}
+		audioPlay(SND_JUMP);
+
+		evasV = viewVector != iPointZero ? viewVector / iPointLength(viewVector) : iPointZero;
 	}
 
 	if (act != Act_evasion)
@@ -458,11 +469,15 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 	if (img[Player_imgEvasion]->animation)
 	{	
 		iPoint mp = evasV * (EVASION_DISTANCE * dt);
-		wallCheck(false, tile, playerPosition, mp, HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
+		iPoint size = HALF_OF_TEX_POINT / 2.0f;
 
-		iPoint dp = playerPosition + iPointMake(0,-30) + SET_DRAW_OFF;
-		iPoint p = iPointMake(dp.x - HALF_OF_TEX_WIDTH/2,
-			dp.y - HALF_OF_TEX_HEIGHT);
+		iPoint playPos = playerPosition + size;
+		wallCheck(false, tile, playPos, mp, size.x, size.y);
+		playerPosition = playPos - size;
+
+		iPoint dp = playerPosition + iPointMake(0, -30) + SET_DRAW_OFF;
+		iPoint p = iPointMake(dp.x - size.x, 
+			dp.y - (size.y * 2.0));
 		
 		//히트박스 표시-------------------------------
 		drawtouchPlayer();
@@ -470,13 +485,6 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 		img[Player_imgEvasion]->paint(dt, p);
 		
 		return true;
-	}
-	else //if (img[Player_imgEvasion]->animation == false)
-	{
-		act = Act_idle;
-		evasV = iPointZero;
-
-		return false;
 	}
 	
 	return false;
@@ -490,7 +498,7 @@ float findMoveTile(MapTile* tile, int x, int y)
 		return min;
 
 	float distance = iPointLength(
-		(pc->playerPosition + iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT))
+		(pc->playerPosition + HALF_OF_TEX_POINT)
 		- t->tileOff + iPointMake(RGTILE_Width * x + RGTILE_Width / 2,
 			RGTILE_Height * y + RGTILE_Height / 2));
 
@@ -631,7 +639,7 @@ bool Player::fallCheck(MapTile* tile, float dt)
 
 		pc->act = Act_falling;
 		iPoint p = pc->playerPosition - t->tileOff + setPos
-			- iPointMake(HALF_OF_TEX_WIDTH / 2, HALF_OF_TEX_HEIGHT / 2);
+			- HALF_OF_TEX_POINT / 2.0f;
 
 		pc->img[Player_imgFall]->selected = true;
 		pc->img[Player_imgFall]->paint(dt, p);

@@ -26,7 +26,13 @@ void loadRgProc()
 	loadRoomTile();
 	weapon = new Weapon();
 	pc = new Player();
+	{
+		for (int i = 0; i < TOTAL_WP_NUM; i++)
+		{
+			PWP[i].pos = maps[pc->tileNumber]->tileOff + RGTILE_CENTER;
+		}
 
+	}
 	createEffect();
 	createItemImg();// createEnemy + createChest
 	createEnemy();

@@ -38,7 +38,7 @@ struct rangeWeapon {
 	float heightReach;
 
 	float holdAngle;
-	iPoint combatPosition;
+	iPoint centerPos;
 
 	iRect hitBox;
 	bool attackEnemy;

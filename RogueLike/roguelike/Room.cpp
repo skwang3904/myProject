@@ -527,7 +527,8 @@ void drawObject(float dt)
 	}
 	
 	{
-		int tmp = check ? 01 : WALLTILE;
+		//int tmp = check ? 01 : WALLTILE;
+		int tmp = check ? 01 : 01;
 		for (int j = 0; j < 2; j++) // 나무통
 		{
 			MapObject* mobj = m->mapObj[j];
@@ -556,7 +557,7 @@ void drawObject(float dt)
 			iPoint p = m->tileOff + mobj->objPos + SET_DRAW_OFF;
 			iImage* img = mobj->objImg;
 			if (j != 2)
-			img->setTexAtIndex(check);
+				img->setTexAtIndex(check);
 			img->paint(dt, p);
 		}
 	}
@@ -570,6 +571,20 @@ void drawRoomTile(float dt)
 	m->mapImg->paint(dt, p);
 
 	drawObject(dt);
+
+	int num = RGTILE_X * RGTILE_Y;
+	iPoint tmp = m->tileOff + SET_DRAW_OFF;
+	setRGBA(0, 1, 0, 0.1f);
+	for (int i = 0; i < num; i++)
+	{
+		if (m->rgTile[i] == WALLTILE)
+		{
+			fillRect(tmp.x + RGTILE_Width * (i % RGTILE_X), tmp.y + RGTILE_Height * (i / RGTILE_X),
+				RGTILE_Width, RGTILE_Height);
+		}
+
+	}
+		setRGBA(1, 1, 1, 1);
 
 }
 
@@ -627,6 +642,7 @@ void wallCheck(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float half
 	MapTile* t = tile;
 	if (tile->rgTile == NULL)
 		return;
+
 	bool evase = (pc->act == Act_evasion);
 	if (mp.x < 0)
 	{

@@ -29,6 +29,7 @@ void createPopHP()
 		"assets/PlayerUI/Bar_Fill_Green.png",
 		"assets/PlayerUI/Bar_Fill_Red.png"
 	};
+	// fbo 로 만들것
 	iImage** imgs = (iImage**)malloc(sizeof(iImage*) * 6);
 	iImage* img;
 	Texture* tex;
@@ -240,7 +241,6 @@ iImage* imgInfoButten;
 void drawCombat(float dt)
 {
 	iPoint p;
-
 	PlayerWP* pw;
 
 	for (int i = 0; i < pc->weaponArray->count; i++)
@@ -254,8 +254,8 @@ void drawCombat(float dt)
 			mw->img->setTexAtIndex(1);
 			if (pw == pc->pwp)
 			{
-				if (popCombatMenu->selected == i) setRGBA(0, 0, 1, 1);
-				else setRGBA(0, 1, 0, 1);
+				if (popCombatMenu->selected == i) setRGBA(0, 0, 1, 0.5f);
+				else setRGBA(0, 1, 0, 0.5f);
 				fillRect(p.x, p.y, mw->img->tex->width, mw->img->tex->height);
 				setRGBA(1, 1, 1, 1);
 			}
@@ -269,8 +269,8 @@ void drawCombat(float dt)
 			rw->img->setTexAtIndex(1);
 			if (pw == pc->pwp)
 			{
-				if (popCombatMenu->selected == i) setRGBA(0, 0, 1, 1);
-				else setRGBA(0, 1, 0, 1);
+				if (popCombatMenu->selected == i) setRGBA(0, 0, 1, 0.5f);
+				else setRGBA(0, 1, 0, 0.5f);
 				fillRect(p.x, p.y, rw->img->tex->width, rw->img->tex->height);
 				setRGBA(1, 1, 1, 1);
 			}
@@ -306,16 +306,33 @@ void createPopCombatMenu()
 	popCombatMenu = pop;
 
 	iImage* img = new iImage();
-	Texture* tex = createImage("assets/PlayerUI/inven button1.png");
+
+	setRGBA(1, 1, 1, 1);
+	iPoint size = iPointMake(130, 120);
+	Texture* tex = createTexture(size.x, size.y);
+	fbo->bind(tex);
+	fbo->setSize(size.x,size.y);
+
+	Texture* texCbUI = createImage("assets/PlayerUI/combatUI.png");
+	drawImage(texCbUI, 0, 0,
+		0,0, texCbUI->width, texCbUI->height,
+		TOP | LEFT, size.x / texCbUI->width, size.y / texCbUI->height,
+		2, 0);
+	freeImage(texCbUI);
+
+	fbo->backSize();
+	fbo->unbind();
+
 	img->addObject(tex);
 	freeImage(tex);
+	
 	img->position = p;
 	pop->addObject(img);
 
 	for (int i = 1; i < 8; i++)
 	{
 		iImage* tmp = img->copy();
-		tmp->position = p +iPointMake(150 * (i % 2), 150 * (i / 2));
+		tmp->position = p + iPointMake(150 * (i % 2), 150 * (i / 2));
 		pop->addObject(tmp);
 	}
 
@@ -327,16 +344,17 @@ void createPopCombatMenu()
 	img = new iImage();
 	img->addObject(setCombatInfo(0));
 	img->position = p + iPointMake(-350, 0);
-	pop->addObject(img);
 	imgCombatInfo = img;
+	pop->addObject(img);
 
 	img = new iImage();
 	tex = createImage("assets/PlayerUI/check button.png");
 	img->addObject(tex);
 	freeImage(tex);
+
 	img->position = imgCombatInfo->position + iPointMake(250, 0);
-	pop->addObject(img);
 	imgInfoButten = img;
+	pop->addObject(img);
 
 	pop->_showDt = 0.01f;
 }

@@ -29,7 +29,7 @@ void rangeWeapon::init(const char* info, Range* r)
 	heightReach = rs->heightReach;
 	holdAngle = rs->holdAngle;
 
-	combatPosition = iPointZero;
+	centerPos = iPointZero;
 	hitBox = iRectZero;
 	attackEnemy = false;
 }
@@ -131,9 +131,9 @@ void draw(rangeWeapon* rw, float dt, iPoint dropP)
 	iPoint setp = SET_DRAW_OFF;
 	if (pc->pwp->wp == rw)
 	{
-		iPoint centerP = rw->combatPosition;
+		iPoint centerP = rw->centerPos;
 		iRect rt;
-		weaponPosAndRt(rw, rw->combatPosition, centerP, rt);
+		weaponPosAndRt(rw, rw->centerPos, centerP, rt);
 
 		drawImage(tex,
 			setp.x + centerP.x,

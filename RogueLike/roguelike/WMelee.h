@@ -37,18 +37,19 @@ struct meleeWeapon {
 	float heightReach;
 
 	float holdAngle;
-	iPoint combatPosition;
+	iPoint centerPos;
 
 	iRect hitBox;
 	bool attackEnemy;
 
 	void init(const char* info, Melee* m);
+	void draw(float dt, iPoint dropPos);
+
+	void setCenterPos();
 };
 
 
 void createMeleeWeapon();
 void freeMeleeWeapon();
 
-void weaponPosAndRt(meleeWeapon* mw, iPoint& wcp, iPoint& centerP, iRect& rt);
-
-void draw(meleeWeapon* mw, float dt, iPoint dropP);
+//void draw(meleeWeapon* mw, float dt, iPoint dropP);

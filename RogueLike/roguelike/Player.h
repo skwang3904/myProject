@@ -10,10 +10,9 @@
 - 장비 모션, 충돌체크
 */
 
-#define HALF_OF_TEX_WIDTH	pc->img[0]->tex->width/2
-#define HALF_OF_TEX_HEIGHT	pc->img[0]->tex->height/2
-#define HALF_OF_TEX_POINT	iPointMake(pc->img[0]->tex->width/2,	\
-										pc->img[0]->tex->height/2)
+#define HALF_OF_TEX_WIDTH	pc->img[0]->tex->width / 2.0f * pc->img[0]->ratio
+#define HALF_OF_TEX_HEIGHT	pc->img[0]->tex->height / 2.0f * pc->img[0]->ratio
+#define HALF_OF_TEX_POINT	iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT)
 
 #define Player_imgFall 8
 #define Player_imgEvasion 9
@@ -71,11 +70,12 @@ public:
 	iPoint viewVector;
 	int headNum;
 	iPoint evasV;
-	iPoint combatV;
-	float combatAngleV;
 
 	iRect touchPlayer;
 
+	iPoint combatV;
+	iPoint combatPos;
+	float combatAngleV;
 	rgArray* weaponArray;
 	PlayerWP* pwp;
 	int pwpCount;

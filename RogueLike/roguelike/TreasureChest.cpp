@@ -103,7 +103,7 @@ void Chest::paint(float dt)
 		if (pc->pwp->isMelee)
 		{
 			meleeWeapon* mw = (meleeWeapon*)pc->pwp->wp;
-			if (pc->act == Act_attacking && mw->attackSpeed > -0.1f)
+			if (pc->act == Act_attack && mw->attackSpeed > -0.1f)
 			{
 				if (containRect(mw->hitBox, touchRect))
 					open = true;

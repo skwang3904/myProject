@@ -252,30 +252,40 @@ void drawCombat(float dt)
 		{
 			meleeWeapon* mw = (meleeWeapon*)pw->wp;
 			mw->img->setTexAtIndex(1);
+			Texture* tex = mw->img->tex;
 			if (pw == pc->pwp)
 			{
 				if (popCombatMenu->selected == i) setRGBA(0, 0, 1, 0.5f);
 				else setRGBA(0, 1, 0, 0.5f);
-				fillRect(p.x, p.y, mw->img->tex->width, mw->img->tex->height);
+				fillRect(p.x, p.y, tex->width, tex->height);
 				setRGBA(1, 1, 1, 1);
 			}
 
-			drawImage(mw->img->tex, p.x, p.y, TOP | LEFT);
+			drawImage(tex, p.x, p.y,
+				0, 0, tex->width, tex->height,
+				TOP | LEFT, 1.0f, 1.0f,
+				2, 0, REVERSE_HEIGHT);
+
 			mw->img->setTexAtIndex(0);
 		}
 		else //range
 		{ 
 			rangeWeapon* rw = (rangeWeapon*)pw->wp;
 			rw->img->setTexAtIndex(1);
+			Texture* tex = rw->img->tex;
 			if (pw == pc->pwp)
 			{
 				if (popCombatMenu->selected == i) setRGBA(0, 0, 1, 0.5f);
 				else setRGBA(0, 1, 0, 0.5f);
-				fillRect(p.x, p.y, rw->img->tex->width, rw->img->tex->height);
+				fillRect(p.x, p.y, tex->width, tex->height);
 				setRGBA(1, 1, 1, 1);
 			}
 
-			drawImage(rw->img->tex, p.x, p.y, TOP | LEFT);
+			drawImage(tex, p.x, p.y,
+				0, 0, tex->width, tex->height,
+				TOP | LEFT, 1.0f, 1.0f,
+				2, 0, REVERSE_HEIGHT);
+
 			rw->img->setTexAtIndex(0);
 		}
 	}

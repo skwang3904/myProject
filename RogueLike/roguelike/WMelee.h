@@ -7,6 +7,7 @@
 
 struct meleeWeapon;
 typedef void (*Method_Combat)(float dt, iPoint p);
+typedef bool (*Method_MeleeAttack)(float dt);
 
 struct meleeStat {
 	float attackDmg;
@@ -14,11 +15,17 @@ struct meleeStat {
 	float widthReach;
 	float heightReach;
 	float holdAngle;
+
+	float atkRange;
+	float atkAngle;
+	iPoint atkRatio;
+	int cycleCount;
 };
 
 struct Melee {
 	meleeWeapon* mw;
 	Method_Combat method;
+	Method_MeleeAttack methodMelee;
 	meleeStat stat;
 
 	const char* strImg;
@@ -39,13 +46,24 @@ struct meleeWeapon {
 	float holdAngle;
 	iPoint centerPos;
 
+	float atkRange;
+	float atkAngle;
+	iPoint atkRatio;
+	int cycleCount;
+
+	iPoint sp;
+	iPoint ep;
+
 	iRect hitBox;
 	bool attackEnemy;
 
 	void init(const char* info, Melee* m);
 	void draw(float dt, iPoint dropPos);
 
-	void setCenterPos();
+	iPoint setCenterPos();
+	iRect setHitBox(iPoint& cp);
+
+	Method_MeleeAttack methodMelee;
 };
 
 

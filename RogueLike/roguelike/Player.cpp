@@ -57,7 +57,7 @@ void Player::initPlayerStat()
 	evasV = iPointZero;
 	combatV = iPointMake(0, 1);
 	combatPos = iPointZero;
-	combatAngleV = 270.0f;
+	combatAngleV = 180.0f;
 
 	touchPlayer = iRectZero;
 
@@ -84,7 +84,8 @@ void Player::initPlayerPosition()
 			break;
 		}
 	}
-	combatPos = playerPosition + iPointMake(0, img[0]->tex->height * img[0]->ratio / 2.0f);
+	combatPos = playerPosition + iPointMake(img[0]->tex->width / 2.0f * img[0]->ratio * 0.5f,
+											img[0]->tex->height / 2.0f * img[0]->ratio * 1.5f);
 }
 
 void Player::createPlayerImage()
@@ -204,13 +205,16 @@ void Player::paint(float dt)
 	}
 	sort->update();
 
-	for (int i = 0; i < sort->sdNum; i++) // 수정필요
-	{
-		if (sort->get(i) == 0)
-			drawPlayer(dt);
-		else
-			combatDraw(dt);
-	}
+	//for (int i = 0; i < sort->sdNum; i++) // 수정필요
+	//{
+	//	if (sort->get(i) == 0)
+	//		drawPlayer(dt);
+	//	else
+	//		combatDraw(dt);
+	//}
+
+	drawPlayer(dt);
+	combatDraw(dt);
 
 	choseWeapon(getKeyDown(keyboard_tab));
 	rootCombat(getKeyDown(keyboard_i));
@@ -359,21 +363,21 @@ void Player::drawPlayer(float dt)
 		{
 			v.x = -1;
 			headNum = 4;
-			comp = iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT * 0.25f);
+			comp = iPointMake(HALF_OF_TEX_WIDTH * 0.5f, HALF_OF_TEX_HEIGHT * 0.5f);
 			angle = 90;
 		}
 		else if (getKeyStat(keyboard_right))
 		{
 			v.x = 1;
 			headNum = 5;
-			comp = iPointMake(HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT * 0.75f);
+			comp = iPointMake(HALF_OF_TEX_WIDTH * 1.5f, HALF_OF_TEX_HEIGHT * 1.5f);
 			angle = 270;
 		}
 		if (getKeyStat(keyboard_up))
 		{
 			v.y = -1;
 			headNum = 6;
-			comp = iPointMake(HALF_OF_TEX_WIDTH * 0.75f , HALF_OF_TEX_HEIGHT);
+			comp = iPointMake(HALF_OF_TEX_WIDTH * 1.5f , HALF_OF_TEX_HEIGHT * 0.5f);
 			angle = 0;
 
 		}
@@ -381,7 +385,7 @@ void Player::drawPlayer(float dt)
 		{
 			v.y = 1;
 			headNum = 7;
-			comp = iPointMake(HALF_OF_TEX_WIDTH * 0.25f, HALF_OF_TEX_HEIGHT);
+			comp = iPointMake(HALF_OF_TEX_WIDTH * 0.5f, HALF_OF_TEX_HEIGHT * 1.5f);
 			angle = 180;
 		}
 	}
@@ -399,7 +403,7 @@ void Player::drawPlayer(float dt)
 	bool ani = (v != iPointZero);
 	if (ani)
 		v /= iPointLength(v);
-	iPoint mp = v * (moveSpeed * dt) * (act == Act_attacking ? 0.1f : 1.0f);
+	iPoint mp = v * (moveSpeed * dt) * (act == Act_attack ? 0.1f : 1.0f);
 
 	iPoint t = maps[tileNumber]->tileOff;
 	float x = playerPosition.x + HALF_OF_TEX_WIDTH;
@@ -426,7 +430,7 @@ void Player::drawPlayer(float dt)
 	wallCheck(false, tile, playPos, mp, size.x, size.y);
 	playerPosition = playPos - (size );
 
-	img[headNum]->setTexAtIndex(act == Act_attacking ? true : false);
+	img[headNum]->setTexAtIndex(act == Act_attack ? true : false);
 	iPoint drawPos = playerPosition + SET_DRAW_OFF;
 
 	//히트박스 표시-------------------------------

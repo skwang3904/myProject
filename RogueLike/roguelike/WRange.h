@@ -50,7 +50,3 @@ struct rangeWeapon {
 
 void createRangeWeapon();
 void freeRangeWeapon();
-
-void weaponPosAndRt(rangeWeapon* rw, iPoint& wcp, iPoint& centerP, iRect& rt);
-
-void draw(rangeWeapon* rw, float dt, iPoint dropP);

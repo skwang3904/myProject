@@ -82,11 +82,14 @@ void MonsterData::drawShowHP(float dt)
 
 }
 
+float test = 0.1f;
 void MonsterData::takeDmgEnemy(float dt, float dmg)
 {
 	if (takeDmg == false)
 	{
 		hp -= dmg;
+		if (dmg < 5)	test = 0.1f;
+		else			test = 1.0f;
 		takeDmg = true;
 		showHp = true;
 		if (act != Act_meleeAtk && act != Act_rangeAtk)
@@ -107,7 +110,7 @@ void MonsterData::takeDmgEffect(float dt)
 	//setRGBA(1, 1, 1, 1);
 
 	takeDmgTime += dt;
-	if (takeDmgTime > _takeDmgTime)
+	if (takeDmgTime > _takeDmgTime * test)
 	{
 		takeDmgTime = 0.0f;
 		takeDmg = false;

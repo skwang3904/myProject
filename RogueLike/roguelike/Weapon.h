@@ -27,7 +27,6 @@ extern PlayerWP* PWP;
 
 //------------------------------------------------------------------------
 
-iImage* infoFromMW(const char* info);
 class Weapon
 {
 public:
@@ -40,4 +39,10 @@ public:
 	iPoint wDropPos[10];
 };
 extern Weapon* weapon;
+
+iImage* infoFromMW(const char* info);
+
+void meleeWeaponHit(float dt, float dmg, iRect& rt);
+void hitMonster(float dt, float dmg, iRect& rt);
+void hitObject(float dt, float dmg, iRect& rt);
 

@@ -14,7 +14,7 @@
 
 enum CharAction {
 	Act_idle = 0,
-	Act_attacking,
+	Act_attack,
 	Act_meleeAtk,
 	Act_rangeAtk,
 

@@ -2,6 +2,8 @@
 
 #include "Room.h"
 
+#include "EnemyData.h"
+
 #include "WMelee.h"
 #include "WRange.h"
 
@@ -66,4 +68,43 @@ iImage* infoFromMW(const char* info)
 	freeImage(tex);
 
 	return img;
+}
+
+//----------------------------------------------------------------------------'
+
+void meleeWeaponHit(float dt, float dmg, iRect& rt)
+{
+	hitMonster(dt, dmg, rt);
+	hitObject(dt, dmg, rt);
+}
+
+void hitMonster(float dt, float dmg, iRect& rt)
+{
+	for (int i = 0; i < monsterNum; i++)
+	{
+		MonsterData* t = totalMonster[i];
+		if (t->tileNumber == pc->tileNumber)
+		{
+			if (containRect(rt, t->touchEnemy))
+				t->takeDmgEnemy(dt, dmg);
+		}
+	}
+}
+
+void hitObject(float dt, float dmg, iRect& rt)
+{
+	MapTile* m = maps[pc->tileNumber];
+	for (int i = 0; i < m->mapObjNum; i++)
+	{
+		if (m->mapObj[i]->type == MapObj_Broke)
+		{
+			iRect objhit = m->mapObj[i]->hitBox;
+			objhit.origin += m->tileOff;
+
+			if (containRect(rt, objhit))
+			{
+				m->mapObj[i]->objImg->setTexAtIndex(1);
+			}
+		}
+	}
 }

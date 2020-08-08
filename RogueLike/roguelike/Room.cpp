@@ -240,11 +240,12 @@ void setRoomTile()
 			continue;
 
 		MapTile* m = maps[i];
+		iImage* img;
 
-		m->mapObjNum = 7;
+#if 0
+		m->mapObjNum = 3;
 		m->mapObj = (MapObject**)malloc(sizeof(MapObject*) * m->mapObjNum);
 
-		iImage* img;
 		for (j = 0; j < m->mapObjNum; j++)
 		{
 			m->mapObj[j] = (MapObject*)malloc(sizeof(MapObject));
@@ -259,7 +260,7 @@ void setRoomTile()
 
 				mobj->type = MapObj_Nomal;
 				mobj->hitBox = iRectMake(mobj->objPos.x, mobj->objPos.y,
-											RGTILE_Width * 2, RGTILE_Height * 2);
+					RGTILE_Width * 2, RGTILE_Height * 2);
 
 				mobj->objImg = imgBarrel->copy();
 				img = mobj->objImg;
@@ -288,90 +289,100 @@ void setRoomTile()
 				img->ratio = ratio;
 				img->reverse = REVERSE_HEIGHT;
 			}
+		}
+#endif
+		MapObject** mo = mapObjs[random() % 5];
+		m->mapObj = (MapObject**)malloc(sizeof(MapObject*));
+		for (j = 0; j < );
+		m->mapObj
 
-			else if (j < 7) // 문 이미지
+
+		m->mapDoor = (MapObject**)malloc(sizeof(MapObject*) * 4);
+
+		for (j = 0; j < 4; j++)
+		{
+			m->mapDoor[j] = (MapObject*)malloc(sizeof(MapObject));
+			MapObject* mobj = m->mapDoor[j];
+			iPoint drp = iPointZero;
+			bool check = false;
+			mobj->objImg = NULL;
+			mobj->objTile = NULL;
+			int angle = 0;
+			if (j == 0 && m->rgTile[RGTILE_X * (RGTILE_Y / 2)] == DR)
 			{
-				iPoint drp = iPointZero;
-				bool check = false;
-				mobj->objImg = NULL;
-				mobj->objTile = NULL;
-				int angle = 0;
-				if (j == 3 && m->rgTile[RGTILE_X * (RGTILE_Y / 2)] == DR)
+				check = true;
+				angle = 180;
+
+				mobj->objTileNum = 4;
+				mobj->objTile = (int*)calloc(sizeof(int), mobj->objTileNum);
+				for (int k = 0; k < mobj->objTileNum; k++)
 				{
-					check = true;
-					angle = 180;
-
-					mobj->objTileNum = 4;
-					mobj->objTile = (int*)calloc(sizeof(int), mobj->objTileNum);
-					for (int k = 0; k < mobj->objTileNum; k++)
-					{
-						mobj->objTile[k] = RGTILE_X * (RGTILE_Y / 2 - 2 + k);
-						m->rgTile[mobj->objTile[k]] = WALLTILE;
-					}
-					drp = iPointMake(0, RGTILE_Height * (RGTILE_Y / 2 - 2)) 
-						- iPointMake(RGTILE_Width * 4, RGTILE_Height);
+					mobj->objTile[k] = RGTILE_X * (RGTILE_Y / 2 - 2 + k);
+					m->rgTile[mobj->objTile[k]] = WALLTILE;
 				}
-				if (j == 4 && m->rgTile[RGTILE_X * (RGTILE_Y / 2) + RGTILE_X - 1] == DR)
+				drp = iPointMake(0, RGTILE_Height * (RGTILE_Y / 2 - 2))
+					- iPointMake(RGTILE_Width * 4, RGTILE_Height);
+			}
+			if (j == 1 && m->rgTile[RGTILE_X * (RGTILE_Y / 2) + RGTILE_X - 1] == DR)
+			{
+				check = true;
+				angle = 0;
+
+				mobj->objTileNum = 4;
+				mobj->objTile = (int*)calloc(sizeof(int), mobj->objTileNum);
+				for (int k = 0; k < mobj->objTileNum; k++)
 				{
-					check = true;
-					angle = 0;
-
-					mobj->objTileNum = 4;
-					mobj->objTile = (int*)calloc(sizeof(int), mobj->objTileNum);
-					for (int k = 0; k < mobj->objTileNum; k++)
-					{
-						mobj->objTile[k] = RGTILE_X * (RGTILE_Y / 2 - 2 + k) + RGTILE_X - 1;
-						m->rgTile[mobj->objTile[k]] = WALLTILE;
-					}
-					drp = iPointMake(RGTILE_Width * (RGTILE_X - 1), RGTILE_Height * (RGTILE_Y / 2 - 2))
-						- iPointMake(0, RGTILE_Height);
-
+					mobj->objTile[k] = RGTILE_X * (RGTILE_Y / 2 - 2 + k) + RGTILE_X - 1;
+					m->rgTile[mobj->objTile[k]] = WALLTILE;
 				}
-				if (j == 5 && m->rgTile[RGTILE_X / 2] == DR)
+				drp = iPointMake(RGTILE_Width * (RGTILE_X - 1), RGTILE_Height * (RGTILE_Y / 2 - 2))
+					- iPointMake(0, RGTILE_Height);
+
+			}
+			if (j == 2 && m->rgTile[RGTILE_X / 2] == DR)
+			{
+				check = true;
+				angle = 90;
+
+				mobj->objTileNum = 4;
+				mobj->objTile = (int*)calloc(sizeof(int), mobj->objTileNum);
+				for (int k = 0; k < mobj->objTileNum; k++)
 				{
-					check = true;
-					angle = 90;
-
-					mobj->objTileNum = 4;
-					mobj->objTile = (int*)calloc(sizeof(int), mobj->objTileNum);
-					for (int k = 0; k < mobj->objTileNum; k++)
-					{
-						mobj->objTile[k] = RGTILE_X / 2 - 2 + k;
-						m->rgTile[mobj->objTile[k]] = WALLTILE;
-					}
-					drp = iPointMake(RGTILE_Width * (RGTILE_X / 2 - 2), 0)
-						- iPointMake(RGTILE_Width, RGTILE_Height * 4);
-
+					mobj->objTile[k] = RGTILE_X / 2 - 2 + k;
+					m->rgTile[mobj->objTile[k]] = WALLTILE;
 				}
-				if (j == 6 && m->rgTile[RGTILE_X * (RGTILE_Y - 1) + RGTILE_X / 2] == DR)
+				drp = iPointMake(RGTILE_Width * (RGTILE_X / 2 - 2), 0)
+					- iPointMake(RGTILE_Width, RGTILE_Height * 4);
+
+			}
+			if (j == 3 && m->rgTile[RGTILE_X * (RGTILE_Y - 1) + RGTILE_X / 2] == DR)
+			{
+				check = true;
+				angle = 270;
+
+				mobj->objTileNum = 4;
+				mobj->objTile = (int*)calloc(sizeof(int), mobj->objTileNum);
+				for (int k = 0; k < mobj->objTileNum; k++)
 				{
-					check = true;
-					angle = 270;
-
-					mobj->objTileNum = 4;
-					mobj->objTile = (int*)calloc(sizeof(int), mobj->objTileNum);
-					for (int k = 0; k < mobj->objTileNum; k++)
-					{
-						mobj->objTile[k] = RGTILE_X * (RGTILE_Y - 1) + RGTILE_X / 2 - 2 + k;
-						m->rgTile[mobj->objTile[k]] = WALLTILE;
-					}
-					drp = iPointMake(RGTILE_Width * (RGTILE_X / 2 - 2), RGTILE_Height * (RGTILE_Y - 1))
-						 - iPointMake(RGTILE_Width,0);
+					mobj->objTile[k] = RGTILE_X * (RGTILE_Y - 1) + RGTILE_X / 2 - 2 + k;
+					m->rgTile[mobj->objTile[k]] = WALLTILE;
 				}
+				drp = iPointMake(RGTILE_Width * (RGTILE_X / 2 - 2), RGTILE_Height * (RGTILE_Y - 1))
+					- iPointMake(RGTILE_Width, 0);
+			}
 
-				if (check)
-				{
-					mobj->objImg = imgDoorNormal->copy();
-					img = mobj->objImg;
+			if (check)
+			{
+				mobj->objImg = imgDoorNormal->copy();
+				img = mobj->objImg;
 
-					img->ratio = RGTILE_Height * 4.0f / img->tex->height * 1.5f;
-					img->reverse = REVERSE_HEIGHT;
-					img->angle = angle;
-					img->lockAngle = true;
+				img->ratio = RGTILE_Height * 4.0f / img->tex->height * 1.5f;
+				img->reverse = REVERSE_HEIGHT;
+				img->angle = angle;
+				img->lockAngle = true;
 
-					mobj->objPos = drp;
-					mobj->type = MapObj_Door;
-				}
+				mobj->objPos = drp;
+				mobj->type = MapObj_Door;
 			}
 		}
 
@@ -572,20 +583,21 @@ void drawRoomTile(float dt)
 
 	drawObject(dt);
 
-	int num = RGTILE_X * RGTILE_Y;
-	iPoint tmp = m->tileOff + SET_DRAW_OFF;
-	setRGBA(0, 1, 0, 0.1f);
-	for (int i = 0; i < num; i++)
-	{
-		if (m->rgTile[i] == WALLTILE)
+	{ 
+		int num = RGTILE_X * RGTILE_Y;
+		iPoint tmp = m->tileOff + SET_DRAW_OFF;
+		setRGBA(0, 1, 0, 0.1f);
+		for (int i = 0; i < num; i++)
 		{
-			fillRect(tmp.x + RGTILE_Width * (i % RGTILE_X), tmp.y + RGTILE_Height * (i / RGTILE_X),
-				RGTILE_Width, RGTILE_Height);
+			if (m->rgTile[i] == WALLTILE)
+			{
+				fillRect(tmp.x + RGTILE_Width * (i % RGTILE_X), tmp.y + RGTILE_Height * (i / RGTILE_X),
+					RGTILE_Width, RGTILE_Height);
+			}
 		}
-
 	}
-		setRGBA(1, 1, 1, 1);
 
+	setRGBA(1, 1, 1, 1);
 }
 
 void passTileAnimation(float dt)
@@ -795,5 +807,131 @@ void wallCheck(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float half
 		pos.y += mp.y;
 		if (pos.y > max - halfOfTexH * 2.0f - 1)
 			pos.y = max - halfOfTexH * 2.0f - 1;
+	}
+}
+
+//--------------------------------------------------------------------------------------------
+// createObject
+
+MapObject*** mapObjs;
+MapObject*** mapBossObjs;
+MapObject*** mapTreasureObjs;
+
+void createObject()
+{
+	int i, j, k;
+	iImage* img;
+
+	int numList = 5;
+	int numObj = 3;
+
+	mapObjs = (MapObject***)malloc(sizeof(MapObject**) * numList);
+
+	iPoint p[3] = {
+		{8,  6},
+		{24, 12},
+		{16, 18}
+	};
+
+	for (i = 0; i < numList; i++)
+	{
+		mapObjs[i] = (MapObject**)malloc(sizeof(MapObject*) * numObj); // mapobjNum
+		p[0] += iPointMake(4, 0);
+		p[1] += iPointMake(0, -3);
+		p[2] += iPointMake(-2, -3);
+
+		for (j = 0; j < numObj; j++)
+		{
+			mapObjs[i][j] = (MapObject*)malloc(sizeof(MapObject));
+			MapObject* mo = mapObjs[i][j];
+
+			mo->objPos = iPointMake(RGTILE_Width, RGTILE_Height) * p[j];
+			mo->objTileNum = 4;
+			mo->objTile = (int*)calloc(sizeof(int), mo->objTileNum);
+			for (k = 0; k < mo->objTileNum; k++)
+				mo->objTile[k] = RGTILE_X * (p[j].y + k / 2) + p[j].x + k % 2;
+
+			mo->type = MapObj_Nomal;
+			mo->hitBox = iRectMake(mo->objPos.x, mo->objPos.y,
+				RGTILE_Width * 2, RGTILE_Height * 2);
+
+			mo->objImg = imgBarrel->copy();
+			img = mo->objImg;
+
+			float ratio = max(RGTILE_Width / img->tex->width, RGTILE_Height / img->tex->height) * 2.0f;
+			img->ratio = ratio;
+			img->reverse = REVERSE_HEIGHT;
+		}
+	}
+
+	numList = 1;
+	numObj = 3;
+	mapBossObjs = (MapObject***)malloc(sizeof(MapObject**) * numList);
+	p[0] = { 16,  6 };
+	p[1] = { 16,  12 };
+	p[2] = { 16,  18 };
+
+	for (i = 0; i < numList; i++)
+	{
+		mapBossObjs[i] = (MapObject**)malloc(sizeof(MapObject*) * numObj); // mapobjNum
+
+		for (j = 0; j < numObj; j++)
+		{
+			mapBossObjs[i][j] = (MapObject*)malloc(sizeof(MapObject));
+			MapObject* mo = mapBossObjs[i][j];
+
+			mo->objPos = iPointMake(RGTILE_Width, RGTILE_Height) * p[j];
+			mo->objTileNum = 4;
+			mo->objTile = (int*)calloc(sizeof(int), mo->objTileNum);
+			for (k = 0; k < mo->objTileNum; k++)
+				mo->objTile[k] = RGTILE_X * (p[j].y + k / 2) + p[j].x + k % 2;
+
+			mo->type = MapObj_Broke;
+			mo->hitBox = iRectMake(mo->objPos.x, mo->objPos.y,
+				RGTILE_Width * 2, RGTILE_Height * 2);
+
+			mo->objImg = imgBarrel->copy();
+			img = mo->objImg;
+
+			float ratio = max(RGTILE_Width / img->tex->width, RGTILE_Height / img->tex->height) * 2.0f;
+			img->ratio = ratio;
+			img->reverse = REVERSE_HEIGHT;
+		}
+	}
+
+
+	numList = 1;
+	numObj = 3;
+	mapTreasureObjs = (MapObject***)malloc(sizeof(MapObject**) * numList);
+	p[0] = { 8,  12 };
+	p[1] = { 16,  12 };
+	p[2] = { 24,  12 };
+
+	for (i = 0; i < numList; i++)
+	{
+		mapTreasureObjs[i] = (MapObject**)malloc(sizeof(MapObject*) * numObj); // mapobjNum
+
+		for (j = 0; j < numObj; j++)
+		{
+			mapTreasureObjs[i][j] = (MapObject*)malloc(sizeof(MapObject));
+			MapObject* mo = mapTreasureObjs[i][j];
+
+			mo->objPos = iPointMake(RGTILE_Width, RGTILE_Height) * p[j];
+			mo->objTileNum = 4;
+			mo->objTile = (int*)calloc(sizeof(int), mo->objTileNum);
+			for (k = 0; k < mo->objTileNum; k++)
+				mo->objTile[k] = RGTILE_X * (p[j].y + k / 2) + p[j].x + k % 2;
+
+			mo->type = MapObj_Broke;
+			mo->hitBox = iRectMake(mo->objPos.x, mo->objPos.y,
+				RGTILE_Width * 2, RGTILE_Height * 2);
+
+			mo->objImg = imgBarrel->copy();
+			img = mo->objImg;
+
+			float ratio = max(RGTILE_Width / img->tex->width, RGTILE_Height / img->tex->height) * 2.0f;
+			img->ratio = ratio;
+			img->reverse = REVERSE_HEIGHT;
+		}
 	}
 }

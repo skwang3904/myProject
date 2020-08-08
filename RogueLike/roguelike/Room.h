@@ -28,6 +28,7 @@ enum MapObjType {
 	MapObj_Broke,
 };
 
+class UseItem;
 struct MapObject
 {
 	iImage* objImg; // 오브젝트 애니메이션
@@ -39,6 +40,7 @@ struct MapObject
 	MapObjType type;
 	iRect hitBox;
 
+	UseItem* item;
 };
 
 struct MapTile 
@@ -51,6 +53,7 @@ struct MapTile
 	
 	int mapObjNum;
 	MapObject** mapObj;
+	MapObject** mapDoor;
 };
 extern MapTile** maps;
 

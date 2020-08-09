@@ -12,7 +12,7 @@
 void loadRgGame()
 {
 
-#if 1
+#if 0
 	loadRgProc();
 	gamestat = gs_proc;
 #else

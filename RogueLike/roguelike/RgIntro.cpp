@@ -243,4 +243,3 @@ bool keyPopIntroOption(iKeyState stat, iPoint point)
 {
 	return false;
 }
-

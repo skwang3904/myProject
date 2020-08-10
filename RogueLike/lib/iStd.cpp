@@ -423,6 +423,11 @@ uint32 iFBO::bindingTexID()
     return 0;
 }
 
+void iFBO::setSize(iPoint p)
+{
+    setSize(p.x, p.y);
+}
+
 void iFBO::setSize(float w, float h)
 {
     size = devSize;

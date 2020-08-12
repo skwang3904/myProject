@@ -1,5 +1,6 @@
 #include "iStd.h"
 
+#include "../roguelike/RgIntro.h"
 uint8 float2uint8(float f)
 {
     return f * 0xFF;
@@ -84,7 +85,6 @@ void loadLib(HDC hDC)
     fbo->clear(1, 1, 1, 1);
     fbo->unbind(); //
     texGdi[1] = tex;
-
 }
 
 void freeLib()
@@ -179,6 +179,7 @@ static void keyLib(uint32& key, iKeyState stat, int c)
 		case 'j': case 'J': key |= keyboard_j; break;
 		case 'r': case 'R': key |= keyboard_r; break;
 		case VK_TAB:  key |= keyboard_tab; break;
+        case VK_ESCAPE: key |= keyboard_escape; break;
         }
     }
     else if (stat == iKeyStateEnded)
@@ -203,6 +204,7 @@ static void keyLib(uint32& key, iKeyState stat, int c)
 		case 'j': case 'J': key &= ~keyboard_j; break;
 		case 'r': case 'R': key &= ~keyboard_r; break;
 		case VK_TAB: key &= ~keyboard_r; break;
+        case VK_ESCAPE: key &= ~keyboard_escape; break;
         }
     }
 }

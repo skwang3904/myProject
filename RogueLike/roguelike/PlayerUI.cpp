@@ -494,11 +494,11 @@ void showPopItem(bool show)
 
 void cointest()
 {
-	numberFont->drawFont(150, 200, TOP | LEFT, 1, 1, 1, "%.0f", pc->hp);
-	numberFont->drawFont(150, 300, TOP | LEFT, 1, 1, 1, "%d", pc->coin);
-	numberFont->drawFont(150, 400, TOP | LEFT, 1, 1, 1, "%.0f", pc->attackDmg);
-	numberFont->drawFont(150, 500, TOP | LEFT, 1, 1, 1, "%.1f", pc->attackSpeed);
-	numberFont->drawFont(150, 600, TOP | LEFT, 1, 1, 1, "%.1f", pc->moveSpeed);
+	numberFont->drawFont(150, 200, TOP | LEFT, 1, 0.8f, 0.8f, "%.0f", pc->hp);
+	numberFont->drawFont(150, 300, TOP | LEFT, 1, 0.8f, 0.8f, "%d", pc->coin);
+	numberFont->drawFont(150, 400, TOP | LEFT, 1, 0.8f, 0.8f, "%.0f", pc->attackDmg);
+	numberFont->drawFont(150, 500, TOP | LEFT, 1, 0.8f, 0.8f, "%.1f", pc->attackSpeed);
+	numberFont->drawFont(150, 600, TOP | LEFT, 1, 0.8f, 0.8f, "%.1f", pc->moveSpeed);
 }
 
 void drawPopItem(float dt)

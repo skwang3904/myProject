@@ -1,7 +1,8 @@
 #include "RgIntro.h"
 
-#include "RgProc.h"
 #include "RgGame.h"
+#include "RgMenu.h"
+#include "RgProc.h"
 #include "loading.h"
 
 void showPopIntroPress(bool show);
@@ -53,7 +54,6 @@ void methodAfterPress(iPopup* me, iPoint p, float dt)
 {
 	setRGBA(1, 1, 1, 1);
 }
-
 
 void createPopIntroBG()
 {
@@ -144,8 +144,8 @@ bool keyPopIntroBG(iKeyState stat, iPoint point)
 	{
 	case iKeyStateBegan:
 	{
-		showPopIntroButten(true);
 		showPopIntroPress(false);
+		showPopIntroButten(true);
 		break;
 	}
 	case iKeyStateMoved:
@@ -173,11 +173,17 @@ void createPopIntroButten()
 	imgIntroBtn = (iImage**)malloc(sizeof(iImage*) * 3);
 	iPoint size = iPointMake(devSize.width / 10.0f, devSize.height / 10.0f);
 	iImage* img;
-	Texture* tex;
+	Texture* tex, *texText;
+
+	const char* strBtn[3] = {
+		"게임시작", "   옵션", " 끝내기"
+	};
+
+
 	for (int i = 0; i < 3; i++)
 	{
 		img = new iImage();
-
+		
 		for (int j = 0; j < 2; j++)
 		{
 			tex = createTexture(size.x, size.y);
@@ -191,13 +197,29 @@ void createPopIntroButten()
 				2, 0);
 			freeImage(texBt);
 
+			{
+				iGraphics* g = iGraphics::instance();
+				g->init(size.x, size.y);
+				setStringName("assets/BMJUA_ttf.ttf");
+				setStringRGBA(0, 0, 0, 1);
+				setStringSize(30);
+				setStringBorder(0);
+				g->drawString(0, 0, TOP | LEFT, strBtn[i]);
+				setStringName("궁서체");
+				setStringRGBA(1, 1, 1, 1);
+				setStringSize(1);
+				setStringBorder(0);
+				texText = g->getTexture();
+				drawImage(texText, size.x / 4.0f, size.y / 3.0f, TOP | LEFT);
+				freeImage(texText);
+			}
+
 			fbo->backSize();
 			fbo->unbind();
 
 			img->addObject(tex);
 			freeImage(tex);
 		};
-		
 
 		img->reverse = REVERSE_HEIGHT;
 		img->position = iPointMake(img->tex->width / 2.0f, 
@@ -208,6 +230,7 @@ void createPopIntroButten()
 	}
 
 	pop->methodDrawBefore = drawBeforeIntroButton;
+
 
 }
 
@@ -233,6 +256,7 @@ void drawPopIntroButten(float dt)
 	popIntroBtn->paint(dt);
 }
 
+extern bool runWnd;
 bool keyPopIntroButten(iKeyState stat, iPoint point)
 {
 	int i, j = -1;
@@ -246,7 +270,7 @@ bool keyPopIntroButten(iKeyState stat, iPoint point)
 		if (i == 0)
 		{
 			//게임시작
-			setLoading(gs_proc, freeRgIntro, loadRgProc);
+			setLoading(gs_menu, freeRgIntro, loadRgMenu);
 		}
 		else if (i == 1)
 		{
@@ -256,6 +280,7 @@ bool keyPopIntroButten(iKeyState stat, iPoint point)
 		else if (i == 2)
 		{
 			// 게임종료
+			runWnd = false;
 		}
 		break;
 	}
@@ -293,12 +318,14 @@ iPopup* popIntroOption;
 iImage* imgOptionBtnBar;
 iImage** imgOptionBtn;
 
+void drawBeforePopIntroOption(iPopup* me, iPoint p, float dt);
+
 void createPopIntroOption()
 {
 	int i, j;
 
 	imgOptionBtn = (iImage**)malloc(sizeof(iImage*) * 5);
-	iPopup* pop = new iPopup(iPopupStyleNone);
+	iPopup* pop = new iPopup(iPopupStyleZoom);
 	iImage* img = new iImage();
 	Texture* tex;
 
@@ -326,6 +353,28 @@ void createPopIntroOption()
 	}
 	freeImage(texOpBar);
 
+	const char* strOption[2] = {
+		"MUSIC","SOUNDS"
+	};
+	iGraphics* g = iGraphics::instance();
+	g->init(iSizeMake(size.x, size.y));
+	setStringName("assets/pixelfont.ttf");
+	setStringRGBA(0, 0, 0, 1);
+	setStringSize(20);
+	setStringBorder(0);
+	
+	for(i=0; i<2;i++)
+		g->drawString(size.x * 0.3f - (size.x * 0.05f) * i, size.y * 0.33f + size.y * 0.1f * i, TOP|LEFT, strOption[i]);
+
+	setStringName("궁서체");
+	setStringRGBA(1, 1, 1, 1);
+	setStringSize(1);
+	setStringBorder(0);
+
+	Texture* texText = g->getTexture();
+	drawImage(texText, 0, 0, TOP | LEFT);
+	freeImage(texText);
+
 	fbo->backSize();
 	fbo->unbind();
 
@@ -334,7 +383,6 @@ void createPopIntroOption()
 	img->reverse = REVERSE_HEIGHT;
 	imgOptionBtnBar = img;
 	pop->addObject(img);
-
 
 	const char* strPath[4] = {
 	"Option_Controler",
@@ -362,41 +410,52 @@ void createPopIntroOption()
 	for (i = 0; i < 5; i++)
 	{
 		img = new iImage();
-		tex = createTexture(sizeBtn[i].width, sizeBtn[i].height);
-		fbo->bind(tex);
-		fbo->setSize(sizeBtn[i].width, sizeBtn[i].height);
 
 		if (i == 0 || i == 1)
 		{
+			tex = createTexture(sizeBtn[i].width, sizeBtn[i].height);
+			fbo->bind(tex);
+			fbo->setSize(sizeBtn[i].width, sizeBtn[i].height);
+
 			for (j = 0; j < 2; j++)
 			{
 				texOp = createImage("assets/intro/%s.png", strPath[0]);
 				drawImage(texOp, 0, 0,
 					0, 0, texOp->width, texOp->height,
-					TOP | LEFT, sizeBtn[i].width / texOp->width, sizeBtn[i].height / texOp->height,
+					TOP | LEFT, sizeBtn[i].width / texOp->width, sizeBtn[i].height / texOp->height * 0.9f,
 					2, 0);
 				freeImage(texOp);
 			}
+
+			fbo->backSize();
+			fbo->unbind();
+
+			img->addObject(tex);
+			freeImage(tex);
 
 		}
 		else //if (i == 1)
 		{
 			for (j = 0; j < 2; j++)
 			{
+				tex = createTexture(sizeBtn[i].width, sizeBtn[i].height);
+				fbo->bind(tex);
+				fbo->setSize(sizeBtn[i].width, sizeBtn[i].height);
+
 				texOp = createImage("assets/intro/%s%d.png", strPath[i-1], j);
 				drawImage(texOp, 0, 0, 
 					0, 0, texOp->width, texOp->height,
 					TOP | LEFT, sizeBtn[i].width / texOp->width, sizeBtn[i].height / texOp->height,
 					2, 0);
 				freeImage(texOp);
+
+				fbo->backSize();
+				fbo->unbind();
+
+				img->addObject(tex);
+				freeImage(tex);
 			}
 		}
-
-		fbo->backSize();
-		fbo->unbind();
-
-		img->addObject(tex);
-		freeImage(tex);
 
 		img->position = p[i];
 		img->reverse = REVERSE_HEIGHT;
@@ -404,10 +463,11 @@ void createPopIntroOption()
 		pop->addObject(img);
 	}
 
+	pop->openPosition = iPointMake(devSize.width / 20.0f, 
+		devSize.height * 0.6f);
+	pop->closePosition = iPointMake((devSize.width - size.x) / 2.0f, (devSize.height - size.y) / 2.0f);
 
-
-
-
+	pop->methodDrawBefore = drawBeforePopIntroOption;
 	popIntroOption = pop;
 }
 
@@ -421,6 +481,14 @@ void showPopIntroOption(bool show)
 	popIntroOption->show(show);
 }
 
+void drawBeforePopIntroOption(iPopup* me, iPoint p, float dt)
+{
+	for (int i = 3; i < 5; i++)
+	{
+		imgOptionBtn[i]->setTexAtIndex(popIntroOption->selected == i);
+	}
+}
+
 void drawPopIntroOption(float dt)
 {
 	popIntroOption->paint(dt);
@@ -429,6 +497,8 @@ void drawPopIntroOption(float dt)
 static iPoint prevPosition;
 static bool click = false;
 static int clickNum = 0;
+
+bool optionBtnCheck = false;
 bool keyPopIntroOption(iKeyState stat, iPoint point)
 {
 	int i, j = -1;
@@ -444,6 +514,22 @@ bool keyPopIntroOption(iKeyState stat, iPoint point)
 			click = true;
 			prevPosition = point;
 			clickNum = i;
+		}
+
+		if (i == 2)
+		{
+			imgOptionBtn[2]->setTexAtIndex(optionBtnCheck);
+			optionBtnCheck = !optionBtnCheck;
+		}
+
+		if (i == 3)
+		{
+			showPopIntroOption(false);
+		}
+
+		if (i == 4)
+		{
+			showPopIntroOption(false);
 		}
 		break;
 	}
@@ -474,6 +560,10 @@ bool keyPopIntroOption(iKeyState stat, iPoint point)
 				imgOptionBtn[clickNum]->position.x = 310;
 			else if (imgOptionBtn[clickNum]->position.x > 420)
 				imgOptionBtn[clickNum]->position.x = 420;
+
+			float bgm = (imgOptionBtn[0]->position.x - 310) / 110.0f;
+			float sfx = (imgOptionBtn[1]->position.x - 310) / 110.0f;
+			audioVolume(bgm, sfx, SOUND_SFX_NUM);
 		}
 		break;
 	}

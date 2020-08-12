@@ -261,19 +261,21 @@ void audioVolume(float bgm, float sfx, int sfxNum)
 	float vol;
 	for (i = 0; i < sfxNum; i++)
 	{
-		alGetSourcef(al->gSource[i], AL_GAIN, &vol);
-		vol /= al->sfx;
+		//alGetSourcef(al->gSource[i], AL_GAIN, &vol);
+		//vol /= al->sfx;
+		//al->volume(i, vol * sfx);
 
-		al->volume(i, vol * sfx);
+		al->volume(i, sfx);
 	}
 	al->sfx = sfx;
 
 	for (i = sfxNum; i < al->bufCount; i++)
 	{
-		alGetSourcef(al->gSource[i], AL_GAIN, &vol);
-		vol /= al->bgm;
+		//alGetSourcef(al->gSource[i], AL_GAIN, &vol);
+		//vol /= al->bgm;
+		//al->volume(i, vol * bgm);
 
-		al->volume(i, vol * bgm);
+		al->volume(i, bgm);
 	}
 	al->bgm = bgm;
 }

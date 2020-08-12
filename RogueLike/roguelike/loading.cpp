@@ -46,13 +46,12 @@ void drawLoading(float dt)
 	else //if( loadingDt > 0.5f)
 	{
 		loadingDt += dt;
-		alpha = 7.0f - (loadingDt - 0.5f) / 0.5f;
-		printf("%.2f\n" , alpha);
-		if (loadingDt > 4.0f)
+		alpha = 1.0f - (loadingDt - 0.5f) / 2.0f;
+		if (loadingDt > 2.5f)
 			loadingDt = _loadingDt;
 	}
 
-	setRGBA(0, 0, 0, alpha);
+	setRGBA(0, 1, 0, alpha);
 	fillRect(0, 0, devSize.width, devSize.height);
 	setRGBA(1, 1, 1, 1);
 }

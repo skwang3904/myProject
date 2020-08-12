@@ -7,3 +7,4 @@ void freeRgGame();
 void drawRgGame(float dt);
 void keyRgGame(iKeyState stat, iPoint point);
 
+#define SOUND_SFX_NUM 5

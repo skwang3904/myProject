@@ -16,6 +16,12 @@ void createPopMenuBG();
 void freePopMenuBG();
 void showPopMenuBG(bool show);
 void drawPopMenuBG(float dt);
-void keyPopMenuBG(iKeyState stat, iPoint point);
+bool keyPopMenuBG(iKeyState stat, iPoint point);
 
 //-------------------------------------------------------------------------------------
+
+void createPopMenuButton();
+void freePopMenuButton();
+void showPopMenuButton(bool show);
+void drawPopMenuButton(float dt);
+bool keyPopMenuButton(iKeyState stat, iPoint point);

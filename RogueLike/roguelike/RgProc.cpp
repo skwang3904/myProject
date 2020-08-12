@@ -3,6 +3,8 @@
 #include "loading.h"
 #include "RgLoading.h"
 
+#include "RgIntro.h"
+
 #include "Room.h"
 #include "Stage.h"
 

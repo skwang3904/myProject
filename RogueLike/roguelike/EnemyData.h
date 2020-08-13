@@ -15,6 +15,7 @@ typedef void (*Method_Item)(MonsterData* enm);
 enum MonsterType {
 	golemNomal = 0,
 	golemElete,
+	golemBoss,
 };
 
 class MonsterData
@@ -35,6 +36,8 @@ public:
 	virtual void takeDmgEffect(float dt);
 public:
 	// common data
+	int imgDir;
+
 	float hp, _hp;
 	float attackDmg;
 	float meleeAtkSpeed;
@@ -101,6 +104,14 @@ extern int monsterNum;
 
 #define GOLEM_ITEM_NUM 5
 
+#define GOLEM_BOSS_IMG_NUM 5
+#define GOLEM_BOSS_IMG_DIRECTION 4
+#define GOLEM_BOSS_RATIO 4.0f
+#define GOLEM_ELETE_MELEE_ATKTIME 1.0f
+#define GOLEM_ELETE_RANGE_ATKTIME 1.0f
+
+
+
 class EGolem : public MonsterData
 {
 public:
@@ -119,6 +130,7 @@ struct golemImgInfo {
 	int repeatNum;
 	bool lastFrame;
 	float aniDt;
+	bool animation;
 };
 extern EGolem** golems;
 extern EGolem** golemEletes;
@@ -126,5 +138,17 @@ extern EGolem** golemEletes;
 void createGolemImg();
 void freeGolemImg();
 
+class EGolemBoss : public MonsterData
+{
+public:
+	EGolemBoss(MonsterType mt);
+	virtual ~EGolemBoss();
+
+	void init();
+	void paint(float dt);
+public:
+
+};
+extern EGolemBoss* golemBOSS;
 //----------------------------------------------------------------------------------------
 

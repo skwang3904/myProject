@@ -10,7 +10,6 @@ iImage* imgPowerUp;
 iImage* imgAtkSpeedUp;
 iImage* imgMoveSpeedUp;
 
-#define ANIDT 0.5f
 UseItem::UseItem(itemType it)
 {
     type = it;
@@ -20,11 +19,13 @@ UseItem::UseItem(itemType it)
     img = imgs[it]->copy();
 
     alive = false;
+    getItem = false;
     value = 0.0f;
 
     sp = iPointZero;
-    aniHeight = 50.0f;
-    aniDt = ANIDT;
+    dropAniDt = ANIDT;
+    dropAniHeight = 50.0f;
+    getAniDt = 0.0f;
 
     itemPos = iPointZero;
     touchItem = iRectZero;
@@ -70,20 +71,20 @@ void UseItem::gainValue()
 	}
 }
 
-bool UseItem::animation(float dt)
+bool UseItem::dropAnimation(float dt)
 {
-    if (aniDt == ANIDT)
+    if (dropAniDt == ANIDT)
         return false;
 
-    aniDt += dt;
-    if (aniDt > ANIDT)
+    dropAniDt += dt;
+    if (dropAniDt > ANIDT)
     {
         sp = itemPos;
-        aniDt = ANIDT;
+        dropAniDt = ANIDT;
     }
 
-    float h = 0.0f - aniHeight * _sin(180 * aniDt / ANIDT);
-    iPoint a = easeIn(aniDt / ANIDT, sp, itemPos);
+    float h = 0.0f - dropAniHeight * _sin(180 * dropAniDt / ANIDT);
+    iPoint a = easeIn(dropAniDt / ANIDT, sp, itemPos);
     a += iPointMake(0, h);
     
     iPoint drawitemPos = a + SET_DRAW_OFF;
@@ -92,9 +93,38 @@ bool UseItem::animation(float dt)
     return true;
 }
 
+void UseItem::getAnimation(float dt)
+{
+    if (getItem == false)
+        return;
+
+    float f = ANIDT;
+    //float f = 10.0f;
+    getAniDt += dt;
+    if (getAniDt > f)
+    {
+        getAniDt = f;
+        getItem = false;
+    }
+
+    sp = pc->playerPosition;
+    iPoint p = linear(getAniDt / f, itemPos, sp);
+    itemPos = p;
+
+    if (iPointLength(sp - itemPos) < 3.0f)
+    {
+        getAniDt = f;
+        getItem = false;
+    }
+
+    iPoint drawitemPos = p + SET_DRAW_OFF;
+    img->paint(dt, drawitemPos);
+}
+
 void UseItem::paint(float dt)
 {
-    if (animation(dt) || alive == false)
+    getAnimation(dt);
+    if (dropAnimation(dt) || alive == false)
         return;
 
     iRect rt = touchItem;
@@ -111,6 +141,7 @@ void UseItem::paint(float dt)
     if (containPoint(p, touchItem))
     {
         alive = false;
+        getItem = true;
         gainValue();
     }
 }
@@ -126,6 +157,7 @@ void createItemImg()
         "assets/item/gemGreen.png",
         "assets/item/gemBlue.png"
     };
+
     iImage* imgs[5];
     for (int i = 0; i < 5; i++)
     {
@@ -162,7 +194,7 @@ void golemItems(MonsterData* enm)
         Texture* tex = ui->img->tex;
 
         ui->alive = true;
-        ui->aniDt = 0.0f;
+        ui->dropAniDt = 0.0f;
         ui->value = 10.0f;
 
 		iPoint et = iPointMake(enm->img[0]->tex->width / 4 * enm->ratio,

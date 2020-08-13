@@ -6,7 +6,7 @@
 #include "EnemyData.h"
 #include "EnemyStruct.h"
 
-//타일마다 포지션 만들어 넣어야함
+//몹 배치 종류 만들것
 iPoint enemyPos[16] = {
 {RGTILE_Width * 3,  RGTILE_Height * 3},
 {RGTILE_Width * 3,  RGTILE_Height * 6},
@@ -94,7 +94,11 @@ void setEnemyPosition()
 		{
 			if (maps[randomTile[j]]->state == MapType_Boss)
 			{
+#if 0
 				MonsterData* enm = golemEletes[0];
+#else
+				MonsterData* enm = golemBOSS;
+#endif
 				enm->enemyPos = maps[randomTile[j]]->tileOff +
 					RGTILE_CENTER;
 				elete = true;

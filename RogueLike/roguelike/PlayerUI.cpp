@@ -148,8 +148,8 @@ void refreshMiniMap()
 				}
 			}
 
-			int a = golemEletes[0]->tileNumber; // stage boss
-			if (a == i && golemEletes[0]->hp > 0.0f)
+			int a = golemBOSS->tileNumber; // stage boss
+			if (a == i && golemBOSS->hp > 0.0f)
 			{
 				setRGBA(1, 0, 0, 1);
 				fillRect(mp.x + 10, mp.y + 10,

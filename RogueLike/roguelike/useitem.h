@@ -8,6 +8,7 @@
 - 체력회복 /
 */
 
+#define ANIDT 0.5f
 
 enum itemType{
 	coin = 0,
@@ -26,7 +27,8 @@ public:
 	~UseItem();
 
 	void gainValue();
-	bool animation(float dt);
+	bool dropAnimation(float dt);
+	void getAnimation(float dt);
 
 	void paint(float dt);
 
@@ -37,16 +39,16 @@ public:
 	iImage* img;
 
 	bool alive;
+	bool getItem;
 	float value;
 
 	iPoint sp;
-	float aniHeight;
-	float aniDt;
+	float dropAniDt;
+	float dropAniHeight;
+	float getAniDt;
 
 	iPoint itemPos;
-	//iPoint drawitemPos;
 	iRect touchItem;
-
 };
 
  //----------------------------------------------------------------------------

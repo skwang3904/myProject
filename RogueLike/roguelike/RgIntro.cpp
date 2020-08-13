@@ -270,7 +270,7 @@ bool keyPopIntroButten(iKeyState stat, iPoint point)
 		if (i == 0)
 		{
 			//게임시작
-			setLoading(gs_menu, freeRgIntro, loadRgMenu);
+			setLoading(gs_proc, freeRgIntro, loadRgProc);
 		}
 		else if (i == 1)
 		{

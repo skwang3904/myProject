@@ -42,6 +42,27 @@ void IdleEyeBlink(MonsterData* enm, float dt)
 	else					img[1]->paint(dt, egdp);
 }
 
+void IdleBoss(MonsterData* enm, float dt)
+{
+	MonsterData* e = enm;
+
+	if (e->act != Act_idle)
+		return;
+
+	int imgDir = e->imgDir;
+	iImage* img = e->img[imgDir];
+
+	iPoint gp = iPointMake(img->tex->width * e->ratio / 2, img->tex->height * e->ratio / 2);
+
+	//e->reverse = (pc->playerPosition.x + HALF_OF_TEX_WIDTH < e->enemyPos.x + gp.x ?
+	//	REVERSE_NONE : REVERSE_WIDTH);
+
+	//img->reverse = e->reverse;
+	iPoint egdp = e->enemyPos + SET_DRAW_OFF;
+
+	img->paint(dt, egdp);
+}
+
 //----------------------------------------------------------------------------------------
 // hurt
 
@@ -67,6 +88,31 @@ void commonHurt(MonsterData* enm, float dt)
 	img[6]->reverse = e->reverse;
 	img[6]->paint(dt, egdp);
 	if (img[6]->animation == false)
+		e->act = Act_idle;
+}
+
+void commonHurtBoss(MonsterData* enm, float dt)
+{
+	MonsterData* e = enm;
+	if (e->act != Act_hurt)
+		return;
+
+	int imgDir = GOLEM_BOSS_IMG_DIRECTION * 4 + e->imgDir;
+	iImage* img = e->img[imgDir];
+
+	iPoint gp = iPointMake(img->tex->width * e->ratio / 2, img->tex->height * e->ratio / 2);
+
+	e->reverse = (pc->playerPosition.x + HALF_OF_TEX_WIDTH < e->enemyPos.x + gp.x ?
+		REVERSE_NONE : REVERSE_WIDTH);
+
+	iPoint egdp = e->enemyPos + SET_DRAW_OFF;
+
+	if (img->animation == false)
+		img->startAnimation();
+
+	//img->reverse = e->reverse;
+	img->paint(dt, egdp);
+	if (img->animation == false)
 		e->act = Act_idle;
 }
 
@@ -103,6 +149,38 @@ void WalkToPlayer(MonsterData* enm, float dt)
 	iPoint egdp = e->enemyPos + SET_DRAW_OFF;
 	img[2]->reverse = e->reverse;
 	img[2]->paint(dt, egdp);
+}
+
+void WalkBossToPlayer(MonsterData* enm, float dt)
+{
+	MonsterData* e = enm;
+	int imgDir = GOLEM_BOSS_IMG_DIRECTION * 1 + e->imgDir;
+	iImage* img = e->img[imgDir];
+	iPoint gp = iPointMake(img->tex->width * e->ratio / 2, img->tex->height * e->ratio / 2);
+	iPoint v = (pc->playerPosition + HALF_OF_TEX_POINT)
+		- (e->enemyPos + gp);
+
+	if (iPointLength(v) > 500.0f)
+	{
+		e->act = Act_idle;
+		return;
+	}
+
+	if (e->act == Act_hurt)
+		return;
+
+	e->act = Act_walking;
+	v /= iPointLength(v);
+	iPoint mp = v * e->moveSpeed * dt;
+
+	gp *= 0.5f;
+	iPoint dummy = e->enemyPos + gp;
+	wallCheck(true, maps[e->tileNumber], dummy, mp, gp.x, gp.y * 1.5f);
+	e->enemyPos = dummy - gp;
+
+	iPoint egdp = e->enemyPos + SET_DRAW_OFF;
+	//img->reverse = e->reverse;
+	img->paint(dt, egdp);
 }
 
 //----------------------------------------------------------------------------------------
@@ -195,6 +273,87 @@ bool commonAttack(MonsterData* enm, float dt)
 
 	return true;
 }
+
+bool commonAttackBoss(MonsterData* enm, float dt)
+{
+	MonsterData* e = enm;
+	if (e->act == Act_rangeAtk)
+		return false;
+
+	int imgDir = GOLEM_BOSS_IMG_DIRECTION * 2 + e->imgDir;
+	iImage* img = e->img[imgDir];
+	iPoint et = iPointMake(img->tex->width * e->ratio / 2,
+		img->tex->height * e->ratio / 2);
+
+	iPoint v = (pc->playerPosition + HALF_OF_TEX_POINT)
+		- (e->enemyPos + et);
+
+	if (iPointLength(v) > e->meleeReach&& e->act != Act_meleeAtk)
+		return false;
+
+	//e->resetActAtAttack();
+	if (e->atkMotion == false)
+	{
+		img->startAnimation();
+
+		e->atkMotion = true;
+		e->atkMotionTime -= e->meleeAtkSpeed;
+		e->act = Act_meleeAtk;
+
+		e->ATV = v;
+		//float range = e->meleeReach;
+		//e->ATV /= iPointLength(e->ATV);
+		//e->ATV = e->enemyPos + et + (e->ATV * range);
+		e->ATV += e->enemyPos + et;
+		//e->reverse = (v.x > 0.0f ? REVERSE_WIDTH : REVERSE_NONE);
+	}
+
+	e->atkMotionTime += dt;
+	iPoint egdp = e->enemyPos + SET_DRAW_OFF;
+	//img->reverse = e->reverse;
+	img->paint(dt, egdp);
+
+	if (e->atkMotionTime > 0.0f)
+	{
+		e->atkMotion = false;
+		e->atkMotionTime = 0.0f;
+		e->hit = false;
+		e->act = Act_idle;
+	}
+
+	if (e->atkMotion &&
+		e->atkMotionTime > 0.0f - e->meleeAtkSpeed * 0.4f &&
+		e->atkMotionTime < 0.0f - e->meleeAtkSpeed * 0.3f)
+	{
+		setLineWidth(10);
+		setRGBA(1, 0, 0, 1);
+		drawLine(egdp + et,
+			e->ATV + SET_DRAW_OFF);
+		setLineWidth(1);
+		setRGBA(1, 1, 1, 1);
+
+		if (e->hit == false && pc->act != Act_evasion && pc->act != Act_falling)
+		{
+			iPoint n = e->ATV - (e->enemyPos + et);
+			float len = iPointLength(n);
+			n /= len;
+			iPoint p = (pc->playerPosition + HALF_OF_TEX_POINT) - (e->enemyPos + et);
+			float dot = min(max(p.x * n.x + p.y * n.y, 0.0f), len);
+			iPoint proj = n * dot;
+			float hitDis = iPointLength(p - proj);
+
+			if (hitDis < e->meleeReach * 0.5f)
+			{
+				pc->hp -= e->attackDmg;
+				e->hit = true;
+
+			}
+		}
+	}
+
+	return true;
+}
+
 
 //bool rangeAttack(MonsterData* enm, float dt)
 //{

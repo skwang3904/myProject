@@ -197,7 +197,7 @@ void openChestBasic(Chest* me)
 		Texture* tex = ui->img->tex;
 
 		ui->alive = true;
-		ui->aniDt = 0.0f;
+		ui->dropAniDt = 0.0f;
 		ui->value = i * 10;
 
 		iPoint cp = iPointMake(me->img->tex->width / 2, 

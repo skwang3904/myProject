@@ -74,3 +74,6 @@ enum TextureFilter {
 #define REVERSE_WIDTH   1
 #define REVERSE_HEIGHT  2
 
+#define PRINTF(val) printf("%.2f\n", val)
+#define PRINTI(val) printf("%d\n", val)
+#define PRINTS(val) printf("%s\n", val)

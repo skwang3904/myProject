@@ -448,8 +448,11 @@ void drawObject(float dt)
 	}
 
 	{
-		int tmp = check ? 01 : WALLTILE;
-		//int tmp = check ? 01 : 01;
+#if 0
+		//int tmp = check ? 01 : WALLTILE;
+#else
+		int tmp = check ? 01 : 01;
+#endif
 		for (j = 0; j < 3; j++) // 나무통
 		{
 			MapObject* mobj = m->mapObj[j];

@@ -69,7 +69,9 @@ public:
 	bool atkMotion;
 	float atkMotionTime;
 	bool hit;
+
 	iPoint ATV;
+	float ATVlength;
 
 	UseItem** items; // 임시 공통사용
 

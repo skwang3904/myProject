@@ -60,7 +60,7 @@ iImage* infoFromMW(const char* info)
 	setStringRGBA(0, 0, 0, 1);
 	setStringSize(30);
 	setStringBorder(0);
-	g->drawString(size.width / 2, size.height / 2, VCENTER | HCENTER, info);
+	g->drawString(size.width / 2, size.height / 2, TOP | LEFT, info);
 
 	iImage* img = new iImage();
 	Texture* tex = g->getTexture();

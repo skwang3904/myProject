@@ -38,6 +38,9 @@ void keyRgMenu(iKeyState stat, iPoint point)
 //-------------------------------------------------------------------------------------
 
 iPopup* popMenu;
+iPopup** popMenuChar;
+
+iImage* imgMainCharExplanation;
 iImage** imgMainChar;
 
 Texture*** texChars;
@@ -48,7 +51,7 @@ void createCharTexture()
 
 	const char* strPath[2] = {
 	"assets/char/CharGood.png",
-	"assets/char/CharJump.png"
+	"assets/char/CharGood2.png"
 	};
 
 	for (int i = 0; i < 2; i++)
@@ -68,7 +71,12 @@ void freeCharTexture()
 
 void createPopMenuBG()
 {
+	popMenuChar = (iPopup**)malloc(sizeof(iPopup*) * 2);
+	iPopup* pop0 = new iPopup(iPopupStyleMove);
+	iPopup* pop1 = new iPopup(iPopupStyleMove);
+
 	iPopup* pop = new iPopup(iPopupStyleNone);
+	
 	iImage* img;
 	Texture* tex;
 
@@ -131,12 +139,12 @@ void createPopMenuBG()
 			if (i == 1)
 			{ 
 				imgMainChar[0] = img; 
-				img->position = iPointMake(p.x, p.y * 1.3f);
+				//img->position = iPointMake(p.x, p.y * 1.3f);
 			}
 			else 
 			{
 				imgMainChar[1] = img;
-				img->position = iPointMake(p.x + devSize.width / 2.0f, p.y * 1.3f);
+				//img->position = iPointMake(p.x + devSize.width / 2.0f, p.y * 1.3f);
 
 			}
 			img->animation = true;
@@ -144,53 +152,85 @@ void createPopMenuBG()
 		}
 
 		img->reverse = REVERSE_HEIGHT;
-		pop->addObject(img);
+
+		if (i == 0)
+			pop->addObject(img);
+		else if (i == 1)
+		{
+			iPopup* pp = pop0;
+			pp->addObject(img);
+			pp->openPosition = iPointMake(p.x, p.y * 1.3);
+			pp->closePosition = iPointMake(p.x, p.y * 1.3);
+			
+		}
+		else
+		{
+			iPopup* pp = pop1;
+			pp->addObject(img);
+			pp->openPosition = iPointMake(p.x - devSize.width/2.0f, p.y * 1.3);
+			pp->closePosition = iPointMake(p.x - devSize.width / 2.0f, p.y * 1.3);
+		}
 	}
 
 	img = new iImage();
-	const char* strChar = {
-	"캐릭터 정보\n"
-	"체력 = 100\n"
-	"공격력 = 10\n"
-	"공격속도 = 1.0\n"
-	"이동속도 = 700\n"
-	"대충 기본캐릭이라는뜻"
+	const char* strChar[2] = {
+	"캐릭터\n체력 = 100\n공격력 = 10\n공격속도 = 1.0\n이동속도 = 700\n첫번째",
+	"캐릭터\n체력 = 100\n공격력 = 10\n공격속도 = 1.0\n이동속도 = 700\n두번째",
 	};
 
 	iPoint p = size[1];
 	iGraphics* g = iGraphics::instance();
-	g->init(p.x, p.y);
-	
-	setStringName("assets/BMJUA_ttf.ttf");
-	setStringSize(40);
-	setStringRGBA(1, 1, 0, 1);
-	setStringBorder(0);
 
-	int lineNum;
-	char** line = iString::getStringLine(strChar, lineNum);
-	for (int i = 0; i < lineNum; i++)
-		g->drawString(0, 45 * i, TOP | LEFT, line[i]);
-	iString::freeStringLine(line, lineNum);
+	for (int i = 0; i < 2; i++)
+	{
+		g->init(p.x, p.y);
 
-	setStringName("궁서체");
-	setStringSize(1);
-	setStringRGBA(1, 1, 1, 1);
-	setStringBorder(0);
-	tex = g->getTexture();
+		setStringName("assets/BMJUA_ttf.ttf");
+		setStringSize(40);
+		setStringRGBA(1, 1, 0, 1);
+		setStringBorder(0);
 
-	img->addObject(tex);
-	freeImage(tex);
+		int lineNum;
+		char** line = iString::getStringLine(strChar[i], lineNum);
+		for (int i = 0; i < lineNum; i++)
+			g->drawString(0, 45 * i, TOP | LEFT, line[i]);
+		iString::freeStringLine(line, lineNum);
+
+		setStringName("궁서체");
+		setStringSize(1);
+		setStringRGBA(1, 1, 1, 1);
+		setStringBorder(0);
+		tex = g->getTexture();
+
+		img->addObject(tex);
+		freeImage(tex);
+	}
+
 	img->position = iPointMake(p.x * 2.0f, p.y * 1.3f);
+	imgMainCharExplanation = img;
 	pop->addObject(img);
 
 	pop->openPosition = iPointZero;
 	pop->closePosition = iPointZero;
 	popMenu = pop;
+
+	pop0->show(true);
+	pop0->_showDt = 1.0f;
+
+	pop1->show(false);
+	pop1->_showDt = 1.0f;
+
+	popMenuChar[0] = pop0;
+	popMenuChar[1] = pop1;
 }
 
 void freePopMenuBG()
 {
 	delete popMenu;
+
+	delete popMenuChar[0];
+	delete popMenuChar[1];
+	free(popMenuChar);
 }
 
 void showPopMenuBG(bool show)
@@ -200,15 +240,10 @@ void showPopMenuBG(bool show)
 
 void drawPopMenuBG(float dt)
 {
-	for (int i = 0; i < 2; i++)
-	{
-		iImage* img = imgMainChar[i];
-		img->position += iPointMake(10, 0);
-		if (img->position.x > devSize.width)
-			img->position.x = -img->tex->width;
-	}
-
 	popMenu->paint(dt);
+
+	popMenuChar[0]->paint(dt);
+	popMenuChar[1]->paint(dt);
 }
 
 bool keyPopMenuBG(iKeyState stat, iPoint point)
@@ -220,6 +255,7 @@ bool keyPopMenuBG(iKeyState stat, iPoint point)
 
 iPopup* popMenuBtn;
 iImage** imgMenuBtn;
+extern int playerCharNumber;
 
 void drawBeforeMenuButton(iPopup* me, iPoint p, float dt);
 
@@ -230,7 +266,7 @@ void createPopMenuButton()
 	iImage* img = new iImage();
 	Texture* tex, *t;
 
-	imgMenuBtn = (iImage**)malloc(sizeof(iImage*) * 6);
+	imgMenuBtn = (iImage**)malloc(sizeof(iImage*) * 7);
 
 	iPoint size = iPointMake(devSize.width * 0.8f, devSize.height * 0.4f);
 	tex = createTexture(size.x, size.y);
@@ -328,6 +364,44 @@ void createPopMenuButton()
 		pop->addObject(img);
 	}
 
+	img = new iImage();
+	size = iPointMake(devSize.width * 0.5f, devSize.height * 0.15f);
+	iGraphics* g = iGraphics::instance();
+	for (int i = 0; i < 2; i++)
+	{
+		g->init(size.x, size.y);
+		igImage* igimg = g->createIgImage("assets/PlayerUI/combatUI.png");
+
+		float width = igimg->GetWidth();
+		float height = igimg->GetHeight();
+		setRGBA(1, 1, 1, i == 0 ? 0.7f : 1.0f);
+		g->drawImage(igimg, 0, 0,
+			0, 0, width, height, 
+			TOP | LEFT, size.x / width, size.y / height,
+			2, 0, REVERSE_NONE);
+		setRGBA(1, 1, 1, 1);
+
+		setStringRGBA(0, i, 0, 1);
+		setStringSize(50);
+		setStringName("assets/BMJUA_ttf.ttf");
+		setStringBorder(0);
+		
+		g->drawString((size.x - 200) / 2.0f, (size.y - 50) / 2.0f, TOP | LEFT, "게임 시작");
+
+		setStringRGBA(1, 1, 1, 1);
+		setStringSize(1);
+		setStringName("궁서체");
+		setStringBorder(0);
+			
+		tex = g->getTexture();
+		img->addObject(tex);
+		freeImage(tex);
+	}
+	
+	img->position = iPointMake((devSize.width - img->tex->width) * 0.5f, devSize.height * 0.75f);
+	imgMenuBtn[6] = img;
+	pop->addObject(img);
+
 	pop->methodDrawBefore = drawBeforeMenuButton;
 	popMenuBtn = pop;
 }
@@ -345,13 +419,24 @@ void showPopMenuButton(bool show)
 
 void drawBeforeMenuButton(iPopup* me, iPoint p, float dt)
 {
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < 7; i++)
 		imgMenuBtn[i]->setTexAtIndex(popMenuBtn->selected == i);
 }
 
 void drawPopMenuButton(float dt)
 {
 	popMenuBtn->paint(dt);
+}
+
+bool currentChar(int i)
+{
+	if (playerCharNumber == i)
+		return true;
+
+	playerCharNumber = i;
+	imgMainCharExplanation->setTexAtIndex(i);
+
+	return false;
 }
 
 bool keyPopMenuButton(iKeyState stat, iPoint point)
@@ -364,11 +449,48 @@ bool keyPopMenuButton(iKeyState stat, iPoint point)
 		i = popMenuBtn->selected;
 		if (i == -1) break;
 
+		if (i == 0)
+		{
+			if (currentChar(0))
+				break;
+
+			iPopup* p0 = popMenuChar[0];
+			iPopup* p1 = popMenuChar[1];
+			p0->show(true);
+			p1->show(false);
+			p0->openPosition = iPointMake(-imgMainChar[0]->tex->width, devSize.height / 3.0 * 1.3f);
+			p0->closePosition = iPointMake(devSize.width / 4.0f, devSize.height / 3.0 * 1.3f);
+
+			p1->openPosition = iPointMake(devSize.width, devSize.height / 3.0 * 1.3f);
+			p1->closePosition = iPointMake(devSize.width / 4.0f, devSize.height / 3.0 * 1.3f);
+		}
+		else if (i == 1)
+		{
+			if (currentChar(1))
+				break;
+
+			iPopup* p0 = popMenuChar[0];
+			iPopup* p1 = popMenuChar[1];
+			p0->show(false);
+			p1->show(true);
+
+			p0->openPosition = iPointMake(-imgMainChar[0]->tex->width, devSize.height / 3.0 * 1.3f);
+			p0->closePosition = iPointMake(devSize.width / 4.0f, devSize.height / 3.0 * 1.3f);
+
+			p1->openPosition = iPointMake(devSize.width, devSize.height / 3.0 * 1.3f);
+			p1->closePosition = iPointMake(devSize.width / 4.0f, devSize.height / 3.0 * 1.3f);
+		}
+		else if (i == 2);
+		else if (i == 3);
+		else if (i == 4);
+		else if (i == 5);
+		else if (i == 6);
+
 		break;
 	}
 	case iKeyStateMoved:
 	{
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < 7; i++)
 		{
 			if (containPoint(point, imgMenuBtn[i]->touchRect(popMenuBtn->closePosition)))
 			{

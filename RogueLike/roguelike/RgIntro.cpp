@@ -270,7 +270,11 @@ bool keyPopIntroButten(iKeyState stat, iPoint point)
 		if (i == 0)
 		{
 			//게임시작
+#if 0
+			setLoading(gs_menu, freeRgIntro, loadRgMenu);
+#else
 			setLoading(gs_proc, freeRgIntro, loadRgProc);
+#endif
 		}
 		else if (i == 1)
 		{
@@ -363,8 +367,12 @@ void createPopIntroOption()
 	setStringSize(20);
 	setStringBorder(0);
 	
-	for(i=0; i<2;i++)
-		g->drawString(size.x * 0.3f - (size.x * 0.05f) * i, size.y * 0.33f + size.y * 0.1f * i, TOP|LEFT, strOption[i]);
+	for (i = 0; i < 2; i++)
+	{
+		g->drawString(size.x * 0.3f - (size.x * 0.05f) * i,
+			size.y * 0.33f + size.y * 0.1f * i,
+			TOP | LEFT, strOption[i]);
+	}
 
 	setStringName("궁서체");
 	setStringRGBA(1, 1, 1, 1);
@@ -564,6 +572,9 @@ bool keyPopIntroOption(iKeyState stat, iPoint point)
 			float bgm = (imgOptionBtn[0]->position.x - 310) / 110.0f;
 			float sfx = (imgOptionBtn[1]->position.x - 310) / 110.0f;
 			audioVolume(bgm, sfx, SOUND_SFX_NUM);
+			PRINTF(bgm);
+			PRINTF(sfx);
+
 		}
 		break;
 	}

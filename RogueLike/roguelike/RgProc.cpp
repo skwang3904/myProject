@@ -22,12 +22,12 @@
 
 void loadRgProc()
 {
-	numberFont = new numFont();
-
 	createTileSet();
 	loadRoomTile();
+	numberFont = new numFont();
 	weapon = new Weapon();
 	pc = new Player();
+
 	{
 		for (int i = 0; i < TOTAL_WP_NUM; i++)
 		{

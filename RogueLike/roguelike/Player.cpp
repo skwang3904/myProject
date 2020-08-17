@@ -88,14 +88,50 @@ void Player::initPlayerPosition()
 											img[0]->tex->height / 2.0f * img[0]->ratio * 1.5f);
 }
 
+int playerCharNumber = 1;
 void Player::createPlayerImage()
 {
+	int i, j;
+
+	const char* strChar[10] = {
+	"assets/char/CharBodyR.png",
+	"assets/char/CharBodyUD.png",
+	"assets/char/CharHead.png",
+	"assets/char/CharJump.png",
+	"assets/char/CharJump.png",
+
+	"assets/char/CharBodyR2.png",
+	"assets/char/CharBodyUD2.png",
+	"assets/char/CharHead2.png",
+	"assets/char/CharJump2.png",
+	"assets/char/CharJump2.png",
+	};
+
+	int s = playerCharNumber;
+
+	iPoint size = iPointMake(64, 40) * 2.0f;
+	Texture* tex;
+
 	iImage* imgRight = new iImage();
-	Texture** texs = createDivideImage(10, 1, "assets/char/CharBodyR.png");	// 좌우 10개
-	for (int i = 0; i < 10; i++)
+	Texture** texs = createDivideImage(10, 1, strChar[5 * s + 0]);	// 좌우 10개
+	for (i = 0; i < 10; i++)
 	{
-		imgRight->addObject(texs[i]);
-		freeImage(texs[i]);
+		tex = createTexture(size.x, size.y);
+		fbo->bind(tex);
+		fbo->setSize(size);
+
+		Texture* t = texs[i];
+		drawImage(t, 0, 0,
+			0, 0, t->width, t->height,
+			TOP | LEFT, size.x / t->width, size.y / t->height,
+			2, 0, REVERSE_HEIGHT);
+		freeImage(t);
+
+		fbo->backSize();
+		fbo->unbind();
+
+		imgRight->addObject(tex);
+		freeImage(tex);
 	}
 	free(texs);
 	imgRight->startAnimation();
@@ -103,36 +139,82 @@ void Player::createPlayerImage()
 	imgRight->_repeatNum = 0;
 
 	iImage* imgDown = new iImage();
-	texs = createDivideImage(10, 1, "assets/char/CharBodyUD.png");	// 상하 10개
-	for (int i = 0; i < 10; i++)
+	texs = createDivideImage(10, 1, strChar[5 * s + 1]);	// 상하 10개
+	for (i = 0; i < 10; i++)
 	{
-		imgDown->addObject(texs[i]);
-		freeImage(texs[i]);
+		tex = createTexture(size.x, size.y);
+		fbo->bind(tex);
+		fbo->setSize(size);
+
+		Texture* t = texs[i];
+		drawImage(t, 0, 0,
+			0, 0, t->width, t->height,
+			TOP | LEFT, size.x / t->width, size.y / t->height,
+			2, 0, REVERSE_HEIGHT);
+		freeImage(t);
+
+		fbo->backSize();
+		fbo->unbind();
+
+		imgDown->addObject(tex);
+		freeImage(tex);
 	}
 	free(texs);
 	imgDown->startAnimation();
 	imgDown->_aniDt = 0.05f;
 	imgDown->_repeatNum = 0;
 
+	size = iPointMake(60, 45) * 2.0f;
+
 	iImage** imgHead = (iImage**)malloc(sizeof(iImage*) * 4);			// 머리 상하좌우
-	texs = createDivideImage(8, 1, "assets/char/CharHead.png");		// 머리 4방향 각 2개
-	for (int i = 0; i < 4; i++)
+	texs = createDivideImage(8, 1, strChar[5 * s + 2]);		// 머리 4방향 각 2개
+	for (i = 0; i < 4; i++)
 	{
 		imgHead[i] = new iImage();
-		for (int j = 0; j < 2; j++)
+		for (j = 0; j < 2; j++)
 		{
-			imgHead[i]->addObject(texs[2 * i + j]);
-			freeImage(texs[2 * i + j]);
+			tex = createTexture(size.x, size.y);
+			fbo->bind(tex);
+			fbo->setSize(size);
+
+			Texture* t = texs[2 * i + j];
+			drawImage(t, 0, 0,
+				0, 0, t->width, t->height,
+				TOP | LEFT, size.x / t->width, size.y / t->height,
+				2, 0, REVERSE_HEIGHT);
+			freeImage(t);
+
+			fbo->backSize();
+			fbo->unbind();
+
+			imgHead[i]->addObject(tex);
+			freeImage(tex);
 		}
 	}
 	free(texs);
 
+	size = iPointMake(97, 60) * 2.0f;
+
 	iImage* imgFall = new iImage();
-	texs = createDivideImage(4, 1, "assets/char/CharJump.png");		// 낙하모션 4개
-	for (int i = 0; i < 4; i++)
+	texs = createDivideImage(4, 1, strChar[5 * s + 3]);		// 낙하모션 4개
+	for (i = 0; i < 4; i++)
 	{
-		imgFall->addObject(texs[i]);
-		freeImage(texs[i]);
+		tex = createTexture(size.x, size.y);
+		fbo->bind(tex);
+		fbo->setSize(size);
+
+		Texture* t = texs[i];
+		drawImage(t, 0, 0,
+			0, 0, t->width, t->height,
+			TOP | LEFT, size.x / t->width, size.y / t->height,
+			2, 0, REVERSE_HEIGHT);
+		freeImage(t);
+
+		fbo->backSize();
+		fbo->unbind();
+
+		imgFall->addObject(tex);
+		freeImage(tex);
 	}
 	free(texs);
 	imgFall->_aniDt = 0.15f; // img 4개
@@ -141,11 +223,25 @@ void Player::createPlayerImage()
 	imgFall->selectedScale = 0.5f;
 
 	iImage* imgEvasion = new iImage();
-	texs = createDivideImage(4, 1, "assets/char/CharJump.png");	// 회피모션 4개
-	for (int i = 0; i < 4; i++)
+	texs = createDivideImage(4, 1, strChar[5 * s + 4]);	// 회피모션 4개
+	for (i = 0; i < 4; i++)
 	{
-		imgEvasion->addObject(texs[i]);
-		freeImage(texs[i]);
+		tex = createTexture(size.x, size.y);
+		fbo->bind(tex);
+		fbo->setSize(size);
+
+		Texture* t = texs[i];
+		drawImage(t, 0, 0,
+			0, 0, t->width, t->height,
+			TOP | LEFT, size.x / t->width, size.y / t->height,
+			2, 0, REVERSE_HEIGHT);
+		freeImage(t);
+
+		fbo->backSize();
+		fbo->unbind();
+
+		imgEvasion->addObject(tex);
+		freeImage(tex);
 	}
 	free(texs);
 	imgEvasion->_aniDt = EVASION_DURATION / 4.0f;
@@ -171,8 +267,8 @@ void Player::createPlayerImage()
 
 	img[9] = imgEvasion;
 
-	for (int i = 0; i < 10; i++)
-		img[i]->ratio = 2.0f;
+	//for (i = 0; i < 10; i++)
+	//	img[i]->ratio = 2.0f;
 }
 
 bool Player::actionCheck(bool key)

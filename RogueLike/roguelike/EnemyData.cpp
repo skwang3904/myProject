@@ -65,9 +65,12 @@ MonsterData::~MonsterData()
 		delete img[i];
 	free(img);
 
-	for (int i = 0; i < itemTypeMax; i++)
-		delete items[i];
-	free(items);
+	if (items)
+	{
+		for (int i = 0; i < itemTypeMax; i++)
+			delete items[i];
+		free(items);
+	}
 }
 
 void MonsterData::drawShowHP(float dt)
@@ -95,12 +98,23 @@ void MonsterData::takeDmgEnemy(float dt, float dmg)
 	if (takeDmg == false)
 	{
 		hp -= dmg;
-		if (dmg < 5)	test = 0.1f;
-		else			test = 1.0f;
+		if (hp < 0.0f)
+		{
+			act = Act_dying;
+			// death audio
+			return;
+		}
+
+		{
+			if (dmg < 5)	test = 0.1f;
+			else			test = 1.0f;
+		}
+
 		takeDmg = true;
 		showHp = true;
 		if (act != Act_meleeAtk && act != Act_rangeAtk)
 			act = Act_hurt;
+
 
 		audioPlay(SND_ENEMY_HIT);
 	}
@@ -285,9 +299,8 @@ void EGolem::paint(float dt)
 	}
 	else
 	{
-		if (act != Act_dying)
+		if (img[4]->animation == false)
 		{
-			act = Act_dying;
 			audioPlay(SND_ENEMY_DEAD);
 			img[4]->startAnimation();
 			methodead(this);
@@ -369,52 +382,126 @@ void EGolemBoss::init()
 void EGolemBoss::paint(float dt)
 {
 	bool mapPos = (tileNumber == pc->tileNumber);
-
-
-	Texture* tex = img[0]->tex;
-	iRect rt = iRectMake(enemyPos.x + tex->width * ratio * 0.25f,
-		enemyPos.y + tex->height * ratio * 0.25f,
-		tex->width * ratio * 0.5f,
-		tex->height * ratio * 0.75f);
-	iRect rt1 = iRectMake(enemyPos.x,
-		enemyPos.y,
-		tex->width * ratio,
-		tex->height * ratio);
-
-	if (act == Act_idle || act == Act_walking)
+	if (mapPos)
 	{
-		iPoint dir = iPointVector((pc->playerPosition + HALF_OF_TEX_POINT)
-			- (enemyPos + iPointMake(tex->width * ratio * 0.5f, tex->height * ratio * 0.5f)));
+		Texture* tex = img[0]->tex;
+		iRect rt = iRectMake(enemyPos.x + tex->width * ratio * 0.25f,
+			enemyPos.y + tex->height * ratio * 0.25f,
+			tex->width * ratio * 0.5f,
+			tex->height * ratio * 0.75f);
+		iRect rt1 = iRectMake(enemyPos.x,
+			enemyPos.y,
+			tex->width * ratio,
+			tex->height * ratio);
 
-		float angle = iPointAngle(iPointMake(1, 0), iPointZero, dir);
+		touchEnemy = rt;
+		
+		rt.origin += SET_DRAW_OFF;
+		rt1.origin += SET_DRAW_OFF;
+		setRGBA(0, 0, 0, 1);
+		setLineWidth(2);
+		drawRect(rt);
+		setRGBA(1, 0, 1, 1);
+		drawRect(rt1);
+		setRGBA(1, 1, 1, 1);
+		setLineWidth(1);
 
-		if (angle < 45 || angle > 315) imgDir = 2;
-		else if (angle > 45 && angle < 135) imgDir = 0;
-		else if (angle > 135 && angle < 225) imgDir = 1;
-		else if (angle > 225 && angle < 315) imgDir = 3;
+
+		if (act == Act_idle || act == Act_walking)
+		{
+			iImage* img = this->img[0];
+			iPoint dir = iPointVector((pc->playerPosition + HALF_OF_TEX_POINT)
+				- (enemyPos + iPointMake(img->tex->width * ratio * 0.5f, img->tex->height * ratio * 0.5f)));
+
+			float angle = iPointAngle(iPointMake(1, 0), iPointZero, dir);
+			if (angle < 45 || angle > 315) imgDir = 2;
+			else if (angle > 45 && angle < 135) imgDir = 0;
+			else if (angle > 135 && angle < 225) imgDir = 1;
+			else if (angle > 225 && angle < 315) imgDir = 3;
+
+			iPoint et = iPointMake(img->tex->width * ratio / 2,
+				img->tex->height * ratio / 2);
+
+			ATV = (pc->playerPosition + HALF_OF_TEX_POINT)
+				- (enemyPos + et);
+			ATVlength = iPointLength(ATV);
+
+			if (ATVlength < meleeReach)
+				act = Act_meleeAtk;
+			else if (ATVlength < rangeReach)
+				//act = Act_rangeAtk;
+				;
+			else if (ATVlength < 600)
+				act = Act_walking;
+			else
+				act = Act_idle;
+
+		}
+
+		switch (act)
+		{
+		case Act_idle:
+		{
+			methodIdle(this, dt);
+			break;
+		}
+		case Act_attack:
+			break;
+		case Act_meleeAtk:
+		{
+			methodMelee(this, dt);
+			break;
+		}
+		case Act_rangeAtk:
+		{
+			methodRange(this, dt);
+			break;
+		}
+		case Act_falling:
+			break;
+		case Act_evasion:
+			break;
+		case Act_walking:
+		{
+			methodWalk(this, dt);
+			break;
+		}
+		case Act_hurt:
+		{
+			methodHurt(this, dt);
+			break;
+		}
+		case Act_dying:
+		{
+			int imgD = GOLEM_BOSS_IMG_DIRECTION * 3 + imgDir;
+			iImage* img = this->img[imgD];
+			if (img->animation == false)
+			{
+				img->startAnimation();
+			}
+
+			img->paint(dt, enemyPos + SET_DRAW_OFF);
+
+			if (img->animation == false)
+			{
+				enemyPos = iPointZero;
+				touchEnemy = iRectZero;
+				act = Act_dead;
+				tileNumber = 0;
+			}
+			break;
+		}
+		case Act_dead:
+		{
+			break;
+		}
+		default:
+			break;
+		}
 	}
-	touchEnemy = rt;
+		
 
-	rt.origin += SET_DRAW_OFF;
-	rt1.origin += SET_DRAW_OFF;
-	setRGBA(0, 0, 0, 1);
-	setLineWidth(2);
-	drawRect(rt);
-	setRGBA(1, 0, 1, 1);
-	drawRect(rt1);
-	setRGBA(1, 1, 1, 1);
-	setLineWidth(1);
-
-	if (hp > 0.0f)
-	{
-		methodIdle(this, dt);
-		methodHurt(this, dt);
-
-		if (takeDmg)
-			takeDmgEffect(dt);
-
-		if (showHp)
-			drawShowHP(dt);
+#if 0
 		if (mapPos)
 		{
 			if ((methodRange(this, dt) == false) &&
@@ -425,6 +512,9 @@ void EGolemBoss::paint(float dt)
 		}
 		else
 			act = Act_idle;
+
+
+
 	}
 	else
 	{
@@ -449,7 +539,13 @@ void EGolemBoss::paint(float dt)
 			tileNumber = 0;
 		}
 	}
+#endif
 
+	if (takeDmg)
+		takeDmgEffect(dt);
+
+	if (showHp)
+		drawShowHP(dt);
 
 }
 

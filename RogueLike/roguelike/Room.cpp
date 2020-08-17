@@ -35,19 +35,15 @@ iImage* imgNextDoor;
 iImage* imgBarrel;
 iImage* imgDoorNormal;
 
-
 void loadRoomTile()
 {
 	int i;
 	maps = (MapTile**)malloc(sizeof(MapTile*) * TILEOFF_NUM);
 
 	for (i = 0; i < TILEOFF_NUM; i++)
-		maps[i] = (MapTile*)malloc(sizeof(MapTile) * 1);
-
-	for (i = 0; i < TILEOFF_NUM; i++)
 	{
-		MapTile* m = maps[i];
-		m->rgTile = (int*)calloc(sizeof(int), RGTILE_X * RGTILE_Y);
+		maps[i] = (MapTile*)malloc(sizeof(MapTile) * 1);
+		maps[i]->rgTile = (int*)calloc(sizeof(int), RGTILE_X * RGTILE_Y);
 	}
 
 	pt.tileNum = -1;
@@ -98,13 +94,10 @@ void setRoomTile()
 		}
 
 		for (i = 0; i < MAPTILE_NUM; i++)
-			memcpy(maps[m[i]]->rgTile, Tile4way1, sizeof(int) * RGTILE_X * RGTILE_Y);
-
-		for (i = 0; i < TILEOFF_NUM; i++)
 		{
-			ConnectTile* c = &ct[i];
-			if (maps[i]->rgTile[0] != 0)
-				c->value = true;
+			memcpy(maps[m[i]]->rgTile, Tile4way1, sizeof(int) * RGTILE_X * RGTILE_Y);
+			ConnectTile* c = &ct[m[i]];
+			c->value = true;
 		}
 
 		for (i = 0; i < TILEOFF_NUM; i++)
@@ -173,21 +166,21 @@ void setRoomTile()
 			{
 				mo = mapObjs[random() % 5];
 			}
-				m->mapObj[j] = (MapObject*)malloc(sizeof(MapObject));
-				MapObject* mobj = m->mapObj[j];
+			m->mapObj[j] = (MapObject*)malloc(sizeof(MapObject));
+			MapObject* mobj = m->mapObj[j];
 
-				mobj->objImg = mo[j]->objImg->copy();
-				mobj->objPos = mo[j]->objPos;
-				mobj->objTileNum = mo[j]->objTileNum;
-				mobj->objTile = (int*)calloc(sizeof(int), m->mapObj[j]->objTileNum);
-				memcpy(mobj->objTile, mo[j]->objTile, sizeof(int) * m->mapObj[j]->objTileNum);
-				mobj->type = mo[j]->type;
-				mobj->hitBox = mo[j]->hitBox;
+			mobj->objImg = mo[j]->objImg->copy();
+			mobj->objPos = mo[j]->objPos;
+			mobj->objTileNum = mo[j]->objTileNum;
+			mobj->objTile = (int*)calloc(sizeof(int), m->mapObj[j]->objTileNum);
+			memcpy(mobj->objTile, mo[j]->objTile, sizeof(int) * m->mapObj[j]->objTileNum);
+			mobj->type = mo[j]->type;
+			mobj->hitBox = mo[j]->hitBox;
 
-				img = mobj->objImg;
-				img->ratio = max(RGTILE_Width / img->tex->width, RGTILE_Height / img->tex->height) * 2.0f;
-				img->reverse = REVERSE_HEIGHT;
-				//item
+			img = mobj->objImg;
+			img->ratio = max(RGTILE_Width / img->tex->width, RGTILE_Height / img->tex->height) * 2.0f;
+			img->reverse = REVERSE_HEIGHT;
+			//item
 		}
 
 		//------------------------------------------------------------
@@ -411,22 +404,34 @@ void freeRoomTile()
 
 	for (int i = 0; i < TILEOFF_NUM; i++)
 	{
-		if (maps[i]->mapImg)
+		if (maps[i]->rgTile[0] != 0)
 		{
-			delete(maps[i]->mapImg);
-			free(maps[i]->rgTile);
+			delete maps[i]->mapImg;
 
 			int num = maps[i]->mapObjNum;
-			for (int j = 0; j < num; j++)
+			if (num > 0)
 			{
-				delete(maps[i]->mapObj[j]->objImg);
-
-				free(maps[i]->mapObj[j]->objTile);
-
-				free(maps[i]->mapObj[j]);
+				for (int j = 0; j < num; j++)
+				{
+					delete maps[i]->mapObj[j]->objImg;
+					free(maps[i]->mapObj[j]->objTile);
+					free(maps[i]->mapObj[j]);
+				}
+				free(maps[i]->mapObj);
 			}
-			free(maps[i]->mapObj);
+
+			for (int j = 0; j < 4; j++)
+			{
+				if (maps[i]->mapDoor[j]->objImg)
+				{
+					delete maps[i]->mapDoor[j]->objImg;
+					free(maps[i]->mapDoor[j]->objTile);
+				}
+			}
+			free(maps[i]->mapDoor);
 		}
+
+		free(maps[i]->rgTile);
 		free(maps[i]);
 	}
 	free(maps);
@@ -964,9 +969,9 @@ void createObject()
 
 void freeObject()
 {
+	int i, j;
 	int numList = 5;
 	int numObj = 3;
-	int i, j;
 
 	for (i = 0; i< numList; i++)
 	{

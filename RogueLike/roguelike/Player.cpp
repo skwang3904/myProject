@@ -88,7 +88,7 @@ void Player::initPlayerPosition()
 											img[0]->tex->height / 2.0f * img[0]->ratio * 1.5f);
 }
 
-int playerCharNumber = 1;
+extern int playerCharNumber;
 void Player::createPlayerImage()
 {
 	int i, j;
@@ -436,7 +436,7 @@ void Player::setPlayerTile()
 
 void Player::drawtouchPlayer()
 {
-	iRect rt = iRectMake(playerPosition.x + img[0]->tex->width / 2.0f, 
+	iRect rt = iRectMake(playerPosition.x + img[0]->tex->width * 0.25f, 
 		playerPosition.y + img[0]->tex->height / 2.0f,
 		HALF_OF_TEX_WIDTH, HALF_OF_TEX_HEIGHT);
 
@@ -521,9 +521,9 @@ void Player::drawPlayer(float dt)
 	if (evasionPlayer(tile, dt))
 		return;
 
-	iPoint size = HALF_OF_TEX_POINT / 2.0f;
+	iPoint size = iPointMake(HALF_OF_TEX_WIDTH * 0.5f, HALF_OF_TEX_HEIGHT);
 	iPoint playPos = playerPosition + size;
-	wallCheck(false, tile, playPos, mp, size.x, size.y);
+	wallCheck(false, tile, playPos, mp, size.x, size.y * 0.5f);
 	playerPosition = playPos - (size );
 
 	img[headNum]->setTexAtIndex(act == Act_attack ? true : false);
@@ -569,10 +569,10 @@ bool Player::evasionPlayer(MapTile* tile, float dt)
 	if (img[Player_imgEvasion]->animation)
 	{	
 		iPoint mp = evasV * (EVASION_DISTANCE * dt);
-		iPoint size = HALF_OF_TEX_POINT / 2.0f;
+		iPoint size = iPointMake(HALF_OF_TEX_WIDTH * 0.5f, HALF_OF_TEX_HEIGHT);
 
 		iPoint playPos = playerPosition + size;
-		wallCheck(false, tile, playPos, mp, size.x, size.y);
+		wallCheck(false, tile, playPos, mp, size.x, size.y * 0.5f);
 		playerPosition = playPos - size;
 
 		iPoint dp = playerPosition + iPointMake(0, -30) + SET_DRAW_OFF;

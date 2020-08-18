@@ -430,7 +430,8 @@ void EGolemBoss::paint(float dt)
 				act = Act_meleeAtk;
 			else if (ATVlength < rangeReach)
 				//act = Act_rangeAtk;
-				;
+				act = Act_walking;
+				
 			else if (ATVlength < 600)
 				act = Act_walking;
 			else
@@ -499,54 +500,12 @@ void EGolemBoss::paint(float dt)
 			break;
 		}
 	}
-		
-
-#if 0
-		if (mapPos)
-		{
-			if ((methodRange(this, dt) == false) &&
-				(methodMelee(this, dt) == false))
-			{
-				methodWalk(this, dt);
-			}
-		}
-		else
-			act = Act_idle;
-
-
-
-	}
-	else
-	{
-		int imgD = GOLEM_BOSS_IMG_DIRECTION * 3 + imgDir;
-		iImage* img = this->img[imgD];
-		if (act != Act_dying)
-		{
-			act = Act_dying;
-			audioPlay(SND_ENEMY_DEAD);
-			img->startAnimation();
-			//methodead(this);
-			img->reverse = reverse;
-		}
-
-		img->paint(dt, enemyPos + SET_DRAW_OFF);
-
-		if (img->animation == false)
-		{
-			enemyPos = iPointZero;
-			touchEnemy = iRectZero;
-			act = Act_dead;
-			tileNumber = 0;
-		}
-	}
-#endif
 
 	if (takeDmg)
 		takeDmgEffect(dt);
 
 	if (showHp)
 		drawShowHP(dt);
-
 }
 
 

@@ -1,5 +1,7 @@
 #include "RgGame.h"
 
+#include "Common.h"
+
 #include "RgIntro.h"
 #include "RgMenu.h"
 
@@ -35,6 +37,8 @@ void loadRgGame()
 	loadAudio(ai, 6);
 
 	//audioPlay(5);
+
+	createPopOption();
 }
 
 void freeRgGame()
@@ -46,6 +50,7 @@ void freeRgGame()
 	}
 
 	freeAudio();
+	freePopOption();
 }
 
 bool bCall = false;
@@ -67,12 +72,18 @@ void drawRgGame(float dt)
 	}
 
 	drawLoading(_dt);
+
+	drawPopOption(dt);
 }
 
 void keyRgGame(iKeyState stat, iPoint point)
 {
 	if (keyLoading(stat, point))
 		return;
+
+	if (keyPopOption(stat, point))
+		return;
+
 	//if (stat == iKeyStateBegan)
 	//	zoomLib(point, 2.0f);
 
@@ -81,6 +92,7 @@ void keyRgGame(iKeyState stat, iPoint point)
 	case gs_menu:	keyRgMenu(stat, point);		break;
 	case gs_proc:	keyRgProc(stat, point);		break;
 	}
+
 }
 
 

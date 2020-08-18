@@ -30,10 +30,10 @@ Chest::Chest(ChestType ct)
 	};
 
 	TmpType tt[4] = {
-		{imgBasicChest, openChestBasic, coin},
-		{imgCommonChest, openChestBasic, healing },
-		{imgRareChest, openChestBasic, powerUp},
-		{imgUniqueChest, openChestBasic, coin },
+		{imgBasicChest,		openChestBasic, coin},
+		{imgCommonChest,	openChestBasic, healing },
+		{imgRareChest,		openChestBasic, powerUp},
+		{imgUniqueChest,	openChestBasic, coin },
 	};
 	TmpType* t = &tt[ct];
 
@@ -61,28 +61,10 @@ Chest::~Chest()
 	free(items);
 }
 
-bool Chest::openAni(float dt)
+void Chest::openAni(float dt)
 {
-	if (open == false)
-		return false;
 	// 오픈 애니메이션
-	// 다 열리면 드랍
-	// 드랍 아이템
-
-	static float delta = 0.0f;
-	setRGBA(1, 1, 1, 1.0f - (delta / 3.0f));
-	img->paint(dt, pos + SET_DRAW_OFF);
-	setRGBA(1, 1, 1, 1);
-
-	delta += dt;
-	if (delta > 3.0f)
-	{
-		delta = 0.0f;
-		alive = false;
-		openMethod(this);
-
-	}
-	return true;
+	// 현재 사용안함
 }
 
 void Chest::paint(float dt)
@@ -90,13 +72,27 @@ void Chest::paint(float dt)
 	for (int i = 0; i < 3; i++)
 		items[i]->paint(dt);
 
-	if (alive == false || openAni(dt))
+	if (alive == false)
 		return;
+
+	if (open)
+	{
+		if (img->animation == false)
+		{
+			alive = false;
+			openMethod(this);
+		}
+	}
+
+	setRGBA(0, 1, 0, 0.5f);
+	iRect rt = touchRect;
+	rt.origin += SET_DRAW_OFF;
+	fillRect(rt);
+	setRGBA(1, 1, 1, 1);
 
 	img->paint(dt, pos + SET_DRAW_OFF);
 	
 	//if( ? ) open = true;
-
 	// 무기에 이사할것
 	if (tileNumber == pc->tileNumber)
 	{
@@ -106,7 +102,10 @@ void Chest::paint(float dt)
 			if (pc->act == Act_attack && mw->attackSpeed > -0.1f)
 			{
 				if (containRect(mw->hitBox, touchRect))
+				{
 					open = true;
+					img->startAnimation();
+				}
 			}
 		}
 		else
@@ -129,27 +128,55 @@ void Chest::setChest()
 		}
 	}
 
-	touchRect = iRectMake(pos.x, pos.y, img->tex->width, img->tex->height);
+	float x = img->tex->width * 0.2;
+	float y = img->tex->height * 0.2;
+	touchRect = iRectMake(pos.x + x, pos.y + y * 1.3f, 
+		img->tex->width - x * 2.0f, img->tex->height - y * 2.0f);
 }
 
 void createChest()
 {
-	iGraphics* g = iGraphics::instance();
 	iImage* imgs[4];
-	for(int i=0; i<4; i++)
+	Texture* tex;
+
+	const char* strPath[4] = {
+	"assets/TreasureBox/Chest_Basic_%d.png",
+	"assets/TreasureBox/Chest_Common_%d.png",
+	"assets/TreasureBox/Chest_Rare_%d.png",
+	"assets/TreasureBox/Chest_Rare_%d.png",
+	};
+
+	iPoint size = iPointMake(200, 200);
+	for (int i = 0; i < 4; i++)
 	{
-		iSize size = iSizeMake(100, 100);
-		g->init(size);
-
-		setRGBA(0.5f, 1, 0.5f, 1);
-		g->fillRect(0, 0, size.width, size.height, 10 + 20 * i);
-
-		Texture* tex = g->getTexture();
 		iImage* img = new iImage();
-		img->addObject(tex);
-		freeImage(tex);
+		for (int j = 0; j < 2; j++)
+		{
+			tex = createTexture(size.x, size.y);
+			fbo->bind(tex);
+			fbo->setSize(size);
+			
+			Texture* t = createImage(strPath[i], j + 1);
+			drawImage(t, 0, 0,
+				0, 0, t->width, t->height,
+				TOP | LEFT, size.x / t->width, size.y / t->height,
+				2, 0, REVERSE_HEIGHT);
+			freeImage(t);
+
+			fbo->backSize();
+			fbo->unbind();
+
+			img->addObject(tex);
+			freeImage(tex);
+		}
+
+		img->_aniDt = 1.0f;
+		img->_repeatNum = 1;
+		img->lastFrame = true;
 		imgs[i] = img;
 	}
+
+
 	imgBasicChest = imgs[0];
 	imgCommonChest = imgs[1];
 	imgRareChest = imgs[2];

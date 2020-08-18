@@ -1,5 +1,7 @@
 #include "RgMenu.h"
 
+#include "loading.h"
+
 void createCharTexture();
 void freeCharTexture();
 
@@ -160,14 +162,13 @@ void createPopMenuBG()
 			iPopup* pp = pop0;
 			pp->addObject(img);
 			pp->openPosition = iPointMake(p.x, p.y * 1.3);
-			pp->closePosition = iPointMake(p.x, p.y * 1.3);
-			
+			pp->closePosition = iPointMake(p.x, p.y * 1.3);	
 		}
 		else
 		{
 			iPopup* pp = pop1;
 			pp->addObject(img);
-			pp->openPosition = iPointMake(p.x - devSize.width/2.0f, p.y * 1.3);
+			pp->openPosition = iPointMake(p.x - devSize.width / 2.0f, p.y * 1.3);
 			pp->closePosition = iPointMake(p.x - devSize.width / 2.0f, p.y * 1.3);
 		}
 	}
@@ -217,7 +218,6 @@ void createPopMenuBG()
 	pop0->show(true);
 	pop0->_showDt = 1.0f;
 
-	pop1->show(false);
 	pop1->_showDt = 1.0f;
 
 	popMenuChar[0] = pop0;
@@ -255,7 +255,7 @@ bool keyPopMenuBG(iKeyState stat, iPoint point)
 
 iPopup* popMenuBtn;
 iImage** imgMenuBtn;
-extern int playerCharNumber;
+
 
 void drawBeforeMenuButton(iPopup* me, iPoint p, float dt);
 
@@ -428,16 +428,50 @@ void drawPopMenuButton(float dt)
 	popMenuBtn->paint(dt);
 }
 
-bool currentChar(int i)
+int playerCharNumber = 0;
+void currentChar(int dst, int src, bool isLast)
 {
-	if (playerCharNumber == i)
-		return true;
+	if (dst == src)
+		return;
 
-	playerCharNumber = i;
-	imgMainCharExplanation->setTexAtIndex(i);
+	bool check = dst > src;
 
-	return false;
+	// s = 1
+	// d = 0
+	iPoint p[3] = {
+	iPointMake(-imgMainChar[0]->tex->width, devSize.height / 3.0 * 1.3f),
+	iPointMake(devSize.width / 4.0f, devSize.height / 3.0 * 1.3f),
+	iPointMake(devSize.width, devSize.height / 3.0 * 1.3f)
+	};
+
+	iPopup* p0 = popMenuChar[dst];
+	iPopup* p1 = popMenuChar[src];
+
+	if (p0->bShow)
+		return;
+
+	p0->show(true);
+	p1->show(false);
+
+	p0->openPosition = check ? p[2] : p[0];
+	p0->closePosition = p[1];
+
+	p1->openPosition = check ? p[0] : p[2];
+	p1->closePosition = p[1];
+
+	if (isLast)
+	{
+		p0->openPosition = check ? p[0] : p[2];
+		p0->closePosition = p[1];
+
+		p1->openPosition = check ? p[2] : p[0];
+		p1->closePosition = p[1];
+	}
+		
+	playerCharNumber = dst;
+	imgMainCharExplanation->setTexAtIndex(dst);
 }
+
 
 bool keyPopMenuButton(iKeyState stat, iPoint point)
 {
@@ -451,40 +485,45 @@ bool keyPopMenuButton(iKeyState stat, iPoint point)
 
 		if (i == 0)
 		{
-			if (currentChar(0))
-				break;
-
-			iPopup* p0 = popMenuChar[0];
-			iPopup* p1 = popMenuChar[1];
-			p0->show(true);
-			p1->show(false);
-			p0->openPosition = iPointMake(-imgMainChar[0]->tex->width, devSize.height / 3.0 * 1.3f);
-			p0->closePosition = iPointMake(devSize.width / 4.0f, devSize.height / 3.0 * 1.3f);
-
-			p1->openPosition = iPointMake(devSize.width, devSize.height / 3.0 * 1.3f);
-			p1->closePosition = iPointMake(devSize.width / 4.0f, devSize.height / 3.0 * 1.3f);
+			currentChar(0, playerCharNumber, false);
 		}
 		else if (i == 1)
 		{
-			if (currentChar(1))
-				break;
-
-			iPopup* p0 = popMenuChar[0];
-			iPopup* p1 = popMenuChar[1];
-			p0->show(false);
-			p1->show(true);
-
-			p0->openPosition = iPointMake(-imgMainChar[0]->tex->width, devSize.height / 3.0 * 1.3f);
-			p0->closePosition = iPointMake(devSize.width / 4.0f, devSize.height / 3.0 * 1.3f);
-
-			p1->openPosition = iPointMake(devSize.width, devSize.height / 3.0 * 1.3f);
-			p1->closePosition = iPointMake(devSize.width / 4.0f, devSize.height / 3.0 * 1.3f);
+			currentChar(1, playerCharNumber, false);
 		}
 		else if (i == 2);
 		else if (i == 3);
-		else if (i == 4);
-		else if (i == 5);
-		else if (i == 6);
+		else if (i == 4)
+		{
+			//left arrow
+			int n = playerCharNumber - 1;
+			bool isLast = false;
+			if (n < 0)
+			{
+				n = 1;
+				isLast = true;
+			}
+			
+			currentChar(n, playerCharNumber, isLast);
+
+		}
+		else if (i == 5)
+		{
+			// right arrow
+			int n = playerCharNumber + 1;
+			bool isLast = false;
+			if (n > 1)
+			{
+				n = 0;
+				isLast = true;
+			}
+			currentChar(n, playerCharNumber, isLast);
+
+		}
+		else if (i == 6)
+		{
+			setLoading(gs_proc, freeRgMenu, loadRgProc);
+		}
 
 		break;
 	}

@@ -20,7 +20,7 @@ public:
 	Chest(ChestType ct);
 	virtual ~Chest();
 
-	bool openAni(float dt);
+	void openAni(float dt);
 	void paint(float dt);
 
 	void setChest();

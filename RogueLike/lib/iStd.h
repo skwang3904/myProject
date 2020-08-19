@@ -193,3 +193,6 @@ bool containRect(iRect src, iRect dst);
 
 char* loadFile(const char* filePath, int& length);
 void saveFile(const char* filePath, char* buf, int bufLength);
+
+
+#define CHECK_CODE 0

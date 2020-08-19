@@ -1,6 +1,6 @@
 #pragma once
 
-#include "iStd.h"
+//#include "iStd.h"
 
 class MonsterData;
 class UseItem;

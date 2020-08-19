@@ -22,26 +22,24 @@ enum MapType {
 	MapType_Shop,
 };
 
-enum MapObjType {
-	MapObj_Nomal = 0,
-	MapObj_Door,
-	MapObj_Broke,
-};
-
-class UseItem;
-struct MapObject
-{
-	iImage* objImg; // 오브젝트 애니메이션
-	iPoint objPos;
-
-	int objTileNum; //오브젝트가 사용하는 타일숫자
-	int* objTile; // 오브젝트가 사용하는 타일
-
-	MapObjType type;
-	iRect hitBox;
-
-	UseItem* item;
-};
+//enum MapObjType {
+//	MapObj_Nomal = 0,
+//	MapObj_Door,
+//	MapObj_Broke,
+//};
+//
+//struct MapObject
+//{
+//	iImage* objImg; // 오브젝트 애니메이션
+//	iPoint objPos;
+//
+//	int objTileNum; //오브젝트가 사용하는 타일숫자
+//	int* objTile; // 오브젝트가 사용하는 타일
+//
+//	MapObjType type;
+//	iRect hitBox;
+//
+//};
 
 struct MapTile 
 {
@@ -52,8 +50,8 @@ struct MapTile
 	iPoint tileOff;
 	
 	int mapObjNum;
-	MapObject** mapObj;
-	MapObject** mapDoor;
+	//MapObject** mapObj;
+	//MapObject** mapDoor;
 };
 extern MapTile** maps;
 

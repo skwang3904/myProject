@@ -6,9 +6,11 @@
 ConnectTile ct[TILEOFF_NUM];
 MapTile** maps;
 
+#if CHECK_CODE
 MapObject*** mapObjs;
 MapObject*** mapBossObjs;
 MapObject*** mapTreasureObjs;
+#endif 
 
 void createObjImage();
 void freeObjImage();
@@ -29,11 +31,12 @@ static passTile pt;
 #define _passAniDt 0.2f
 
 iImage* imgRoom;
-
+#if CHECK_CODE
 iImage* imgNextDoor;
 
 iImage* imgBarrel;
 iImage* imgDoorNormal;
+#endif 
 
 void loadRoomTile()
 {
@@ -141,6 +144,7 @@ void setRoomTile()
 		}
 	}
 
+#if CHECK_CODE
 	for (i = 0; i < TILEOFF_NUM; i++)
 	{
 		if (maps[i]->rgTile[0] == 0)
@@ -273,7 +277,6 @@ void setRoomTile()
 				mobj->type = MapObj_Door;
 			}
 		}
-
 		//--------------------------------------------------------------------
 		// 맵 이미지 애니메이션
 
@@ -284,10 +287,12 @@ void setRoomTile()
 		//img->animation = true;
 		//img->_aniDt = 0.5f;
 	}
+#endif
 }
 
 void reSetTile()
 {
+#if CHECK_CODE
 	int i, j;
 	// 타일 초기화
 	for (i = 0; i < TILEOFF_NUM; i++)
@@ -323,6 +328,7 @@ void reSetTile()
 		}
 		free(m->mapDoor);
 	}
+#endif
 }
 
 void connectCheck(ConnectTile* c, int& count)
@@ -399,6 +405,7 @@ void pathTileCheck(ConnectTile* c)
 
 void freeRoomTile()
 {
+#if CHECK_CODE
 	freeObjImage();
 	freeObject();
 
@@ -435,10 +442,12 @@ void freeRoomTile()
 		free(maps[i]);
 	}
 	free(maps);
+#endif
 }
 
 void drawObject(float dt)
 {
+#if CHECK_CODE
 	int i, j;
 	bool check = true;
 	MapTile* m = maps[pc->tileNumber];
@@ -501,6 +510,7 @@ void drawObject(float dt)
 			img->paint(dt, p);
 		}
 	}
+#endif
 }
 
 void drawRoomTile(float dt)
@@ -739,11 +749,13 @@ void wallCheck(bool checkFall, MapTile* tile, iPoint& pos, iPoint mp, float half
 	}
 }
 
+
 //--------------------------------------------------------------------------------------------
 // createObject
 
 void createObjImage()
 {
+#if CHECK_CODE
 	int i, j;
 
 	iImage* img = new iImage();
@@ -838,19 +850,23 @@ void createObjImage()
 		freeImage(tex);
 	}
 	imgDoorNormal = img;
+#endif
 }
 
 void freeObjImage()
 {
 	delete imgRoom;
+#if CHECK_CODE
 	delete imgNextDoor;
 
 	delete imgBarrel;
 	delete imgDoorNormal;
+#endif
 }
 
 void createObject()
 {
+#if CHECK_CODE
 	int i, j, k;
 	iImage* img;
 
@@ -965,10 +981,12 @@ void createObject()
 			img->reverse = REVERSE_HEIGHT;
 		}
 	}
+#endif
 }
 
 void freeObject()
 {
+#if CHECK_CODE
 	int i, j;
 	int numList = 5;
 	int numObj = 3;
@@ -1012,4 +1030,5 @@ void freeObject()
 		free(mapTreasureObjs[i]);
 	}
 	free(mapTreasureObjs);
+#endif
 }

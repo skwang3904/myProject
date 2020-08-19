@@ -155,21 +155,17 @@ void rgArray::remove(int index)
 
 void rgArray::removeAll()
 {
-	tail->prev = curr;
+	curr = tail->prev;
 	while (curr)
 	{
-		if (curr->prev == head)
-		{
-			if (method)
-				method(curr->data);
-			free(curr);
-			break;
-		}
 		rgxArray* c = curr->prev;
 		if (method)
 			method(curr->data);
 		free(curr);
 		curr = c;
+
+		if (curr == head)
+			break;
 	}
 	count = 0;
 }
@@ -196,19 +192,6 @@ void* rgArray::objectAtIndex(int index)
 		a = a->next;
 	}
 
-	//else
-	//{
-	//	a = tail->prev;
-	//	for (int i = 0; ; i++)
-	//	{
-	//		if (i == index - count - 1)
-	//		{
-	//			curr = a;
-	//			return a->data;
-	//		}
-	//		a = a->prev;
-	//	}
-	//}
 }
 
 void rgArray::printArray()

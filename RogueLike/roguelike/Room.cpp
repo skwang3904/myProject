@@ -28,7 +28,7 @@ struct passTile {
 	float passAniDt;
 };
 static passTile pt;
-#define _passAniDt 0.2f
+
 
 iImage* imgRoom;
 #if CHECK_CODE

@@ -10,11 +10,7 @@
 
 /////////////////////////////////////////////////////////////////////////////////
 #include "iDrawNumber.h"
-#include "rgArray.h"
-#include "../roguelike/Player.h"
-#include "../roguelike/RgTile.h"
-#include "../roguelike/RgLoading.h"
-#include "../roguelike/RgProc.h"
+
 /////////////////////////////////////////////////////////////////////////////////
 
 #include "iSort.h"
@@ -193,6 +189,3 @@ bool containRect(iRect src, iRect dst);
 
 char* loadFile(const char* filePath, int& length);
 void saveFile(const char* filePath, char* buf, int bufLength);
-
-
-#define CHECK_CODE 0

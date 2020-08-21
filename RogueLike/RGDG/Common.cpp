@@ -4,7 +4,8 @@
 Object::Object(int index)
 {
 	this->index = index;
-	this->img = NULL;
+	this->imgNum = 0;
+	this->imgs = NULL;
 	this->mapNumber = -1;
 
 	this->position = iPointZero;
@@ -13,6 +14,10 @@ Object::Object(int index)
 
 Object::~Object()
 {
-	if (img)
-		delete img;
+	if (imgs)
+	{
+		for (int i = 0; i < imgNum; i++)
+			delete imgs[i];
+		free(imgs);
+	}
 }

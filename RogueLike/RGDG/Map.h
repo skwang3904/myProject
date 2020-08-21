@@ -3,6 +3,7 @@
 #include "iStd.h"
 
 extern iPoint displayCenterPos;
+#define DRAW_OFF displayCenterPos + player->camera
 
 void loadMap();
 void freeMap();

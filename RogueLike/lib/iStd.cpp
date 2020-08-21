@@ -1,6 +1,5 @@
 #include "iStd.h"
 
-#include "../roguelike/RgIntro.h"
 uint8 float2uint8(float f)
 {
     return f * 0xFF;
@@ -72,11 +71,11 @@ void loadLib(HDC hDC)
     Texture* tex = createTexture(p.x, p.y);
     setTexture(CLAMP, MIPMAP);
     fbo->bind(tex); //
-    fbo->setSize(p.x, p.y);
+    //fbo->setSize(p.x, p.y);
 
     fillCircle(16, 16, 16);
 
-    fbo->backSize();
+    //fbo->backSize();
     fbo->unbind(); //
     texGdi[0] = tex;
 
@@ -98,6 +97,9 @@ void freeLib()
     for (int i = 0; i < 2; i++)
         freeImage(texGdi[i]);
     free(texGdi);
+
+    iGraphics* g = iGraphics::instance();
+    g->~iGraphics();
 }
 
 iPoint zoomPosition;
@@ -115,14 +117,15 @@ void drawLib(Method_Paint method)
     fbo->bind();
     fbo->clear(0, 0, 0, 1);
 
-    setRGBA(1, 1, 1, 1);
     method(delta);
     keyDown = 0;
 
+    extern void drawCursor(float dt);
+    drawCursor(0.0f);
     fbo->unbind();
     // ------------------
 
-    glClearColor(0, 0, 0, 1);
+    glClearColor(0, 0, 1, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     setRGBA(1, 1, 1, 1);
@@ -146,9 +149,17 @@ void drawLib(Method_Paint method)
         //drawImage(tex, devSize.width / 2, devSize.height / 2,
         //    0, 0, tex->width, tex->height, VCENTER | HCENTER,
         //    2.0f, 2.0f, 2, 0, REVERSE_HEIGHT);
-		drawImage(tex, devSize.width / 2, devSize.height / 2,
-			0, 0, tex->width, tex->height, VCENTER | HCENTER,
-			1.0f, 1.0f, 2, 0, REVERSE_HEIGHT);
+#if 1
+		drawImage(tex, viewport.size.width / 2, viewport.size.height / 2,
+			0, 0, tex->width, tex->height, 
+            VCENTER | HCENTER,	viewport.size.width / tex->width, viewport.size.height / tex->height, 
+            2, 0, REVERSE_HEIGHT);
+#else
+        drawImage(tex, viewport.size.width / 2, viewport.size.height / 2,
+            0, 0, tex->width, tex->height,
+            TOP | LEFT, viewport.size.width / tex->width, viewport.size.height / tex->height,
+            2, 0, REVERSE_HEIGHT);
+#endif
     }
 
 
@@ -398,6 +409,11 @@ void iFBO::bind(Texture* tex)
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex->texID, 0);
 
     glViewport(0, 0, tex->width, tex->height);
+
+
+    mProjection->loadIdentity();
+    mProjection->ortho(0, tex->width, tex->height, 0, -1000, 1000);
+    mModelview->loadIdentity();
 }
 
 void iFBO::unbind()
@@ -413,6 +429,10 @@ void iFBO::unbind()
         glBindFramebuffer(GL_FRAMEBUFFER, prevFbo);
         glViewport(viewport.origin.x, viewport.origin.y, viewport.size.width, viewport.size.height);
     }
+
+    mProjection->loadIdentity();
+    mProjection->ortho(viewport.origin.x, viewport.size.width, viewport.size.height, viewport.origin.y, -1000, 1000);
+    mModelview->loadIdentity();
 }
 
 Texture* iFBO::getTexture()

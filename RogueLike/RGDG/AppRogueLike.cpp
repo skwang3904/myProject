@@ -65,7 +65,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInst,
         else
         {
             drawLib(drawGame);
-            drawCursor(0.0f);
+            //drawCursor(0.0f);
             SwapBuffers(hDC);
         }
 }

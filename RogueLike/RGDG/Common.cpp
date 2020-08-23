@@ -14,10 +14,7 @@ Object::Object(int index)
 
 Object::~Object()
 {
-	if (imgs)
-	{
-		for (int i = 0; i < imgNum; i++)
-			delete imgs[i];
-		free(imgs);
-	}
+	for (int i = 0; i < imgNum; i++)
+		delete imgs[i];
+	free(imgs);
 }

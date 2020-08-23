@@ -1,8 +1,7 @@
 #include "Map.h"
 
+#include "PlayerChar.h"
 #include "Tile.h"
-
-
 
 struct passTile {
 	int tileNum;
@@ -13,9 +12,7 @@ struct passTile {
 static passTile pt;
 #define _passAniDt 0.2f
 
-
 iPoint displayCenterPos;
-
 
 MapTile** maps;
 void createMap();
@@ -50,6 +47,43 @@ void loadMap()
 
 	
 	createMap();
+
+	int num = TILE_TOTAL_NUM;
+	int t = TILE_NUM_X * TILE_NUM_Y;
+
+	iSize size = iSizeMake(TILE_NUM_X * TILE_Width, TILE_NUM_Y * TILE_Height);
+	for (i = 0; i < num; i++)
+	{
+		if (maps[i]->tile[0] != 0)
+		{
+			iPoint p = maps[i]->tileOff;
+
+			Texture* tex = createTexture(size.width, size.height);
+			iImage* img = new iImage();
+
+			fbo->bind(tex);
+			for (int j = 0; j < t; j++)
+			{
+				int8 n = maps[i]->tile[j];
+				if (n == MOVETILE)		setRGBA(MOVETILE_RGBA);
+				else if (n == WALLTILE)	setRGBA(WALLTILE_RGBA);
+				else if (n == FALLTILE)	setRGBA(FALLTILE_RGBA);
+				else					setRGBA(1, 1, 1, 1);
+
+				fillRect(TILE_Width * (j % TILE_NUM_X), TILE_Height * (j / TILE_NUM_X),
+					TILE_Width, TILE_Height);
+			}
+			fbo->unbind();
+
+			img->addObject(tex);
+			freeImage(tex);
+
+			img->position = p;
+			img->reverse = REVERSE_HEIGHT;
+			maps[i]->img = img;
+		}
+
+	}
 }
 
 void freeMap()
@@ -67,32 +101,12 @@ void freeMap()
 
 void drawMap(float dt)
 {
-	
 	int num = TILE_TOTAL_NUM;
-	int t = TILE_NUM_X * TILE_NUM_Y;
-	
 	for (int i = 0; i < num; i++)
 	{
-		if (maps[i]->tile[0] != 0)
-		{
-			iPoint p = maps[i]->tileOff;
-			for (int j = 0; j < t; j++)
-			{
-				int8 n = maps[i]->tile[j];
-				if (n == MOVETILE)		setRGBA(MOVETILE_RGBA);
-				else if (n == WALLTILE)	setRGBA(WALLTILE_RGBA);
-				else if (n == FALLTILE)	setRGBA(FALLTILE_RGBA);
-				else					setRGBA(1, 1, 1, 1);
-
-
-				fillRect(0 * p.x + TILE_Width * (j % TILE_NUM_X), 0 * p.y + TILE_Height * (j / TILE_NUM_X),
-					TILE_Width, TILE_Height);
-			}
-			break;
-		}
+		if(maps[i]->img)
+			maps[i]->img->paint(dt, DRAW_OFF);
 	}
-
-	setRGBA(1, 1, 1, 1);
 }
 
 //----------------------------------------------------------------------------------
@@ -230,6 +244,8 @@ void pathTileCheck(ConnectTile* c)
 	if (y > 0)						u = ct[c->index - TILE_TOTAL_SQRT].value;
 	if (y < TILE_TOTAL_SQRT - 1)	d = ct[c->index + TILE_TOTAL_SQRT].value;
 
+//#define PATH(index, l, r, u, d) printf("index[%d] = [ l : %d, r : %d, u : %d, d : %d ]\n", index, l, r, u, d)
+//	PATH(index, l, r, u, d);
 	int pathNum = l + r + u + d;
 	switch (pathNum) {
 	case 4: MAPSIZE(index, Tile4Way1); break;

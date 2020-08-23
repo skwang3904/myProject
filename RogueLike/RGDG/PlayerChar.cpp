@@ -180,7 +180,7 @@ void PlayerChar::paint(float dt, iPoint off)
 {
 	uint8 reverse = img->reverse;
 	iPoint mp = iPointZero;
-	int tmp = 3;
+	int tmp = 50;
 
 	uint32 key = getKeyStat();
 	if (key == 0)
@@ -222,7 +222,7 @@ void PlayerChar::paint(float dt, iPoint off)
 		}
 	}
 	position += mp;
-	//camera -= mp;
+	camera -= mp;
 
 
 	// wallcheck

@@ -1,60 +1,36 @@
-﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(459,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (TowerDefense.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-iOpenGL.obj : error LNK2019: _glewInit@0 외부 기호(참조 위치: "bool __cdecl startGLEW(void)" (?startGLEW@@YA_NXZ) 함수)에서 확인하지 못했습니다.
-iOpenGL.obj : error LNK2019: _glewGetErrorString@4 외부 기호(참조 위치: "void __cdecl checkOpenGL(void)" (?checkOpenGL@@YAXXZ) 함수)에서 확인하지 못했습니다.
-iOpenGL.obj : error LNK2019: _glewGetString@4 외부 기호(참조 위치: "void __cdecl checkOpenGL(void)" (?checkOpenGL@@YAXXZ) 함수)에서 확인하지 못했습니다.
-iOpenGL.obj : error LNK2019: _wglewIsSupported@4 외부 기호(참조 위치: "void __cdecl setupOpenGL(bool,struct HDC__ *)" (?setupOpenGL@@YAX_NPAUHDC__@@@Z) 함수)에서 확인하지 못했습니다.
-iOpenGL.obj : error LNK2001: ___glewBindBuffer 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewBindBuffer 외부 기호를 확인할 수 없습니다.
-iOpenGL.obj : error LNK2001: ___glewBufferData 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewBufferData 외부 기호를 확인할 수 없습니다.
-iOpenGL.obj : error LNK2001: ___glewDeleteBuffers 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewDeleteBuffers 외부 기호를 확인할 수 없습니다.
-iOpenGL.obj : error LNK2001: ___glewGenBuffers 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewGenBuffers 외부 기호를 확인할 수 없습니다.
-iOpenGL.obj : error LNK2001: ___glewAttachShader 외부 기호를 확인할 수 없습니다.
-iOpenGL.obj : error LNK2001: ___glewCompileShader 외부 기호를 확인할 수 없습니다.
-iOpenGL.obj : error LNK2001: ___glewCreateProgram 외부 기호를 확인할 수 없습니다.
-iOpenGL.obj : error LNK2001: ___glewCreateShader 외부 기호를 확인할 수 없습니다.
-iOpenGL.obj : error LNK2001: ___glewDeleteProgram 외부 기호를 확인할 수 없습니다.
-iOpenGL.obj : error LNK2001: ___glewDeleteShader 외부 기호를 확인할 수 없습니다.
-iOpenGL.obj : error LNK2001: ___glewDetachShader 외부 기호를 확인할 수 없습니다.
-iOpenGL.obj : error LNK2001: ___glewGetProgramInfoLog 외부 기호를 확인할 수 없습니다.
-iOpenGL.obj : error LNK2001: ___glewGetProgramiv 외부 기호를 확인할 수 없습니다.
-iOpenGL.obj : error LNK2001: ___glewGetShaderInfoLog 외부 기호를 확인할 수 없습니다.
-iOpenGL.obj : error LNK2001: ___glewGetShaderiv 외부 기호를 확인할 수 없습니다.
-iOpenGL.obj : error LNK2001: ___glewLinkProgram 외부 기호를 확인할 수 없습니다.
-iOpenGL.obj : error LNK2001: ___glewShaderSource 외부 기호를 확인할 수 없습니다.
-iOpenGL.obj : error LNK2001: ___glewBindVertexArray 외부 기호를 확인할 수 없습니다.
-iOpenGL.obj : error LNK2001: ___glewDeleteVertexArrays 외부 기호를 확인할 수 없습니다.
-iOpenGL.obj : error LNK2001: ___glewGenVertexArrays 외부 기호를 확인할 수 없습니다.
-iOpenGL.obj : error LNK2001: _glewExperimental 외부 기호를 확인할 수 없습니다.
-iOpenGL.obj : error LNK2001: ___wglewCreateContextAttribsARB 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewActiveTexture 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewBufferSubData 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewDisableVertexAttribArray 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewDrawBuffers 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewEnableVertexAttribArray 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewGetAttribLocation 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewGetUniformLocation 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewUniform1f 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewUniform1i 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewUniform2f 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewUniform2fv 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewUniform4f 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewUniformMatrix4fv 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewUseProgram 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewVertexAttribPointer 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewBindFramebuffer 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewBindRenderbuffer 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewCheckFramebufferStatus 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewDeleteFramebuffers 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewDeleteRenderbuffers 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewFramebufferRenderbuffer 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewFramebufferTexture2D 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewGenFramebuffers 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewGenRenderbuffers 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewGenerateMipmap 외부 기호를 확인할 수 없습니다.
-iStd.obj : error LNK2001: ___glewRenderbufferStorage 외부 기호를 확인할 수 없습니다.
-Map.obj : error LNK2001: "class Player * pc" (?pc@@3PAVPlayer@@A) 외부 기호를 확인할 수 없습니다.
-Map.obj : error LNK2001: "struct iPoint * tileOffSet" (?tileOffSet@@3PAUiPoint@@A) 외부 기호를 확인할 수 없습니다.
-C:\Users\user\Documents\GitHub\myProject\Debug\RogueLike.exe : fatal error LNK1120: 54개의 확인할 수 없는 외부 참조입니다.
+﻿D:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(467,5): warning MSB8028: 중간 디렉터리(Debug\)에 다른 프로젝트(TowerDefense.vcxproj)에서 공유하는 파일이 포함되어 있습니다.  이로 인해 잘못된 정리 및 다시 빌드 동작이 수행될 수 있습니다.
+  Map.cpp
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(16,17): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(18,25): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(27,29): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(26,54): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(61,49): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(61,37): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(70,50): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(73,57): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(73,25): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(78,24): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(78,16): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(299,10): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(300,11): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(301,11): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(302,11): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(312,25): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(321,16): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(325,10): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(326,11): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(327,11): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(328,11): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(338,42): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(353,10): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(354,11): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(355,11): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(356,11): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(366,25): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(375,16): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(379,10): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(380,11): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(381,11): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(382,11): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Map.cpp(392,43): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  RogueLike.vcxproj -> C:\Users\qkrtn\Documents\GitHub\myProject\Debug\RogueLike.exe

@@ -71,11 +71,9 @@ void loadLib(HDC hDC)
     Texture* tex = createTexture(p.x, p.y);
     setTexture(CLAMP, MIPMAP);
     fbo->bind(tex); //
-    //fbo->setSize(p.x, p.y);
 
     fillCircle(16, 16, 16);
 
-    //fbo->backSize();
     fbo->unbind(); //
     texGdi[0] = tex;
 

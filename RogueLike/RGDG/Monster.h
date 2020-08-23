@@ -18,12 +18,17 @@ public:
 	virtual void actionHurt() = 0;
 	virtual void actionDeath() = 0;
 public:
-
+	// 멤버 클래스에서 사용할때 
+	// (this->*method[n])(); 형식으로 사용해야함
+	// 자식클래스의 함수포인터에 접근하려면 
+	// 자식클래스의 자신의 주소를 가르쳐줘야함
+	void (Monster::*method[6])();
+	
 };
 
 //---------------------------------------------------------------------------------------
 // golemNomal
-
+#define GOLEM_NOMAL_NUM 1
 class GolemNomal : public Monster
 {
 public:
@@ -31,12 +36,12 @@ public:
 	virtual ~GolemNomal();
 
 	virtual void paint(float dt, iPoint off);
-	virtual void actionIdle() = 0;
-	virtual void actionMove() = 0;
-	virtual void actionMeleeAttack() = 0;
-	virtual void actionRangeAttack() = 0;
-	virtual void actionHurt() = 0;
-	virtual void actionDeath() = 0;
+	virtual void actionIdle();
+	virtual void actionMove();
+	virtual void actionMeleeAttack();
+	virtual void actionRangeAttack();
+	virtual void actionHurt();
+	virtual void actionDeath();
 public:
 	
 };
@@ -80,3 +85,11 @@ public:
 public:
 
 };
+
+//---------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------
+
+void loadMonster();
+void freeMonster();
+void drawMonster(float dt);
+

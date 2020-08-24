@@ -4,6 +4,17 @@
 
 #include "Common.h"
 
+#define GOLEM_NOMAL_NUM 1
+
+enum MonsterState {
+	monster_idle = 0,
+	monster_move,
+	monster_meleeAttack,
+	monster_rangeAttack,
+	monster_hurt,
+	monster_death,
+};
+
 class Monster : public Object
 {
 public:
@@ -24,11 +35,18 @@ public:
 	// 자식클래스의 자신의 주소를 가르쳐줘야함
 	void (Monster::*method[6])();
 	
+	MonsterState state;
+	bool alive;
+	float hp, _hp;
+	float attackPoint, _attackPoint;
+	float attackSpeed, _attackSpeed;
+	float moveSpeed;
+
+	float distance;
 };
 
 //---------------------------------------------------------------------------------------
 // golemNomal
-#define GOLEM_NOMAL_NUM 1
 class GolemNomal : public Monster
 {
 public:

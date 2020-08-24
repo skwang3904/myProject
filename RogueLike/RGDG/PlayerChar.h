@@ -5,6 +5,16 @@
 #include "Common.h"
 
 #define PLAYER_IMG_NUM 10
+
+enum PlayerState {
+	player_idle = 0,
+	player_move,
+	player_meleeAttack,
+	player_rangeAttack,
+	player_hurt,
+	player_death,
+};
+
 class PlayerChar : public Object
 {
 public:
@@ -17,7 +27,7 @@ public:
 	uint8 headNum;
 	uint8 holdNum;
 
-	State state;
+	PlayerState state;
 	iPoint camera;
 
 	float hp, _hp;

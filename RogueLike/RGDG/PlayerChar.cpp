@@ -133,12 +133,11 @@ PlayerChar::PlayerChar(int index) : Object(index)
 	//------------------------------------------------------------------------------------------
 	// init data
 
-	imgNum = 10;
-	this->img = this->imgs[5];
 	headNum = 0;
 	holdNum = 4;
 
-	state = state_idle;
+	state = player_idle;
+	camera = iPointZero - maps[0]->tileOff;
 
 	PlayerInfo* pi = &playerInfo[index];
 	hp = _hp = pi->_hp;
@@ -160,10 +159,14 @@ PlayerChar::PlayerChar(int index) : Object(index)
 		}
 	}
 #endif
-	mapNumber = 0;
 
-	position = iPointZero;
-	camera = iPointZero - maps[0]->tileOff;
+	//common data
+	imgNum = 10;
+	this->img = this->imgs[5];
+
+	mapNumber = 0;
+	position = iPointMake(TILE_NUM_X * TILE_Width / 2.0f, TILE_NUM_Y * TILE_Height / 2.0f);
+	vector = iPointZero;
 }
 
 PlayerChar::~PlayerChar()
@@ -180,7 +183,7 @@ void PlayerChar::paint(float dt, iPoint off)
 {
 	uint8 reverse = img->reverse;
 	iPoint mp = iPointZero;
-	int tmp = 50;
+	int tmp = 10;
 
 	uint32 key = getKeyStat();
 	if (key == 0)
@@ -222,14 +225,37 @@ void PlayerChar::paint(float dt, iPoint off)
 		}
 	}
 	position += mp;
-	camera -= mp;
+	//camera -= mp;
+	iPoint sp = position;
+	iPoint tp = iPointMake(sp.x + img->tex->width, sp.y + img->tex->height);
 
-
+	if (tp.x < maps[mapNumber]->tileOff.x )
+	{
+		mapNumber--;
+	}
+	else if (sp.x > maps[mapNumber]->tileOff.x + TILE_NUM_X * TILE_Width)
+	{
+		mapNumber++;
+	}
+	if (tp.y < maps[mapNumber]->tileOff.y )
+	{
+		mapNumber -= TILE_TOTAL_SQRT;
+	}
+	else if (sp.y > maps[mapNumber]->tileOff.y + TILE_NUM_Y * TILE_Height)
+	{
+		mapNumber += TILE_TOTAL_SQRT;
+	}
+	camera = iPointZero - maps[mapNumber]->tileOff;
 	// wallcheck
 
 	//evasion
 
-	
+	setRGBA(1, 0, 0, 0.3f);
+	fillRect(position.x + (DRAW_OFF).x, position.y + (DRAW_OFF).y,
+		30, 30);
+	setRGBA(1, 1, 1, 1);
+
+
 	iPoint p = position + DRAW_OFF;
 	img->reverse = reverse;
 	img->paint(dt, p);

@@ -2,6 +2,10 @@
 
 #include "PlayerChar.h"
 #include "Map.h"
+#include "ProcData.h"
+
+Monster** monster;
+int monsterNum;
 
 //---------------------------------------------------------------------------------------
 // monster parents class
@@ -23,8 +27,6 @@ Monster::~Monster()
 // golemNomal
 
 GolemNomal** _golemNomal = NULL;
-GolemNomal** golemNomal = NULL;
-int golemNomalNum = 0;
 
 GolemNomal::GolemNomal(int index) : Monster(index)
 {
@@ -45,7 +47,26 @@ GolemNomal::GolemNomal(int index) : Monster(index)
 	img->addObject(tex);
 	freeImage(tex);
 
+
+	state = monster_idle;
+	
+	alive = true;
+
+	MonsterInfo* mi = &monsterInfo[0];
+	hp, _hp = mi->_hp;
+	attackPoint = _attackPoint = mi->_attackPoint;
+	attackSpeed = 0.0f;
+	_attackSpeed = mi->_attackSpeed;
+	moveSpeed = mi->moveSpeed;
+
+	//common data
+	//imgNum
+	//imgs
+	//img
+	mapNumber = 0;
+
 	position = iPointMake(300, 300);
+	vector = iPointZero;
 }
 
 GolemNomal::~GolemNomal()
@@ -60,7 +81,17 @@ void GolemNomal::paint(float dt, iPoint off)
 		int n = random() % 6;
 		(this->*method[n])();
 	}
+	
+	if (hp <= 0.0f)
+	{
+		state = monster_death;
+	}
+	else
+	{
 
+	}
+
+	(this->*method[state])();
 
 	iPoint p = position + off + DRAW_OFF;
 	img->paint(dt, p);
@@ -134,30 +165,41 @@ void GolemBoss::paint(float dt, iPoint off)
 
 void loadMonster()
 {
-	golemNomalNum = 0;
-	golemNomal = (GolemNomal**)malloc(sizeof(GolemNomal*) * GOLEM_NOMAL_NUM);
+	monsterNum = 0;
+	monster = (Monster**)malloc(sizeof(Monster*) * GOLEM_NOMAL_NUM);
 
 	_golemNomal = (GolemNomal**)malloc(sizeof(GolemNomal*) * GOLEM_NOMAL_NUM);
 	for (int i = 0; i < GOLEM_NOMAL_NUM; i++)
 	{
 		_golemNomal[i] = new GolemNomal(0);
 
-		golemNomal[golemNomalNum] = _golemNomal[i];
-		golemNomalNum++;
+		monster[monsterNum] = _golemNomal[i];
+		monsterNum++;
 	}
 
 }
 
 void freeMonster()
 {
+	free(monster);
+
 	for (int i = 0; i < GOLEM_NOMAL_NUM; i++)
 		delete _golemNomal[i];
 	free(_golemNomal);
-	free(golemNomal);
 }
 
 void drawMonster(float dt)
 {
-	for (int i = 0; i < golemNomalNum; i++)
-		golemNomal[i]->paint(dt, iPointZero);
+	for (int i = 0; i < monsterNum; i++)
+	{
+		Monster* m = monster[i];
+		m->paint(dt, iPointZero);
+
+		if (m->alive == false)
+		{ // death
+			monsterNum--;
+			monster[i] = monster[monsterNum];
+			i--;
+		}
+	}
 }

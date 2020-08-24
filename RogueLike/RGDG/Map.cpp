@@ -27,7 +27,8 @@ void loadMap()
 			TILE_NUM_Y * TILE_Height * (i / TILE_TOTAL_SQRT));
 	}
 
-	displayCenterPos = iPointMake(devSize.width / 2, devSize.height / 2);
+	displayCenterPos = iPointMake(devSize.width / 2.0f, devSize.height / 2.0f)
+		- iPointMake(TILE_NUM_X * TILE_Width / 2.0f, TILE_NUM_Y * TILE_Height / 2.0f);
 
 	pt.tileNum = -1;
 	pt.sp = iPointZero;
@@ -45,7 +46,7 @@ void loadMap()
 		maps[i]->tileOff = tileOffSet[i];
 	}
 
-	
+	// create random map
 	createMap();
 
 	int num = TILE_TOTAL_NUM;
@@ -56,8 +57,6 @@ void loadMap()
 	{
 		if (maps[i]->tile[0] != 0)
 		{
-			iPoint p = maps[i]->tileOff;
-
 			Texture* tex = createTexture(size.width, size.height);
 			iImage* img = new iImage();
 
@@ -78,7 +77,6 @@ void loadMap()
 			img->addObject(tex);
 			freeImage(tex);
 
-			img->position = p;
 			img->reverse = REVERSE_HEIGHT;
 			maps[i]->img = img;
 		}
@@ -104,8 +102,10 @@ void drawMap(float dt)
 	int num = TILE_TOTAL_NUM;
 	for (int i = 0; i < num; i++)
 	{
-		if(maps[i]->img)
-			maps[i]->img->paint(dt, DRAW_OFF);
+		MapTile* m = maps[i];
+		iPoint p = m->tileOff + DRAW_OFF;
+		if(m->img)
+			m->img->paint(dt, p);
 	}
 }
 

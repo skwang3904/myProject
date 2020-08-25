@@ -4,13 +4,11 @@
 
 #include "Common.h"
 
-#define PLAYER_IMG_NUM 10
-
 enum PlayerState {
 	player_idle = 0,
 	player_move,
-	player_meleeAttack,
-	player_rangeAttack,
+	player_attack,
+	player_jump,
 	player_hurt,
 	player_death,
 };
@@ -23,6 +21,8 @@ public:
 
 	void initData();
 	virtual void paint(float dt, iPoint off);
+
+
 public:
 	uint8 headNum;
 	uint8 holdNum;

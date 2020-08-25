@@ -103,9 +103,9 @@ void drawMap(float dt)
 	for (int i = 0; i < num; i++)
 	{
 		MapTile* m = maps[i];
-		iPoint p = m->tileOff + DRAW_OFF;
+		iPoint to = m->tileOff + DRAW_OFF;
 		if(m->img)
-			m->img->paint(dt, p);
+			m->img->paint(dt, to);
 	}
 }
 
@@ -224,7 +224,6 @@ void connectCheck(ConnectTile* c, int& count)
 	if (y < TILE_TOTAL_SQRT - 1)	connectCheck(&ct[c->index + TILE_TOTAL_SQRT], count);
 }
 
-#define MAPSIZE(index, t) memcpy(maps[index]->tile, t, sizeof(int8) * TILE_NUM_X * TILE_NUM_Y)
 void pathTileCheck(ConnectTile* c)
 {
 	if (c->value == false)
@@ -244,59 +243,64 @@ void pathTileCheck(ConnectTile* c)
 	if (y > 0)						u = ct[c->index - TILE_TOTAL_SQRT].value;
 	if (y < TILE_TOTAL_SQRT - 1)	d = ct[c->index + TILE_TOTAL_SQRT].value;
 
-//#define PATH(index, l, r, u, d) printf("index[%d] = [ l : %d, r : %d, u : %d, d : %d ]\n", index, l, r, u, d)
-//	PATH(index, l, r, u, d);
 	int pathNum = l + r + u + d;
+#define TILECOPY(index, t) memcpy(maps[index]->tile, t, sizeof(int8) * TILE_NUM_X * TILE_NUM_Y)
 	switch (pathNum) {
-	case 4: MAPSIZE(index, Tile4Way1); break;
+	case 4: TILECOPY(index, Tile4Way1); break;
 	case 3:
 	{
-		if (r && u && d)	  MAPSIZE(index, Tile3Way1);
-		else if (l && u && d) MAPSIZE(index, Tile3Way2);
-		else if (l && r && d) MAPSIZE(index, Tile3Way3);
-		else if (l && r && u) MAPSIZE(index, Tile3Way4);
+		if (r && u && d)	  TILECOPY(index, Tile3Way1);
+		else if (l && u && d) TILECOPY(index, Tile3Way2);
+		else if (l && r && d) TILECOPY(index, Tile3Way3);
+		else if (l && r && u) TILECOPY(index, Tile3Way4);
 		break;
 	}
 	case 2:
 	{
-		if (l && r) MAPSIZE(index, Tile2Way1);
-		else if (u && d) MAPSIZE(index, Tile2Way2);
-		else if (l && u) MAPSIZE(index, Tile2Way3);
-		else if (r && u) MAPSIZE(index, Tile2Way4);
-		else if (l && d) MAPSIZE(index, Tile2Way5);
-		else if (r && d) MAPSIZE(index, Tile2Way6);
+		if (l && r) TILECOPY(index, Tile2Way1);
+		else if (u && d) TILECOPY(index, Tile2Way2);
+		else if (l && u) TILECOPY(index, Tile2Way3);
+		else if (r && u) TILECOPY(index, Tile2Way4);
+		else if (l && d) TILECOPY(index, Tile2Way5);
+		else if (r && d) TILECOPY(index, Tile2Way6);
 		break;
 	}
 	case 1:
 	{
-		if (l) MAPSIZE(index, Tile1Way1);
-		else if (r) MAPSIZE(index, Tile1Way2);
-		else if (u) MAPSIZE(index, Tile1Way3);
-		else if (d) MAPSIZE(index, Tile1Way4);
+		if (l) TILECOPY(index, Tile1Way1);
+		else if (r) TILECOPY(index, Tile1Way2);
+		else if (u) TILECOPY(index, Tile1Way3);
+		else if (d) TILECOPY(index, Tile1Way4);
 		break;
 	}
 	default:
-		MAPSIZE(index, Tile0Way1);
+		TILECOPY(index, Tile0Way1);
 		break;
 	}
 }
 
 //---------------------------------------------------------------------------------------------
 
-void wallCheck(iPoint& pos, iPoint mp, float halfOfTexW, float halfOfTexH)
+void wallCheck(Object* obj, iPoint mp)
 {
 	int i, j;
-	MapTile* t = maps[0];
+	MapTile* t = maps[player->mapNumber];
 	if (t->tile == NULL)
 		return;
 
+	iPoint to = t->tileOff;
+	iSize size = iSizeMake(obj->img->tex->width, obj->img->tex->height) * 0.5f;
+	iPoint pos = obj->position + iPointMake(size.width, size.height);
+
+	iSize tmp = size * 2.0f * 0;
+	
 	if (mp.x < 0)
 	{
-		int LX = pos.x - t->tileOff.x;							LX /= TILE_Width;
-		int TLY = pos.y - t->tileOff.y;						TLY /= TILE_Height;
-		int BLY = pos.y + halfOfTexH * 2.0f - t->tileOff.y;	BLY /= TILE_Height;
-		int min = t->tileOff.x;
-
+		int LX = pos.x - to.x;						LX /= TILE_Width;
+		int TLY = pos.y - to.y;						TLY /= TILE_Height;
+		int BLY = pos.y + tmp.height - to.y;		BLY /= TILE_Height;
+		int min = to.x - size.width * 4.0f;
+	
 		for (i = LX - 1; i > -1; i--)
 		{
 			bool stop = false;
@@ -305,7 +309,7 @@ void wallCheck(iPoint& pos, iPoint mp, float halfOfTexW, float halfOfTexH)
 				if (t->tile[TILE_NUM_X * j + i] == WALLTILE)
 				{
 					stop = true;
-					min = t->tileOff.x + TILE_Width * (i + 1);
+					min = to.x + TILE_Width * (i + 1);
 					break;
 				}
 			}
@@ -318,11 +322,11 @@ void wallCheck(iPoint& pos, iPoint mp, float halfOfTexW, float halfOfTexH)
 	}
 	else if (mp.x > 0)
 	{
-		int RX = pos.x + halfOfTexW * 2.0f - t->tileOff.x;		RX /= TILE_Width;
-		int TRY = pos.y - t->tileOff.y;							TRY /= TILE_Height;
-		int BRY = pos.y + halfOfTexH * 2.0f - t->tileOff.y;		BRY /= TILE_Height;
-		int max = t->tileOff.x + TILE_NUM_X * TILE_Width - 1;
-
+		int RX = pos.x + tmp.width - to.x;			RX /= TILE_Width;
+		int TRY = pos.y - to.y;						TRY /= TILE_Height;
+		int BRY = pos.y + tmp.height - to.y;		BRY /= TILE_Height;
+		int max = to.x + TILE_NUM_X * TILE_Width - 1 + size.width * 4.0f;
+	
 		for (i = RX + 1; i < TILE_NUM_X; i++)
 		{
 			bool stop = false;
@@ -331,26 +335,26 @@ void wallCheck(iPoint& pos, iPoint mp, float halfOfTexW, float halfOfTexH)
 				if (t->tile[TILE_NUM_X * j + i] == WALLTILE)
 				{
 					stop = true;
-					max = t->tileOff.x + TILE_Width * i - 1;
+					max = to.x + TILE_Width * i - 1;
 					break;
 				}
 			}
 			if (stop)
 				break;
 		}
-
+	
 		pos.x += mp.x;
-		if (pos.x > max - halfOfTexW * 2.0f - 1)
-			pos.x = max - halfOfTexW * 2.0f - 1;
+		if (pos.x > max - tmp.width - 1)
+			pos.x = max - tmp.width - 1;
 	}
-
+	
 	if (mp.y < 0)
 	{
-		int TY = pos.y - t->tileOff.y;							TY /= TILE_Height;
-		int TLX = pos.x - t->tileOff.x;							TLX /= TILE_Width;
-		int TRX = pos.x + halfOfTexW * 2.0f - t->tileOff.x;		TRX /= TILE_Width;
-		int min = t->tileOff.y;
-
+		int TY = pos.y - to.y;							TY /= TILE_Height;
+		int TLX = pos.x - to.x;							TLX /= TILE_Width;
+		int TRX = pos.x + tmp.width - to.x;				TRX /= TILE_Width;
+		int min = to.y - size.height * 4.0f;
+	
 		for (j = TY - 1; j > -1; j--)
 		{
 			bool stop = false;
@@ -359,7 +363,7 @@ void wallCheck(iPoint& pos, iPoint mp, float halfOfTexW, float halfOfTexH)
 				if (t->tile[TILE_NUM_X * j + i] == WALLTILE)
 				{
 					stop = true;
-					min = t->tileOff.y + TILE_Height * (j + 1);
+					min = to.y + TILE_Height * (j + 1);
 					break;
 				}
 			}
@@ -372,11 +376,11 @@ void wallCheck(iPoint& pos, iPoint mp, float halfOfTexW, float halfOfTexH)
 	}
 	else if (mp.y > 0)
 	{
-		int BY = pos.y + halfOfTexH * 2.0f - t->tileOff.y;		BY /= TILE_Height;
-		int BLX = pos.x - t->tileOff.x;							BLX /= TILE_Width;
-		int BRX = pos.x + halfOfTexW * 2.0f - t->tileOff.x;		BRX /= TILE_Width;
-		int max = t->tileOff.y + TILE_NUM_Y * TILE_Height - 1;
-
+		int BY = pos.y + tmp.height - to.y;			BY /= TILE_Height;
+		int BLX = pos.x - to.x;						BLX /= TILE_Width;
+		int BRX = pos.x + tmp.width - to.x;			BRX /= TILE_Width;
+		int max = to.y + TILE_NUM_Y * TILE_Height - 1 + size.height * 4.0f;
+	
 		for (j = BY + 1; j < TILE_NUM_Y; j++)
 		{
 			bool stop = false;
@@ -385,16 +389,18 @@ void wallCheck(iPoint& pos, iPoint mp, float halfOfTexW, float halfOfTexH)
 				if (t->tile[TILE_NUM_X * j + i] == WALLTILE)
 				{
 					stop = true;
-					max = t->tileOff.y + TILE_Height * j - 1;
+					max = to.y + TILE_Height * j - 1;
 					break;
 				}
 			}
 			if (stop)
 				break;
 		}
-
+	
 		pos.y += mp.y;
-		if (pos.y > max - halfOfTexH * 2.0f - 1)
-			pos.y = max - halfOfTexH * 2.0f - 1;
+		if (pos.y > max - tmp.height - 1)
+			pos.y = max - tmp.height - 1;
 	}
+
+	obj->position = pos -iPointMake(size.width, size.height);
 }

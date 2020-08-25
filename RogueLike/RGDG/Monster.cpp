@@ -17,6 +17,19 @@ Monster::Monster(int index) : Object(index)
 	method[3] = &Monster::actionRangeAttack;
 	method[4] = &Monster::actionHurt;
 	method[5] = &Monster::actionDeath;
+
+	state = monster_idle;
+	alive = false;
+	hp = _hp = 0.0f;
+	attackPoint =  _attackPoint = 0.0f;
+	attackSpeed =  _attackSpeed = 0.0f;
+	moveSpeed = 0.0f;
+
+	lookDistance = 0.0f;
+	meleeDistance = 0.0f;
+	rangeDistance = 0.0f;
+
+	distance = 0.0f;
 }
 
 Monster::~Monster()
@@ -30,101 +43,153 @@ GolemNomal** _golemNomal = NULL;
 
 GolemNomal::GolemNomal(int index) : Monster(index)
 {
-	img = new iImage();
-
-	Texture* t = createImage("assets/monster/golem1/idle/Golem_01_Idle_0.png");
+	iImage* img;
+	Texture* tex;
+	imgNum = 6;
+	imgs = (iImage**)malloc(sizeof(iImage*) * imgNum);
 	iSize size = iSizeMake(200, 150);
-	Texture* tex = createTexture(size.width, size.height);
+	for (int i = 0; i < imgNum; i++)
+	{
+		img = new iImage();
+		tex = createTexture(size.width, size.height, false);
+		
+		fbo->bind(tex);
+		fbo->clear(1.0f - 0.2f * i, 0, 0.2f * i, 1);
+		fbo->unbind();
 
-	fbo->bind(tex);
-	drawImage(t, 0, 0,
-		0, 0, t->width, t->height,
-		TOP | LEFT, size.width / t->width, size.height / t->height,
-		2, 0, REVERSE_HEIGHT);
-	freeImage(t);
-	fbo->unbind();
+		img->addObject(tex);
+		freeImage(tex);
 
-	img->addObject(tex);
-	freeImage(tex);
+		imgs[i] = img;
+	}
+
+	this->img = imgs[0];
+	mapNumber = 0;
+
+	position = iPointMake(300, 300);
+	vector = iPointZero;
+
+	touchRect = iRectZero;
 
 
-	state = monster_idle;
-	
+
 	alive = true;
-
 	MonsterInfo* mi = &monsterInfo[0];
-	hp, _hp = mi->_hp;
+	hp = _hp = mi->_hp;
 	attackPoint = _attackPoint = mi->_attackPoint;
 	attackSpeed = 0.0f;
 	_attackSpeed = mi->_attackSpeed;
 	moveSpeed = mi->moveSpeed;
 
-	//common data
-	//imgNum
-	//imgs
-	//img
-	mapNumber = 0;
+	lookDistance = mi->lookDistance;
+	meleeDistance = mi->meleeDistance;
+	rangeDistance = mi->rangeDistance;
 
-	position = iPointMake(300, 300);
-	vector = iPointZero;
 }
 
 GolemNomal::~GolemNomal()
 {
-	delete img;
+
 }
 
 void GolemNomal::paint(float dt, iPoint off)
 {
-	if (getKeyDown(keyboard_j))
-	{
-		int n = random() % 6;
-		(this->*method[n])();
-	}
-	
+	if (mapNumber != player->mapNumber)
+		return;
+
 	if (hp <= 0.0f)
 	{
 		state = monster_death;
+		//start death ani
+		// alive false = after death ani
 	}
 	else
 	{
+		iPoint sp = player->position + iPointMake(player->img->tex->width, player->img->tex->height) * 0.5f;
+		iPoint ep = position + iPointMake(img->tex->width, img->tex->height) * 0.5f;
+		vector = iPointVector(ep - sp);
+		distance = iPointLength(ep - sp);
+
+		if (distance < meleeDistance)
+		{
+			state = monster_meleeAttack;
+		}
+		else
+		{
+			if (state == monster_meleeAttack)
+			{
+				;
+			}
+
+			//else
+			{
+				if (distance < lookDistance)
+					state = monster_move;
+				else
+					state = monster_idle;
+			}
+		}
 
 	}
 
-	(this->*method[state])();
+	(this->*method[state])(dt);
 
-	iPoint p = position + off + DRAW_OFF;
+	iPoint p = position + off;
 	img->paint(dt, p);
 }
 
-void GolemNomal::actionIdle()
+void GolemNomal::actionIdle(float dt)
 {
 	printf("called method idle\n");
+
+	img = imgs[0];
 }
 
-void GolemNomal::actionMove()
+void GolemNomal::actionMove(float dt)
 {
 	printf("called method move\n");
+	img = imgs[1];
+
 }
 
-void GolemNomal::actionMeleeAttack()
+void GolemNomal::actionMeleeAttack(float dt)
 {
 	printf("called method meleeAttack\n");
+	// if( img ) animation
+	// return
+
+	attackSpeed += dt;
+	if (attackSpeed > _attackSpeed)
+	{
+		attackSpeed -= _attackSpeed;
+		//start ani
+		img = imgs[2];
+
+	}
 }
 
-void GolemNomal::actionRangeAttack()
+void GolemNomal::actionRangeAttack(float dt)
 {
 	printf("called method rangeAttack\n");
+
+	img = imgs[3];
+
 }
 
-void GolemNomal::actionHurt()
+void GolemNomal::actionHurt(float dt)
 {
 	printf("called method hurt\n");
+
+	img = imgs[4];
+
 }
 
-void GolemNomal::actionDeath()
+void GolemNomal::actionDeath(float dt)
 {
 	printf("called method death\n");
+
+	img = imgs[5];
+
 }
 
 //---------------------------------------------------------------------------------------
@@ -193,7 +258,7 @@ void drawMonster(float dt)
 	for (int i = 0; i < monsterNum; i++)
 	{
 		Monster* m = monster[i];
-		m->paint(dt, iPointZero);
+		m->paint(dt, DRAW_OFF);
 
 		if (m->alive == false)
 		{ // death

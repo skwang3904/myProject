@@ -113,7 +113,8 @@ PlayerChar::PlayerChar(int index) : Object(index)
 		free(texs);
 	}
 
-	this->imgs = (iImage**)malloc(sizeof(iImage*) * PLAYER_IMG_NUM);
+	imgNum = 10;
+	this->imgs = (iImage**)malloc(sizeof(iImage*) * imgNum);
 
 	//head
 	this->imgs[0] = imgs[3];
@@ -128,7 +129,19 @@ PlayerChar::PlayerChar(int index) : Object(index)
 	// good
 	this->imgs[8] = imgs[6];
 	// jump
+	imgs[7]->_repeatNum = 1;
+	imgs[7]->_aniDt = 0.1f;
+	imgs[7]->lastFrame = true;
+	imgs[7]->position = iPointMake(-imgs[7]->tex->width * 0.27f, -imgs[7]->tex->height);
 	this->imgs[9] = imgs[7];
+
+	//common data
+	this->img = this->imgs[5];
+
+	mapNumber = 0;
+	position = iPointMake(TILE_NUM_X * TILE_Width / 2.0f, TILE_NUM_Y * TILE_Height / 2.0f);
+	vector = iPointZero;
+	touchRect = iRectZero;
 
 	//------------------------------------------------------------------------------------------
 	// init data
@@ -160,13 +173,6 @@ PlayerChar::PlayerChar(int index) : Object(index)
 	}
 #endif
 
-	//common data
-	imgNum = 10;
-	this->img = this->imgs[5];
-
-	mapNumber = 0;
-	position = iPointMake(TILE_NUM_X * TILE_Width / 2.0f, TILE_NUM_Y * TILE_Height / 2.0f);
-	vector = iPointZero;
 }
 
 PlayerChar::~PlayerChar()
@@ -179,23 +185,27 @@ void PlayerChar::initData()
 	// 스테이지 넘어갈때 or 죽었을때
 }
 
+void callBackIdle(iImage* me)
+{
+	player->state = player_idle;
+}
+
 void PlayerChar::paint(float dt, iPoint off)
 {
 	uint8 reverse = img->reverse;
 	iPoint mp = iPointZero;
-	int tmp = 10;
 
 	uint32 key = getKeyStat();
-	if (key == 0)
-		img = imgs[holdNum];
-	else
+
+	if (key && state < player_attack)
 	{
+		state = player_move;
 		if (key & keyboard_left)
 		{
 			headNum = 0;
 			img = imgs[6];
 			reverse = REVERSE_WIDTH;
-			mp.x -= tmp;
+			mp.x -= 1.0f;
 			holdNum = 4;
 
 		}
@@ -204,7 +214,7 @@ void PlayerChar::paint(float dt, iPoint off)
 			headNum = 1;
 			img = imgs[6];
 			reverse = REVERSE_NONE;
-			mp.x += tmp;
+			mp.x += 1.0f;
 			holdNum = 4;
 		}
 		if (key & keyboard_up)
@@ -212,7 +222,7 @@ void PlayerChar::paint(float dt, iPoint off)
 			headNum = 2;
 			img = imgs[7];
 			reverse = REVERSE_WIDTH;
-			mp.y -= tmp;
+			mp.y -= 1.0f;
 			holdNum = 5;
 		}
 		else if (key & keyboard_down)
@@ -220,48 +230,68 @@ void PlayerChar::paint(float dt, iPoint off)
 			headNum = 3;
 			img = imgs[7];
 			reverse = REVERSE_NONE;
-			mp.y += tmp;
+			mp.y += 1.0f;
 			holdNum = 5;
 		}
-	}
-	position += mp;
-	//camera -= mp;
-	iPoint sp = position;
-	iPoint tp = iPointMake(sp.x + img->tex->width, sp.y + img->tex->height);
 
-	if (tp.x < maps[mapNumber]->tileOff.x )
+		if (getKeyDown(keyboard_space))
+		{
+			state = player_jump;
+			img = imgs[9];
+			img->startAnimation(callBackIdle);
+		}
+
+		vector = iPointVector(mp);
+	}
+	else if (key == 0 && state < player_attack)
+	{
+		state = player_idle;
+		img = imgs[holdNum];
+
+		vector = mp;	
+	}
+
+	mp = vector * (moveSpeed * dt);
+	wallCheck(this, mp);
+	
+	iPoint rp = position + iPointMake(img->tex->width * 0.25f, img->tex->height * 0.25);
+	touchRect = iRectMake(rp.x, rp.y, img->tex->width * 0.5f, img->tex->height * 0.5f);
+	setRGBA(1, 0, 0, 1);
+	iRect rt = touchRect;
+	rt.origin += DRAW_OFF + img->position;
+	fillRect(rt);
+	//rect
+	setRGBA(1, 1, 1, 1);
+
+	//camera -= mp;
+	iPoint sp = position + iPointMake(img->tex->width / 2.0f, img->tex->height / 2.0f);
+	if (sp.x < maps[mapNumber]->tileOff.x )
 	{
 		mapNumber--;
 	}
-	else if (sp.x > maps[mapNumber]->tileOff.x + TILE_NUM_X * TILE_Width)
+	else if (sp.x > maps[mapNumber]->tileOff.x + TILE_NUM_X * TILE_Width - 1)
 	{
 		mapNumber++;
 	}
-	if (tp.y < maps[mapNumber]->tileOff.y )
+	if (sp.y < maps[mapNumber]->tileOff.y )
 	{
 		mapNumber -= TILE_TOTAL_SQRT;
 	}
-	else if (sp.y > maps[mapNumber]->tileOff.y + TILE_NUM_Y * TILE_Height)
+	else if (sp.y > maps[mapNumber]->tileOff.y + TILE_NUM_Y * TILE_Height - 1)
 	{
 		mapNumber += TILE_TOTAL_SQRT;
 	}
 	camera = iPointZero - maps[mapNumber]->tileOff;
-	// wallcheck
 
 	//evasion
-
-	setRGBA(1, 0, 0, 0.3f);
-	fillRect(position.x + (DRAW_OFF).x, position.y + (DRAW_OFF).y,
-		30, 30);
-	setRGBA(1, 1, 1, 1);
 
 
 	iPoint p = position + DRAW_OFF;
 	img->reverse = reverse;
 	img->paint(dt, p);
-	imgs[headNum]->paint(dt, p + iPointMake(4,-43));
+	if (state != player_jump)
+		imgs[headNum]->paint(dt, p + iPointMake(4, -43));
 }
-
 
 //-------------------------------------------------------------------------------------
 

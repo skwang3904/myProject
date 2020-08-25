@@ -19,5 +19,9 @@ struct MonsterInfo
 	float _attackPoint;
 	float _attackSpeed;
 	float moveSpeed;
+
+	float lookDistance;
+	float meleeDistance;
+	float rangeDistance;
 };
 extern MonsterInfo monsterInfo[2];

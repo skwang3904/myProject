@@ -38,6 +38,6 @@ void main()
 #endif
 	d = clamp(d, 0.0, 1.0);
 
-	fragColor = vec4(color.rgb, 1.0 - d);
+	fragColor = vec4(color.rgb, color.a * (1.0 - d));
 
 }

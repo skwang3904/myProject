@@ -2,6 +2,7 @@
 
 #include "iStd.h"
 
+#include "Common.h"
 extern iPoint displayCenterPos;
 #define DRAW_OFF displayCenterPos + player->camera
 
@@ -25,3 +26,5 @@ struct MapTile
 	iPoint tileOff;
 };
 extern MapTile** maps;
+
+void wallCheck(Object* obj, iPoint mp);

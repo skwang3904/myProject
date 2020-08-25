@@ -10,6 +10,8 @@ Object::Object(int index)
 
 	this->position = iPointZero;
 	this->vector = iPointZero;
+
+	this->touchRect = iRectZero;
 }
 
 Object::~Object()

@@ -26,4 +26,6 @@ public:
 	
 	iPoint position;
 	iPoint vector;
+
+	iRect touchRect;
 };

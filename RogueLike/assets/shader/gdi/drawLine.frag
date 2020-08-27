@@ -25,5 +25,5 @@ void main()
 	
 	float d = clamp(-dis, 0.0, 1.0);
 
-	fragColor = vec4(color.rgb, color.a * d);
+	fragColor = vec4(color.rgb, d);
 }

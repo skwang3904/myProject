@@ -25,6 +25,8 @@ Monster::Monster(int index) : Object(index)
 	attackSpeed =  _attackSpeed = 0.0f;
 	moveSpeed = 0.0f;
 
+	attackDt = 0.0f;
+	_attackDt = 0.0f;
 	lookDistance = 0.0f;
 	meleeDistance = 0.0f;
 	rangeDistance = 0.0f;
@@ -40,6 +42,7 @@ Monster::~Monster()
 // golemNomal
 
 GolemNomal** _golemNomal = NULL;
+int golemNomalNum;
 
 GolemNomal::GolemNomal(int index) : Monster(index)
 {
@@ -77,10 +80,12 @@ GolemNomal::GolemNomal(int index) : Monster(index)
 	MonsterInfo* mi = &monsterInfo[0];
 	hp = _hp = mi->_hp;
 	attackPoint = _attackPoint = mi->_attackPoint;
-	attackSpeed = 0.0f;
+	//attackSpeed = 0.0f;
 	_attackSpeed = mi->_attackSpeed;
 	moveSpeed = mi->moveSpeed;
 
+	//attackDt = 0.0f;
+	_attackDt = mi->_attackDt;
 	lookDistance = mi->lookDistance;
 	meleeDistance = mi->meleeDistance;
 	rangeDistance = mi->rangeDistance;
@@ -105,31 +110,38 @@ void GolemNomal::paint(float dt, iPoint off)
 	}
 	else
 	{
-		iPoint sp = player->position + iPointMake(player->img->tex->width, player->img->tex->height) * 0.5f;
-		iPoint ep = position + iPointMake(img->tex->width, img->tex->height) * 0.5f;
-		vector = iPointVector(ep - sp);
-		distance = iPointLength(ep - sp);
-
-		if (distance < meleeDistance)
+		// 공격 받았을때 hurt
+		if (state == monster_hurt)
 		{
-			state = monster_meleeAttack;
+			
 		}
 		else
 		{
-			if (state == monster_meleeAttack)
-			{
-				;
-			}
+			iPoint pp = player->position + iPointMake(player->img->tex->width, player->img->tex->height) * 0.5f;
+			iPoint ep = position + iPointMake(img->tex->width, img->tex->height) * 0.5f;
+			vector = iPointVector(pp - ep);
+			distance = iPointLength(pp - ep);
 
-			//else
+			if (distance < meleeDistance)
 			{
-				if (distance < lookDistance)
-					state = monster_move;
-				else
-					state = monster_idle;
+				state = monster_meleeAttack;
+			}
+			else
+			{
+				if (state == monster_meleeAttack)
+				{
+					;
+				}
+
+				//else
+				{
+					if (distance < lookDistance)
+						state = monster_move;
+					else
+						state = monster_idle;
+				}
 			}
 		}
-
 	}
 
 	(this->*method[state])(dt);
@@ -138,34 +150,59 @@ void GolemNomal::paint(float dt, iPoint off)
 	img->paint(dt, p);
 }
 
+void GolemNomal::getDmg(float dmg)
+{
+	hp -= dmg;
+	
+	if( state != monster_meleeAttack)
+		state = monster_hurt;
+}
+
 void GolemNomal::actionIdle(float dt)
 {
-	printf("called method idle\n");
+	//printf("called method idle\n");
 
 	img = imgs[0];
 }
 
 void GolemNomal::actionMove(float dt)
 {
-	printf("called method move\n");
+	//printf("called method move\n");
 	img = imgs[1];
+
+	position += vector * (moveSpeed * dt);
 
 }
 
 void GolemNomal::actionMeleeAttack(float dt)
 {
-	printf("called method meleeAttack\n");
-	// if( img ) animation
-	// return
-
-	attackSpeed += dt;
-	if (attackSpeed > _attackSpeed)
+	if (imgs[2]->animation)
 	{
-		attackSpeed -= _attackSpeed;
-		//start ani
-		img = imgs[2];
-
+		attackDt += dt;
+		if (attackDt > _attackDt)
+		{
+			// player->dmg
+			printf("hit\n");
+			img->animation = false;
+		}
+		return;
 	}
+
+	if (attackSpeed < _attackSpeed)
+	{
+		attackSpeed += dt;
+		return;
+	}
+
+	img = imgs[2];
+
+#if 0
+	img->startAnimation();
+#endif
+	img->animation = true;
+
+	attackDt = 0.0f;
+	attackSpeed -= _attackSpeed;
 }
 
 void GolemNomal::actionRangeAttack(float dt)
@@ -190,6 +227,15 @@ void GolemNomal::actionDeath(float dt)
 
 	img = imgs[5];
 
+}
+
+void GolemNomal::initOtherAct(int index)
+{
+	for (int i = 0; i < imgNum; i++)
+	{
+		if (index == i) continue;
+		imgs[i]->frame = 0;
+	}
 }
 
 //---------------------------------------------------------------------------------------
@@ -233,8 +279,9 @@ void loadMonster()
 	monsterNum = 0;
 	monster = (Monster**)malloc(sizeof(Monster*) * GOLEM_NOMAL_NUM);
 
-	_golemNomal = (GolemNomal**)malloc(sizeof(GolemNomal*) * GOLEM_NOMAL_NUM);
-	for (int i = 0; i < GOLEM_NOMAL_NUM; i++)
+	golemNomalNum = GOLEM_NOMAL_NUM;
+	_golemNomal = (GolemNomal**)malloc(sizeof(GolemNomal*) * golemNomalNum);
+	for (int i = 0; i < golemNomalNum; i++)
 	{
 		_golemNomal[i] = new GolemNomal(0);
 

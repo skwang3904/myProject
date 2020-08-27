@@ -35,12 +35,10 @@ public:
 	float attackSpeed, _attackSpeed;
 	float moveSpeed;
 
+	iArray* arrayWeapon;
+
 };
 extern PlayerChar* player;
-
-void loadPlayerChar();
-void freePlayerChar();
-void drawPlayerChar(float dt);
 
 /*
 imgs

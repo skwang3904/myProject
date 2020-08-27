@@ -293,20 +293,5 @@ void PlayerChar::paint(float dt, iPoint off)
 		imgs[headNum]->paint(dt, p + iPointMake(4, -43));
 }
 
+
 //-------------------------------------------------------------------------------------
-
-void loadPlayerChar()
-{
-	player = new PlayerChar(0);
-
-}
-
-void freePlayerChar()
-{
-	delete player;
-}
-
-void drawPlayerChar(float dt)
-{
-	player->paint(dt, DRAW_OFF);
-}

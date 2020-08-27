@@ -14,7 +14,14 @@ enum MonsterState {
 	monster_hurt,
 	monster_death,
 };
-
+#if 0 // 이미지 번호
+[0] = Idle;
+[1] = Move;
+[2] = MeleeAttack;
+[3] = RangeAttack;
+[4] = Hurt;
+[5] = Death;
+#endif
 class Monster : public Object
 {
 public:
@@ -22,12 +29,17 @@ public:
 	virtual ~Monster();
 
 	virtual void paint(float dt, iPoint off) = 0;
+
+	virtual void getDmg(float dmg) = 0;
+
 	virtual void actionIdle(float) = 0;
 	virtual void actionMove(float) = 0;
 	virtual void actionMeleeAttack(float) = 0;
 	virtual void actionRangeAttack(float) = 0;
 	virtual void actionHurt(float) = 0;
 	virtual void actionDeath(float) = 0;
+	virtual void initOtherAct(int index) = 0;
+
 public:
 	// 멤버 클래스에서 사용할때 
 	// (this->*method[n])(); 형식으로 사용해야함
@@ -42,6 +54,8 @@ public:
 	float attackSpeed, _attackSpeed;
 	float moveSpeed;
 
+	// #check 공격 데미지 주는 시간
+	float attackDt, _attackDt;
 	float lookDistance;
 	float meleeDistance;
 	float rangeDistance;
@@ -58,12 +72,16 @@ public:
 	virtual ~GolemNomal();
 
 	virtual void paint(float dt, iPoint off);
+	virtual void getDmg(float dmg);
+
 	virtual void actionIdle(float);
 	virtual void actionMove(float);
 	virtual void actionMeleeAttack(float);
 	virtual void actionRangeAttack(float);
 	virtual void actionHurt(float);
 	virtual void actionDeath(float);
+	virtual void initOtherAct(int index);
+
 public:
 	
 };
@@ -78,12 +96,15 @@ public:
 	virtual ~GolemElete();
 
 	virtual void paint(float dt, iPoint off);
+	virtual void getDmg(float dmg) = 0;
+
 	virtual void actionIdle(float) = 0;
 	virtual void actionMove(float) = 0;
 	virtual void actionMeleeAttack(float) = 0;
 	virtual void actionRangeAttack(float) = 0;
 	virtual void actionHurt(float) = 0;
 	virtual void actionDeath(float) = 0;
+	virtual void initOtherAct(int index) = 0;
 public:
 
 };
@@ -98,12 +119,15 @@ public:
 	virtual ~GolemBoss();
 
 	virtual void paint(float dt, iPoint off);
+	virtual void getDmg(float dmg) = 0;
+
 	virtual void actionIdle(float) = 0;
 	virtual void actionMove(float) = 0;
 	virtual void actionMeleeAttack(float) = 0;
 	virtual void actionRangeAttack(float) = 0;
 	virtual void actionHurt(float) = 0;
 	virtual void actionDeath(float) = 0;
+	virtual void initOtherAct(int index) = 0;
 public:
 
 };

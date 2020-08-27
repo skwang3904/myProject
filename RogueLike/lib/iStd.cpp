@@ -160,8 +160,6 @@ void drawLib(Method_Paint method)
 #endif
     }
 
-
-
 }
 
 static void keyLib(uint32& key, iKeyState stat, int c)

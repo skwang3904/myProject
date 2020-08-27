@@ -44,8 +44,6 @@ public:
 
 	uint8 reverse;
 	float ratio;
-	float imgRatioX;
-	float imgRatioY;
 	int location;
 	bool reverseRotate;
 	float angle;

@@ -24,8 +24,6 @@ iImage::iImage()
 
 	reverse = REVERSE_NONE;
 	ratio = 1.0f;
-	imgRatioX = 1.0f;
-	imgRatioY = 1.0f;
 	location = 2; // 0.x 1.y 2.z
 	reverseRotate = false;
 	angle = 0.0f;
@@ -102,7 +100,7 @@ void iImage::paint(float dt, iPoint off)
 			frame++;
 			if (frame == arrayTex->count)
 			{
-				if( _repeatNum==0 )
+				if (_repeatNum == 0)
 					frame = 0;
 				else
 				{
@@ -137,7 +135,7 @@ void iImage::paint(float dt, iPoint off)
 		selectedDt = 0.0f;
 	}
 
-	float a = 0.0f; 
+	float a = 0.0f;
 	if (reverseRotate) a = 360 - linear(selectedDt / _selectedDt, 0.0f, angle);
 	else a = linear(selectedDt / _selectedDt, 0.0f, angle);
 
@@ -150,17 +148,17 @@ void iImage::paint(float dt, iPoint off)
 	}
 	else if (lockAngle)
 	{
-		p.x += tex->width / 2 * ratio * imgRatioX;
-		p.y += tex->height / 2 * ratio * imgRatioY;
-		drawImage(tex, p.x , p.y, 0, 0, tex->width * imgRatioX, tex->height * imgRatioY,
-			VCENTER | HCENTER, s * ratio * imgRatioX, s * ratio * imgRatioY, location, angle, reverse);
+		p.x += tex->width / 2 * ratio;
+		p.y += tex->height / 2 * ratio;
+		drawImage(tex, p.x, p.y, 0, 0, tex->width, tex->height,
+			VCENTER | HCENTER, s * ratio, s * ratio, location, angle, reverse);
 	}
 	else
 	{
-		p.x += tex->width / 2 * ratio * imgRatioX;
-		p.y += tex->height / 2 * ratio * imgRatioY;
-		drawImage(tex, p.x, p.y, 0, 0, tex->width * imgRatioX, tex->height * imgRatioY,
-			VCENTER | HCENTER, s * ratio * imgRatioX, s * ratio * imgRatioY, location, a, reverse);
+		p.x += tex->width / 2 * ratio;
+		p.y += tex->height / 2 * ratio;
+		drawImage(tex, p.x, p.y, 0, 0, tex->width, tex->height,
+			VCENTER | HCENTER, s * ratio, s * ratio, location, a, reverse);
 	}
 }
 

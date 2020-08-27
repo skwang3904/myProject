@@ -187,6 +187,7 @@
     <ClInclude Include="RGDG\Proc.h" />
     <ClInclude Include="RGDG\ProcData.h" />
     <ClInclude Include="RGDG\Tile.h" />
+    <ClInclude Include="RGDG\Weapon.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\iArray.cpp" />
@@ -218,6 +219,7 @@
     <ClCompile Include="RGDG\Proc.cpp" />
     <ClCompile Include="RGDG\ProcData.cpp" />
     <ClCompile Include="RGDG\Tile.cpp" />
+    <ClCompile Include="RGDG\Weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="RogueLike.rc" />

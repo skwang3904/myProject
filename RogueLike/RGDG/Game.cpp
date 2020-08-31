@@ -6,8 +6,8 @@ int8 gamestat;
 
 void loadGame()
 {
-	gamestat = gamestat_proc;
 	loadProc();
+	gamestat = gamestat_proc;
 
 	//--------------------------------------------------------
 	// sound // itunes로 변환해서 사용
@@ -35,17 +35,8 @@ void freeGame()
 	freeAudio();
 }
 
-bool bCall = false;
-void pauseGame(bool call)
-{
-	bCall = call;
-}
-
 void drawGame(float dt)
 {
-	float _dt = dt;
-	if (bCall)
-		dt = 0.0f;
 
 	switch (gamestat) {
 	//case gamestat_intro:	drawIntro(dt);	break;

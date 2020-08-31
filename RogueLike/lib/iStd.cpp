@@ -71,9 +71,7 @@ void loadLib(HDC hDC)
     Texture* tex = createTexture(p.x, p.y);
     setTexture(CLAMP, MIPMAP);
     fbo->bind(tex); //
-
     fillCircle(16, 16, 16);
-
     fbo->unbind(); //
     texGdi[0] = tex;
 
@@ -155,7 +153,7 @@ void drawLib(Method_Paint method)
 #else
         drawImage(tex, viewport.size.width / 2, viewport.size.height / 2,
             0, 0, tex->width, tex->height,
-            TOP | LEFT, viewport.size.width / tex->width, viewport.size.height / tex->height,
+            VCENTER | HCENTER, 1.0f, 1.0f,
             2, 0, REVERSE_HEIGHT);
 #endif
     }
@@ -414,21 +412,28 @@ void iFBO::bind(Texture* tex)
 
 void iFBO::unbind()
 {
+    mProjection->loadIdentity();
+    mModelview->loadIdentity();
+
     listNum--;
     if (listNum)
     {
         bind(listTex[listNum - 1]);
         listNum--;
+        mProjection->ortho(0, devSize.width, devSize.height, 0, -1000, 1000);
     }
     else
     {
         glBindFramebuffer(GL_FRAMEBUFFER, prevFbo);
         glViewport(viewport.origin.x, viewport.origin.y, viewport.size.width, viewport.size.height);
+        mProjection->ortho(viewport.origin.x, viewport.size.width, viewport.size.height, viewport.origin.y, -1000, 1000);
     }
 
+#if 0
     mProjection->loadIdentity();
     mProjection->ortho(viewport.origin.x, viewport.size.width, viewport.size.height, viewport.origin.y, -1000, 1000);
     mModelview->loadIdentity();
+#endif
 }
 
 Texture* iFBO::getTexture()

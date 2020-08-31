@@ -17,6 +17,8 @@ iPoint displayCenterPos;
 MapTile** maps;
 void createMap();
 
+MapObject* mobj;
+
 void loadMap()
 {
 	int i;
@@ -82,6 +84,8 @@ void loadMap()
 		}
 
 	}
+
+	mobj = new MapObject(0);
 }
 
 void freeMap()
@@ -95,6 +99,8 @@ void freeMap()
 		free(maps[i]);
 	}
 	free(maps);
+
+	delete mobj;
 }
 
 void drawMap(float dt)
@@ -107,6 +113,8 @@ void drawMap(float dt)
 		if(m->img)
 			m->img->paint(dt, to);
 	}
+
+	mobj->paint(dt, DRAW_OFF);
 }
 
 //----------------------------------------------------------------------------------
@@ -403,4 +411,62 @@ void wallCheck(Object* obj, iPoint mp)
 	}
 
 	obj->position = pos -iPointMake(size.width, size.height);
+}
+
+//-----------------------------------------------------------------------------
+// MapObject
+MapObject::MapObject(int index) : Object(index)
+{
+	iImage* img;
+	Texture* tex;
+	
+	img = new iImage();
+	iSize size = iSizeMake(TILE_Width, TILE_Height);
+	tex = createTexture(size.width,size.height);
+
+	fbo->bind(tex);
+	setRGBA(0, 0, 1, 1);
+	fillRect(0, 0, size.width, size.height);
+	setRGBA(1, 1, 0, 1);
+	fillRect(size.width * 0.25f, size.height * 0.25f, size.width * 0.5f, size.height * 0.5f);
+	setRGBA(1, 1, 1, 1);
+	fbo->unbind();
+
+	img->addObject(tex);
+	freeImage(tex);
+
+	this->img = img;
+	mapNumber = 0;
+
+	tileNumber = TILE_NUM_X * 5 + 12;
+	position = maps[mapNumber]->tileOff + iPointMake(12 * TILE_Width, 5 * TILE_Height);
+	touchRect = iRectMake(position.x, position.y, TILE_Width, TILE_Height);
+
+
+	maps[mapNumber]->tile[tileNumber] = WW;
+}
+
+MapObject::~MapObject()
+{
+	delete img; // test
+}
+
+void MapObject::paint(float dt, iPoint off)
+{
+	if (containRect(touchRect, player->touchRect))
+	{
+		printf("touch obj\n");
+		action();
+	}
+
+	img->paint(dt, position + off);
+}
+
+void MapObject::action()
+{
+	switch (index)
+	{
+	default:
+		break;
+	}
 }

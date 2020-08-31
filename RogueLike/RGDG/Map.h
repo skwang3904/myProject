@@ -28,3 +28,22 @@ struct MapTile
 extern MapTile** maps;
 
 void wallCheck(Object* obj, iPoint mp);
+
+//-----------------------------------------------------------------------------
+//
+class MapObject : public Object
+{
+public:
+	MapObject(int index);
+	virtual ~MapObject();
+
+	virtual void paint(float dt, iPoint off); // 구현해야함
+
+	// 상호작용 함수,
+	void action();
+public:
+	//type = index로 구분
+	int tileNumber;
+
+	
+};

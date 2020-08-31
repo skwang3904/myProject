@@ -1,8 +1,9 @@
 #include "PlayerChar.h"
 
+#include "Proc.h"
+#include "ProcData.h"
 #include "Tile.h"
 #include "Map.h"
-#include "ProcData.h"
 
 
 struct charPath 
@@ -151,6 +152,8 @@ PlayerChar::PlayerChar(int index) : Object(index)
 
 	state = player_idle;
 	camera = iPointZero - maps[0]->tileOff;
+	wpVector = iPointMake(0, 1);
+	wpPosition = iPointZero;
 
 	PlayerInfo* pi = &playerInfo[index];
 	hp = _hp = pi->_hp;
@@ -185,16 +188,19 @@ void PlayerChar::initData()
 	// 스테이지 넘어갈때 or 죽었을때
 }
 
-void callBackIdle(iImage* me)
+void PlayerChar::getDmg(float dmg)
 {
-	player->state = player_idle;
+	hp -= dmg;
+	if (hp <= 0.0f)
+		showPopGameOver(true);
 }
+
+void callBackIdle(iImage* me);
 
 void PlayerChar::paint(float dt, iPoint off)
 {
 	uint8 reverse = img->reverse;
 	iPoint mp = iPointZero;
-
 	uint32 key = getKeyStat();
 
 	if (key && state < player_attack)
@@ -208,6 +214,8 @@ void PlayerChar::paint(float dt, iPoint off)
 			mp.x -= 1.0f;
 			holdNum = 4;
 
+			wpVector.x = -1.0f;
+			wpVector.y = 0.0f;
 		}
 		else if (key & keyboard_right)
 		{
@@ -216,6 +224,9 @@ void PlayerChar::paint(float dt, iPoint off)
 			reverse = REVERSE_NONE;
 			mp.x += 1.0f;
 			holdNum = 4;
+
+			wpVector.x = 1.0f;
+			wpVector.y = 0.0f;
 		}
 		if (key & keyboard_up)
 		{
@@ -224,6 +235,9 @@ void PlayerChar::paint(float dt, iPoint off)
 			reverse = REVERSE_WIDTH;
 			mp.y -= 1.0f;
 			holdNum = 5;
+
+			wpVector.x = 0.0f;
+			wpVector.y = -1.0f;
 		}
 		else if (key & keyboard_down)
 		{
@@ -232,6 +246,9 @@ void PlayerChar::paint(float dt, iPoint off)
 			reverse = REVERSE_NONE;
 			mp.y += 1.0f;
 			holdNum = 5;
+
+			wpVector.x = 0.0f;
+			wpVector.y = 1.0f;
 		}
 
 		if (getKeyDown(keyboard_space))
@@ -251,20 +268,25 @@ void PlayerChar::paint(float dt, iPoint off)
 		vector = mp;	
 	}
 
+	iPoint half = iPointMake(img->tex->width / 2.0f, img->tex->height / 2.0f);
+	iPoint sp = position + half;
+
+	wpPosition = sp + iPointMake(-wpVector.y * 32, wpVector.x * 24);
+
 	mp = vector * (moveSpeed * dt);
 	wallCheck(this, mp);
 	
-	iPoint rp = position + iPointMake(img->tex->width * 0.25f, img->tex->height * 0.25);
-	touchRect = iRectMake(rp.x, rp.y, img->tex->width * 0.5f, img->tex->height * 0.5f);
+	iPoint rp = position + half * 0.5f;
+	touchRect = iRectMake(rp.x, rp.y, half.x, half.y);
+#if 1 //draw touchRect
 	setRGBA(1, 0, 0, 1);
 	iRect rt = touchRect;
 	rt.origin += DRAW_OFF + img->position;
 	fillRect(rt);
-	//rect
 	setRGBA(1, 1, 1, 1);
+#endif
 
 	//camera -= mp;
-	iPoint sp = position + iPointMake(img->tex->width / 2.0f, img->tex->height / 2.0f);
 	if (sp.x < maps[mapNumber]->tileOff.x )
 	{
 		mapNumber--;
@@ -273,7 +295,7 @@ void PlayerChar::paint(float dt, iPoint off)
 	{
 		mapNumber++;
 	}
-	if (sp.y < maps[mapNumber]->tileOff.y )
+	else if (sp.y < maps[mapNumber]->tileOff.y )
 	{
 		mapNumber -= TILE_TOTAL_SQRT;
 	}
@@ -295,3 +317,7 @@ void PlayerChar::paint(float dt, iPoint off)
 
 
 //-------------------------------------------------------------------------------------
+void callBackIdle(iImage* me)
+{
+	player->state = player_idle;
+}

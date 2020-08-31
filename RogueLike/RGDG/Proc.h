@@ -24,7 +24,22 @@ void keyProc(iKeyState stat, iPoint point);
 2. 캐릭터 조작 : 움직임, 점프 ... 무기들고있을때 공격
 3. 몬스터 : 패턴 ... 간단한 이동만 가능
 4. 무기 :
-	5. 아이템 :
+5. 아이템 :
+-
+
+00. 세이브 데이터
+{
+	maps
+	player
+	monster
+	weapon
+	item
+}
+
+게임 종료 조건
+-player life = 0
+boss kill
+
 #endif
 
 //-----------------------------------------------------------
@@ -34,3 +49,29 @@ void freePopState();
 void showPopState(bool show);
 void drawPopState(float dt);
 bool keyPopState(iKeyState stat, iPoint point);
+
+//-----------------------------------------------------------
+// ProcButton
+void createPopProcButton();
+void freePopProcButton();
+void showPopProcButton(bool show);
+void drawPopProcButton(float dt);
+bool keyPopProcButton(iKeyState stat, iPoint point);
+
+//-----------------------------------------------------------
+// ProcMenu
+extern iPopup* popProcMenu;
+void createPopProcMenu();
+void freePopProcMenu();
+void showPopProcMenu(bool show);
+void drawPopProcMenu(float dt);
+bool keyPopProcMenu(iKeyState stat, iPoint point);
+
+//-----------------------------------------------------------
+// GameOver
+extern iPopup* popGameOver;
+void createPopGameOver();
+void freePopGameOver();
+void showPopGameOver(bool show);
+void drawPopGameOver(float dt);
+bool keyPopGameOver(iKeyState stat, iPoint point);

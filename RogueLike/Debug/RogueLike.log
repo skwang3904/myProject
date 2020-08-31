@@ -1,7 +1,12 @@
-﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(459,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (TowerDefense.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+﻿D:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(467,5): warning MSB8028: 중간 디렉터리(Debug\)에 다른 프로젝트(TowerDefense.vcxproj)에서 공유하는 파일이 포함되어 있습니다.  이로 인해 잘못된 정리 및 다시 빌드 동작이 수행될 수 있습니다.
   Proc.cpp
-C:\Users\user\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(16,17): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(18,25): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(60,11): warning C4101: 'tex' :참조되지 않은 지역 변수입니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(58,9): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
-  RogueLike.vcxproj -> C:\Users\user\Documents\GitHub\myProject\Debug\RogueLike.exe
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(16,17): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(18,25): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(90,11): warning C4101: 'tex' :참조되지 않은 지역 변수입니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(88,9): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(169,9): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(261,4): warning C4390: ';': 제어된 빈 문이 있습니다. 이 문이 필요합니까?
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(400,4): warning C4390: ';': 제어된 빈 문이 있습니다. 이 문이 필요합니까?
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(490,37): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(564,4): warning C4390: ';': 제어된 빈 문이 있습니다. 이 문이 필요합니까?
+  RogueLike.vcxproj -> C:\Users\qkrtn\Documents\GitHub\myProject\Debug\RogueLike.exe

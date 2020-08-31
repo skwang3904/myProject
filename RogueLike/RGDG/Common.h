@@ -18,6 +18,7 @@ public:
 	virtual void paint(float dt, iPoint off) = 0;
 public:
 	int index;
+	bool alive;
 
 	int imgNum;
 	iImage** imgs;

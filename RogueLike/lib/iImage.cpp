@@ -22,6 +22,7 @@ iImage::iImage()
 	_repeatNum = 0;// inf
 	method = NULL;
 
+	anc = TOP | LEFT;
 	reverse = REVERSE_NONE;
 	ratio = 1.0f;
 	location = 2; // 0.x 1.y 2.z
@@ -141,6 +142,20 @@ void iImage::paint(float dt, iPoint off)
 
 	iPoint p = position + off;
 	float s = 1.0f - linear(selectedDt / _selectedDt, 0.0f, selectedScale);
+
+	int width = tex->width * ratio;
+	int height = tex->height * ratio;
+	switch (anc) {
+	case TOP | LEFT:										       break;
+	case TOP | HCENTER:     p.x -= width / 2;			           break;
+	case TOP | RIGHT:       p.x -= width;			               break;
+	case VCENTER | LEFT:						p.y -= height / 2; break;
+	case VCENTER | HCENTER: p.x -= width / 2;	p.y -= height / 2; break;
+	case VCENTER | RIGHT:   p.x -= width;		p.y -= height / 2; break;
+	case BOTTOM | LEFT:							p.y -= height;     break;
+	case BOTTOM | HCENTER:  p.x -= width / 2;	p.y -= height;     break;
+	case BOTTOM | RIGHT:    p.x -= width;		p.y -= height;     break;
+	}
 
 	if (s == 0.0f)
 	{

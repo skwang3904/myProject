@@ -12,15 +12,19 @@ public:
 
 	virtual void paint(float dt, iPoint off);
 	virtual void attack(float dt);
-	void getWeapon();
+	bool getWeapon();
 
+
+	void setPosition();
 public:
 	float attackPoint, _attackPoint;
 	float attackSpeed, _attackSpeed;
 	float attackDelay, _attackDelay;
-	float angle;
-	float range;
+	float attackAngle;
+	float attackRange;
 
+	float holdAngle;
+	int anc;
 	bool hit;
 	bool get;
 	// 공격력, 속도,

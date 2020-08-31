@@ -6,43 +6,73 @@
 #include "Monster.h"
 #include "Weapon.h"
 
+#include "Item.h"
+
 void loadProc()
 {
+	loadNumberFont();
+
 	loadMap();
 	player = new PlayerChar(0);
 	loadMonster();
 	loadWeapon();
+	loadItem();
 
 
 	createPopState();
+	createPopProcButton();
+	createPopProcMenu();
+	createPopGameOver();
+
 	showPopState(true);
+	showPopProcButton(true);
+	showPopGameOver(true);
 }
 
 void freeProc()
 {
+	freeNumberFont();
+
 	freeMap();
 	delete player;
 	freeMonster();
 	freeWeapon();
+	freeItem();
 
 
 	freePopState();
+	freePopProcButton();
+	freePopProcMenu();
+	freePopGameOver();
 }
 
 void drawProc(float dt)
 {
+	float _dt = dt;
+	if (popProcMenu->bShow || popGameOver->bShow)
+		dt = 0.0f;
+
 	drawMap(dt);
 	player->paint(dt, DRAW_OFF);
-	drawMonster(dt);
+	//drawMonster(dt);
 	drawWeapon(dt);
+	drawItem(dt);
 
 
+	drawPopProcButton(dt);
 	drawPopState(dt);
-
+	drawPopProcMenu(_dt);
+	drawPopGameOver(_dt);
+	//numberFont->drawFont()
 }
 
 void keyProc(iKeyState stat, iPoint point)
 {
+	if (keyPopGameOver(stat, point)	||
+		keyPopProcMenu(stat,point) ||
+		keyPopState(stat, point) ||
+		keyPopProcButton(stat, point))
+		return;
 }
 
 
@@ -65,7 +95,7 @@ void createPopState()
 	{
 		img = new iImage();
 		iStrTex* st = new iStrTex(methodStState);
-		st->setString("%d\n%d\n%d", 0, 0, 0);
+		st->setString("%d", 0);
 
 		img->addObject(st->tex);
 		img->position = iPointMake(10, 100);
@@ -81,24 +111,22 @@ Texture* methodStState(const char* str)
 	int lineNum;
 	char** line = iString::getStringLine(str, lineNum);
 	int hp = atoi(line[0]);
-	int ap = atoi(line[1]);
-	int ms = atoi(line[2]);
+
 	iString::freeStringLine(line, lineNum);
 
 	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(128, 512);
+	iSize size = iSizeMake(128, 64);
 	g->init(size);
 
-	setRGBA(0, 0, 0.5f, 1);
-	g->fillRect(0, 0, size.width, size.height);
+	setRGBA(0, 0, 0.2f, 1);
+	g->fillRect(0, 0, size.width, size.height,3);
 	setRGBA(1, 1, 1, 1);
 
 	setStringRGBA(1, 1, 1, 1);
 	setStringSize(30);
 	setStringBorder(0);
-	g->drawString(10, 100, TOP | LEFT, "%d", hp);
-	g->drawString(10, 200, TOP | LEFT, "%d", ap);
-	g->drawString(10, 300, TOP | LEFT, "%d", ms);
+	g->drawString(10, size.height / 2.0f, VCENTER | LEFT, "HP: ");
+	g->drawString(size.width / 2.0f, size.height / 2.0f, VCENTER | LEFT, "%d", hp);
 
 	setStringRGBA(1, 1, 1, 1);
 	setStringSize(1);
@@ -123,10 +151,429 @@ void drawPopState(float dt)
 {
 	popState->paint(dt);
 
-	stState->setString("%d\n%d\n%d", (int)player->hp, 0, 0);
+	stState->setString("%.0f", player->hp);
 }
 
 bool keyPopState(iKeyState stat, iPoint point)
 {
 	return false;
 }
+
+//-----------------------------------------------------------
+// ProcButton
+iPopup* popProcButton;
+iImage* imgProcButtonBtn;
+
+void createPopProcButton()
+{
+	int i, j;
+	iImage* img;
+	Texture* tex;
+	iPopup* pop = new iPopup(iPopupStyleMove);
+
+	img = new iImage();
+	iGraphics* g = iGraphics::instance();
+	iSize size = iSizeMake(128, 64);
+
+
+	setStringRGBA(0, 0, 0, 1);
+	setStringSize(30);
+	setStringBorder(0);
+	for (i = 0; i < 2; i++)
+	{
+		g->init(size);
+		
+		if (i == 0) 	setRGBA(1, 1, 1, 1);
+		else 	setRGBA(0, 1, 0, 1);
+		g->fillRect(0, 0, size.width, size.height, 10);
+		g->drawString(size.width / 2.0f, size.height / 2.0f, VCENTER | HCENTER, "menu");
+
+		tex = g->getTexture();
+		img->addObject(tex);
+		freeImage(tex);
+	}
+	setRGBA(1, 1, 1, 1);
+	setStringRGBA(1, 1, 1, 1);
+	setStringSize(1);
+	setStringBorder(0);
+
+	imgProcButtonBtn = img;
+	pop->addObject(img);
+
+	pop->openPosition = iPointMake(devSize.width / 2.0f - size.width / 2.0f, -100);
+	pop->closePosition = iPointMake(devSize.width / 2.0f - size.width / 2.0f, 10);
+	popProcButton = pop;
+}
+
+void freePopProcButton()
+{
+	delete popProcButton;
+}
+
+void showPopProcButton(bool show)
+{
+	popProcButton->show(show);
+}
+
+void drawPopProcButton(float dt)
+{
+	for (int i = 0; i < 1; i++)
+		imgProcButtonBtn->setTexAtIndex(i == popProcButton->selected);
+
+	popProcButton->paint(dt);
+}
+
+bool keyPopProcButton(iKeyState stat, iPoint point)
+{
+	if (popProcButton->bShow == false)
+		return false;
+
+	if (popProcButton->stat != iPopupStatProc)
+		return false;
+
+	int i, j = -1;
+	switch (stat)
+	{
+	case iKeyStateBegan:
+	{
+		i = popProcButton->selected;
+		if (i == -1)
+			break;
+
+		if (i == 0)
+		{
+			showPopProcMenu(true);
+		}
+		break;
+	}
+	case iKeyStateMoved:
+	{
+		for (i = 0; i < 1; i++)
+		{
+			if (containPoint(point, imgProcButtonBtn->touchRect(popProcButton->closePosition)))
+			{
+				j = i;
+				break;
+			}
+		}
+		
+		if (popProcButton->selected != j)
+			;
+
+		popProcButton->selected = j;
+
+		break;
+	}
+	case iKeyStateEnded:
+	{
+
+		break;
+	}
+	}
+
+	return true;
+}
+
+//-----------------------------------------------------------
+// ProcMenu
+iPopup* popProcMenu;
+iImage** imgProcMenu;
+
+void drawPopProcMenuBefore(iPopup* me, iPoint p, float dt);
+
+void createPopProcMenu()
+{
+	int i, j;
+	iImage* img;
+	Texture* tex;
+	iPopup* pop = new iPopup(iPopupStyleMove);
+	imgProcMenu = (iImage**)malloc(sizeof(iImage*) * 2);
+
+	iGraphics* g = iGraphics::instance();
+	iSize size = iSizeMake(128, 64);
+	const char* strBtn[2] = {
+		"RESUME", "EXIT"
+	};
+	setStringSize(30);
+	setStringBorder(0);
+	for (i = 0; i < 2; i++)
+	{
+		img = new iImage();
+		for (j = 0; j < 2; j++)
+		{
+			g->init(size);
+
+			if (j == 0)
+			{
+				setRGBA(0, 0, 0, 1);
+				setStringRGBA(1, 1, 1, 1);
+			}
+			else
+			{
+				setRGBA(0, 0.5f, 0, 1);
+				setStringRGBA(0, 0, 0, 1);
+			}
+			g->fillRect(0, 0, size.width, size.height, 5);
+			g->drawString(size.width / 2.0f, size.height / 2.0f, VCENTER | HCENTER, strBtn[i]);
+
+			tex = g->getTexture();
+			img->addObject(tex);
+			freeImage(tex);
+		}
+
+		img->position = iPointMake((devSize.width - size.width) / 2.0f, devSize.height / 2.0f - 64 + 74 * i);
+		imgProcMenu[i] = img;
+		pop->addObject(img);
+	}
+	setRGBA(1, 1, 1, 1);
+	setStringRGBA(1, 1, 1, 1);
+	setStringSize(1);
+	setStringBorder(0);
+
+	pop->methodDrawBefore = drawPopProcMenuBefore;
+	popProcMenu = pop;
+}
+
+void freePopProcMenu()
+{
+	delete popProcMenu;
+	free(imgProcMenu);
+}
+
+void showPopProcMenu(bool show)
+{
+	popProcMenu->show(show);
+}
+
+void drawPopProcMenuBefore(iPopup* me, iPoint p, float dt)
+{
+	for (int i = 0; i < 2; i++)
+		imgProcMenu[i]->setTexAtIndex(i == popProcMenu->selected);
+}
+
+void drawPopProcMenu(float dt)
+{
+	popProcMenu->paint(dt);
+}
+
+bool keyPopProcMenu(iKeyState stat, iPoint point)
+{
+	if (popProcMenu->bShow == false)
+		return false;
+
+	if (popProcMenu->stat != iPopupStatProc)
+		return false;
+
+	int i, j = -1;
+	switch (stat)
+	{
+	case iKeyStateBegan:
+	{
+		i = popProcMenu->selected;
+		if (i == -1)
+			break;
+
+		if (i == 0)
+		{
+			// 재개
+			showPopProcMenu(false);
+		}
+		else if (i == 1)
+		{
+			//나가기
+			showPopProcMenu(false);
+		}
+		return true;
+	}
+	case iKeyStateMoved:
+	{
+		for (i = 0; i < 2; i++)
+		{
+			if (containPoint(point, imgProcMenu[i]->touchRect(popProcMenu->closePosition)))
+			{
+				j = i;
+				break;
+			}
+		}
+
+		if (popProcMenu->selected != j)
+			;
+
+		popProcMenu->selected = j;
+
+		break;
+	}
+	case iKeyStateEnded:
+	{
+
+		break;
+	}
+	}
+
+	return true;
+}
+
+//-----------------------------------------------------------
+// GameOver
+iPopup* popGameOver;
+iImage** imgGameOverBtn;
+
+void drawPopGameOverBefore(iPopup* me, iPoint p, float dt);
+
+void createPopGameOver()
+{
+	int i, j;
+	iImage* img;
+	Texture* tex;
+	iPopup* pop = new iPopup(iPopupStyleMove);
+	
+	img = new iImage();
+	iGraphics* g = iGraphics::instance();
+	iSize size = iSizeMake(256, 128);
+	g->init(size);
+
+	setRGBA(0, 1, 0, 1);
+	g->fillRect(0, 0, size.width, size.height, 20);
+	setRGBA(1, 1, 1, 1);
+
+	setStringRGBA(0, 0, 0, 1);
+	setStringSize(40);
+	setStringBorder(0);
+	g->drawString(size.width / 2.0f, 32, VCENTER | HCENTER, "Game Over");
+	setStringRGBA(1, 1, 1, 1);
+	setStringSize(1);
+	setStringBorder(0);
+
+	tex = g->getTexture();
+	img->addObject(tex);
+	freeImage(tex);
+	pop->addObject(img);
+
+
+	imgGameOverBtn = (iImage**)malloc(sizeof(iImage*) * 2);
+	const char* strBtn[2] = {
+	"Main Menu", "Game Exit"
+	};
+	size = iSizeMake(240, 24);
+	for (i = 0; i < 2; i++)
+	{
+		img = new iImage();
+		for (j = 0; j < 2; j++)
+		{
+			g->init(size);
+
+			if (j == 0)
+			{
+				setRGBA(0, 0, 1, 1);
+				setStringRGBA(1, 1, 1, 1);
+			}
+			else
+			{
+				setRGBA(1, 1, 1, 1);
+				setStringRGBA(0, 0, 0, 1);
+			}
+			g->fillRect(0, 0, size.width, size.height, 5);
+			setRGBA(1, 1, 1, 1);
+
+
+			setStringSize(20);
+			setStringBorder(0);
+			g->drawString(size.width / 2.0f, size.height / 2.0f, VCENTER | HCENTER, strBtn[i]);
+			setStringRGBA(1, 1, 1, 1);
+			setStringSize(1);
+			setStringBorder(0);
+
+			tex = g->getTexture();
+			img->addObject(tex);
+			freeImage(tex);
+		}
+		img->position = iPointMake(8 , 60 + 30 * i);
+		imgGameOverBtn[i] = img;
+		pop->addObject(img);
+	}
+
+	pop->openPosition = iPointMake(devSize.width/2.0f - 128, -128);
+	pop->closePosition = iPointMake(devSize.width / 2.0f - 128, devSize.height / 2.0f - 64);
+	pop->methodDrawBefore = drawPopGameOverBefore;
+	popGameOver = pop;
+}
+
+void freePopGameOver()
+{
+	delete popGameOver;
+	free(imgGameOverBtn);
+}
+
+void showPopGameOver(bool show)
+{
+	popGameOver->show(show);
+}
+
+void drawPopGameOverBefore(iPopup* me, iPoint p, float dt)
+{
+	for (int i = 0; i < 2; i++)
+		imgGameOverBtn[i]->setTexAtIndex(i == popGameOver->selected);
+}
+
+void drawPopGameOver(float dt)
+{
+	popGameOver->paint(dt);
+}
+
+bool keyPopGameOver(iKeyState stat, iPoint point)
+{
+	if (popGameOver->bShow == false)
+		return false;
+
+	//if(popGameOver->stat != iPopupStatProc)
+	//	return false;
+
+	int i, j = -1;
+	switch (stat)
+	{
+	case iKeyStateBegan:
+	{
+		i = popGameOver->selected;
+		if (i == -1)
+			break;
+
+		if (i == 0)
+		{
+			// main
+			showPopGameOver(false);
+		}
+		else if (i == 1)
+		{
+			//exit
+			showPopGameOver(false);
+		}
+		break;
+	}
+	case iKeyStateMoved:
+	{
+		for (i = 0; i < 2; i++)
+		{
+			if (containPoint(point, imgGameOverBtn[i]->touchRect(popGameOver->closePosition)))
+			{
+				j = i;
+				break;
+			}
+		}
+
+		if (popGameOver->selected != j)
+			;
+
+		popGameOver->selected = j;
+
+		break;
+	}
+	case iKeyStateEnded:
+	{
+
+		break;
+	}
+	}
+
+	return true;
+}
+

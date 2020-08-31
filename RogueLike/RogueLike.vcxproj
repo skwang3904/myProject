@@ -181,7 +181,10 @@
     <ClInclude Include="RGDG\AppRogueLike.h" />
     <ClInclude Include="RGDG\Common.h" />
     <ClInclude Include="RGDG\Game.h" />
+    <ClInclude Include="RGDG\intro.h" />
+    <ClInclude Include="RGDG\Item.h" />
     <ClInclude Include="RGDG\Map.h" />
+    <ClInclude Include="RGDG\Menu.h" />
     <ClInclude Include="RGDG\Monster.h" />
     <ClInclude Include="RGDG\PlayerChar.h" />
     <ClInclude Include="RGDG\Proc.h" />
@@ -213,7 +216,10 @@
     <ClCompile Include="RGDG\Common.cpp" />
     <ClCompile Include="RGDG\Game.cpp" />
     <ClCompile Include="RGDG\glew.c" />
+    <ClCompile Include="RGDG\intro.cpp" />
+    <ClCompile Include="RGDG\Item.cpp" />
     <ClCompile Include="RGDG\Map.cpp" />
+    <ClCompile Include="RGDG\Menu.cpp" />
     <ClCompile Include="RGDG\Monster.cpp" />
     <ClCompile Include="RGDG\PlayerChar.cpp" />
     <ClCompile Include="RGDG\Proc.cpp" />

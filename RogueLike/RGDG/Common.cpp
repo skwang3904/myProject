@@ -4,6 +4,8 @@
 Object::Object(int index)
 {
 	this->index = index;
+	this->alive = false;
+
 	this->imgNum = 0;
 	this->imgs = NULL;
 	this->mapNumber = -1;

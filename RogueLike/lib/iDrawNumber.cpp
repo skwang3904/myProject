@@ -96,8 +96,12 @@ void numFont::drawFont(int x, int y, int anc, int dis, float ratX, float ratY, c
 
 }
 
-//void numFont::drawFont(int x, int y, int anc, const char* szFormat, ...)
-//{
-//	drawFont(x, y, anc, 1, 1, 1, szFormat);
-//}
+void loadNumberFont()
+{
+	numberFont = new numFont();
+}
 
+void freeNumberFont()
+{
+	delete numberFont;
+}

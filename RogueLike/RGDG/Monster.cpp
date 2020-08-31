@@ -19,7 +19,7 @@ Monster::Monster(int index) : Object(index)
 	method[5] = &Monster::actionDeath;
 
 	state = monster_idle;
-	alive = false;
+	alive = true;
 	hp = _hp = 0.0f;
 	attackPoint =  _attackPoint = 0.0f;
 	attackSpeed =  _attackSpeed = 0.0f;
@@ -183,6 +183,7 @@ void GolemNomal::actionMeleeAttack(float dt)
 		{
 			// player->dmg
 			printf("hit\n");
+			player->getDmg(attackPoint);
 			img->animation = false;
 		}
 		return;
@@ -194,12 +195,12 @@ void GolemNomal::actionMeleeAttack(float dt)
 		return;
 	}
 
-	img = imgs[2];
 
 #if 0
 	img->startAnimation();
 #endif
-	img->animation = true;
+	imgs[2]->animation = true;
+	img = imgs[2];
 
 	attackDt = 0.0f;
 	attackSpeed -= _attackSpeed;

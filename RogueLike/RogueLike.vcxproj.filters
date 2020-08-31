@@ -108,6 +108,15 @@
     <ClInclude Include="RGDG\Weapon.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="RGDG\Item.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="RGDG\intro.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="RGDG\Menu.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\iArray.cpp">
@@ -198,6 +207,15 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="RGDG\Weapon.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="RGDG\Item.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="RGDG\intro.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="RGDG\Menu.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

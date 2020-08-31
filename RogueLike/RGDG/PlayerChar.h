@@ -4,6 +4,7 @@
 
 #include "Common.h"
 
+
 enum PlayerState {
 	player_idle = 0,
 	player_move,
@@ -19,9 +20,9 @@ public:
 	PlayerChar(int index);
 	virtual ~PlayerChar();
 
-	void initData();
 	virtual void paint(float dt, iPoint off);
-
+	void initData();
+	void getDmg(float dmg);
 
 public:
 	uint8 headNum;
@@ -29,6 +30,8 @@ public:
 
 	PlayerState state;
 	iPoint camera;
+	iPoint wpVector;
+	iPoint wpPosition;
 
 	float hp, _hp;
 	float attackPoint, _attackPoint;

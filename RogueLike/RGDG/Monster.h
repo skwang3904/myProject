@@ -48,7 +48,6 @@ public:
 	void (Monster::*method[6])(float);
 	
 	MonsterState state;
-	bool alive;
 	float hp, _hp;
 	float attackPoint, _attackPoint;
 	float attackSpeed, _attackSpeed;

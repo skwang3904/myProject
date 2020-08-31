@@ -27,3 +27,6 @@ public:
 };
 
 extern numFont* numberFont;
+
+void loadNumberFont();
+void freeNumberFont();

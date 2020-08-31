@@ -42,6 +42,7 @@ public:
 	int repeatNum, _repeatNum;	// 0 : inf
 	IMAGE_METHOD method;
 
+	int anc;
 	uint8 reverse;
 	float ratio;
 	int location;

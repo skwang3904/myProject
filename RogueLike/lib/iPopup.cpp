@@ -174,8 +174,10 @@ void iPopup::paint(float dt)
 
 	setRGBA(1, 1, 1, alpha);
 	p -= iPointMake(closePosition.x * rx, closePosition.y * ry);
-	drawImage(tex, p.x, p.y, 0, 0, tex->width, tex->height, 
-		TOP | LEFT, rx, ry, 2, 0, REVERSE_HEIGHT);
+	drawImage(tex, p.x, p.y,
+		0, 0, tex->width, tex->height, 
+		TOP | LEFT, rx, ry, 
+		2, 0, REVERSE_HEIGHT);
 
 	setRGBA(gr, gg, gb, ga);
 	setStringSize(size);

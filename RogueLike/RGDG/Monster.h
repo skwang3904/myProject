@@ -4,7 +4,7 @@
 
 #include "Common.h"
 
-#define GOLEM_NOMAL_NUM 1
+#define GOLEM_NOMAL_NUM 2
 
 enum MonsterState {
 	monster_idle = 0,
@@ -67,7 +67,7 @@ public:
 class GolemNomal : public Monster
 {
 public:
-	GolemNomal(int index);
+	GolemNomal(int index, int mapNum, iPoint pos);
 	virtual ~GolemNomal();
 
 	virtual void paint(float dt, iPoint off);
@@ -91,7 +91,7 @@ public:
 class GolemElete : public Monster
 {
 public:
-	GolemElete(int index);
+	GolemElete(int index, int mapNum, iPoint pos);
 	virtual ~GolemElete();
 
 	virtual void paint(float dt, iPoint off);
@@ -114,7 +114,7 @@ public:
 class GolemBoss : public Monster
 {
 public:
-	GolemBoss(int index);
+	GolemBoss(int index, int mapNum, iPoint pos);
 	virtual ~GolemBoss();
 
 	virtual void paint(float dt, iPoint off);

@@ -11,7 +11,7 @@ void keyProc(iKeyState stat, iPoint point);
 0. 세이브 방법
 - 매 스테이지 시작 시 저장
 - 맵 정보 : maps 데이터
-공통 저장변수 : index, imgNum, mapNumber, position, vector, touchRect
+공통 저장변수 : index, imgNum, mapNumber, position, vector, touchRect...
 - 플레이어캐릭터 : imgNum, imgs, camera, status
 - 몬스터 : monsterNum, golemNomalNum, _golemNomal, ...
 - state, status
@@ -57,6 +57,15 @@ void freePopProcButton();
 void showPopProcButton(bool show);
 void drawPopProcButton(float dt);
 bool keyPopProcButton(iKeyState stat, iPoint point);
+
+//-----------------------------------------------------------
+// MiniMap
+void createPopMiniMap();
+void freePopMiniMap();
+void showPopMiniMap(bool show);
+void drawPopMiniMap(float dt);
+bool keyPopMiniMap(iKeyState stat, iPoint point);
+
 
 //-----------------------------------------------------------
 // ProcMenu

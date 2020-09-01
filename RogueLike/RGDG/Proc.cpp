@@ -1,5 +1,6 @@
 #include "Proc.h"
 
+#include "Tile.h"
 #include "Map.h"
 
 #include "PlayerChar.h"
@@ -21,12 +22,13 @@ void loadProc()
 
 	createPopState();
 	createPopProcButton();
+	createPopMiniMap();
 	createPopProcMenu();
 	createPopGameOver();
 
 	showPopState(true);
 	showPopProcButton(true);
-	showPopGameOver(true);
+	showPopMiniMap(true);
 }
 
 void freeProc()
@@ -42,6 +44,7 @@ void freeProc()
 
 	freePopState();
 	freePopProcButton();
+	freePopMiniMap();
 	freePopProcMenu();
 	freePopGameOver();
 }
@@ -49,18 +52,20 @@ void freeProc()
 void drawProc(float dt)
 {
 	float _dt = dt;
-	if (popProcMenu->bShow || popGameOver->bShow)
+	if (popProcMenu->bShow || 
+		popGameOver->bShow)
 		dt = 0.0f;
 
 	drawMap(dt);
 	player->paint(dt, DRAW_OFF);
-	//drawMonster(dt);
+	drawMonster(dt);
 	drawWeapon(dt);
 	drawItem(dt);
 
 
-	drawPopProcButton(dt);
 	drawPopState(dt);
+	drawPopProcButton(dt);
+	drawPopMiniMap(dt);
 	drawPopProcMenu(_dt);
 	drawPopGameOver(_dt);
 	//numberFont->drawFont()
@@ -68,10 +73,11 @@ void drawProc(float dt)
 
 void keyProc(iKeyState stat, iPoint point)
 {
-	if (keyPopGameOver(stat, point)	||
-		keyPopProcMenu(stat,point) ||
-		keyPopState(stat, point) ||
-		keyPopProcButton(stat, point))
+	if (keyPopGameOver(stat, point) ||
+		keyPopProcMenu(stat, point) ||
+		keyPopMiniMap(stat, point) ||
+		keyPopProcButton(stat, point) ||
+		keyPopState(stat, point))
 		return;
 }
 
@@ -275,6 +281,65 @@ bool keyPopProcButton(iKeyState stat, iPoint point)
 }
 
 //-----------------------------------------------------------
+// MiniMap
+iPopup* popMiniMap;
+iImage* imgMiniMap;
+
+void createPopMiniMap()
+{
+	int i, j;
+	iImage* img;
+	Texture* tex;
+	iPopup* pop = new iPopup(iPopupStyleMove);
+	
+	img = new iImage();
+	iSize size = iSizeMake(TILE_NUM_X * TILE_Width, TILE_NUM_Y * TILE_Height);
+	tex = createTexture(size.width, size.height);
+	fbo->bind(tex);
+	fbo->clear(0, 0, 0, 0);
+	setRGBA(0, 1, 0, 1);
+	for (i = 0; i < TILE_TOTAL_NUM; i++)
+	{
+		if (maps[i]->tile[0] == 0) 
+			continue;
+
+		iPoint p = iPointMake(TILE_Width * (i % TILE_TOTAL_SQRT), TILE_Height * (i / TILE_TOTAL_SQRT));
+		fillRect(p.x, p.y, TILE_Width, TILE_Height);
+	}
+	setRGBA(1, 1, 1, 1);
+	fbo->unbind();
+	img->addObject(tex);
+	freeImage(tex);
+
+	img->ratio = 0.5f;
+	img->position = iPointMake(50, 50);
+	imgMiniMap = img;
+	pop->addObject(img);
+
+	popMiniMap = pop;
+}
+
+void freePopMiniMap()
+{
+	delete popMiniMap;
+}
+
+void showPopMiniMap(bool show)
+{
+	popMiniMap->show(show);
+}
+
+void drawPopMiniMap(float dt)
+{
+	popMiniMap->paint(dt);
+}
+
+bool keyPopMiniMap(iKeyState stat, iPoint point)
+{
+	return false;
+}
+
+//-----------------------------------------------------------
 // ProcMenu
 iPopup* popProcMenu;
 iImage** imgProcMenu;
@@ -429,7 +494,7 @@ void createPopGameOver()
 	
 	img = new iImage();
 	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(256, 128);
+	iSize size = iSizeMake(256, 256);
 	g->init(size);
 
 	setRGBA(0, 1, 0, 1);
@@ -454,7 +519,7 @@ void createPopGameOver()
 	const char* strBtn[2] = {
 	"Main Menu", "Game Exit"
 	};
-	size = iSizeMake(240, 24);
+	size = iSizeMake(240, 48);
 	for (i = 0; i < 2; i++)
 	{
 		img = new iImage();
@@ -487,7 +552,7 @@ void createPopGameOver()
 			img->addObject(tex);
 			freeImage(tex);
 		}
-		img->position = iPointMake(8 , 60 + 30 * i);
+		img->position = iPointMake(8 , 80 + 58 * i);
 		imgGameOverBtn[i] = img;
 		pop->addObject(img);
 	}

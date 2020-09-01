@@ -278,7 +278,7 @@ void PlayerChar::paint(float dt, iPoint off)
 	
 	iPoint rp = position + half * 0.5f;
 	touchRect = iRectMake(rp.x, rp.y, half.x, half.y);
-#if 1 //draw touchRect
+#if 0 //draw touchRect
 	setRGBA(1, 0, 0, 1);
 	iRect rt = touchRect;
 	rt.origin += DRAW_OFF + img->position;

@@ -15,109 +15,6 @@ static passTile pt;
 iPoint displayCenterPos;
 
 MapTile** maps;
-void createMap();
-
-MapObject* mobj;
-
-void loadMap()
-{
-	int i;
-	iPoint tileOffSet[TILE_TOTAL_NUM];
-	for (int i = 0; i < TILE_TOTAL_NUM; i++)
-	{
-		tileOffSet[i] = iPointMake(TILE_NUM_X * TILE_Width * (i % TILE_TOTAL_SQRT),
-			TILE_NUM_Y * TILE_Height * (i / TILE_TOTAL_SQRT));
-	}
-
-	displayCenterPos = iPointMake(devSize.width / 2.0f, devSize.height / 2.0f)
-		- iPointMake(TILE_NUM_X * TILE_Width / 2.0f, TILE_NUM_Y * TILE_Height / 2.0f);
-
-	pt.tileNum = -1;
-	pt.sp = iPointZero;
-	pt.tp = iPointZero;
-	pt.passAniDt = _passAniDt;
-
-
-	maps = (MapTile**)malloc(sizeof(MapTile*) * TILE_TOTAL_NUM);
-	for (i = 0; i < TILE_TOTAL_NUM; i++)
-	{
-		maps[i] = (MapTile*)malloc(sizeof(MapTile));
-		maps[i]->img = NULL;
-
-		maps[i]->tile = (int8*)calloc(sizeof(int8), TILE_NUM_X * TILE_NUM_Y);
-		maps[i]->tileOff = tileOffSet[i];
-	}
-
-	// create random map
-	createMap();
-
-	int num = TILE_TOTAL_NUM;
-	int t = TILE_NUM_X * TILE_NUM_Y;
-
-	iSize size = iSizeMake(TILE_NUM_X * TILE_Width, TILE_NUM_Y * TILE_Height);
-	for (i = 0; i < num; i++)
-	{
-		if (maps[i]->tile[0] != 0)
-		{
-			Texture* tex = createTexture(size.width, size.height);
-			iImage* img = new iImage();
-
-			fbo->bind(tex);
-			for (int j = 0; j < t; j++)
-			{
-				int8 n = maps[i]->tile[j];
-				if (n == MOVETILE)		setRGBA(MOVETILE_RGBA);
-				else if (n == WALLTILE)	setRGBA(WALLTILE_RGBA);
-				else if (n == FALLTILE)	setRGBA(FALLTILE_RGBA);
-				else					setRGBA(1, 1, 1, 1);
-
-				fillRect(TILE_Width * (j % TILE_NUM_X), TILE_Height * (j / TILE_NUM_X),
-					TILE_Width, TILE_Height);
-			}
-			fbo->unbind();
-
-			img->addObject(tex);
-			freeImage(tex);
-
-			img->reverse = REVERSE_HEIGHT;
-			maps[i]->img = img;
-		}
-
-	}
-
-	mobj = new MapObject(0);
-}
-
-void freeMap()
-{
-	int i;
-	for (i = 0; i < TILE_TOTAL_NUM; i++)
-	{
-		if (maps[i]->img)
-			delete maps[i]->img;
-		free(maps[i]->tile);
-		free(maps[i]);
-	}
-	free(maps);
-
-	delete mobj;
-}
-
-void drawMap(float dt)
-{
-	int num = TILE_TOTAL_NUM;
-	for (int i = 0; i < num; i++)
-	{
-		MapTile* m = maps[i];
-		iPoint to = m->tileOff + DRAW_OFF;
-		if(m->img)
-			m->img->paint(dt, to);
-	}
-
-	mobj->paint(dt, DRAW_OFF);
-}
-
-//----------------------------------------------------------------------------------
 
 struct ConnectTile
 {
@@ -415,6 +312,10 @@ void wallCheck(Object* obj, iPoint mp)
 
 //-----------------------------------------------------------------------------
 // MapObject
+MapObject** _mapObj;
+MapObject** mapObj;
+int mapObjNum;
+
 MapObject::MapObject(int index) : Object(index)
 {
 	iImage* img;
@@ -438,12 +339,14 @@ MapObject::MapObject(int index) : Object(index)
 	this->img = img;
 	mapNumber = 0;
 
-	tileNumber = TILE_NUM_X * 5 + 12;
+	alive = true;
 	position = maps[mapNumber]->tileOff + iPointMake(12 * TILE_Width, 5 * TILE_Height);
 	touchRect = iRectMake(position.x, position.y, TILE_Width, TILE_Height);
 
 
+	tileNumber = TILE_NUM_X * 5 + 12;
 	maps[mapNumber]->tile[tileNumber] = WW;
+	value = 1;
 }
 
 MapObject::~MapObject()
@@ -453,20 +356,155 @@ MapObject::~MapObject()
 
 void MapObject::paint(float dt, iPoint off)
 {
+	if (alive == false)
+		return;
+
 	if (containRect(touchRect, player->touchRect))
 	{
 		printf("touch obj\n");
+		alive = false;
 		action();
 	}
+
+	iRect rt = touchRect;
+	rt.origin += off;
+	setRGBA(1, 0, 0, 1);
+	fillRect(rt);
+	setRGBA(1, 1, 1, 1);
 
 	img->paint(dt, position + off);
 }
 
 void MapObject::action()
 {
+
 	switch (index)
 	{
-	default:
-		break;
+	case 0: player->getDmg(value); break;
+	case 1: break;
+	case 2: break;
+	case 3: break;
+	case 4: break;
 	}
 }
+
+//----------------------------------------------------------------------------------
+
+void loadMap()
+{
+	int i;
+	iPoint tileOffSet[TILE_TOTAL_NUM];
+	for (int i = 0; i < TILE_TOTAL_NUM; i++)
+	{
+		tileOffSet[i] = iPointMake(TILE_NUM_X * TILE_Width * (i % TILE_TOTAL_SQRT),
+			TILE_NUM_Y * TILE_Height * (i / TILE_TOTAL_SQRT));
+	}
+
+	displayCenterPos = iPointMake(devSize.width / 2.0f, devSize.height / 2.0f)
+		- iPointMake(TILE_NUM_X * TILE_Width / 2.0f, TILE_NUM_Y * TILE_Height / 2.0f);
+
+	pt.tileNum = -1;
+	pt.sp = iPointZero;
+	pt.tp = iPointZero;
+	pt.passAniDt = _passAniDt;
+
+
+	maps = (MapTile**)malloc(sizeof(MapTile*) * TILE_TOTAL_NUM);
+	for (i = 0; i < TILE_TOTAL_NUM; i++)
+	{
+		maps[i] = (MapTile*)malloc(sizeof(MapTile));
+		maps[i]->img = NULL;
+
+		maps[i]->tile = (int8*)calloc(sizeof(int8), TILE_NUM_X * TILE_NUM_Y);
+		maps[i]->tileOff = tileOffSet[i];
+	}
+
+	// create random map
+	createMap();
+
+	int num = TILE_TOTAL_NUM;
+	int t = TILE_NUM_X * TILE_NUM_Y;
+
+	iSize size = iSizeMake(TILE_NUM_X * TILE_Width, TILE_NUM_Y * TILE_Height);
+	for (i = 0; i < num; i++)
+	{
+		if (maps[i]->tile[0] != 0)
+		{
+			Texture* tex = createTexture(size.width, size.height);
+			iImage* img = new iImage();
+
+			fbo->bind(tex);
+			for (int j = 0; j < t; j++)
+			{
+				int8 n = maps[i]->tile[j];
+				if (n == MOVETILE)		setRGBA(MOVETILE_RGBA);
+				else if (n == WALLTILE)	setRGBA(WALLTILE_RGBA);
+				else if (n == FALLTILE)	setRGBA(FALLTILE_RGBA);
+				else					setRGBA(1, 1, 1, 1);
+
+				fillRect(TILE_Width * (j % TILE_NUM_X), TILE_Height * (j / TILE_NUM_X),
+					TILE_Width, TILE_Height);
+			}
+			fbo->unbind();
+
+			img->addObject(tex);
+			freeImage(tex);
+
+			img->reverse = REVERSE_HEIGHT;
+			maps[i]->img = img;
+		}
+
+	}
+
+	//-----------------------------------------------------------------------------
+
+	mapObjNum = 3;
+	_mapObj = (MapObject**)malloc(sizeof(MapObject*) * mapObjNum);
+	mapObj = (MapObject**)malloc(sizeof(MapObject*) * mapObjNum);
+	for (i = 0; i < mapObjNum; i++)
+	{
+		_mapObj[i] = new MapObject(0);
+		MapObject* mo = _mapObj[i];
+		mo->position = maps[mo->mapNumber]->tileOff 
+			+ iPointMake(TILE_Width * 4 + TILE_Width * 2 * i, TILE_Height * 3 + TILE_Height * 2 * i);
+		mo->touchRect = iRectMake(mo->position.x, mo->position.y, TILE_Width, TILE_Height);
+
+		mapObj[i] = mo;
+	}
+}
+
+void freeMap()
+{
+	int i;
+	for (i = 0; i < TILE_TOTAL_NUM; i++)
+	{
+		if (maps[i]->img)
+			delete maps[i]->img;
+		free(maps[i]->tile);
+		free(maps[i]);
+	}
+	free(maps);
+
+	for (i = 0; i < mapObjNum; i++)
+	{
+		delete _mapObj[i];
+	}
+	free(_mapObj);
+	free(mapObj);
+}
+
+void drawMap(float dt)
+{
+	int num = TILE_TOTAL_NUM;
+	for (int i = 0; i < num; i++)
+	{
+		MapTile* m = maps[i];
+		iPoint to = m->tileOff + DRAW_OFF;
+		if (m->img)
+			m->img->paint(dt, to);
+	}
+
+	for (int i = 0; i < mapObjNum;i++)
+		mapObj[i]->paint(dt, DRAW_OFF);
+}
+

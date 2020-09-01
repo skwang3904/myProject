@@ -6,10 +6,6 @@
 extern iPoint displayCenterPos;
 #define DRAW_OFF displayCenterPos + player->camera
 
-void loadMap();
-void freeMap();
-void drawMap(float dt);
-
 enum MapType {
 	MapType_Nomal = 0,
 	MapType_Boss,
@@ -26,11 +22,10 @@ struct MapTile
 	iPoint tileOff;
 };
 extern MapTile** maps;
-
 void wallCheck(Object* obj, iPoint mp);
 
 //-----------------------------------------------------------------------------
-//
+// MapObject
 class MapObject : public Object
 {
 public:
@@ -44,6 +39,9 @@ public:
 public:
 	//type = index로 구분
 	int tileNumber;
-
-	
+	int value;
 };
+
+void loadMap();
+void freeMap();
+void drawMap(float dt);

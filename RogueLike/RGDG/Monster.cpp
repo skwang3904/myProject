@@ -40,11 +40,10 @@ Monster::~Monster()
 
 //---------------------------------------------------------------------------------------
 // golemNomal
-
 GolemNomal** _golemNomal = NULL;
 int golemNomalNum;
 
-GolemNomal::GolemNomal(int index) : Monster(index)
+GolemNomal::GolemNomal(int index, int mapNum, iPoint pos) : Monster(index)
 {
 	iImage* img;
 	Texture* tex;
@@ -67,13 +66,12 @@ GolemNomal::GolemNomal(int index) : Monster(index)
 	}
 
 	this->img = imgs[0];
-	mapNumber = 0;
+	mapNumber = mapNum;
 
-	position = iPointMake(300, 300);
+	position = maps[mapNumber]->tileOff + pos;
 	vector = iPointZero;
 
 	touchRect = iRectZero;
-
 
 
 	alive = true;
@@ -171,7 +169,6 @@ void GolemNomal::actionMove(float dt)
 	img = imgs[1];
 
 	position += vector * (moveSpeed * dt);
-
 }
 
 void GolemNomal::actionMeleeAttack(float dt)
@@ -241,8 +238,7 @@ void GolemNomal::initOtherAct(int index)
 
 //---------------------------------------------------------------------------------------
 // golemElete
-
-GolemElete::GolemElete(int index) : Monster(index)
+GolemElete::GolemElete(int index, int mapNum, iPoint pos) : Monster(index)
 {
 }
 
@@ -256,8 +252,7 @@ void GolemElete::paint(float dt, iPoint off)
 
 //---------------------------------------------------------------------------------------
 // golemBoss
-
-GolemBoss::GolemBoss(int index) : Monster(index)
+GolemBoss::GolemBoss(int index, int mapNum, iPoint pos) : Monster(index)
 {
 }
 
@@ -284,12 +279,11 @@ void loadMonster()
 	_golemNomal = (GolemNomal**)malloc(sizeof(GolemNomal*) * golemNomalNum);
 	for (int i = 0; i < golemNomalNum; i++)
 	{
-		_golemNomal[i] = new GolemNomal(0);
+		_golemNomal[i] = new GolemNomal(0, i, iPointMake(300 + 100 * i, 300 + 200 * i));
 
 		monster[monsterNum] = _golemNomal[i];
 		monsterNum++;
 	}
-
 }
 
 void freeMonster()

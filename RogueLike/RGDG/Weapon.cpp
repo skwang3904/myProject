@@ -8,6 +8,33 @@ int weaponNum;
 
 Weapon::Weapon(int index) : Object(index)
 {
+	attackPoint	 = 0.0f;
+	_attackPoint = 0.0f;
+	attackSpeed  = 0.0f;
+	_attackSpeed = 0.0f;
+	attackDelay  = 0.0f;
+	_attackDelay = 0.0f;
+	attackAngle  = 0.0f;
+	attackRange  = 0.0f;
+
+	holdAngle = 0.0f;
+	attacking = false;
+	hit = false;
+	get = false;
+
+	drawPos = iPointZero;
+}
+
+Weapon::~Weapon()
+{
+}
+
+//--------------------------------------------------------
+// Hammer
+Hammer* hammer;
+
+Hammer::Hammer(int index) : Weapon(index)
+{
 	int i, j;
 	iImage* img;
 	Texture* tex;
@@ -32,6 +59,8 @@ Weapon::Weapon(int index) : Object(index)
 		imgs[i] = img;
 	}
 	this->img = imgs[0];
+	this->img->lockAngle = true;
+	this->img->anc = VCENTER | HCENTER;
 	mapNumber = 0;
 
 	position = player->position + iPointMake(30, 0);
@@ -40,26 +69,25 @@ Weapon::Weapon(int index) : Object(index)
 
 	attackPoint = 10.0f;
 	_attackPoint = 10.0f;
-	attackSpeed = 1.0f;
+	attackSpeed = 0.0f;
 	_attackSpeed = 1.0f;
-	attackDelay = 2.0f;
-	_attackDelay = 2.0f;
+	attackDelay = 0.0f;
+	_attackDelay = 1.0f;
 	attackAngle = 90.0f;
 	attackRange = 90.0f;
 
 	holdAngle = 90.0f;
-	anc = TOP | LEFT;
-
+	attacking = false;
 	hit = false;
 	get = true;
-
+	drawPos = iPointZero;
 }
 
-Weapon::~Weapon()
+Hammer::~Hammer()
 {
 }
 
-void Weapon::paint(float dt, iPoint off)
+void Hammer::paint(float dt, iPoint off)
 {
 #if 0
 	if (mapNumber != player->mapNumber)
@@ -78,53 +106,78 @@ void Weapon::paint(float dt, iPoint off)
 		img->lockAngle = true;
 		img->paint(dt, rp + off);
 #endif
+		position = player->wpPosition;
+		img->angle = holdAngle;
 	}
 	else
 	{
-		getWeapon();
+		if (getWeapon())
+			printf("getWeapon\n");
 	}
 
 	setPosition();
 	attack(dt);
 
-	position = player->wpPosition;
-	img->anc = anc;
-	img->lockAngle = true;
 
-	img->paint(dt, position + off);
+	img->paint(dt, position + drawPos + off);
 }
 
-void Weapon::attack(float dt)
+void Hammer::attack(float dt)
 {
-	if (attackDelay < _attackDelay)
+	//if (attackDelay < _attackDelay)
+	if (attackDelay < 0.2)
 	{
 		attackDelay += dt;
 		return;
 	}
-	
-	//attack
+
+
+	if (attacking == false)
+	{
+		if (getKeyStat(keyboard_j))
+			attacking = true;
+		return;
+	}
+
+	//attack	
 	float d = attackSpeed / _attackSpeed;
-	float ang = holdAngle + linear(d, 0.0f, attackAngle);
+	float ang = linear(d, 0.0f, attackAngle);
+	//float ang = linear(d, 0.0f, 0.0f);
 	float ran = linear(d, 0.0f, attackRange);
 
-	iPoint pp = player->position + iPointMake(player->img->tex->width / 2.0f, player->img->tex->height / 2.0f);
-	iPoint rp = iPointRotate(position, pp, ang);
-
+	iPoint pp = position;
+	iPoint rp = iPointRotate(position + drawPos, pp, ang);
+	
+#if 0
+	iPoint drawrp = rp + DRAW_OFF;
+	iPoint dpp = pp + DRAW_OFF;
+	setRGBA(0, 1, 1, 1);
+	fillRect(drawrp.x, drawrp.y, 30, 30);
 	setRGBA(0, 1, 0, 1);
-	fillRect(position.x + (DRAW_OFF).x, position.y + (DRAW_OFF).y, 10, 10);
-	setRGBA(1, 1, 1, 1);
+	fillRect(dpp.x, dpp.y, 20, 20);
 
-	img->angle = ang;
+	iPoint posp = position + DRAW_OFF;
+	setRGBA(1, 0, 0, 1);
+	fillRect(posp.x, posp.y, 15, 15);
+	setRGBA(1, 1, 1, 1);
+#endif
+
+	img->angle = holdAngle + ang;
+	img->position = rp - position - drawPos;
 
 	attackSpeed += dt;
 	if (attackSpeed > _attackSpeed)
 	{
 		attackSpeed = 0.0f;
 		attackDelay = 0.0f;
+		attacking = false;
+		img->angle = holdAngle;
+		img->position = iPointZero;
 	}
+
 }
 
-bool Weapon::getWeapon()
+bool Hammer::getWeapon()
 {
 	if (getKeyDown(keyboard_i))
 	{
@@ -132,52 +185,63 @@ bool Weapon::getWeapon()
 		{
 			get = true;
 			return true;
-		}	
+		}
 	}
 
 	return false;
 }
 
-void Weapon::setPosition()
+#if 0
+void te()
+{
+	attack(iPoint, iPoint, iSize)
+		-> iPoint에서 iPoint 까지 선 
+
+}
+#endif
+
+void Hammer::setPosition()
 {
 	iPoint v = player->wpVector;
-	float angle = 0.0f;
-	int anc = TOP | LEFT;
+	float angle = holdAngle;
+	iPoint p = drawPos;
+	iSize size = iSizeMake(img->tex->width, img->tex->height);
 
 	if (v.x < 0.0f)
 	{
 		angle = 90.0f;
-		anc = BOTTOM | RIGHT;
+		p = iPointMake(-size.height * 0.5f, size.width * 0.5f);
 	}
 	else if (v.x > 0.0f)
 	{
-		angle = 90.0f;
-		anc = TOP | LEFT;
+		angle = 270.0f;
+		p = iPointMake(size.height * 0.5f, size.width * 0.5f);
+
 	}
 	if (v.y < 0.0f)
 	{
 		angle = 180.0f;
-		anc = BOTTOM | LEFT;
+		p = iPointMake(size.width * 0.5f, -size.height * 0.5f);
 	}
 	else if (v.y > 0.0f)
 	{
 		angle = 0.0f;
-		anc = TOP | RIGHT;
+		p = iPointMake(-size.width * 0.5f, size.height * 0.5f);
 	}
 
-	this->anc = anc;
+	drawPos = p;
 	holdAngle = angle;
 }
 
+//--------------------------------------------------------
+
 void loadWeapon()
 {
-	weaponNum = 1;
-	weapon = (Weapon**)malloc(sizeof(Weapon*) * weaponNum);
+	weapon = (Weapon**)malloc(sizeof(Weapon*) * 1);
 
-	for (int i = 0; i < weaponNum; i++)
-	{
-		weapon[i] = new Weapon(0);
-	}
+	hammer = new Hammer(0);
+	weapon[0] = hammer;
+	weaponNum++;
 }
 
 void freeWeapon()
@@ -193,3 +257,4 @@ void drawWeapon(float dt)
 	for (int i = 0; i < weaponNum; i++)
 		weapon[i]->paint(dt, DRAW_OFF);
 }
+

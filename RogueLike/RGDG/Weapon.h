@@ -10,12 +10,12 @@ public:
 	Weapon(int index);
 	virtual ~Weapon();
 
-	virtual void paint(float dt, iPoint off);
-	virtual void attack(float dt);
-	bool getWeapon();
+	virtual void paint(float dt, iPoint off) = 0;
+	virtual void attack(float dt) = 0;
+	virtual bool getWeapon() = 0;
 
+	virtual void setPosition() = 0;
 
-	void setPosition();
 public:
 	float attackPoint, _attackPoint;
 	float attackSpeed, _attackSpeed;
@@ -24,16 +24,30 @@ public:
 	float attackRange;
 
 	float holdAngle;
-	int anc;
+	bool attacking;
 	bool hit;
 	bool get;
-	// 공격력, 속도,
-	// bool 데미지를 주었나
-	// 플레이어가 주웠는지,
-	// 공격할때 움직이는 각도, 거리
-	// 
+	
+	iPoint drawPos;
 };
 
+//--------------------------------------------------------
+// Hammer
+class Hammer : public Weapon
+{
+public:
+	Hammer(int index);
+	virtual ~Hammer();
+
+	virtual void paint(float dt, iPoint off);
+	virtual void attack(float dt);
+	virtual bool getWeapon();
+
+	virtual void setPosition();
+
+public:
+
+};
 //2종류 : 망치, 창
 
 

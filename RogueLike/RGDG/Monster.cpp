@@ -107,8 +107,9 @@ void GolemNomal::paint(float dt, iPoint off)
 	if (hp <= 0.0f)
 	{
 		state = monster_death;
-		//start death ani
+		// start death ani
 		// alive false = after death ani
+
 	}
 	else
 	{

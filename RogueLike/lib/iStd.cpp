@@ -365,6 +365,8 @@ iFBO::iFBO(int width, int height)
     prevFbo = 0;
     listTex = (Texture**)malloc(sizeof(Texture*) * 10);
     listNum = 0;
+
+    size = iSizeMake(width, height);
 }
 
 iFBO::~iFBO()
@@ -399,7 +401,7 @@ void iFBO::bind(Texture* tex)
 
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     GLenum fboBuffs[1] = { GL_COLOR_ATTACHMENT0, };
-    glDrawBuffers(1, fboBuffs);//glDrawBuffer(GL_COLOR_ATTACHMENT0);
+    glDrawBuffers(1, fboBuffs); //glDrawBuffer(GL_COLOR_ATTACHMENT0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex->texID, 0);
 
     glViewport(0, 0, tex->width, tex->height);
@@ -407,6 +409,7 @@ void iFBO::bind(Texture* tex)
     mProjection->loadIdentity();
     mProjection->ortho(0, tex->width, tex->height, 0, -1000, 1000);
     mModelview->loadIdentity();
+    devSize = iSizeMake(tex->width, tex->height);
 }
 
 void iFBO::unbind()
@@ -419,15 +422,14 @@ void iFBO::unbind()
     {
         bind(listTex[listNum - 1]);
         listNum--;
-
-        glViewport(0, 0, devSize.width, devSize.height);
-        mProjection->ortho(0, devSize.width, devSize.height, 0, -1000, 1000);
+        devSize = size;
     }
     else
     {
         glBindFramebuffer(GL_FRAMEBUFFER, prevFbo);
         glViewport(viewport.origin.x, viewport.origin.y, viewport.size.width, viewport.size.height);
         mProjection->ortho(viewport.origin.x, viewport.size.width, viewport.size.height, viewport.origin.y, -1000, 1000);
+        devSize = size;
     }
 
 #if 0
@@ -1107,10 +1109,17 @@ uint8* bmp2rgba(Bitmap* bmp, int& width, int& height)
         {
             uint8* dst = &rgba[potWidth * 4 * j + 4 * i];
             uint8* src = &argb[stride * 4 * j + 4 * i];
+#if 1 // Straight Alpha : 2D
             dst[0] = src[2];
             dst[1] = src[1];
             dst[2] = src[0];
             dst[3] = src[3];
+#else // Pre-multiply Alpha : 3D
+            dst[0] = src[2] * 255.0f / src[3];
+            dst[1] = src[1] * 255.0f / src[3];
+            dst[2] = src[0] * 255.0f / src[3];
+            dst[3] = src[3];
+#endif
         }
     }
 

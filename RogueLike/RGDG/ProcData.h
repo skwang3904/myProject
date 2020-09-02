@@ -27,3 +27,13 @@ struct MonsterInfo
 	float rangeDistance;
 };
 extern MonsterInfo monsterInfo[2];
+
+struct WeaponInfo
+{
+	float _attackPoint;
+	float _attackSpeed;
+	float _attackDelay;
+	float attackAngle;
+	float attackRange;
+};
+extern WeaponInfo weaponInfo[1];

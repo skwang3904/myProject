@@ -13,6 +13,7 @@ void loadProc()
 {
 	loadNumberFont();
 
+	loadTile();
 	loadMap();
 	player = new PlayerChar(0);
 	loadMonster();
@@ -35,6 +36,7 @@ void freeProc()
 {
 	freeNumberFont();
 
+	freeTile();
 	freeMap();
 	delete player;
 	freeMonster();
@@ -303,12 +305,14 @@ void refreshMiniMap(Texture* tex)
 		if (i == player->mapNumber) setRGBA(0, 1, 0, 1);
 		else						setRGBA(1, 1, 1, 1);
 
-		fillRect(p.x + 1, p.y + 1, TILE_Width - 2, TILE_Height - 2);
-		// #bug 쉐이더코드 안먹음
+		fillRect(p.x + 1, p.y + 1, TILE_Width - 2, TILE_Height - 2 , 10);
+
 	}
 	setLineWidth(1);
 
 	fbo->unbind();
+
+
 }
 
 void createPopMiniMap()
@@ -327,7 +331,7 @@ void createPopMiniMap()
 
 	img->reverse = REVERSE_HEIGHT;
 	img->ratio = 2.0f;
-	img->position = iPointMake(devSize.width - size.width * img->ratio - 100, 100);
+	img->position = iPointMake(devSize.width - size.width * img->ratio - 50, -50);
 	imgMiniMap = img;
 	pop->addObject(img);
 

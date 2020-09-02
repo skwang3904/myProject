@@ -14,9 +14,10 @@ uniform sampler2D texBlend;
 
 void main()
 {
-	fragColor = texture(texBlend, texCoordV) * colorV;
+	vec4 c = texture(texBlend, texCoordV);
+	c.rgb *= c.a;
 
-	//fragColor = texture(texBase, texCoordV) * colorV;
-
-	//fragColor =  vec4(1,1,1,1);
+	vec4 cc = colorV;
+	cc.rgb *= cc.a;
+	fragColor = c * cc;
 }

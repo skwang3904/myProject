@@ -100,9 +100,9 @@ public:
     Texture** listTex;
     int listNum;
 
-    iSize size;
-    iRect view;
     float m[16];
+
+    iSize size;
 };
 extern iFBO* fbo;
 

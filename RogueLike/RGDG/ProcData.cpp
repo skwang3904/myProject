@@ -15,3 +15,10 @@ MonsterInfo monsterInfo[2] = {
 		0.6f, 1.0f, 300.0f, 50.0f, 100.0f
 	},
 };
+
+WeaponInfo weaponInfo[1] = {
+	{
+		50.0f, 0.5f, 1.0f,
+		90.0f, 0.0f
+	},
+};

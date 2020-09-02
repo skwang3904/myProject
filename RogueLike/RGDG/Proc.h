@@ -7,6 +7,31 @@ void freeProc();
 void drawProc(float dt);
 void keyProc(iKeyState stat, iPoint point);
 
+class MapTile;
+class PlayerChar;
+class Monster;
+class Weapon;
+class Item;
+
+struct Stage
+{
+	MapTile* maps;
+	// playerInfo
+	PlayerChar* player;
+	
+	// monsterInfo
+	int monsterNum;
+	Monster** monster;
+
+	// weaponInfo
+	int weaponNum;
+	Weapon** weapon;
+
+	int itemNum;
+	Item** item;
+
+};
+
 #if 0
 0. 세이브 방법
 - 매 스테이지 시작 시 저장

@@ -26,21 +26,45 @@ void wallCheck(Object* obj, iPoint mp);
 
 //-----------------------------------------------------------------------------
 // MapObject
+// 문, 밟으면 피해입는 함정, 부숴지고 아이템나오는 상자
+#if 0
+index
+0 : Door
+1 : 
+2 :
+#endif
 class MapObject : public Object
 {
 public:
 	MapObject(int index);
 	virtual ~MapObject();
 
-	virtual void paint(float dt, iPoint off); // 구현해야함
+	virtual void paint(float dt, iPoint off) = 0; //
 
 	// 상호작용 함수,
-	void action();
+	virtual void action() = 0;
 public:
 	//type = index로 구분
-	int tileNumber;
+	int tileNum;
+	int* tileNumber;
 	int value;
 };
+
+//-----------------------------------------------------------------------------
+
+class MapObjectDoor : public MapObject
+{
+public:
+	MapObjectDoor(int index);
+	virtual ~MapObjectDoor();
+
+	virtual void paint(float dt, iPoint off);
+
+	virtual void action();
+public:
+
+};
+//-----------------------------------------------------------------------------
 
 void loadMap();
 void freeMap();

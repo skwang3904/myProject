@@ -1,5 +1,141 @@
 #include "Tile.h"
 
+TileWay* tileWay;
+
+extern int8 Tile0Way1[TILE_NUM_X * TILE_NUM_Y]; // 0way
+extern int8 Tile4Way1[TILE_NUM_X * TILE_NUM_Y]; // 4way
+
+extern int8 Tile3Way1[TILE_NUM_X * TILE_NUM_Y]; // R UD
+extern int8 Tile3Way2[TILE_NUM_X * TILE_NUM_Y]; // L UD
+extern int8 Tile3Way3[TILE_NUM_X * TILE_NUM_Y]; // LR D
+extern int8 Tile3Way4[TILE_NUM_X * TILE_NUM_Y]; // LR U
+
+extern int8 Tile2Way1[TILE_NUM_X * TILE_NUM_Y]; // LR
+extern int8 Tile2Way2[TILE_NUM_X * TILE_NUM_Y]; // UD
+extern int8 Tile2Way3[TILE_NUM_X * TILE_NUM_Y]; // LU
+extern int8 Tile2Way4[TILE_NUM_X * TILE_NUM_Y]; // RU
+extern int8 Tile2Way5[TILE_NUM_X * TILE_NUM_Y]; // LD
+extern int8 Tile2Way6[TILE_NUM_X * TILE_NUM_Y]; // RD
+
+extern int8 Tile1Way1[TILE_NUM_X * TILE_NUM_Y]; // L
+extern int8 Tile1Way2[TILE_NUM_X * TILE_NUM_Y]; // R
+extern int8 Tile1Way3[TILE_NUM_X * TILE_NUM_Y]; // U
+extern int8 Tile1Way4[TILE_NUM_X * TILE_NUM_Y]; // D
+
+void loadTile()
+{
+	int8* tileName[16] = {
+		Tile0Way1,
+		Tile4Way1,
+
+		Tile3Way1,
+		Tile3Way2,
+		Tile3Way3,
+		Tile3Way4,
+				 
+		Tile2Way1,
+		Tile2Way2,
+		Tile2Way3,
+		Tile2Way4,
+		Tile2Way5,
+		Tile2Way6,
+				 
+		Tile1Way1,
+		Tile1Way2,
+		Tile1Way3,
+		Tile1Way4,
+	};
+
+	/*
+	l : 320, 352, 384, 416
+	u : 14, 15, 16 ,17
+	r : 351, 383, 415, 447
+	d : 750, 751, 752, 753
+	*/
+	int l[4] = { 320, 352, 384, 416 };
+	int r[4] = { 351, 383, 415, 447 };
+	int u[4] = { 14, 15, 16 ,17 };
+	int d[4] = { 750, 751, 752, 753 };
+
+	// 전체갯수 / 문 갯수 / 문의 타일갯수
+
+	int drNum[16][4][4] = {
+		{ 
+			NULL, 
+			NULL, 
+			NULL, 
+			NULL
+		},
+		{   
+			l,    
+			r,    
+			u,    
+			d 
+		},
+
+		{ 
+			NULL,	 
+			r,	
+			u,  
+			d 
+		},
+		{	
+			l, 
+			NULL, 
+			u,   
+			d 
+		},
+		{	 l,	   r, NULL,    d },
+		{	 l,	   r,    u, NULL },
+		 
+		{    l,    r, NULL, NULL },
+		{ NULL, NULL,    u,    d },
+		{    l, NULL,    u, NULL },
+		{ NULL,    r,    u, NULL },
+		{    l, NULL, NULL,    d },
+		{ NULL,    r, NULL,    d },
+		
+		{    l, NULL, NULL, NULL},
+		{ NULL,    r, NULL, NULL},
+		{ NULL, NULL,    u, NULL},
+		{ NULL, NULL, NULL,    d},
+	};	  
+
+
+	tileWay = (TileWay*)malloc(sizeof(TileWay) * 16);
+
+	for (int i = 0; i < 16; i++)
+	{
+		TileWay* tw = &tileWay[i];
+
+		tw->tile = tileName[i];
+		tw->doorNum = (int**)calloc(sizeof(int*), 4);
+		for (int j = 0; j < 4; j++)
+		{
+			tw->doorNum[j] = (int*)calloc(sizeof(int), 4);
+			//if (drNum[i][j] == NULL) 
+			//	tw->doorNum[j] = NULL;
+
+			//memcpy(tw->doorNum[j], drNum[i][j], sizeof(int) * 4);
+			for (int k = 0; k < 4; k++)
+			{
+				if (drNum[i][j][k] == NULL)
+					tw->doorNum[j][k] = NULL;
+				tw->doorNum[j][k] = drNum[i][j][k];
+			}
+		}
+	}
+
+	
+}
+
+void freeTile()
+{
+	for (int i = 0; i < 16; i++)
+		free(tileWay[i].tile);
+	free(tileWay);
+}
+
 //------------------------------------------------------------------------------------------------
 
 int8 Tile0Way1[TILE_NUM_X * TILE_NUM_Y] = {

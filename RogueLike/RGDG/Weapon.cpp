@@ -1,5 +1,6 @@
 #include "Weapon.h"
 
+#include "ProcData.h"
 #include "PlayerChar.h"
 #include "Map.h"
 #include "Monster.h"
@@ -68,14 +69,15 @@ Hammer::Hammer(int index) : Weapon(index)
 	touchRect = iRectMake(position.x - size.width / 2.0f, position.y - size.height / 2.0f,
 		size.width, size.height);
 
-	attackPoint = 10.0f;
-	_attackPoint = 10.0f;
+	WeaponInfo* wi = &weaponInfo[1];
+	attackPoint = wi->_attackPoint;
+	_attackPoint = wi->_attackPoint;
 	attackSpeed = 0.0f;
-	_attackSpeed = 1.0f;
+	_attackSpeed = wi->_attackSpeed;
 	attackDelay = 0.0f;
-	_attackDelay = 1.0f;
-	attackAngle = 90.0f;
-	attackRange = 90.0f;
+	_attackDelay = wi->_attackDelay;
+	attackAngle = wi->attackAngle;
+	attackRange = wi->attackRange;
 
 	holdAngle = 90.0f;
 	attacking = false;
@@ -158,7 +160,7 @@ void Hammer::attack(float dt)
 		if (m->mapNumber == player->mapNumber)
 		{
 			if (containRect(touchRect, m->touchRect))
-				m->getDmg(attackPoint);
+				m->getDmg(100);
 		}
 	}
 

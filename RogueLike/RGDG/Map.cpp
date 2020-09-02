@@ -2,6 +2,7 @@
 
 #include "PlayerChar.h"
 #include "Tile.h"
+#include "Monster.h"
 
 struct passTile {
 	int tileNum;
@@ -65,7 +66,7 @@ void createMap()
 
 		for (i = 0; i < TILE_CONNECT_NUM; i++)
 		{
-			memcpy(maps[m[i]]->tile, Tile4Way1, sizeof(int8) * TILE_NUM_X * TILE_NUM_Y);
+			memcpy(maps[m[i]]->tile, tileWay[1].tile, sizeof(int8) * TILE_NUM_X * TILE_NUM_Y);
 			ConnectTile* c = &ct[m[i]];
 			c->value = true;
 		}
@@ -147,41 +148,44 @@ void pathTileCheck(ConnectTile* c)
 	if (x < TILE_TOTAL_SQRT - 1)	r = ct[c->index + 1].value;
 	if (y > 0)						u = ct[c->index - TILE_TOTAL_SQRT].value;
 	if (y < TILE_TOTAL_SQRT - 1)	d = ct[c->index + TILE_TOTAL_SQRT].value;
-
+	
 	int pathNum = l + r + u + d;
-#define TILECOPY(index, t) memcpy(maps[index]->tile, t, sizeof(int8) * TILE_NUM_X * TILE_NUM_Y)
 	switch (pathNum) {
-	case 4: TILECOPY(index, Tile4Way1); break;
+	case 4: pathNum = 1; break;
 	case 3:
 	{
-		if (r && u && d)	  TILECOPY(index, Tile3Way1);
-		else if (l && u && d) TILECOPY(index, Tile3Way2);
-		else if (l && r && d) TILECOPY(index, Tile3Way3);
-		else if (l && r && u) TILECOPY(index, Tile3Way4);
+		if		(r && u && d) pathNum = 2;
+		else if (l && u && d) pathNum = 3;
+		else if (l && r && d) pathNum = 4;
+		else if (l && r && u) pathNum = 5;
 		break;
 	}
 	case 2:
 	{
-		if (l && r) TILECOPY(index, Tile2Way1);
-		else if (u && d) TILECOPY(index, Tile2Way2);
-		else if (l && u) TILECOPY(index, Tile2Way3);
-		else if (r && u) TILECOPY(index, Tile2Way4);
-		else if (l && d) TILECOPY(index, Tile2Way5);
-		else if (r && d) TILECOPY(index, Tile2Way6);
+		if		(l && r) pathNum = 6;
+		else if (u && d) pathNum = 7;
+		else if (l && u) pathNum = 8;
+		else if (r && u) pathNum = 9;
+		else if (l && d) pathNum = 10;
+		else if (r && d) pathNum = 11;
 		break;
 	}
 	case 1:
 	{
-		if (l) TILECOPY(index, Tile1Way1);
-		else if (r) TILECOPY(index, Tile1Way2);
-		else if (u) TILECOPY(index, Tile1Way3);
-		else if (d) TILECOPY(index, Tile1Way4);
+		if		(l)	pathNum = 12;
+		else if (r) pathNum = 13;
+		else if (u) pathNum = 14;
+		else if (d) pathNum = 15;
 		break;
 	}
 	default:
-		TILECOPY(index, Tile0Way1);
+		pathNum = 0;
 		break;
 	}
+
+#define TILECOPY(index, t) memcpy(maps[index]->tile, t, sizeof(int8) * TILE_NUM_X * TILE_NUM_Y)
+	TILECOPY(index, tileWay[pathNum].tile);
+
 }
 
 //---------------------------------------------------------------------------------------------
@@ -312,31 +316,59 @@ void wallCheck(Object* obj, iPoint mp)
 
 //-----------------------------------------------------------------------------
 // MapObject
-MapObject** _mapObj;
 MapObject** mapObj;
 int mapObjNum;
 
+iImage* imgNextDoor = NULL;
 MapObject::MapObject(int index) : Object(index)
+{
+	mapNumber = 0;
+
+	alive = false;
+	position = iPointZero;
+	touchRect = iRectZero;
+
+	tileNum = 0;
+	value = 0;
+}
+
+MapObject::~MapObject()
+{
+
+}
+
+//----------------------------------------------------------------------------------
+MapObjectDoor** _mapObjectDoor;
+int mapObjectDoorNum;
+
+MapObjectDoor::MapObjectDoor(int index) : MapObject(index)
 {
 	iImage* img;
 	Texture* tex;
-	
-	img = new iImage();
-	iSize size = iSizeMake(TILE_Width, TILE_Height);
-	tex = createTexture(size.width,size.height);
 
-	fbo->bind(tex);
-	setRGBA(0, 0, 1, 1);
-	fillRect(0, 0, size.width, size.height);
-	setRGBA(1, 1, 0, 1);
-	fillRect(size.width * 0.25f, size.height * 0.25f, size.width * 0.5f, size.height * 0.5f);
-	setRGBA(1, 1, 1, 1);
-	fbo->unbind();
+	if (imgNextDoor == NULL)
+	{
+		img = new iImage();
+		iSize size = iSizeMake(TILE_Width, TILE_Height);
+		Texture* tex = createTexture(size.width, size.height);
 
-	img->addObject(tex);
-	freeImage(tex);
+		fbo->bind(tex);
+		setRGBA(0, 1, 0, 1);
+		fillRect(0, 0, size.width, size.height);
+		setRGBA(1, 0, 1, 1);
+		fillRect(size.width * 0.25f, size.height * 0.25f, size.width * 0.5f, size.height * 0.5f);
+		setRGBA(1, 1, 1, 1);
+		fbo->unbind();
 
-	this->img = img;
+		img->addObject(tex);
+		freeImage(tex);
+
+		this->img = img;
+	}
+	else
+	{
+		this->img = imgNextDoor->copy();
+	}
 	mapNumber = 0;
 
 	alive = true;
@@ -344,27 +376,29 @@ MapObject::MapObject(int index) : Object(index)
 	touchRect = iRectMake(position.x, position.y, TILE_Width, TILE_Height);
 
 
-	tileNumber = TILE_NUM_X * 5 + 12;
-	maps[mapNumber]->tile[tileNumber] = WW;
+	tileNum = 4;
+	tileNumber = (int*)calloc(sizeof(int), tileNum);
+
 	value = 1;
 }
 
-MapObject::~MapObject()
+MapObjectDoor::~MapObjectDoor()
 {
 	delete img; // test
+
+	free(tileNumber);
 }
 
-void MapObject::paint(float dt, iPoint off)
+void MapObjectDoor::paint(float dt, iPoint off)
 {
-	if (alive == false)
-		return;
-
+#if 1 // touch obj
 	if (containRect(touchRect, player->touchRect))
 	{
 		printf("touch obj\n");
-		alive = false;
+		//alive = false;
 		action();
 	}
+#endif
 
 	iRect rt = touchRect;
 	rt.origin += off;
@@ -375,16 +409,19 @@ void MapObject::paint(float dt, iPoint off)
 	img->paint(dt, position + off);
 }
 
-void MapObject::action()
+void MapObjectDoor::action()
 {
-
-	switch (index)
+	if (alive)
 	{
-	case 0: player->getDmg(value); break;
-	case 1: break;
-	case 2: break;
-	case 3: break;
-	case 4: break;
+		alive = false;
+		for (int i = 0; i < tileNum; i++)
+		{
+			if (tileNumber[i] == 0) continue;
+
+			maps[mapNumber]->tile[tileNumber[i]] = 01;
+		}
+
+		return;
 	}
 }
 
@@ -392,7 +429,7 @@ void MapObject::action()
 
 void loadMap()
 {
-	int i;
+	int i, j;
 	iPoint tileOffSet[TILE_TOTAL_NUM];
 	for (int i = 0; i < TILE_TOTAL_NUM; i++)
 	{
@@ -407,7 +444,6 @@ void loadMap()
 	pt.sp = iPointZero;
 	pt.tp = iPointZero;
 	pt.passAniDt = _passAniDt;
-
 
 	maps = (MapTile**)malloc(sizeof(MapTile*) * TILE_TOTAL_NUM);
 	for (i = 0; i < TILE_TOTAL_NUM; i++)
@@ -457,19 +493,29 @@ void loadMap()
 	}
 
 	//-----------------------------------------------------------------------------
+	mapObjectDoorNum = 4;
+	_mapObjectDoor = (MapObjectDoor**)malloc(sizeof(MapObjectDoor*) * mapObjectDoorNum);
 
-	mapObjNum = 3;
-	_mapObj = (MapObject**)malloc(sizeof(MapObject*) * mapObjNum);
+	mapObjNum = mapObjectDoorNum;
 	mapObj = (MapObject**)malloc(sizeof(MapObject*) * mapObjNum);
-	for (i = 0; i < mapObjNum; i++)
+	for (i = 0; i < mapObjectDoorNum; i++)
 	{
-		_mapObj[i] = new MapObject(0);
-		MapObject* mo = _mapObj[i];
-		mo->position = maps[mo->mapNumber]->tileOff 
-			+ iPointMake(TILE_Width * 4 + TILE_Width * 2 * i, TILE_Height * 3 + TILE_Height * 2 * i);
+		// l r u d
+		_mapObjectDoor[i] = new MapObjectDoor(0);
+		mapObj[i] = _mapObjectDoor[i];
+		
+		MapObject* mo = mapObj[i];
+		mo->position = iPointMake(TILE_Width * 4 + TILE_Width * 2 * i, TILE_Height * 3 + TILE_Height * 2 * i);
 		mo->touchRect = iRectMake(mo->position.x, mo->position.y, TILE_Width, TILE_Height);
 
-		mapObj[i] = mo;
+#if 1
+		TileWay* tw = &tileWay[0];
+		for (j = 0; j < mo->tileNum; j++)
+			mo->tileNumber[j] = tw->doorNum[j][0];
+
+		for (j = 0; j < mo->tileNum; j++)
+			maps[0]->tile[mo->tileNumber[j]] = WW;
+#endif
 	}
 }
 
@@ -487,16 +533,17 @@ void freeMap()
 
 	for (i = 0; i < mapObjNum; i++)
 	{
-		delete _mapObj[i];
+		delete mapObj[i];
 	}
-	free(_mapObj);
 	free(mapObj);
+	free(_mapObjectDoor);
 }
 
 void drawMap(float dt)
 {
+	int i;
 	int num = TILE_TOTAL_NUM;
-	for (int i = 0; i < num; i++)
+	for (i = 0; i < num; i++)
 	{
 		MapTile* m = maps[i];
 		iPoint to = m->tileOff + DRAW_OFF;
@@ -504,7 +551,48 @@ void drawMap(float dt)
 			m->img->paint(dt, to);
 	}
 
-	for (int i = 0; i < mapObjNum;i++)
-		mapObj[i]->paint(dt, DRAW_OFF);
+	for (i = 0; i < mapObjNum; i++)
+	{
+		MapObject* mo = mapObj[i];
+		mo->paint(dt, DRAW_OFF);
+	}
+
+#if 1 // room clear test
+	bool clear = true;
+	for (i = 0; i < monsterNum; i++)
+	{
+		Monster* m = monster[i];
+		if (m->alive && m->mapNumber == player->mapNumber)
+		{
+			clear = false;
+			break;
+		}
+	}
+
+	if (clear)
+	{
+		for (i = 0; i < mapObjNum; i++)
+		{
+			MapObject* mo = mapObj[i];
+			if(mo->index == 0 && mo->alive)
+				mo->action();
+		}
+	}
+#endif
+
+#if 1 // draw wall 
+	num = TILE_NUM_X * TILE_NUM_Y;
+	for (i = 0; i < num; i++)
+	{
+		uint8 a = maps[0]->tile[i];
+		if (a == WW)	setRGBA(1, 0, 0, 0.3f);
+		else			setRGBA(0, 0, 1, 0.3f);
+		
+		iPoint p = displayCenterPos;
+		fillRect(p.x + TILE_Width * (i % TILE_NUM_X), p.y + TILE_Height * (i / TILE_NUM_X),
+			TILE_Width, TILE_Height);
+	}
+	setRGBA(1, 1, 1, 1);
+#endif
 }
 

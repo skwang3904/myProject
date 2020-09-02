@@ -37,15 +37,13 @@ void freeGame()
 
 void drawGame(float dt)
 {
-
 	switch (gamestat) {
 	//case gamestat_intro:	drawIntro(dt);	break;
 	//case gamestat_menu:	drawMenu(dt);		break;
-	case gamestat_proc:	drawProc(dt);		break;
+	case gamestat_proc:		drawProc(dt);		break;
 	}
 
 	//drawLoading(_dt);
-
 }
 
 void keyGame(iKeyState stat, iPoint point)
@@ -59,7 +57,7 @@ void keyGame(iKeyState stat, iPoint point)
 	switch (gamestat) {
 	//case gamestat_intro:	keyIntro(stat, point);	break;
 	//case gamestat_menu:	keyMenu(stat, point);		break;
-	case gamestat_proc:	keyProc(stat, point);		break;
+	case gamestat_proc:		keyProc(stat, point);		break;
 	}
 
 }

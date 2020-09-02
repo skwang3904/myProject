@@ -123,7 +123,19 @@ void initOpenGL()
 #endif
 
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// Stright Alpha : 2D
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // alpha == 1 일때만 정확
+	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA); 
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	// =>칼라와 알파를 세부적으로 나누어서 블렌딩
+	// color : bend.rgb * blend.rgb + base.rgb * (1.0 - blend.a)
+	// alpha : blend.a * blend.a + base.a * (1.0 - blend.a)
+
+	// Pre-multiplay Alpha : 3D
+	//glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA); 
+	// => 쉐이더(alpha)에서 수정해서 rgba값을 넘김
+	// color : bend.rgb + base.rgb * (1.0 - blend.a)
 
 	glEnable(GL_SMOOTH);
 }

@@ -285,6 +285,32 @@ bool keyPopProcButton(iKeyState stat, iPoint point)
 iPopup* popMiniMap;
 iImage* imgMiniMap;
 
+void refreshMiniMap(Texture* tex)
+{
+	fbo->bind(tex);
+	fbo->clear(1, 0, 0, 1);
+
+	setLineWidth(10);
+	for (int i = 0; i < TILE_TOTAL_NUM; i++)
+	{
+		if (maps[i]->tile[0] == 0)
+			continue;
+
+		iPoint p = iPointMake(TILE_Width * (i % TILE_TOTAL_SQRT), TILE_Height * (i / TILE_TOTAL_SQRT));
+		setRGBA(0, 0, 0, 1);
+		fillRect(p.x, p.y, TILE_Width, TILE_Height);
+
+		if (i == player->mapNumber) setRGBA(0, 1, 0, 1);
+		else						setRGBA(1, 1, 1, 1);
+
+		fillRect(p.x + 1, p.y + 1, TILE_Width - 2, TILE_Height - 2);
+		// #bug 쉐이더코드 안먹음
+	}
+	setLineWidth(1);
+
+	fbo->unbind();
+}
+
 void createPopMiniMap()
 {
 	int i, j;
@@ -293,26 +319,15 @@ void createPopMiniMap()
 	iPopup* pop = new iPopup(iPopupStyleMove);
 	
 	img = new iImage();
-	iSize size = iSizeMake(TILE_NUM_X * TILE_Width, TILE_NUM_Y * TILE_Height);
+	iSize size = iSizeMake(TILE_Width * TILE_TOTAL_SQRT, TILE_Height * TILE_TOTAL_SQRT);
 	tex = createTexture(size.width, size.height);
-	fbo->bind(tex);
-	fbo->clear(0, 0, 0, 0);
-	setRGBA(0, 1, 0, 1);
-	for (i = 0; i < TILE_TOTAL_NUM; i++)
-	{
-		if (maps[i]->tile[0] == 0) 
-			continue;
-
-		iPoint p = iPointMake(TILE_Width * (i % TILE_TOTAL_SQRT), TILE_Height * (i / TILE_TOTAL_SQRT));
-		fillRect(p.x, p.y, TILE_Width, TILE_Height);
-	}
-	setRGBA(1, 1, 1, 1);
-	fbo->unbind();
+	refreshMiniMap(tex);
 	img->addObject(tex);
 	freeImage(tex);
 
-	img->ratio = 0.5f;
-	img->position = iPointMake(50, 50);
+	img->reverse = REVERSE_HEIGHT;
+	img->ratio = 2.0f;
+	img->position = iPointMake(devSize.width - size.width * img->ratio - 100, 100);
 	imgMiniMap = img;
 	pop->addObject(img);
 
@@ -331,6 +346,7 @@ void showPopMiniMap(bool show)
 
 void drawPopMiniMap(float dt)
 {
+	refreshMiniMap(imgMiniMap->tex);
 	popMiniMap->paint(dt);
 }
 

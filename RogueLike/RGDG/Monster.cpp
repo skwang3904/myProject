@@ -25,8 +25,8 @@ Monster::Monster(int index) : Object(index)
 	attackSpeed =  _attackSpeed = 0.0f;
 	moveSpeed = 0.0f;
 
-	attackDt = 0.0f;
-	_attackDt = 0.0f;
+	attackDt = _attackDt = 0.0f;
+	getDmgDt = _getDmgDt = 0.0f;
 	lookDistance = 0.0f;
 	meleeDistance = 0.0f;
 	rangeDistance = 0.0f;
@@ -84,6 +84,7 @@ GolemNomal::GolemNomal(int index, int mapNum, iPoint pos) : Monster(index)
 
 	//attackDt = 0.0f;
 	_attackDt = mi->_attackDt;
+	_getDmgDt = mi->_getDmgDt;
 	lookDistance = mi->lookDistance;
 	meleeDistance = mi->meleeDistance;
 	rangeDistance = mi->rangeDistance;
@@ -99,6 +100,9 @@ void GolemNomal::paint(float dt, iPoint off)
 {
 	if (mapNumber != player->mapNumber)
 		return;
+
+	if (getDmgDt < _getDmgDt)
+		getDmgDt += dt;
 
 	if (hp <= 0.0f)
 	{
@@ -144,12 +148,17 @@ void GolemNomal::paint(float dt, iPoint off)
 
 	(this->*method[state])(dt);
 
+	touchRect = iRectMake(position.x, position.y, img->tex->width, img->tex->height);
 	iPoint p = position + off;
 	img->paint(dt, p);
 }
 
 void GolemNomal::getDmg(float dmg)
 {
+	if (getDmgDt < _getDmgDt)
+		return;
+	getDmgDt = 0.0f;
+
 	hp -= dmg;
 	
 	if( state != monster_meleeAttack)
@@ -217,6 +226,11 @@ void GolemNomal::actionHurt(float dt)
 
 	img = imgs[4];
 
+	if (getDmgDt < _getDmgDt)
+		;
+	else
+		state = monster_idle;
+	 
 }
 
 void GolemNomal::actionDeath(float dt)

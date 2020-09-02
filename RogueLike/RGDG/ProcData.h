@@ -21,6 +21,7 @@ struct MonsterInfo
 	float moveSpeed;
 
 	float _attackDt;
+	float _getDmgDt;
 	float lookDistance;
 	float meleeDistance;
 	float rangeDistance;

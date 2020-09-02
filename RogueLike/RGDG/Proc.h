@@ -25,7 +25,7 @@ void keyProc(iKeyState stat, iPoint point);
 3. 몬스터 : 패턴 ... 간단한 이동만 가능
 4. 무기 :
 5. 아이템 :
--
+6. 보상 상자 :
 
 00. 세이브 데이터
 {
@@ -34,6 +34,7 @@ void keyProc(iKeyState stat, iPoint point);
 	monster
 	weapon
 	item
+	box
 }
 
 게임 종료 조건

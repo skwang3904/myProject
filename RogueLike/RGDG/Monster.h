@@ -22,6 +22,7 @@ enum MonsterState {
 [4] = Hurt;
 [5] = Death;
 #endif
+
 class Monster : public Object
 {
 public:
@@ -53,14 +54,16 @@ public:
 	float attackSpeed, _attackSpeed;
 	float moveSpeed;
 
-	// #check 공격 데미지 주는 시간
 	float attackDt, _attackDt;
+	float getDmgDt, _getDmgDt;
 	float lookDistance;
 	float meleeDistance;
 	float rangeDistance;
 	
 	float distance;
 };
+extern Monster** monster;
+extern int monsterNum;
 
 //---------------------------------------------------------------------------------------
 // golemNomal

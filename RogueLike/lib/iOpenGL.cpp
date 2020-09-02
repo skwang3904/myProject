@@ -212,6 +212,10 @@ void freeShader()
 	for (int i = 0; i < iBlendMax; i++)
 		destroyProgram(programIDs[i]);
 	free(programIDs);
+
+	for (int i = 0; i < iGDIID_Max; i++)
+		destroyProgram(programGDIs[i]);
+	free(programGDIs);
 }
 
 void checkShaderID(GLuint id)
@@ -373,12 +377,10 @@ void reshapeOpenGL(int width, int height)
 		viewport = iRectMake(0, 0, width, height);
 	}
 
-	glViewport(viewport.origin.x, viewport.origin.y, viewport.size.width, viewport.size.height);
-
-	mProjection->loadIdentity();
-	mProjection->ortho(0, devSize.width, devSize.height, 0, -1000, 1000);
-
-	mModelview->loadIdentity();
+	//glViewport(viewport.origin.x, viewport.origin.y, viewport.size.width, viewport.size.height);
+	//mProjection->loadIdentity();
+	//mProjection->ortho(0, devSize.width, devSize.height, 0, -1000, 1000);
+	//mModelview->loadIdentity();
 }
 
 GLuint nextPOT(GLuint x)

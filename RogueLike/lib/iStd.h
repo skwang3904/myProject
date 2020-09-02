@@ -89,10 +89,6 @@ public:
     Texture* getTexture();
     uint32 bindingTexID();
 
-    void setSize(iPoint p);
-    void setSize(float w, float h);
-    void backSize();
-
 public:
     GLuint fbo;
 

@@ -27,8 +27,8 @@ void main()
 {
 	vec2 uv = gl_FragCoord.xy;
 	
-	vec2 center = vec2( rect.x + rect.z / 2.0, rect.y - rect.w / 2.0f);
-	vec2 size = vec2(rect.zw/2.0);
+	vec2 center = vec2(rect.x + rect.z / 2.0, rect.y - rect.w / 2.0);
+	vec2 size = vec2(rect.zw / 2.0);
 
 	float rt1 = boxDist(translate(uv, center), size, radius);
 	float rt2 = boxDist(translate(uv, center), (size - lineWidth), radius);

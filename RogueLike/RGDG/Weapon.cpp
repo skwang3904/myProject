@@ -2,6 +2,7 @@
 
 #include "PlayerChar.h"
 #include "Map.h"
+#include "Monster.h"
 
 Weapon** weapon;
 int weaponNum;
@@ -145,9 +146,22 @@ void Hammer::attack(float dt)
 	//float ang = linear(d, 0.0f, 0.0f);
 	float ran = linear(d, 0.0f, attackRange);
 
-	iPoint pp = position;
-	iPoint rp = iPointRotate(position + drawPos, pp, ang);
-	
+	iPoint pdp = position + drawPos;
+	iPoint rp = iPointRotate(pdp, position, ang);
+	touchRect = iRectMake(rp.x - 15, rp.y - 15, 30, 30);
+
+
+
+	for (int i = 0; i < monsterNum; i++)
+	{
+		Monster* m = monster[i];
+		if (m->mapNumber == player->mapNumber)
+		{
+			if (containRect(touchRect, m->touchRect))
+				m->getDmg(attackPoint);
+		}
+	}
+
 #if 0
 	iPoint drawrp = rp + DRAW_OFF;
 	iPoint dpp = pp + DRAW_OFF;
@@ -160,10 +174,16 @@ void Hammer::attack(float dt)
 	setRGBA(1, 0, 0, 1);
 	fillRect(posp.x, posp.y, 15, 15);
 	setRGBA(1, 1, 1, 1);
+
+	iRect rt = touchRect;
+	rt.origin += DRAW_OFF;
+	setRGBA(1, 0, 0, 1);
+	fillRect(rt);
+	setRGBA(1, 1, 1, 1);
 #endif
 
 	img->angle = holdAngle + ang;
-	img->position = rp - position - drawPos;
+	img->position = rp - pdp;
 
 	attackSpeed += dt;
 	if (attackSpeed > _attackSpeed)
@@ -171,6 +191,7 @@ void Hammer::attack(float dt)
 		attackSpeed = 0.0f;
 		attackDelay = 0.0f;
 		attacking = false;
+		hit = false;
 		img->angle = holdAngle;
 		img->position = iPointZero;
 	}
@@ -249,7 +270,6 @@ void freeWeapon()
 	for (int i = 0; i < weaponNum; i++)
 		delete weapon[i];
 	free(weapon);
-
 }
 
 void drawWeapon(float dt)

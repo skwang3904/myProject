@@ -75,7 +75,7 @@ void loadLib(HDC hDC)
     fbo->unbind(); //
     texGdi[0] = tex;
 
-    tex = createTexture(32, 32);
+    tex = createTexture(p.x, p.y);
     fbo->bind(tex); //
     fbo->clear(1, 1, 1, 1);
     fbo->unbind(); //
@@ -95,7 +95,7 @@ void freeLib()
     free(texGdi);
 
     iGraphics* g = iGraphics::instance();
-    g->~iGraphics();
+    delete g;
 }
 
 iPoint zoomPosition;
@@ -146,7 +146,7 @@ void drawLib(Method_Paint method)
         //    0, 0, tex->width, tex->height, VCENTER | HCENTER,
         //    2.0f, 2.0f, 2, 0, REVERSE_HEIGHT);
 #if 1
-		drawImage(tex, viewport.size.width / 2, viewport.size.height / 2,
+		drawImage(tex, viewport.origin.x + viewport.size.width / 2, viewport.origin.y + viewport.size.height / 2,
 			0, 0, tex->width, tex->height, 
             VCENTER | HCENTER,	viewport.size.width / tex->width, viewport.size.height / tex->height, 
             2, 0, REVERSE_HEIGHT);
@@ -404,7 +404,6 @@ void iFBO::bind(Texture* tex)
 
     glViewport(0, 0, tex->width, tex->height);
 
-
     mProjection->loadIdentity();
     mProjection->ortho(0, tex->width, tex->height, 0, -1000, 1000);
     mModelview->loadIdentity();
@@ -420,6 +419,8 @@ void iFBO::unbind()
     {
         bind(listTex[listNum - 1]);
         listNum--;
+
+        glViewport(0, 0, devSize.width, devSize.height);
         mProjection->ortho(0, devSize.width, devSize.height, 0, -1000, 1000);
     }
     else
@@ -444,35 +445,6 @@ Texture* iFBO::getTexture()
 uint32 iFBO::bindingTexID()
 {
     return 0;
-}
-
-void iFBO::setSize(iPoint p)
-{
-    setSize(p.x, p.y);
-}
-
-void iFBO::setSize(float w, float h)
-{
-    size = devSize;
-    view = viewport;
-    memcpy(m, mProjection->d(), sizeof(float) * 16);
-
-    devSize = iSizeMake(w, h);
-    viewport = iRectMake(0, 0, w, h);
-    mProjection->loadIdentity();
-    mProjection->ortho(0, w, h, 0, -1000, 1000);
-}
-
-void iFBO::backSize()
-{
-    devSize = size;
-    viewport = view;
-    
-    memcpy(mProjection->d(), m, sizeof(float) * 16);
-
-    memset(m, 0x00, sizeof(float) * 16);
-    size = iSizeZero;
-    view = iRectZero;
 }
 
 void setRGBA(float r, float g, float b, float a)

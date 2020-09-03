@@ -16,7 +16,7 @@ public:
 	virtual ~rgArray();
 
 	void addObject(int index, void* data);
-	void addObject(void* data, bool ishead = true);
+	void addObject(void* data);
 
 	void remove();
 	void remove(int index);
@@ -30,6 +30,7 @@ public:
 	rgxArray* tail;
 
 	int count;
+	int currIndex;
 	RGARRAY_METHOD method;
 };
 

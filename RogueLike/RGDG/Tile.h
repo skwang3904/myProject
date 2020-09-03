@@ -13,14 +13,19 @@
 #define TILE_TOTAL_NUM		9 // 제곱수
 #define TILE_TOTAL_SQRT		3
 
-#define MOVETILE	1
-#define WALLTILE	2
-#define FALLTILE	3
-#define DOORTILE	4
+#define TILE_MOVE       1
+#define TILE_WALL       2
+#define TILE_FALL       3
 
-#define WW WALLTILE
-#define FF FALLTILE
-#define DR DOORTILE
+#define TILE_DOOR       4
+#define TILE_BARREL     5
+#define TILE_TRAPDOOR   6
+
+#define WW TILE_WALL
+#define FF TILE_FALL
+#define DR TILE_DOOR
+#define BA TILE_BARREL
+#define TD TILE_TRAPDOOR
 
 #define MOVETILE_RGBA	1, 1, 1, 1
 #define WALLTILE_RGBA	0.5, 0.5, 0.5, 1

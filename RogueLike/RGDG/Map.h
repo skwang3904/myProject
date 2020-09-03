@@ -39,15 +39,17 @@ public:
 	MapObject(int index);
 	virtual ~MapObject();
 
-	virtual void paint(float dt, iPoint off) = 0; //
+	virtual void paint(float dt, iPoint off) = 0;
 
 	// 상호작용 함수,
 	virtual void action() = 0;
 public:
 	//type = index로 구분
-	int tileNum;
-	int* tileNumber;
 	int value;
+
+	int tileNumX;
+	int tileNumY;
+	int* tileNumber;
 };
 
 //-----------------------------------------------------------------------------
@@ -55,16 +57,33 @@ public:
 class MapObjectDoor : public MapObject
 {
 public:
-	MapObjectDoor(int index);
+	MapObjectDoor(int index, int mapNumber, int tileNumber);
 	virtual ~MapObjectDoor();
 
 	virtual void paint(float dt, iPoint off);
 
 	virtual void action();
+
 public:
 
 };
+
 //-----------------------------------------------------------------------------
+
+class MapObjectBarrel : public MapObject
+{
+public:
+	MapObjectBarrel(int index, int mapNumber, int tileNumber);
+	virtual ~MapObjectBarrel();
+
+	virtual void paint(float dt, iPoint off);
+
+	virtual void action();
+
+public:
+
+};
+
 
 void loadMap();
 void freeMap();

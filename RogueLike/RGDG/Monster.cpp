@@ -178,7 +178,9 @@ void GolemNomal::actionMove(float dt)
 	//printf("called method move\n");
 	img = imgs[1];
 
-	position += vector * (moveSpeed * dt);
+
+	iPoint mp = vector * (moveSpeed * dt);
+	wallCheck(this, mp);
 }
 
 void GolemNomal::actionMeleeAttack(float dt)

@@ -3,7 +3,7 @@
 #include "iStd.h"
 
 #include "Common.h"
-
+#include "rgArray.h"
 
 enum PlayerState {
 	player_idle = 0,
@@ -24,6 +24,8 @@ public:
 	void initData();
 	void getDmg(float dmg);
 
+	void selectWeapon();
+
 public:
 	uint8 headNum;
 	uint8 holdNum;
@@ -38,8 +40,7 @@ public:
 	float attackSpeed, _attackSpeed;
 	float moveSpeed;
 
-	iArray* arrayWeapon;
-
+	rgArray* arrayWeapon;
 };
 extern PlayerChar* player;
 

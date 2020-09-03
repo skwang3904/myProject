@@ -176,11 +176,13 @@ PlayerChar::PlayerChar(int index) : Object(index)
 	}
 #endif
 
+	arrayWeapon = new rgArray();
 }
 
 PlayerChar::~PlayerChar()
 {
 	//
+	delete arrayWeapon;
 }
 
 void PlayerChar::initData()
@@ -193,6 +195,12 @@ void PlayerChar::getDmg(float dmg)
 	hp -= dmg;
 	if (hp <= 0.0f)
 		showPopGameOver(true);
+}
+
+void PlayerChar::selectWeapon()
+{
+	arrayWeapon->objectAtIndex(index);
+
 }
 
 void callBackIdle(iImage* me);
@@ -278,6 +286,7 @@ void PlayerChar::paint(float dt, iPoint off)
 	
 	iPoint rp = position + half * 0.5f;
 	touchRect = iRectMake(rp.x, rp.y, half.x, half.y);
+
 #if 0 //draw touchRect
 	setRGBA(1, 0, 0, 1);
 	iRect rt = touchRect;
@@ -286,28 +295,7 @@ void PlayerChar::paint(float dt, iPoint off)
 	setRGBA(1, 1, 1, 1);
 #endif
 
-	//camera -= mp;
-	if (sp.x < maps[mapNumber]->tileOff.x )
-	{
-		mapNumber--;
-	}
-	else if (sp.x > maps[mapNumber]->tileOff.x + TILE_NUM_X * TILE_Width - 1)
-	{
-		mapNumber++;
-	}
-	else if (sp.y < maps[mapNumber]->tileOff.y )
-	{
-		mapNumber -= TILE_TOTAL_SQRT;
-	}
-	else if (sp.y > maps[mapNumber]->tileOff.y + TILE_NUM_Y * TILE_Height - 1)
-	{
-		mapNumber += TILE_TOTAL_SQRT;
-	}
-	camera = iPointZero - maps[mapNumber]->tileOff;
-
 	//evasion
-
-
 	iPoint p = position + DRAW_OFF;
 	img->reverse = reverse;
 	img->paint(dt, p);

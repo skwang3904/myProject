@@ -8,6 +8,9 @@
 Weapon** weapon;
 int weaponNum;
 
+Weapon** weaponList;
+int currWeapon;
+
 Weapon::Weapon(int index) : Object(index)
 {
 	attackPoint	 = 0.0f;
@@ -69,7 +72,7 @@ Hammer::Hammer(int index) : Weapon(index)
 	touchRect = iRectMake(position.x - size.width / 2.0f, position.y - size.height / 2.0f,
 		size.width, size.height);
 
-	WeaponInfo* wi = &weaponInfo[1];
+	WeaponInfo* wi = &weaponInfo[0];
 	attackPoint = wi->_attackPoint;
 	_attackPoint = wi->_attackPoint;
 	attackSpeed = 0.0f;
@@ -84,6 +87,8 @@ Hammer::Hammer(int index) : Weapon(index)
 	hit = false;
 	get = true;
 	drawPos = iPointZero;
+
+	player->arrayWeapon->addObject(this);
 }
 
 Hammer::~Hammer()
@@ -96,21 +101,24 @@ void Hammer::paint(float dt, iPoint off)
 	if (mapNumber != player->mapNumber)
 		return;
 #endif
+
 	if (get)
 	{
-		//attack(dt);
-#if 0
-		float d = attackSpeed / _attackSpeed;
-		float ang = linear(d, 0.0f, angle);
-		iPoint pp = player->position + iPointMake(player->img->tex->width / 2, player->img->tex->height / 2);
-		position = player->position + iPointMake(100, 0);
-		iPoint rp = iPointRotate(position, player->position, ang);
-		img->angle = 45;
-		img->lockAngle = true;
-		img->paint(dt, rp + off);
-#endif
-		position = player->wpPosition;
-		img->angle = holdAngle;
+		if ((Weapon*)player->arrayWeapon->curr == this)
+		{
+			setPosition();
+			position = player->wpPosition;
+			img->angle = holdAngle;
+			if (!attack(dt))
+			{
+				if (getKeyDown(keyboard_o))
+					dropWeapon();
+			}
+		}
+		else
+		{
+			position = iPointMake(-3000, -3000);
+		}
 	}
 	else
 	{
@@ -118,28 +126,23 @@ void Hammer::paint(float dt, iPoint off)
 			printf("getWeapon\n");
 	}
 
-	setPosition();
-	attack(dt);
-
-
 	img->paint(dt, position + drawPos + off);
 }
 
-void Hammer::attack(float dt)
+bool Hammer::attack(float dt)
 {
 	//if (attackDelay < _attackDelay)
 	if (attackDelay < 0.2)
 	{
 		attackDelay += dt;
-		return;
+		return false;
 	}
-
 
 	if (attacking == false)
 	{
 		if (getKeyStat(keyboard_j))
 			attacking = true;
-		return;
+		return false;
 	}
 
 	//attack	
@@ -151,8 +154,6 @@ void Hammer::attack(float dt)
 	iPoint pdp = position + drawPos;
 	iPoint rp = iPointRotate(pdp, position, ang);
 	touchRect = iRectMake(rp.x - 15, rp.y - 15, 30, 30);
-
-
 
 	for (int i = 0; i < monsterNum; i++)
 	{
@@ -166,11 +167,9 @@ void Hammer::attack(float dt)
 
 #if 0
 	iPoint drawrp = rp + DRAW_OFF;
-	iPoint dpp = pp + DRAW_OFF;
 	setRGBA(0, 1, 1, 1);
 	fillRect(drawrp.x, drawrp.y, 30, 30);
 	setRGBA(0, 1, 0, 1);
-	fillRect(dpp.x, dpp.y, 20, 20);
 
 	iPoint posp = position + DRAW_OFF;
 	setRGBA(1, 0, 0, 1);
@@ -196,8 +195,11 @@ void Hammer::attack(float dt)
 		hit = false;
 		img->angle = holdAngle;
 		img->position = iPointZero;
+
+		return false;
 	}
 
+	return true;
 }
 
 bool Hammer::getWeapon()
@@ -212,6 +214,13 @@ bool Hammer::getWeapon()
 	}
 
 	return false;
+}
+
+void Hammer::dropWeapon()
+{
+	mapNumber = player->mapNumber; // 안쓰지만 해둠
+	position = player->position;
+	drawPos = iPointZero;
 }
 
 #if 0
@@ -260,7 +269,7 @@ void Hammer::setPosition()
 
 void loadWeapon()
 {
-	weapon = (Weapon**)malloc(sizeof(Weapon*) * 1);
+	weapon = (Weapon**)malloc(sizeof(Weapon*) * 10);
 
 	hammer = new Hammer(0);
 	weapon[0] = hammer;

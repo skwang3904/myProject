@@ -11,8 +11,10 @@ public:
 	virtual ~Weapon();
 
 	virtual void paint(float dt, iPoint off) = 0;
-	virtual void attack(float dt) = 0;
+
+	virtual bool attack(float dt) = 0;
 	virtual bool getWeapon() = 0;
+	virtual void dropWeapon() = 0;
 
 	virtual void setPosition() = 0;
 
@@ -40,8 +42,9 @@ public:
 	virtual ~Hammer();
 
 	virtual void paint(float dt, iPoint off);
-	virtual void attack(float dt);
+	virtual bool attack(float dt);
 	virtual bool getWeapon();
+	virtual void dropWeapon();
 
 	virtual void setPosition();
 

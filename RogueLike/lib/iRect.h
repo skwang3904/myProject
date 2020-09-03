@@ -11,4 +11,5 @@ struct iRect
 
 #define iRectZero iRectMake(0, 0, 0, 0)
 iRect iRectMake(float x, float y, float width, float height);
+iRect iRectMake(iPoint point, iSize size);
 

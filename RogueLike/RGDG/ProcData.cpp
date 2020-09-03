@@ -21,4 +21,5 @@ WeaponInfo weaponInfo[1] = {
 		50.0f, 0.5f, 1.0f,
 		90.0f, 0.0f
 	},
+
 };

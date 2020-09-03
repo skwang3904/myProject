@@ -331,7 +331,7 @@ void createPopMiniMap()
 
 	img->reverse = REVERSE_HEIGHT;
 	img->ratio = 2.0f;
-	img->position = iPointMake(devSize.width - size.width * img->ratio - 50, -50);
+	img->position = iPointMake(devSize.width - size.width * img->ratio - 50, 50);
 	imgMiniMap = img;
 	pop->addObject(img);
 

@@ -9,6 +9,7 @@ rgArray::rgArray(RGARRAY_METHOD m)
 	tail = (rgxArray*)malloc(sizeof(rgxArray));
 
 	count = 0;
+	currIndex = 0;
 	method = m;
 }
 
@@ -30,6 +31,8 @@ void rgArray::addObject(int index, void* data)
 		{
 			if (i == index)
 			{
+				currIndex = i;
+
 				x->next = a;
 				x->prev = a->prev;
 
@@ -49,6 +52,8 @@ void rgArray::addObject(int index, void* data)
 		{
 			if (i == index)
 			{
+				currIndex = i;
+
 				x->prev = a;
 				x->next = a->next;
 
@@ -65,7 +70,7 @@ void rgArray::addObject(int index, void* data)
 	printf("rgArray add error");
 }
 
-void rgArray::addObject(void* data, bool ishead)
+void rgArray::addObject(void* data)
 {
 	rgxArray* a = (rgxArray*)malloc(sizeof(rgxArray));
 	a->data = data;
@@ -88,12 +93,13 @@ void rgArray::addObject(void* data, bool ishead)
 	tail->prev = a;
 
 	curr = a;
+	currIndex = count;
 	count++;
 }
 
 void rgArray::remove()
 {
-	if (count < 2)
+	if (count == 1)
 		return;
 
 	rgxArray* a;
@@ -103,6 +109,8 @@ void rgArray::remove()
 		head->next = curr->next;
 		curr->next->prev = head;
 		curr = a;
+
+		currIndex = 0;
 	}
 	else if (curr->next == tail)
 	{
@@ -110,6 +118,8 @@ void rgArray::remove()
 		tail->prev = curr->prev;
 		curr->prev->next = tail;
 		curr = a;
+
+		currIndex = count - 2;
 	}
 	else
 	{
@@ -117,6 +127,8 @@ void rgArray::remove()
 		curr->prev->next = curr->next;
 		curr->next->prev = curr->prev;
 		curr = a;
+
+		currIndex--;
 	}
 	count--;
 }
@@ -125,12 +137,15 @@ void rgArray::remove(int index)
 {
 	if (count == 1)
 		return;
+
 	rgxArray* a = head->next;
 	rgxArray* b = NULL;
 	for (int i = 0; i < count; i++)
 	{
 		if (i == index)
 		{
+			currIndex = i;
+
 			if (b)
 			{
 				b->next = a->next;
@@ -168,24 +183,24 @@ void rgArray::removeAll()
 			break;
 	}
 	count = 0;
+	currIndex = 0;
 }
 
 void* rgArray::objectAtIndex(int index)
 {
-	if (count < 2)
+	if (count == 1)
 		return curr->data;
 
 	int ind = index;
 	if (ind < 0)
 		ind = count - 1;
 
-	rgxArray* a;
-
-	a = head->next;
-	for (int i = 0; ; i++)
+	rgxArray* a = head->next;
+	for (int i = 0; i < count; i++)
 	{
 		if (i == ind)
 		{
+			currIndex = i;
 			//curr = a;
 			return a->data;
 		}

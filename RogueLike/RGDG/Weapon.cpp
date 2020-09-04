@@ -88,7 +88,8 @@ Hammer::Hammer(int index) : Weapon(index)
 	get = true;
 	drawPos = iPointZero;
 
-	player->arrayWeapon->addObject(this);
+	player->addWeapon(this);
+	this->index = player->currWeaponIndex();
 }
 
 Hammer::~Hammer()
@@ -104,7 +105,7 @@ void Hammer::paint(float dt, iPoint off)
 
 	if (get)
 	{
-		if ((Weapon*)player->arrayWeapon->curr == this)
+		if (index == player->currWeaponIndex())
 		{
 			setPosition();
 			position = player->wpPosition;
@@ -161,7 +162,7 @@ bool Hammer::attack(float dt)
 		if (m->mapNumber == player->mapNumber)
 		{
 			if (containRect(touchRect, m->touchRect))
-				m->getDmg(100);
+				m->getDmg(attackPoint);
 		}
 	}
 
@@ -209,6 +210,8 @@ bool Hammer::getWeapon()
 		if (containRect(touchRect, player->touchRect))
 		{
 			get = true;
+			player->addWeapon(this);
+
 			return true;
 		}
 	}
@@ -218,7 +221,8 @@ bool Hammer::getWeapon()
 
 void Hammer::dropWeapon()
 {
-	mapNumber = player->mapNumber; // 안쓰지만 해둠
+	player->removeCurrWeapon();
+	mapNumber = player->mapNumber; // 현재 쓰이진않음
 	position = player->position;
 	drawPos = iPointZero;
 }

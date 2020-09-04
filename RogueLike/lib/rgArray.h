@@ -7,7 +7,8 @@ struct rgxArray
 	rgxArray* next;
 };
 
-typedef void (*RGARRAY_METHOD)(void* data);
+typedef void (*RGARRAY_METHOD)(void* data); 
+typedef void (*PRINT_METHOD)(void* data);
 
 class rgArray
 {
@@ -23,7 +24,7 @@ public:
 	void removeAll();
 
 	void* objectAtIndex(int index);
-	void printArray();
+	void printArray(PRINT_METHOD b = 0);
 public:
 	rgxArray* head;
 	rgxArray* curr;

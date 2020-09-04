@@ -24,49 +24,26 @@ void rgArray::addObject(int index, void* data)
 	x->data = data;
 
 	rgxArray* a;
-	if (index < count / 2)
+
+	a = head->next;
+	for (int i = 0; i < count; i++)
 	{
-		a = head->next; //head
-		for (int i = 0; i < count; i++)
+		if (i == index)
 		{
-			if (i == index)
-			{
-				currIndex = i;
+			currIndex = i;
 
-				x->next = a;
-				x->prev = a->prev;
+			x->next = a;
+			x->prev = a->prev;
 
-				a->prev->next = x;
-				a->prev = x;
+			a->prev->next = x;
+			a->prev = x;
 
-				count++;
-				return;
-			}
-			a = a->next;
+			count++;
+			return;
 		}
+		a = a->next;
 	}
-	else
-	{
-		a = tail->prev; //tail
-		for (int i = 0; i < count; i++)
-		{
-			if (i == index)
-			{
-				currIndex = i;
 
-				x->prev = a;
-				x->next = a->next;
-
-				a->next->prev = x;
-				a->next = x;
-
-				count++;
-				return;
-			}
-			a = a->prev;
-		}
-	}
-	
 	printf("rgArray add error");
 }
 
@@ -144,20 +121,22 @@ void rgArray::remove(int index)
 	{
 		if (i == index)
 		{
-			currIndex = i;
-
+			//a 삭제
 			if (b)
 			{
 				b->next = a->next;
 				a->next->prev = b;
 				curr = b;
+
+				currIndex = i - 1;
 			}
 			else
 			{
 				a->next->prev = head;
 				head->next = a->next;
 				curr = a->next;
-				
+
+				currIndex = 0;
 			}
 			
 			count--;
@@ -194,6 +173,8 @@ void* rgArray::objectAtIndex(int index)
 	int ind = index;
 	if (ind < 0)
 		ind = count - 1;
+	else if (ind > count - 1)
+		ind = 0;
 
 	rgxArray* a = head->next;
 	for (int i = 0; i < count; i++)
@@ -209,12 +190,17 @@ void* rgArray::objectAtIndex(int index)
 
 }
 
-void rgArray::printArray()
+void rgArray::printArray(PRINT_METHOD b)
 {
 	rgxArray* a = head->next;
 	for (int i = 0; i < count; i++)
 	{
-		printf("%d, ", a->data );
+		printf("currIndex %d : ", currIndex);
+		if (b)
+			b(a->data);
+		else
+			printf("%d\n", a->data);
+
 		a = a->next;
 		if (a == tail)
 		{

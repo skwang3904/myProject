@@ -197,10 +197,29 @@ void PlayerChar::getDmg(float dmg)
 		showPopGameOver(true);
 }
 
-void PlayerChar::selectWeapon()
+void PlayerChar::addWeapon(void* weapon)
+{
+	arrayWeapon->addObject(weapon);
+}
+
+void PlayerChar::removeCurrWeapon()
+{
+	arrayWeapon->remove(arrayWeapon->currIndex);
+}
+
+void PlayerChar::removeWeapon(int index)
+{
+	arrayWeapon->remove(index);
+}
+
+void PlayerChar::selectWeapon(int index)
 {
 	arrayWeapon->objectAtIndex(index);
+}
 
+int PlayerChar::currWeaponIndex()
+{
+	return arrayWeapon->currIndex;
 }
 
 void callBackIdle(iImage* me);
@@ -301,6 +320,9 @@ void PlayerChar::paint(float dt, iPoint off)
 	img->paint(dt, p);
 	if (state != player_jump)
 		imgs[headNum]->paint(dt, p + iPointMake(4, -43));
+
+	if(getKeyDown(keyboard_i))
+		selectWeapon(arrayWeapon->currIndex--);
 }
 
 

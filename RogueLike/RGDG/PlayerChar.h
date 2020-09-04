@@ -24,7 +24,11 @@ public:
 	void initData();
 	void getDmg(float dmg);
 
-	void selectWeapon();
+	void addWeapon(void* weapon);
+	void removeCurrWeapon();
+	void removeWeapon(int index);
+	void selectWeapon(int index);
+	int currWeaponIndex();
 
 public:
 	uint8 headNum;

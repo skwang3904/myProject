@@ -31,7 +31,7 @@ struct Stage
 	Item** item;
 
 };
-
+/* 4방향 순서 : LRUD (반드시 지킬것)*/
 #if 0
 0. 세이브 방법
 - 매 스테이지 시작 시 저장
@@ -92,6 +92,13 @@ void showPopMiniMap(bool show);
 void drawPopMiniMap(float dt);
 bool keyPopMiniMap(iKeyState stat, iPoint point);
 
+//-----------------------------------------------------------
+// Inven
+void createPopInven();
+void freePopInven();
+void showPopInven(bool show);
+void drawPopInven(float dt);
+bool keyPopInven(iKeyState stat, iPoint point);
 
 //-----------------------------------------------------------
 // ProcMenu

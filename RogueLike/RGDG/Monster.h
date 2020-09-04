@@ -4,7 +4,10 @@
 
 #include "Common.h"
 
-#define GOLEM_NOMAL_NUM 2
+#define MONSTER_IMG_NUM		6
+
+#define GOLEM_NOMAL_NUM		2
+#define GOLEM_BOSS_NUM		1
 
 enum MonsterState {
 	monster_idle = 0,
@@ -33,13 +36,16 @@ public:
 
 	virtual void getDmg(float dmg) = 0;
 
-	virtual void actionIdle(float) = 0;
-	virtual void actionMove(float) = 0;
-	virtual void actionMeleeAttack(float) = 0;
-	virtual void actionRangeAttack(float) = 0;
-	virtual void actionHurt(float) = 0;
-	virtual void actionDeath(float) = 0;
-	virtual void initOtherAct(int index) = 0;
+	virtual void actionIdle(float dt) = 0;
+	virtual void actionMove(float dt) = 0;
+	virtual void actionMeleeAttack(float dt) = 0;
+	virtual void actionRangeAttack(float dt) = 0;
+	virtual void actionHurt(float dt) = 0;
+	virtual void actionDeath(float dt) = 0;
+
+	static void initOtherAct(int index);
+	static void cbSetMonsterIdle(iImage* me);
+	static void cbSetMonsterAliveFalse(iImage* me);
 
 public:
 	// 멤버 클래스에서 사용할때 
@@ -52,15 +58,17 @@ public:
 	float hp, _hp;
 	float attackPoint, _attackPoint;
 	float attackSpeed, _attackSpeed;
-	float moveSpeed;
-
 	float attackDt, _attackDt;
-	float getDmgDt, _getDmgDt;
+	float attackDelay, _attackDelay;
+	float hurtDt, _hurtDt;
+
+	float moveSpeed;
 	float lookDistance;
 	float meleeDistance;
 	float rangeDistance;
 	
 	float distance;
+	uint8 reverse;
 };
 extern Monster** monster;
 extern int monsterNum;
@@ -76,13 +84,12 @@ public:
 	virtual void paint(float dt, iPoint off);
 	virtual void getDmg(float dmg);
 
-	virtual void actionIdle(float);
-	virtual void actionMove(float);
-	virtual void actionMeleeAttack(float);
-	virtual void actionRangeAttack(float);
-	virtual void actionHurt(float);
-	virtual void actionDeath(float);
-	virtual void initOtherAct(int index);
+	virtual void actionIdle(float dt);
+	virtual void actionMove(float dt);
+	virtual void actionMeleeAttack(float dt);
+	virtual void actionRangeAttack(float dt);
+	virtual void actionHurt(float dt);
+	virtual void actionDeath(float dt);
 
 public:
 	
@@ -100,13 +107,13 @@ public:
 	virtual void paint(float dt, iPoint off);
 	virtual void getDmg(float dmg) = 0;
 
-	virtual void actionIdle(float) = 0;
-	virtual void actionMove(float) = 0;
-	virtual void actionMeleeAttack(float) = 0;
-	virtual void actionRangeAttack(float) = 0;
-	virtual void actionHurt(float) = 0;
-	virtual void actionDeath(float) = 0;
-	virtual void initOtherAct(int index) = 0;
+	virtual void actionIdle(float dt) = 0;
+	virtual void actionMove(float dt) = 0;
+	virtual void actionMeleeAttack(float dt) = 0;
+	virtual void actionRangeAttack(float dt) = 0;
+	virtual void actionHurt(float dt) = 0;
+	virtual void actionDeath(float dt) = 0;
+
 public:
 
 };
@@ -121,17 +128,17 @@ public:
 	virtual ~GolemBoss();
 
 	virtual void paint(float dt, iPoint off);
-	virtual void getDmg(float dmg) = 0;
+	virtual void getDmg(float dmg);
 
-	virtual void actionIdle(float) = 0;
-	virtual void actionMove(float) = 0;
-	virtual void actionMeleeAttack(float) = 0;
-	virtual void actionRangeAttack(float) = 0;
-	virtual void actionHurt(float) = 0;
-	virtual void actionDeath(float) = 0;
-	virtual void initOtherAct(int index) = 0;
+	virtual void actionIdle(float dt);
+	virtual void actionMove(float dt);
+	virtual void actionMeleeAttack(float dt);
+	virtual void actionRangeAttack(float dt);
+	virtual void actionHurt(float dt);
+	virtual void actionDeath(float dt);
+
 public:
-
+	int dir;
 };
 
 //---------------------------------------------------------------------------------------

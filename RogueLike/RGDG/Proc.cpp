@@ -24,12 +24,14 @@ void loadProc()
 	createPopState();
 	createPopProcButton();
 	createPopMiniMap();
+	createPopInven();
 	createPopProcMenu();
 	createPopGameOver();
 
 	showPopState(true);
 	showPopProcButton(true);
 	showPopMiniMap(true);
+	showPopInven(true);
 }
 
 void freeProc()
@@ -47,6 +49,7 @@ void freeProc()
 	freePopState();
 	freePopProcButton();
 	freePopMiniMap();
+	freePopInven();
 	freePopProcMenu();
 	freePopGameOver();
 }
@@ -68,6 +71,7 @@ void drawProc(float dt)
 	drawPopState(dt);
 	drawPopProcButton(dt);
 	drawPopMiniMap(dt);
+	drawPopInven(dt);
 	drawPopProcMenu(_dt);
 	drawPopGameOver(_dt);
 	//numberFont->drawFont()
@@ -77,6 +81,7 @@ void keyProc(iKeyState stat, iPoint point)
 {
 	if (keyPopGameOver(stat, point) ||
 		keyPopProcMenu(stat, point) ||
+		keyPopInven(stat,point)	||
 		keyPopMiniMap(stat, point) ||
 		keyPopProcButton(stat, point) ||
 		keyPopState(stat, point))
@@ -356,6 +361,140 @@ void drawPopMiniMap(float dt)
 
 bool keyPopMiniMap(iKeyState stat, iPoint point)
 {
+	return false;
+}
+
+//-----------------------------------------------------------
+// Inven
+iPopup* popInven;
+iImage** imgInvenBtn;
+
+Texture* texInvenWeapon;
+
+void drawPopInvenWeapon(float dt)
+{
+	Weapon* w = (Weapon*)player->arrayWeapon->objectAtIndex(player->currWeaponIndex());
+	
+	texInvenWeapon = w->img->tex;
+}
+
+void drawPopInvenBefore(iPopup* me, iPoint p, float dt);
+
+void createPopInven()
+{
+	int i, j;
+	iImage* img;
+	Texture* tex;
+	iPopup* pop = new iPopup(iPopupStyleMove);
+
+	imgInvenBtn = (iImage**)malloc(sizeof(iImage*) * 4);
+	iSize size = iSizeMake(128, 128);
+	for (i = 0; i < 1; i++)
+	{
+		img = new iImage();
+
+		for (j = 0; j < 2; j++)
+		{
+			tex = createTexture(size.width, size.height);
+			fbo->bind(tex);
+			
+			if (j == 0) setRGBA(1, 0, 1, 1);
+			else		setRGBA(0, 1, 0, 1);
+			
+			fillRect(0, 0, size.width, size.height, 15);
+			fbo->unbind();
+
+			img->addObject(tex);
+			freeImage(tex);
+		}
+		img->position = iPointMake((size.width + 10) * (i % 2),
+			(size.height + 10) * (i / 2));
+
+		imgInvenBtn[i] = img;
+		pop->addObject(img);
+	}
+	iPoint p = iPointMake(devSize.width - size.width * 1 - 30, devSize.height - size.height * 1 - 30);
+
+	pop->openPosition = p + iPointMake(500, 0);
+	pop->closePosition = p;
+	pop->methodDrawBefore = drawPopInvenBefore;
+	popInven = pop;
+}
+
+void freePopInven()
+{
+	delete popInven;
+	free(imgInvenBtn);
+}
+
+void showPopInven(bool show)
+{
+	popInven->show(show);
+}
+
+void drawPopInvenBefore(iPopup* me, iPoint p, float dt)
+{
+	for (int i = 0; i < 1; i++)
+		imgInvenBtn[i]->setTexAtIndex(i == popInven->selected);
+
+	drawPopInvenWeapon(dt);
+}
+
+void drawPopInven(float dt)
+{
+	popInven->paint(dt);
+
+	iPoint p = popInven->closePosition + iPointMake(64,64);
+	drawImage(texInvenWeapon, p.x, p.y, VCENTER | HCENTER);
+}
+
+bool keyPopInven(iKeyState stat, iPoint point)
+{
+
+	int i, j = -1;
+	switch (stat)
+	{
+	case iKeyStateBegan:
+	{
+		i = popInven->selected;
+		if (i == -1)
+			break;
+
+		if (i == 0)
+		{
+			printf("click inven\n");
+		}
+		else if (i == 1)
+		{
+		}
+		return true;
+	}
+	case iKeyStateMoved:
+	{
+		for (i = 0; i < 1; i++)
+		{
+			if (containPoint(point, imgInvenBtn[i]->touchRect(popInven->closePosition)))
+			{
+				j = i;
+				break;
+			}
+		}
+
+		if (popInven->selected != j)
+			;
+
+		popInven->selected = j;
+
+		break;
+	}
+	case iKeyStateEnded:
+	{
+
+		break;
+	}
+	}
+
+
 	return false;
 }
 

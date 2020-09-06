@@ -717,7 +717,7 @@ void loadMap()
 	for (i = 0; i < TILE_TOTAL_NUM; i++)
 	{
 		if (maps[i]->state == MapType_ItemBox)
-			maps[i]->tile[TILE_NUM_X * TILE_NUM_Y / 2 + TILE_NUM_X / 2] = IB;
+			maps[i]->tile[TILE_NUM_X * 24 + TILE_NUM_X / 2] = IB;
 	}
 
 	for (k = 0; k < num; k++)

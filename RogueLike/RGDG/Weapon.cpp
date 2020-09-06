@@ -10,12 +10,7 @@ int weaponNum;
 
 Weapon::Weapon(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos)
 {
-	attackPoint	 = 0.0f;
-	_attackPoint = 0.0f;
-	attackSpeed  = 0.0f;
-	_attackSpeed = 0.0f;
-	attackDelay  = 0.0f;
-	_attackDelay = 0.0f;
+	attackDelay  = _attackDelay = 0.0f;
 	attackAngle  = 0.0f;
 	attackRange  = 0.0f;
 

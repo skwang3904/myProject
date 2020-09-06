@@ -285,6 +285,8 @@ void GolemNomal::action(Object* obj)
 	actionDt = 0.0f;
 	prevHp = hp;
 	hp -= obj->attackPoint;
+	if (hp < 0.0f)
+		hp = 0.0f;
 
 	if (state != monster_meleeAttack)
 		state = monster_hurt;
@@ -559,6 +561,8 @@ void GolemBoss::action(Object* obj)
 	actionDt = 0.0f;
 	prevHp = hp;
 	hp -= obj->attackPoint;
+	if (hp < 0.0f)
+		hp = 0.0f;
 
 	if (state != monster_meleeAttack)
 		state = monster_hurt;

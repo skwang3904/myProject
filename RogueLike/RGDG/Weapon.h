@@ -19,8 +19,6 @@ public:
 	static void dropWeapon(Weapon* me);
 
 public:
-	float attackPoint, _attackPoint;
-	float attackSpeed, _attackSpeed;
 	float attackDelay, _attackDelay;
 	float attackAngle;
 	float attackRange;

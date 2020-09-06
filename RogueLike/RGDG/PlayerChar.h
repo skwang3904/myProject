@@ -17,18 +17,21 @@ enum PlayerState {
 class PlayerChar : public Object
 {
 public:
-	PlayerChar(int index);
+	PlayerChar(int index, int8 mapNum, iPoint pos);
 	virtual ~PlayerChar();
 
 	virtual void paint(float dt, iPoint off);
+	virtual void action(Object* obj);
+
 	void initData();
-	void getDmg(float dmg);
 
 	void addWeapon(void* weapon);
 	void removeCurrWeapon();
 	void removeWeapon(int index);
 	void selectWeapon(int index);
 	int currWeaponIndex();
+
+	static void cbPlayerSetIdle(iImage* me);
 
 public:
 	uint8 headNum;
@@ -38,11 +41,6 @@ public:
 	iPoint camera;
 	iPoint wpVector;
 	iPoint wpPosition;
-
-	float hp, _hp;
-	float attackPoint, _attackPoint;
-	float attackSpeed, _attackSpeed;
-	float moveSpeed;
 
 	rgArray* arrayWeapon;
 };
@@ -63,3 +61,7 @@ imgs
 9 : char Jump
 
 */
+
+void loadPlayerChar();
+void freePlayerChar();
+void drawPlayerChar(float dt);

@@ -12,23 +12,26 @@ Monster** monster;
 int monsterNum;
 
 Monster* cbMonster = NULL;
-Monster::Monster(int index) : Object(index)
+Monster::Monster(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos)
 {
-	method[0] = &Monster::actionIdle;
-	method[1] = &Monster::actionMove;
-	method[2] = &Monster::actionMeleeAttack;
-	method[3] = &Monster::actionRangeAttack;
-	method[4] = &Monster::actionHurt;
-	method[5] = &Monster::actionDeath;
+	stateMethod[0] = &Monster::actionIdle;
+	stateMethod[1] = &Monster::actionMove;
+	stateMethod[2] = &Monster::actionMeleeAttack;
+	stateMethod[3] = &Monster::actionRangeAttack;
+	stateMethod[4] = &Monster::actionHurt;
+	stateMethod[5] = &Monster::actionDeath;
+
+	cbMethod = NULL;
 
 	state = monster_idle;
 	alive = false;
+	prevHp = 0.0f;
 	hp = _hp = 0.0f;
 	attackPoint =  _attackPoint = 0.0f;
 	attackSpeed =  _attackSpeed = 0.0f;
 	attackDt = _attackDt = 0.0f;
 	attackDelay =  _attackDelay = 0.0f;
-	hurtDt = _hurtDt = 0.0f;
+	actionDt = _actionDt = 0.0f;
 
 	moveSpeed = 0.0f;
 	lookDistance = 0.0f;
@@ -37,6 +40,8 @@ Monster::Monster(int index) : Object(index)
 
 	distance = 0.0f;
 	reverse = REVERSE_NONE;
+
+	showHpDt = _showHpDt = 0.0f;
 }
 
 Monster::~Monster()
@@ -45,28 +50,90 @@ Monster::~Monster()
 
 void Monster::initOtherAct(int index)
 {
-	for (int i = 0; i < MONSTER_IMG_NUM; i++)
+	int num = imgNum;
+	for (int i = 0; i < num; i++)
 	{
-		if (i == index) continue;
-		cbMonster->imgs[i]->frame = 0;
+		if (i == index)
+		{
+			switch (index)
+			{
+			case monster_idle: 
+			case monster_move: 
+			{
+				attackDt = 0.0f;
+				attackDelay = 0.0f;
+				break;
+			}
+			case monster_meleeAttack: break;
+			case monster_rangeAttack: break;
+			case monster_hurt: 
+			{
+				attackDt = 0.0f;
+				attackDelay = 0.0f;
+				break;
+			}
+			case monster_death: 
+			{
+				attackDt = 0.0f;
+				attackDelay = 0.0f;
+				break;
+			}
+			default: 
+				break;
+			}
+			continue;
+		}
+		imgs[i]->frame = 0;
 	}
 }
 
-void Monster::cbSetMonsterIdle(iImage* me)
+void Monster::cbMonsterSetIdle()
 {
-	cbMonster->state = monster_idle;
+	state = monster_idle;
+	initOtherAct(monster_idle);
+
+	cbMethod = NULL;
 }
 
-void Monster::cbSetMonsterAliveFalse(iImage* me)
+void Monster::cbMonsterSetAliveFalse()
 {
-	cbMonster->alive = false;
+	alive = false;
+
+	cbMethod = NULL;
+}
+
+void Monster::showHPbar(Monster* me)
+{
+	me->showHpDt = 0.0f;
+}
+
+void Monster::drawHPbar(Monster* me, float dt)
+{
+	if (me->showHpDt < me->_showHpDt)
+	{
+		Monster* m = me;
+		m->showHpDt += dt;
+
+		float h = linear(min(m->showHpDt / m->_showHpDt * 2.0f,1.0f), m->prevHp, m->hp);
+		iPoint p = m->position + DRAW_OFF;
+		setRGBA(0, 0, 0, 1);
+		fillRect(p.x, p.y + 30, m->img->tex->width, 20);
+		setRGBA(1, 0, 0, 1);
+		fillRect(p.x, p.y + 30, m->img->tex->width * (m->prevHp / m->_hp), 20);
+		setRGBA(0.5f, 1, 0, 1);
+		fillRect(p.x, p.y + 30, m->img->tex->width * (h / m->_hp), 20);
+		setRGBA(1, 1, 1, 1);
+
+		if (m->showHpDt >= m->_showHpDt)
+			m->prevHp = m->hp;
+	}
 }
 
 //---------------------------------------------------------------------------------------
 // golemNomal
 int golemNomalNum;
 
-GolemNomal::GolemNomal(int index, int mapNum, iPoint pos) : Monster(index)
+GolemNomal::GolemNomal(int index, int8 mapNum, iPoint pos) : Monster(index, mapNum, pos)
 {
 	int i, j;
 	iImage* img;
@@ -117,15 +184,16 @@ GolemNomal::GolemNomal(int index, int mapNum, iPoint pos) : Monster(index)
 	alive = true;
 	state = monster_idle;
 	MonsterInfo* mi = &monsterInfo[GOLEM_NOMAL];
+	prevHp = 0.0f;
 	hp = _hp = mi->_hp;
 	attackPoint = _attackPoint = mi->_attackPoint;
-	//attackSpeed = 0.0f;
+	attackSpeed = 0.0f;
 	_attackSpeed = mi->_attackSpeed;
-	//attackDt = 0.0f;
+	attackDt = 0.0f;
 	_attackDt = mi->_attackDt;
-	//attackDelay = 0.0f;
+	attackDelay = 0.0f;
 	_attackDelay = mi->_attackDelay;
-	_hurtDt = mi->_hurtDt;
+	_actionDt = mi->_actionDt;
 
 	moveSpeed = mi->moveSpeed;
 	lookDistance = mi->lookDistance;
@@ -134,6 +202,9 @@ GolemNomal::GolemNomal(int index, int mapNum, iPoint pos) : Monster(index)
 
 	distance = 0.0f;
 	reverse = REVERSE_NONE;
+
+	showHpDt = 0.0f;
+	_showHpDt = 2.0f;
 }
 
 GolemNomal::~GolemNomal()
@@ -141,15 +212,13 @@ GolemNomal::~GolemNomal()
 
 }
 
-
-
 void GolemNomal::paint(float dt, iPoint off)
 {
 	if (mapNumber != player->mapNumber)
 		return;
 
-	if (hurtDt < _hurtDt)
-		hurtDt += dt;
+	if (actionDt < _actionDt)
+		actionDt += dt;
 
 	if (hp <= 0.0f)
 	{
@@ -193,25 +262,34 @@ void GolemNomal::paint(float dt, iPoint off)
 		}
 	}
 
-	(this->*method[state])(dt);
+	(this->*stateMethod[state])(dt);
 
 	touchRect = iRectMake(position.x, position.y, img->tex->width, img->tex->height);
 	img->reverse = reverse;
 	iPoint p = position + off;
 	img->paint(dt, p);
+
+
+	if (cbMethod)
+	{
+		if (img->animation == false)
+			(this->*cbMethod)();
+	}
 }
 
-void GolemNomal::getDmg(float dmg)
+void GolemNomal::action(Object* obj)
 {
-	if (hurtDt < _hurtDt)
+	if (actionDt < _actionDt)
 		return;
 
-	hurtDt = 0.0f;
+	actionDt = 0.0f;
+	prevHp = hp;
+	hp -= obj->attackPoint;
 
-	hp -= dmg;
-	
-	if( state != monster_meleeAttack)
+	if (state != monster_meleeAttack)
 		state = monster_hurt;
+
+	showHPbar(this);
 }
 
 void GolemNomal::actionIdle(float dt)
@@ -238,8 +316,8 @@ void GolemNomal::actionMeleeAttack(float dt)
 		else if (attackDt > _attackDt)
 		{
 			// player->dmg
-			printf("hit\n");
-			player->getDmg(attackPoint);
+			if (distance < meleeDistance)
+				player->action(this);
 
 			attackDt = _attackDt;
 		}
@@ -255,8 +333,8 @@ void GolemNomal::actionMeleeAttack(float dt)
 		return;
 	}
 
-	cbMonster = this;
-	img->startAnimation(cbSetMonsterIdle);
+	img->startAnimation();
+	cbMethod = &Monster::cbMonsterSetIdle;
 
 	attackDt = 0.0f;
 	attackDelay = 0.0f;
@@ -278,8 +356,8 @@ void GolemNomal::actionHurt(float dt)
 	}
 	else
 	{
-		cbMonster = this;
-		img->startAnimation(cbSetMonsterIdle);
+		img->startAnimation();
+		cbMethod = &Monster::cbMonsterSetIdle;
 	}
 }
 
@@ -293,14 +371,14 @@ void GolemNomal::actionDeath(float dt)
 	}
 	else
 	{
-		cbMonster = this;
-		img->startAnimation(cbSetMonsterAliveFalse);
+		img->startAnimation();
+		cbMethod = &Monster::cbMonsterSetAliveFalse;
 	}
 }
 
 //---------------------------------------------------------------------------------------
 // golemElete
-GolemElete::GolemElete(int index, int mapNum, iPoint pos) : Monster(index)
+GolemElete::GolemElete(int index, int8 mapNum, iPoint pos) : Monster(index, mapNum, pos)
 {
 }
 
@@ -316,7 +394,7 @@ void GolemElete::paint(float dt, iPoint off)
 // golemBoss
 int golemBossNum;
 // #bug
-GolemBoss::GolemBoss(int index, int mapNum, iPoint pos) : Monster(index)
+GolemBoss::GolemBoss(int index, int8 mapNum, iPoint pos) : Monster(index, mapNum, pos)
 {
 	int i, j;
 	iImage* img;
@@ -325,8 +403,9 @@ GolemBoss::GolemBoss(int index, int mapNum, iPoint pos) : Monster(index)
 	// 4 dir Image
 	imgNum = MONSTER_IMG_NUM * 4;
 	imgs = (iImage**)malloc(sizeof(iImage*) * imgNum);
-	iSize size = iSizeMake(252, 200);
+	iSize size = iSizeMake(378, 300);
 	char c[4] = { 'l', 'r', 't', 'd' };
+	setRGBA(1, 1, 1, 1);
 	for (i = 0; i < imgNum; i++)
 	{
 		img = new iImage();
@@ -369,6 +448,7 @@ GolemBoss::GolemBoss(int index, int mapNum, iPoint pos) : Monster(index)
 	alive = true;
 	state = monster_idle;
 	MonsterInfo* mi = &monsterInfo[GOLEM_BOSS];
+	prevHp = 0.0f;
 	hp = _hp = mi->_hp;
 	attackPoint = _attackPoint = mi->_attackPoint;
 	//attackSpeed = 0.0f;
@@ -377,7 +457,7 @@ GolemBoss::GolemBoss(int index, int mapNum, iPoint pos) : Monster(index)
 	_attackDt = mi->_attackDt;
 	//attackDelay = 0.0f;
 	_attackDelay = mi->_attackDelay;
-	_hurtDt = mi->_hurtDt;
+	_actionDt = mi->_actionDt;
 
 	moveSpeed = mi->moveSpeed;
 	lookDistance = mi->lookDistance;
@@ -387,6 +467,8 @@ GolemBoss::GolemBoss(int index, int mapNum, iPoint pos) : Monster(index)
 	distance = 0.0f;
 	reverse = REVERSE_NONE;
 
+	showHpDt = 0.0f;
+	_showHpDt = 2.0f;
 	dir = 0;
 }
 
@@ -402,15 +484,15 @@ void GolemBoss::paint(float dt, iPoint off)
 	if (state < monster_meleeAttack)
 	{
 		float angle = iPointAngle(vector, iPointZero, iPointMake(1, 0));
-		if (angle - 360 > -45 && angle < 45)	{dir = 1; printf("dir %d\n", dir);}
-		else if (angle > 45  && angle < 135)	{dir = 2; printf("dir %d\n", dir);}
-		else if (angle > 135 && angle < 225)	{dir = 0; printf("dir %d\n", dir);}
-		else if (angle > 225 && angle < 315)	{dir = 3; printf("dir %d\n", dir);}
+		if (angle > 315 || angle < 45)	{ dir = 1; }
+		else if (angle > 45  && angle < 135)	{ dir = 2; }
+		else if (angle > 135 && angle < 225)	{ dir = 0; }
+		else if (angle > 225 && angle < 315)	{ dir = 3; }
 	}
 
 
-	if (hurtDt < _hurtDt)
-		hurtDt += dt;
+	if (actionDt < _actionDt)
+		actionDt += dt;
 
 	if (hp <= 0.0f)
 	{
@@ -454,26 +536,34 @@ void GolemBoss::paint(float dt, iPoint off)
 		}
 	}
 
-	(this->*method[state])(dt);
+	(this->*stateMethod[state])(dt);
 
 	touchRect = iRectMake(position.x, position.y, img->tex->width, img->tex->height);
 	//img->reverse = reverse;
 	iPoint p = position + off;
 	img->paint(dt, p);
 
+
+	if (cbMethod)
+	{
+		if (img->animation == false)
+			(this->*cbMethod)();
+	}
 }
 
-void GolemBoss::getDmg(float dmg)
+void GolemBoss::action(Object* obj)
 {
-	if (hurtDt < _hurtDt)
+	if (actionDt < _actionDt)
 		return;
 
-	hurtDt = 0.0f;
-
-	hp -= dmg;
+	actionDt = 0.0f;
+	prevHp = hp;
+	hp -= obj->attackPoint;
 
 	if (state != monster_meleeAttack)
 		state = monster_hurt;
+
+	showHPbar(this);
 }
 
 void GolemBoss::actionIdle(float dt)
@@ -500,8 +590,8 @@ void GolemBoss::actionMeleeAttack(float dt)
 		else if (attackDt > _attackDt)
 		{
 			// player->dmg
-			printf("hit\n");
-			player->getDmg(attackPoint);
+			if(distance < meleeDistance)
+				player->action(this);
 
 			attackDt = _attackDt;
 		}
@@ -517,8 +607,8 @@ void GolemBoss::actionMeleeAttack(float dt)
 		return;
 	}
 
-	cbMonster = this;
-	img->startAnimation(cbSetMonsterIdle);
+	img->startAnimation();
+	cbMethod = &Monster::cbMonsterSetIdle;
 
 	attackDt = 0.0f;
 	attackDelay = 0.0f;
@@ -538,8 +628,8 @@ void GolemBoss::actionHurt(float dt)
 	}
 	else
 	{
-		cbMonster = this;
-		img->startAnimation(cbSetMonsterIdle);
+		img->startAnimation();
+		cbMethod = &Monster::cbMonsterSetIdle;
 	}
 }
 
@@ -552,8 +642,8 @@ void GolemBoss::actionDeath(float dt)
 	}
 	else
 	{
-		cbMonster = this;
-		img->startAnimation(cbSetMonsterAliveFalse);
+		img->startAnimation();
+		cbMethod = &Monster::cbMonsterSetAliveFalse;
 	}
 }
 
@@ -572,7 +662,7 @@ void loadMonster()
 	golemNomalNum = GOLEM_NOMAL_NUM;
 	for (i = 0; i < golemNomalNum; i++)
 	{
-		monster[monsterNum] = new GolemNomal(0, i, iPointMake(300 + 100 * i, 300 + 200 * i));
+		monster[monsterNum] = new GolemNomal(0, 0, iPointMake(300 + 100 * i, 300 + 200 * i));
 		monsterNum++;
 	}
 
@@ -601,8 +691,14 @@ void drawMonster(float dt)
 	for (int i = 0; i < monsterNum; i++)
 	{
 		Monster* m = monster[i];
+		iSize size = iSizeMake(m->img->tex->width, m->img->tex->height);
+		iPoint p = m->position + iPointMake(size.width / 2.0f, size.height * 0.9f) + DRAW_OFF;
+		setRGBA(0, 0, 0, 0.3f);
+		fillEllipse(p.x, p.y, size.width * 0.5f, size.height * 0.25f);
+		setRGBA(1, 1, 1, 1);
 		m->paint(dt, DRAW_OFF);
 
+		m->drawHPbar(m, dt);
 		if (m->alive == false)
 		{ // death
 			monsterNum--;

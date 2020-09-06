@@ -5,7 +5,7 @@
 #include "PlayerChar.h"
 
 Item* item;
-Item::Item(int index) : Object(index)
+Item::Item(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos)
 {
 	iImage* img;
 	Texture* tex;
@@ -27,15 +27,14 @@ Item::Item(int index) : Object(index)
 
 	alive = true;
 	this->img = img;
-	mapNumber = 0;
-	position = maps[mapNumber]->tileOff + iPointMake(24 * TILE_Width, 12 * TILE_Height);
+
 	touchRect = iRectMake(position.x, position.y, size.width, size.height);
 
 
 	value = 5.0f;
 	get = false;
-	getItemDt = 0.0f;
-	_getItemDt = 2.0f;
+	actionDt = 0.0f;
+	_actionDt = 2.0f;
 }
 
 Item::~Item()
@@ -51,21 +50,21 @@ void Item::paint(float dt, iPoint off)
 	iPoint p = position;
 	if (get)
 	{
-		getItemDt += dt;
-		if (getItemDt > _getItemDt)
+		actionDt += dt;
+		if (actionDt > _actionDt)
 		{
-			getItemDt = _getItemDt;
+			actionDt = _actionDt;
 			alive = false;
 		}
 		iPoint pp = player->position;// +iPointMake(player->img->tex->width / 2.0f, player->img->tex->height / 2.0f);
-		p = linear(getItemDt / _getItemDt, position, pp);
+		p = linear(actionDt / _actionDt, position, pp);
 	}
 	else
 	{
 		if (containRect(touchRect, player->touchRect))
 		{
 			printf("touch item\n");
-			getItem();
+			action(player);
 		}
 	}
 
@@ -73,15 +72,12 @@ void Item::paint(float dt, iPoint off)
 	img->paint(dt, p + off);
 }
 
-void Item::getItem()
+void Item::action(Object* obj)
 {
-	if (get)
-		return;
-
 	get = true;
 	switch (index)
 	{
-		
+
 	default:
 		break;
 	}
@@ -89,7 +85,9 @@ void Item::getItem()
 
 void loadItem()
 {
-	item = new Item(0);
+	int8 mapNum = 0;
+	iPoint p = maps[mapNum]->tileOff + iPointMake(24 * TILE_Width, 12 * TILE_Height);
+	item = new Item(0, mapNum, p);
 }
 
 void freeItem()

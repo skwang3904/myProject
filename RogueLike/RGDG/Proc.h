@@ -20,7 +20,8 @@ struct Stage
 	PlayerChar* player;
 	
 	// monsterInfo
-	int monsterNum;
+	int golemNomalNum;
+	int golemBossNum;
 	Monster** monster;
 
 	// weaponInfo

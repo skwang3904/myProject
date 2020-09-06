@@ -7,16 +7,16 @@
 class Item : public Object
 {
 public:
-	Item(int index);
+	Item(int index, int8 mapNum, iPoint pos);
 	virtual ~Item();
 
 	virtual void paint(float dt, iPoint off);
-	void getItem();
+	virtual void action(Object* obj);
+
 public:
 	float value;
 
 	bool get;
-	float getItemDt, _getItemDt;
 };
 
 

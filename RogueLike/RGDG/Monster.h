@@ -26,15 +26,18 @@ enum MonsterState {
 [5] = Death;
 #endif
 
+class Monster;
+typedef void (Monster::*CBMonster_Method)();
+
 class Monster : public Object
 {
 public:
-	Monster(int index);
+	Monster(int index, int8 mapNum, iPoint pos);
 	virtual ~Monster();
 
 	virtual void paint(float dt, iPoint off) = 0;
 
-	virtual void getDmg(float dmg) = 0;
+	virtual void action(Object* obj) = 0; // hurt
 
 	virtual void actionIdle(float dt) = 0;
 	virtual void actionMove(float dt) = 0;
@@ -43,32 +46,33 @@ public:
 	virtual void actionHurt(float dt) = 0;
 	virtual void actionDeath(float dt) = 0;
 
-	static void initOtherAct(int index);
-	static void cbSetMonsterIdle(iImage* me);
-	static void cbSetMonsterAliveFalse(iImage* me);
+	void initOtherAct(int index);
+	void cbMonsterSetIdle();
+	void cbMonsterSetAliveFalse();
+
+	static void showHPbar(Monster* me);
+	static void drawHPbar(Monster* me, float dt);
 
 public:
 	// 멤버 클래스에서 사용할때 
 	// (this->*method[n])(); 형식으로 사용해야함
 	// 자식클래스의 함수포인터에 접근하려면 
 	// 자식클래스의 자신의 주소를 가르쳐줘야함
-	void (Monster::*method[6])(float);
-	
+	void (Monster::*stateMethod[6])(float);
+	CBMonster_Method cbMethod;
+
 	MonsterState state;
-	float hp, _hp;
-	float attackPoint, _attackPoint;
-	float attackSpeed, _attackSpeed;
 	float attackDt, _attackDt;
 	float attackDelay, _attackDelay;
-	float hurtDt, _hurtDt;
 
-	float moveSpeed;
 	float lookDistance;
 	float meleeDistance;
 	float rangeDistance;
 	
 	float distance;
 	uint8 reverse;
+
+	float showHpDt, _showHpDt;
 };
 extern Monster** monster;
 extern int monsterNum;
@@ -78,11 +82,11 @@ extern int monsterNum;
 class GolemNomal : public Monster
 {
 public:
-	GolemNomal(int index, int mapNum, iPoint pos);
+	GolemNomal(int index, int8 mapNum, iPoint pos);
 	virtual ~GolemNomal();
 
 	virtual void paint(float dt, iPoint off);
-	virtual void getDmg(float dmg);
+	virtual void action(Object* obj);
 
 	virtual void actionIdle(float dt);
 	virtual void actionMove(float dt);
@@ -101,11 +105,11 @@ public:
 class GolemElete : public Monster
 {
 public:
-	GolemElete(int index, int mapNum, iPoint pos);
+	GolemElete(int index, int8 mapNum, iPoint pos);
 	virtual ~GolemElete();
 
 	virtual void paint(float dt, iPoint off);
-	virtual void getDmg(float dmg) = 0;
+	virtual void action(Object* obj) = 0;
 
 	virtual void actionIdle(float dt) = 0;
 	virtual void actionMove(float dt) = 0;
@@ -124,11 +128,11 @@ public:
 class GolemBoss : public Monster
 {
 public:
-	GolemBoss(int index, int mapNum, iPoint pos);
+	GolemBoss(int index, int8 mapNum, iPoint pos);
 	virtual ~GolemBoss();
 
 	virtual void paint(float dt, iPoint off);
-	virtual void getDmg(float dmg);
+	virtual void action(Object* obj);
 
 	virtual void actionIdle(float dt);
 	virtual void actionMove(float dt);

@@ -15,7 +15,7 @@ void loadProc()
 
 	loadTile();
 	loadMap();
-	player = new PlayerChar(0);
+	loadPlayerChar();
 	loadMonster();
 	loadWeapon();
 	loadItem();
@@ -40,7 +40,7 @@ void freeProc()
 
 	freeTile();
 	freeMap();
-	delete player;
+	freePlayerChar();
 	freeMonster();
 	freeWeapon();
 	freeItem();
@@ -62,7 +62,7 @@ void drawProc(float dt)
 		dt = 0.0f;
 
 	drawMap(dt);
-	player->paint(dt, DRAW_OFF);
+	drawPlayerChar(dt);
 	drawMonster(dt);
 	drawWeapon(dt);
 	drawItem(dt);
@@ -373,6 +373,12 @@ Texture* texInvenWeapon;
 
 void drawPopInvenWeapon(float dt)
 {
+	if (player->arrayWeapon->count == 0)
+	{
+		texInvenWeapon = NULL;
+		return;
+	}
+
 	Weapon* w = (Weapon*)player->arrayWeapon->objectAtIndex(player->currWeaponIndex());
 	
 	texInvenWeapon = w->img->tex;
@@ -445,7 +451,8 @@ void drawPopInven(float dt)
 	popInven->paint(dt);
 
 	iPoint p = popInven->closePosition + iPointMake(64,64);
-	drawImage(texInvenWeapon, p.x, p.y, VCENTER | HCENTER);
+	if(texInvenWeapon)
+		drawImage(texInvenWeapon, p.x, p.y, VCENTER | HCENTER);
 }
 
 bool keyPopInven(iKeyState stat, iPoint point)

@@ -11,6 +11,17 @@ struct PlayerInfo
 };
 extern PlayerInfo playerInfo[2];
 
+struct PlayerImageInfo
+{
+	const char* strPath;
+	int dirNum;
+	int kindsNum;
+	bool animation;
+	float aniDt;
+	iSize size;
+};
+extern PlayerImageInfo playerImageInfo[5];
+
 //----------------------------------------------------------------
 
 struct MonsterInfo
@@ -20,7 +31,7 @@ struct MonsterInfo
 	float _attackSpeed;
 	float _attackDt; // 공격 후 이 시간 이후 데미지판정
 	float _attackDelay;
-	float _hurtDt;
+	float _actionDt;
 
 	float moveSpeed;
 	float lookDistance;
@@ -53,4 +64,4 @@ struct WeaponInfo
 	float attackAngle;
 	float attackRange;
 };
-extern WeaponInfo weaponInfo[1];
+extern WeaponInfo weaponInfo[2];

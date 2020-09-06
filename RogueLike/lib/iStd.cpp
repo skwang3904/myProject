@@ -1806,7 +1806,7 @@ iPoint easeIn(float r, iPoint a, iPoint b)
 
 float easeOut(float r, float a, float b)
 {
-    return a + (b - a) * (1 + _sin(270 + 90 * r));
+    return a + (b - a) * (1 + _sin(270 + 90 * r)) * (1 + _sin(270 + 90 * r));
     //return a + (b - a) * r * r;
 }
 

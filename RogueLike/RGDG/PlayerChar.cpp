@@ -4,113 +4,52 @@
 #include "ProcData.h"
 #include "Tile.h"
 #include "Map.h"
-
-
-struct charPath 
-{ 
-	const char* str[5]; 
-};
-
-
+#include "Weapon.h"
 
 PlayerChar* player;
-PlayerChar::PlayerChar(int index) : Object(index)
+PlayerChar::PlayerChar(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos)
 {
-	int i, j, k;
+	int i, j, k, n, num, count = 0;
 
-	const char* cp[5] = {
-	"assets/char/CharHead%d.png",
-	"assets/char/CharBodyR%d.png",
-	"assets/char/CharBodyUD%d.png",
-	"assets/char/CharGood%d.png",
-	"assets/char/CharJump%d.png",
-	};
-	
 	iImage* img;
 	Texture* tex;
+	Texture** texs;
 	iImage** imgs = (iImage**)malloc(sizeof(iImage*) * 8);
+	iSize size;
 
-	Texture** texs = createDivideImage(8, 1, cp[0], index);
-	iSize size = iSizeMake(60, 45) * 2.0f;
-	for (i = 0; i < 4; i++)
+	for (i = 0; i < 5; i++)
 	{
-		img = new iImage();
-		for (j = 0; j < 2; j++)
+		PlayerImageInfo* pii = &playerImageInfo[i];
+		size = pii->size;
+		num = pii->dirNum * pii->kindsNum;
+		texs = createDivideImage(num, 1, pii->strPath, index);
+		for (j = 0; j < pii->dirNum; j++)
 		{
-			Texture* t = texs[2 * i + j];
-			tex = createTexture(size.width, size.height);
+			img = new iImage();
+			for (k = 0; k < pii->kindsNum; k++)
+			{
+				Texture* t = texs[pii->kindsNum * j + k];
+				tex = createTexture(size.width, size.height);
 
-			fbo->bind(tex);
-			drawImage(t, 0, 0,
-				0, 0, t->width, t->height,
-				TOP | LEFT, size.width / t->width, size.height / t->height,
-				2, 0, REVERSE_HEIGHT);
-			fbo->unbind();
+				fbo->bind(tex);
+				drawImage(t, 0, 0,
+					0, 0, t->width, t->height,
+					TOP | LEFT, size.width / t->width, size.height / t->height,
+					2, 0, REVERSE_HEIGHT);
+				fbo->unbind();
 
-			img->addObject(tex);
-			freeImage(tex);
-		}
-		imgs[i] = img;
-	}
-	for (k = 0; k < 8; k++)
-		freeImage(texs[k]);
-	free(texs);
-
-	size = iSizeMake(64, 40) * 2.0f;
-	for (i = 0; i < 2; i++)
-	{
-		texs = createDivideImage(10, 1, cp[1 + i], index);
-		img = new iImage();
-		for (j = 0; j < 10; j++)
-		{
-			tex = createTexture(size.width, size.height);
-			Texture* t = texs[j];
-
-			fbo->bind(tex);
-			drawImage(t, 0, 0,
-				0, 0, t->width, t->height,
-				TOP | LEFT, size.width / t->width, size.height / t->height,
-				2, 0, REVERSE_HEIGHT);
-			fbo->unbind();
-
-			img->addObject(tex);
-			freeImage(tex);
+				img->addObject(tex);
+				freeImage(tex);
+			}
+			img->_aniDt = pii->aniDt;
+			img->animation = pii->animation;
+			
+			imgs[count] = img;
+			count++;
 		}
 
-		img->animation = true;
-		img->_aniDt = 0.1f;
-		imgs[4 + i] = img;
-
-		for (k = 0; k < 10; k++)
-			freeImage(texs[k]);
-		free(texs);
-	}
-
-	size = iSizeMake(97, 60) * 2.0f;
-	for (i = 0; i < 2; i++)
-	{
-		texs = createDivideImage(4, 1, cp[3 + i], index);
-		img = new iImage();
-		for (j = 0; j < 4; j++)
-		{
-			tex = createTexture(size.width, size.height);
-			Texture* t = texs[j];
-
-			fbo->bind(tex);
-			drawImage(t, 0, 0,
-				0, 0, t->width, t->height,
-				TOP | LEFT, size.width / t->width, size.height / t->height,
-				2, 0, REVERSE_HEIGHT);
-			fbo->unbind();
-
-			img->addObject(tex);
-			freeImage(tex);
-		}
-		img->_aniDt = 0.3f;
-		imgs[6 + i] = img;
-
-		for (k = 0; k < 4; k++)
-			freeImage(texs[k]);
+		for (n = 0; n < num; n++)
+			freeImage(texs[n]);
 		free(texs);
 	}
 
@@ -133,14 +72,13 @@ PlayerChar::PlayerChar(int index) : Object(index)
 	imgs[7]->_repeatNum = 1;
 	imgs[7]->_aniDt = 0.1f;
 	imgs[7]->lastFrame = true;
-	imgs[7]->position = iPointMake(-imgs[7]->tex->width * 0.27f, -imgs[7]->tex->height);
+	imgs[7]->position = iPointMake(-imgs[7]->tex->width * 0.22f, -imgs[7]->tex->height);
 	this->imgs[9] = imgs[7];
 
 	//common data
 	this->img = this->imgs[5];
 
-	mapNumber = 0;
-	position = iPointMake(TILE_NUM_X * TILE_Width / 2.0f, TILE_NUM_Y * TILE_Height / 2.0f);
+
 	vector = iPointZero;
 	touchRect = iRectZero;
 
@@ -184,45 +122,6 @@ PlayerChar::~PlayerChar()
 	//
 	delete arrayWeapon;
 }
-
-void PlayerChar::initData()
-{
-	// 스테이지 넘어갈때 or 죽었을때
-}
-
-void PlayerChar::getDmg(float dmg)
-{
-	hp -= dmg;
-	if (hp <= 0.0f)
-		showPopGameOver(true);
-}
-
-void PlayerChar::addWeapon(void* weapon)
-{
-	arrayWeapon->addObject(weapon);
-}
-
-void PlayerChar::removeCurrWeapon()
-{
-	arrayWeapon->remove(arrayWeapon->currIndex);
-}
-
-void PlayerChar::removeWeapon(int index)
-{
-	arrayWeapon->remove(index);
-}
-
-void PlayerChar::selectWeapon(int index)
-{
-	arrayWeapon->objectAtIndex(index);
-}
-
-int PlayerChar::currWeaponIndex()
-{
-	return arrayWeapon->currIndex;
-}
-
-void callBackIdle(iImage* me);
 
 void PlayerChar::paint(float dt, iPoint off)
 {
@@ -282,7 +181,7 @@ void PlayerChar::paint(float dt, iPoint off)
 		{
 			state = player_jump;
 			img = imgs[9];
-			img->startAnimation(callBackIdle);
+			img->startAnimation(cbPlayerSetIdle);
 		}
 
 		vector = iPointVector(mp);
@@ -321,13 +220,73 @@ void PlayerChar::paint(float dt, iPoint off)
 	if (state != player_jump)
 		imgs[headNum]->paint(dt, p + iPointMake(4, -43));
 
-	if(getKeyDown(keyboard_i))
-		selectWeapon(arrayWeapon->currIndex--);
+	if (getKeyDown(keyboard_i))
+	{
+		for (int i = 0; i < weaponNum; i++)
+		{
+			if (weapon[i]->attacking)
+				return;
+		}
+		selectWeapon(arrayWeapon->currIndex - 1);
+	}
 }
 
+void PlayerChar::action(Object* obj)
+{
+	hp -= obj->attackPoint;
+	if (hp <= 0.0f)
+		showPopGameOver(true);
+}
 
-//-------------------------------------------------------------------------------------
-void callBackIdle(iImage* me)
+void PlayerChar::initData()
+{
+	// 스테이지 넘어갈때 or 죽었을때
+}
+
+void PlayerChar::addWeapon(void* weapon)
+{
+	arrayWeapon->addObject(weapon);
+}
+
+void PlayerChar::removeCurrWeapon()
+{
+	arrayWeapon->remove(arrayWeapon->currIndex);
+}
+
+void PlayerChar::removeWeapon(int index)
+{
+	arrayWeapon->remove(index);
+}
+
+void PlayerChar::selectWeapon(int index)
+{
+	arrayWeapon->objectAtIndex(index);
+}
+
+int PlayerChar::currWeaponIndex()
+{
+	return arrayWeapon->currIndex;
+}
+
+void PlayerChar::cbPlayerSetIdle(iImage* me)
 {
 	player->state = player_idle;
+}
+
+//-------------------------------------------------------------------------------------
+
+void loadPlayerChar()
+{
+	iPoint p = iPointMake(TILE_NUM_X * TILE_Width / 2.0f, TILE_NUM_Y * TILE_Height / 2.0f);
+	player = new PlayerChar(0, 0, p);
+}
+
+void freePlayerChar()
+{
+	delete player;
+}
+
+void drawPlayerChar(float dt)
+{
+	player->paint(dt, DRAW_OFF);
 }

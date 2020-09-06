@@ -98,7 +98,7 @@ void createMap()
 	{
 		if (maps[i]->tile[0] != 0)
 		{
-			maps[i]->state = MapType_Treasure;
+			maps[i]->state = MapType_ItemBox;
 			break;
 		}
 	}
@@ -319,12 +319,9 @@ void wallCheck(Object* obj, iPoint mp)
 MapObject** mapObj;
 int mapObjNum;
 
-MapObject::MapObject(int index) : Object(index)
+MapObject::MapObject(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos)
 {
-	mapNumber = 0;
-
 	alive = false;
-	position = iPointZero;
 	touchRect = iRectZero;
 
 	value = 0;
@@ -343,7 +340,7 @@ MapObject::~MapObject()
 //----------------------------------------------------------------------------------
 
 iImage* imgMapObjDoor = NULL;
-MapObjectDoor::MapObjectDoor(int index, int mapNumber, int tileNumber) : MapObject(index)
+MapObjectDoor::MapObjectDoor(int index, int8 mapNum, iPoint pos, int tileNumber) : MapObject(index, mapNum, pos)
 {
 	tileNumX = 1;
 	tileNumY = 4;
@@ -386,9 +383,6 @@ MapObjectDoor::MapObjectDoor(int index, int mapNumber, int tileNumber) : MapObje
 	iImage* img;
 	Texture* tex;
 
-	int s = this->tileNumber[0];
-	iPoint sp = iPointMake(TILE_Width * (s % TILE_NUM_X), TILE_Height * (s / TILE_NUM_X));
-
 	if (imgMapObjDoor == NULL)
 	{
 		setStringSize(TILE_Height - 5);
@@ -412,6 +406,7 @@ MapObjectDoor::MapObjectDoor(int index, int mapNumber, int tileNumber) : MapObje
 			freeImage(tex);
 		}
 
+		setRGBA(1, 1, 1, 1);
 		setStringSize(1);
 		setStringRGBA(1, 1, 1, 1);
 		setStringBorder(0);
@@ -426,9 +421,6 @@ MapObjectDoor::MapObjectDoor(int index, int mapNumber, int tileNumber) : MapObje
 	this->img = img;
 	
 
-	this->mapNumber = mapNumber;
-
-	position = maps[mapNumber]->tileOff + sp;
 	touchRect = iRectMake(position, size);
 }
 
@@ -445,7 +437,7 @@ void MapObjectDoor::paint(float dt, iPoint off)
 	if (containRect(touchRect, player->touchRect))
 	{
 		printf("touch obj\n");
-		action();
+		action(player);
 	}
 
 #if 0
@@ -459,40 +451,41 @@ void MapObjectDoor::paint(float dt, iPoint off)
 	img->paint(dt, position + off);
 }
 
-void MapObjectDoor::action()
+void MapObjectDoor::action(Object* obj)
 {
-	int pm = player->mapNumber;
+	PlayerChar* p = (PlayerChar*)obj;
+	int8 pm = p->mapNumber;
 	int d = 2;
-	iSize size = iSizeMake(player->img->tex->width, player->img->tex->height);
+	iSize size = iSizeMake(p->img->tex->width, p->img->tex->height);
 	switch (index)
 	{
-	case 0: 
+	case 0:
 		pm--;
-		player->position.x = maps[pm]->tileOff.x + (TILE_NUM_X - d) * TILE_Width - size.width;	
+		p->position.x = maps[pm]->tileOff.x + (TILE_NUM_X - d) * TILE_Width - size.width;
 		break;
-	case 1: 
+	case 1:
 		pm++;
-		player->position.x = maps[pm]->tileOff.x + d * TILE_Width;	
+		p->position.x = maps[pm]->tileOff.x + d * TILE_Width;
 		break;
 	case 2:
-		pm -= TILE_TOTAL_SQRT;	
-		player->position.y = maps[pm]->tileOff.y + (TILE_NUM_Y - d) * TILE_Height - size.height;	
+		pm -= TILE_TOTAL_SQRT;
+		p->position.y = maps[pm]->tileOff.y + (TILE_NUM_Y - d) * TILE_Height - size.height;
 		break;
 	case 3:
 		pm += TILE_TOTAL_SQRT;
-		player->position.y = maps[pm]->tileOff.y + d * TILE_Height;
+		p->position.y = maps[pm]->tileOff.y + d * TILE_Height;
 		break;
 
 	}
 
-	player->camera = iPointZero - maps[pm]->tileOff;
-	player->mapNumber = pm;
+	p->camera = iPointZero - maps[pm]->tileOff;
+	p->mapNumber = pm;
 }
 
 //----------------------------------------------------------------------------------
 
 iImage* imgMapObjBarrel = NULL;
-MapObjectBarrel::MapObjectBarrel(int index, int mapNumber, int tileNumber) : MapObject(index)
+MapObjectBarrel::MapObjectBarrel(int index, int8 mapNum, iPoint pos, int tileNumber) : MapObject(index, mapNum, pos)
 {
 	tileNumX = 2;
 	tileNumY = 2;
@@ -503,7 +496,7 @@ MapObjectBarrel::MapObjectBarrel(int index, int mapNumber, int tileNumber) : Map
 
 	for (int i = 0; i < num; i++)
 	{
-		int tn = tileNumber + (i % (num / 2)) + (i / (num / 2)) * TILE_NUM_X;
+		int tn = tileNumber + TILE_NUM_X * (i / tileNumX) + (i % tileNumX);
 		this->tileNumber[i] = tn;
 		maps[mapNumber]->tile[tn] = WW;
 	}
@@ -513,9 +506,6 @@ MapObjectBarrel::MapObjectBarrel(int index, int mapNumber, int tileNumber) : Map
 	int i, j;
 	iImage* img;
 	Texture* tex;
-
-	int s = this->tileNumber[0];
-	iPoint sp = iPointMake(TILE_Width * (s % TILE_NUM_X), TILE_Height * (s / TILE_NUM_X));
 
 	if (imgMapObjBarrel == NULL)
 	{
@@ -539,7 +529,7 @@ MapObjectBarrel::MapObjectBarrel(int index, int mapNumber, int tileNumber) : Map
 			img->addObject(tex);
 			freeImage(tex);
 		}
-
+		setRGBA(1, 1, 1, 1);
 		setStringSize(1);
 		setStringRGBA(1, 1, 1, 1);
 		setStringBorder(0);
@@ -553,10 +543,6 @@ MapObjectBarrel::MapObjectBarrel(int index, int mapNumber, int tileNumber) : Map
 	img->_aniDt = 1.0f;
 	this->img = img;
 
-
-	this->mapNumber = mapNumber;
-
-	position = maps[mapNumber]->tileOff + sp;
 	touchRect = iRectMake(position, size);
 }
 
@@ -571,9 +557,90 @@ void MapObjectBarrel::paint(float dt, iPoint off)
 	img->paint(dt, position + off);
 }
 
-void MapObjectBarrel::action()
+void MapObjectBarrel::action(Object* obj)
 {
 }
+
+//----------------------------------------------------------------------------------
+
+iImage* imgMapObjItemBox = NULL;
+MapObjectItemBox::MapObjectItemBox(int index, int8 mapNum, iPoint pos, int tileNumber) : MapObject(index, mapNum, pos)
+{
+	tileNumX = 6;
+	tileNumY = 4;
+	int num = tileNumX * tileNumY;
+	this->tileNumber = (int*)calloc(sizeof(int), num);
+
+	iSize size = iSizeMake(TILE_Width * tileNumX, TILE_Height * tileNumY);
+
+	for (int i = 0; i < num; i++)
+	{
+		int tn = tileNumber + TILE_NUM_X * (i / tileNumX) + (i % tileNumX);
+		this->tileNumber[i] = tn;
+		maps[mapNumber]->tile[tn] = WW;
+	}
+
+	//-----------------------------------------------------------------
+
+	int i, j;
+	iImage* img;
+	Texture* tex;
+
+	if (imgMapObjItemBox == NULL)
+	{
+		setStringSize(TILE_Height);
+		setStringRGBA(0, 0, 0, 1);
+		setStringBorder(0);
+		img = new iImage();
+
+		iGraphics* g = iGraphics::instance();
+		for (i = 0; i < 2; i++)
+		{
+			g->init(size);
+
+			if (i == 0) setRGBA(0, 1, 1, 1);
+			else		setRGBA(0, 0, 1, 1);
+			g->fillRect(0, 0, size.width, size.height, 20);
+
+			g->drawString(size.width / 2, size.height / 2, VCENTER | HCENTER, "상자");
+
+			tex = g->getTexture();
+			img->addObject(tex);
+			freeImage(tex);
+		}
+		setRGBA(1, 1, 1, 1);
+		setStringSize(1);
+		setStringRGBA(1, 1, 1, 1);
+		setStringBorder(0);
+	}
+	else
+	{
+		img = imgMapObjItemBox->copy();
+	}
+
+	img->animation = true;
+	img->_aniDt = 1.0f;
+	this->img = img;
+
+	touchRect = iRectMake(position, size);
+
+}
+
+MapObjectItemBox::~MapObjectItemBox()
+{
+	delete img;
+}
+
+void MapObjectItemBox::paint(float dt, iPoint off)
+{
+	img->paint(dt, position + off);
+}
+
+void MapObjectItemBox::action(Object* obj)
+{
+	img->startAnimation();
+}
+
 
 //----------------------------------------------------------------------------------
 
@@ -646,6 +713,13 @@ void loadMap()
 	mapObj = (MapObject**)malloc(sizeof(MapObject*) * 100);
 	mapObjNum = 0;
 	bool check[4] = { true, true, true, true };
+	
+	for (i = 0; i < TILE_TOTAL_NUM; i++)
+	{
+		if (maps[i]->state == MapType_ItemBox)
+			maps[i]->tile[TILE_NUM_X * TILE_NUM_Y / 2 + TILE_NUM_X / 2] = IB;
+	}
+
 	for (k = 0; k < num; k++)
 	{
 		for (i = 0; i < TILE_NUM_X; i++)
@@ -653,6 +727,8 @@ void loadMap()
 			for (j = 0; j < TILE_NUM_Y; j++)
 			{
 				int tn = TILE_NUM_X * j + i;
+				iPoint p = maps[k]->tileOff + iPointMake(TILE_Width * i, TILE_Height * j);
+				
 				switch (maps[k]->tile[tn])
 				{
 				case 01:
@@ -679,18 +755,24 @@ void loadMap()
 					if (exist)
 						break;
 
-					mapObj[mapObjNum] = new MapObjectDoor(dir, k, tn);
+					mapObj[mapObjNum] = new MapObjectDoor(dir, k, p, tn);
 					mapObjNum++;
 					break;
 				}
 				case TILE_BARREL:
 				{
-					mapObj[mapObjNum] = new MapObjectBarrel(0, k, tn);
+					mapObj[mapObjNum] = new MapObjectBarrel(0, k, p, tn);
 					mapObjNum++;
 					break;
 				}
 				case TILE_TRAPDOOR:
 				{
+					break;
+				}
+				case TILE_ITEMBOX:
+				{
+					mapObj[mapObjNum] = new MapObjectItemBox(0, k, p, tn);
+					mapObjNum++;
 					break;
 				}
 				default: printf("tile read error\n");	break;

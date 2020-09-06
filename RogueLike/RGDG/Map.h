@@ -9,7 +9,7 @@ extern iPoint displayCenterPos;
 enum MapType {
 	MapType_Nomal = 0,
 	MapType_Boss,
-	MapType_Treasure,
+	MapType_ItemBox,
 	MapType_Shop,
 };
 
@@ -36,13 +36,12 @@ index
 class MapObject : public Object
 {
 public:
-	MapObject(int index);
+	MapObject(int index, int8 mapNum, iPoint pos);
 	virtual ~MapObject();
 
 	virtual void paint(float dt, iPoint off) = 0;
+	virtual void action(Object* obj) = 0;
 
-	// 상호작용 함수,
-	virtual void action() = 0;
 public:
 	//type = index로 구분
 	int value;
@@ -51,18 +50,18 @@ public:
 	int tileNumY;
 	int* tileNumber;
 };
-
+extern MapObject** mapObj;
+extern int mapObjNum;
 //-----------------------------------------------------------------------------
 
 class MapObjectDoor : public MapObject
 {
 public:
-	MapObjectDoor(int index, int mapNumber, int tileNumber);
+	MapObjectDoor(int index, int8 mapNum, iPoint pos, int tileNumber);
 	virtual ~MapObjectDoor();
 
 	virtual void paint(float dt, iPoint off);
-
-	virtual void action();
+	virtual void action(Object* obj);
 
 public:
 
@@ -73,12 +72,26 @@ public:
 class MapObjectBarrel : public MapObject
 {
 public:
-	MapObjectBarrel(int index, int mapNumber, int tileNumber);
+	MapObjectBarrel(int index, int8 mapNum, iPoint pos, int tileNumber);
 	virtual ~MapObjectBarrel();
 
 	virtual void paint(float dt, iPoint off);
+	virtual void action(Object* obj);
 
-	virtual void action();
+public:
+
+};
+
+//-----------------------------------------------------------------------------
+
+class MapObjectItemBox : public MapObject
+{
+public:
+	MapObjectItemBox(int index, int8 mapNum, iPoint pos, int tileNumber);
+	virtual ~MapObjectItemBox();
+
+	virtual void paint(float dt, iPoint off);
+	virtual void action(Object* obj);
 
 public:
 

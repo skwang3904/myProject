@@ -9,7 +9,7 @@ rgArray::rgArray(RGARRAY_METHOD m)
 	tail = (rgxArray*)malloc(sizeof(rgxArray));
 
 	count = 0;
-	currIndex = 0;
+	currIndex = -1;
 	method = m;
 }
 
@@ -60,6 +60,8 @@ void rgArray::addObject(void* data)
 		a->next = tail;
 		tail->prev = a;
 		curr = a;
+
+		currIndex = 0;
 		count++;
 		return;
 	}
@@ -170,11 +172,13 @@ void* rgArray::objectAtIndex(int index)
 	if (count == 1)
 		return curr->data;
 
+	printf("index %d\n", index);
 	int ind = index;
 	if (ind < 0)
 		ind = count - 1;
 	else if (ind > count - 1)
 		ind = 0;
+	printf("ind %d\n", ind);
 
 	rgxArray* a = head->next;
 	for (int i = 0; i < count; i++)

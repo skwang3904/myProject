@@ -1,19 +1,28 @@
 #include "Common.h"
 
 
-Object::Object(int index)
+Object::Object(int index, int8 mapNum, iPoint pos)
 {
 	this->index = index;
-	this->alive = false;
+	alive = false;
 
-	this->imgNum = 0;
-	this->imgs = NULL;
-	this->mapNumber = -1;
+	imgNum = 0;
+	imgs = NULL;
+	img = NULL;
+	this->mapNumber = mapNum;
 
-	this->position = iPointZero;
-	this->vector = iPointZero;
+	this->position = pos;
+	vector = iPointZero;
 
-	this->touchRect = iRectZero;
+	touchRect = iRectZero;
+
+	prevHp = 0.0f;
+	hp = _hp = 0.0f;
+	attackPoint = _attackPoint = 0.0f;
+	attackSpeed = _attackSpeed = 0.0f;
+	actionDt = _actionDt = 0.0f;
+
+	moveSpeed = 0.0f;
 }
 
 Object::~Object()

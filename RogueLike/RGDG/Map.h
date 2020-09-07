@@ -69,6 +69,21 @@ public:
 
 //-----------------------------------------------------------------------------
 
+class MapObjectNextDoor : public MapObject
+{
+public:
+	MapObjectNextDoor(int index, int8 mapNum, iPoint pos, int tileNumber);
+	virtual ~MapObjectNextDoor();
+
+	virtual void paint(float dt, iPoint off);
+	virtual void action(Object* obj);
+
+public:
+
+};
+
+//-----------------------------------------------------------------------------
+
 class MapObjectBarrel : public MapObject
 {
 public:

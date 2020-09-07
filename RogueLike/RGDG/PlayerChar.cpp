@@ -89,7 +89,7 @@ PlayerChar::PlayerChar(int index, int8 mapNum, iPoint pos) : Object(index, mapNu
 	holdNum = 4;
 
 	state = player_idle;
-	camera = iPointZero - maps[0]->tileOff;
+	camera = iPointZero - maps[mapNumber]->tileOff;
 	wpVector = iPointMake(0, 1);
 	wpPosition = iPointZero;
 
@@ -119,7 +119,6 @@ PlayerChar::PlayerChar(int index, int8 mapNum, iPoint pos) : Object(index, mapNu
 
 PlayerChar::~PlayerChar()
 {
-	//
 	delete arrayWeapon;
 }
 

@@ -5,7 +5,6 @@
 #include "ProcData.h"
 #include "PlayerChar.h"
 
-
 //---------------------------------------------------------------------------------------
 // monster parents class
 Monster** monster;
@@ -46,6 +45,15 @@ Monster::Monster(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos
 
 Monster::~Monster()
 {
+}
+
+void Monster::drawShadow(float dt, iPoint off)
+{
+	iSize size = iSizeMake(img->tex->width, img->tex->height);
+	iPoint p = position + iPointMake(size.width / 2.0f, size.height * 0.6f) + off;
+	setRGBA(0, 0, 0, 0.3f);
+	fillEllipse(p.x, p.y, size.width * 0.5f, size.height * 0.25f);
+	setRGBA(1, 1, 1, 1);
 }
 
 void Monster::initOtherAct(int index)
@@ -102,30 +110,28 @@ void Monster::cbMonsterSetAliveFalse()
 	cbMethod = NULL;
 }
 
-void Monster::showHPbar(Monster* me)
+void Monster::showHPbar()
 {
-	me->showHpDt = 0.0f;
+	showHpDt = 0.0f;
 }
 
-void Monster::drawHPbar(Monster* me, float dt)
+void Monster::drawHPbar(float dt, iPoint p)
 {
-	if (me->showHpDt < me->_showHpDt)
+	if (showHpDt < _showHpDt)
 	{
-		Monster* m = me;
-		m->showHpDt += dt;
+		showHpDt += dt;
 
-		float h = linear(min(m->showHpDt / m->_showHpDt * 2.0f,1.0f), m->prevHp, m->hp);
-		iPoint p = m->position + DRAW_OFF;
+		float h = linear(min(showHpDt / _showHpDt * 2.0f,1.0f), prevHp, hp);
 		setRGBA(0, 0, 0, 1);
-		fillRect(p.x, p.y + 30, m->img->tex->width, 20);
+		fillRect(p.x, p.y + 30, img->tex->width, 20);
 		setRGBA(1, 0, 0, 1);
-		fillRect(p.x, p.y + 30, m->img->tex->width * (m->prevHp / m->_hp), 20);
+		fillRect(p.x, p.y + 30, img->tex->width * (prevHp / _hp), 20);
 		setRGBA(0.5f, 1, 0, 1);
-		fillRect(p.x, p.y + 30, m->img->tex->width * (h / m->_hp), 20);
+		fillRect(p.x, p.y + 30, img->tex->width * (h / _hp), 20);
 		setRGBA(1, 1, 1, 1);
 
-		if (m->showHpDt >= m->_showHpDt)
-			m->prevHp = m->hp;
+		if (showHpDt >= _showHpDt)
+			prevHp = hp;
 	}
 }
 
@@ -168,6 +174,7 @@ GolemNomal::GolemNomal(int index, int8 mapNum, iPoint pos) : Monster(index, mapN
 		img->_repeatNum = gni->repeatNum;
 		img->animation = (gni->repeatNum == 0 ? true : false);
 		img->lastFrame = gni->lastFrame;
+		img->position = iPointMake(0, -size.height * 0.33f);
 		imgs[i] = img;
 	}
 
@@ -220,6 +227,8 @@ void GolemNomal::paint(float dt, iPoint off)
 	if (actionDt < _actionDt)
 		actionDt += dt;
 
+	drawShadow(dt, off);
+
 	if (hp <= 0.0f)
 	{
 		state = monster_death;
@@ -269,6 +278,7 @@ void GolemNomal::paint(float dt, iPoint off)
 	iPoint p = position + off;
 	img->paint(dt, p);
 
+	drawHPbar(dt, p);
 
 	if (cbMethod)
 	{
@@ -291,7 +301,7 @@ void GolemNomal::action(Object* obj)
 	if (state != monster_meleeAttack)
 		state = monster_hurt;
 
-	showHPbar(this);
+	showHPbar();
 }
 
 void GolemNomal::actionIdle(float dt)
@@ -435,6 +445,7 @@ GolemBoss::GolemBoss(int index, int8 mapNum, iPoint pos) : Monster(index, mapNum
 		img->_repeatNum = gbi->repeatNum;
 		img->animation = (gbi->repeatNum == 0 ? true : false);
 		img->lastFrame = gbi->lastFrame;
+		img->position = iPointMake(0, -size.height * 0.33f);
 		imgs[i] = img;
 	}
 	this->img = imgs[0];
@@ -482,6 +493,8 @@ void GolemBoss::paint(float dt, iPoint off)
 {
 	//if (mapNumber != player->mapNumber)
 		//return;
+
+	drawShadow(dt, off);
 
 	if (state < monster_meleeAttack)
 	{
@@ -545,6 +558,7 @@ void GolemBoss::paint(float dt, iPoint off)
 	iPoint p = position + off;
 	img->paint(dt, p);
 
+	drawHPbar(dt, p);
 
 	if (cbMethod)
 	{
@@ -567,7 +581,7 @@ void GolemBoss::action(Object* obj)
 	if (state != monster_meleeAttack)
 		state = monster_hurt;
 
-	showHPbar(this);
+	showHPbar();
 }
 
 void GolemBoss::actionIdle(float dt)
@@ -695,14 +709,8 @@ void drawMonster(float dt)
 	for (int i = 0; i < monsterNum; i++)
 	{
 		Monster* m = monster[i];
-		iSize size = iSizeMake(m->img->tex->width, m->img->tex->height);
-		iPoint p = m->position + iPointMake(size.width / 2.0f, size.height * 0.9f) + DRAW_OFF;
-		setRGBA(0, 0, 0, 0.3f);
-		fillEllipse(p.x, p.y, size.width * 0.5f, size.height * 0.25f);
-		setRGBA(1, 1, 1, 1);
 		m->paint(dt, DRAW_OFF);
 
-		m->drawHPbar(m, dt);
 		if (m->alive == false)
 		{ // death
 			monsterNum--;

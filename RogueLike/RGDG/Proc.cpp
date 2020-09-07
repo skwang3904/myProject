@@ -9,6 +9,8 @@
 
 #include "Item.h"
 
+Stage* stage = NULL;
+
 void loadProc()
 {
 	loadNumberFont();
@@ -67,7 +69,8 @@ void drawProc(float dt)
 	drawWeapon(dt);
 	drawItem(dt);
 
-
+	//stage->update(dt);
+	
 	drawPopState(dt);
 	drawPopProcButton(dt);
 	drawPopMiniMap(dt);
@@ -88,6 +91,75 @@ void keyProc(iKeyState stat, iPoint point)
 		return;
 }
 
+//-----------------------------------------------------------
+
+
+void Stage::loadStage()
+{
+	// loadfile
+}
+
+void Stage::saveStage()
+{
+	// stage start -> save
+#if 0
+	// map
+	if (s_maps == NULL)
+		s_maps = (MapTile**)calloc(sizeof(MapTile*), num);
+	for (int i = 0; i < TILE_TOTAL_NUM; i++)
+	{
+		if (s_maps[i] == NULL)
+		{
+			s_maps[i] = (MapTile*)malloc(sizeof(MapTile));
+		}
+		else
+		{
+			delete s_maps[i]->img;
+			free(s_maps[i]->tile);
+		}
+		s_maps[i]->img = (maps[i]->img ? maps[i]->img->copy() : NULL);
+
+		s_maps[i]->tile = (int8*)calloc(sizeof(int8), TILE_NUM_X * TILE_NUM_Y);
+		s_maps[i]->tileOff = maps[i]->tileOff;
+	}
+
+	//player
+	if (s_player == NULL)
+		s_player = new PlayerChar(player->index, player->mapNumber, player->position);
+
+	s_player->hp = player->hp;
+	s_player->_hp = player->_hp;
+	s_player->attackPoint = player->attackPoint;
+	s_player->_attackPoint = player->_attackPoint;
+	s_player->attackSpeed = player->attackSpeed;
+	s_player->_attackSpeed = player->_attackSpeed;
+	s_player->moveSpeed = player->moveSpeed;
+
+	s_player->arrayWeapon;
+
+	//monster
+	s_monsterNum = 0;
+
+	s_golemNomalNum = golemNomalNum;
+	s_golemBossNum = golemBossNum;
+	
+	int monNum[2] = { s_golemNomalNum, s_golemBossNum };
+	for (int i = 0; i < 2; i++)
+	{
+		for (int j = 0; j < monNum[i]; j++)
+		{
+			s_monster[s_monsterNum] = new GolemNomal();
+				s_monsterNum++;
+		}
+	}
+
+		
+#endif
+}
+
+void Stage::update(float dt)
+{
+}
 
 //-----------------------------------------------------------
 // UI
@@ -807,4 +879,3 @@ bool keyPopGameOver(iKeyState stat, iPoint point)
 
 	return true;
 }
-

@@ -15,23 +15,31 @@ class Item;
 
 struct Stage
 {
-	MapTile* maps;
+	int8 s_prevMapNumber;
+	int8 s_mapNumber;
+
+	MapTile** s_maps = NULL;
 	// playerInfo
-	PlayerChar* player;
+	PlayerChar* s_player = NULL;
 	
 	// monsterInfo
-	int golemNomalNum;
-	int golemBossNum;
-	Monster** monster;
+	int s_golemNomalNum;
+	int s_golemBossNum;
+	Monster** s_monster = NULL;
+	int s_monsterNum;
 
 	// weaponInfo
-	int weaponNum;
-	Weapon** weapon;
+	int s_weaponNum;
+	Weapon** s_weapon = NULL;
 
-	int itemNum;
-	Item** item;
-
+	int s_itemNum;
+	Item** s_item = NULL;
+	
+	void loadStage();
+	void saveStage();
+	void update(float dt);
 };
+
 /* 4방향 순서 : LRUD (반드시 지킬것)*/
 #if 0
 0. 세이브 방법

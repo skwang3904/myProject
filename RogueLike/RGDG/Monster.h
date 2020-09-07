@@ -36,7 +36,6 @@ public:
 	virtual ~Monster();
 
 	virtual void paint(float dt, iPoint off) = 0;
-
 	virtual void action(Object* obj) = 0; // hurt
 
 	virtual void actionIdle(float dt) = 0;
@@ -46,12 +45,14 @@ public:
 	virtual void actionHurt(float dt) = 0;
 	virtual void actionDeath(float dt) = 0;
 
+	void showHPbar();
+	void drawHPbar(float dt, iPoint off);
+	void drawShadow(float dt, iPoint off);
+
 	void initOtherAct(int index);
 	void cbMonsterSetIdle();
 	void cbMonsterSetAliveFalse();
 
-	static void showHPbar(Monster* me);
-	static void drawHPbar(Monster* me, float dt);
 
 public:
 	// 멤버 클래스에서 사용할때 

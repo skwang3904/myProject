@@ -484,6 +484,27 @@ void MapObjectDoor::action(Object* obj)
 
 //----------------------------------------------------------------------------------
 
+MapObjectNextDoor* mapObjNextDoor;
+MapObjectNextDoor::MapObjectNextDoor(int index, int8 mapNum, iPoint pos, int tileNumber) : MapObject(index, mapNum, pos)
+{
+}
+
+MapObjectNextDoor::~MapObjectNextDoor()
+{
+}
+
+void MapObjectNextDoor::paint(float dt, iPoint off)
+{
+	if (alive == false)
+		return;
+}
+
+void MapObjectNextDoor::action(Object* obj)
+{
+}
+
+//----------------------------------------------------------------------------------
+
 iImage* imgMapObjBarrel = NULL;
 MapObjectBarrel::MapObjectBarrel(int index, int8 mapNum, iPoint pos, int tileNumber) : MapObject(index, mapNum, pos)
 {
@@ -663,7 +684,7 @@ void loadMap()
 	pt.tp = iPointZero;
 	pt.passAniDt = _passAniDt;
 
-	maps = (MapTile**)malloc(sizeof(MapTile*) * num);
+	maps = (MapTile**)calloc(sizeof(MapTile*), num);
 	for (i = 0; i < num; i++)
 	{
 		maps[i] = (MapTile*)malloc(sizeof(MapTile));

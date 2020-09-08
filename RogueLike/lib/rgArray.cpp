@@ -176,13 +176,11 @@ void* rgArray::objectAtIndex(int index)
 	if (count == 1)
 		return curr->data;
 
-	printf("index %d\n", index);
 	int ind = index;
 	if (ind < 0)
 		ind = count - 1;
 	else if (ind > count - 1)
 		ind = 0;
-	printf("ind %d\n", ind);
 
 	rgxArray* a = head->next;
 	for (int i = 0; i < count; i++)

@@ -222,7 +222,7 @@ void PlayerChar::paint(float dt, iPoint off)
 	if (state != player_jump)
 		imgs[headNum]->paint(dt, p + iPointMake(4, -43));
 
-	if (getKeyDown(keyboard_i))
+	if (getKeyDown(keyboard_i) && state < player_attack)
 	{
 		for (int i = 0; i < weaponNum; i++)
 		{

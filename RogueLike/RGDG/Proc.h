@@ -3,6 +3,8 @@
 #include "iStd.h"
 
 #include "Tile.h"
+
+extern int stageNum;
 void loadProc();
 void freeProc();
 void drawProc(float dt);
@@ -49,9 +51,7 @@ struct WeaponData
 struct Stage
 {
 	int currStage;
-	int8 prevMapNumber;
-	int8 mapNumber;
-	
+
 	MapData mapData[TILE_TOTAL_NUM];
 
 	// playerInfo
@@ -65,13 +65,32 @@ struct Stage
 	// weaponInfo
 	WeaponData weaponData[10];
 
-	void loadStage();
-	void saveStage();
-	void nextStage();
-	void update(float dt);
+	void create();
+	void setStage();
+
 };
 extern Stage* st;
 
+bool loadStage();
+void saveStage();
+void freeStage();
+
+struct PassMap
+{
+	float passDt, _passDt;
+	int8 prevMapNumber;
+	int8 mapNumber;
+
+	void pass(int8 mapNum);
+	void update(float dt);
+
+	void nextStage();
+};
+extern PassMap* passMap;
+#define PASS_DT 0.5f
+
+void loadPassMap();
+void freePassMap();
 /* 4방향 순서 : LRUD (반드시 지킬것)*/
 #if 0
 0. 세이브 방법
@@ -92,16 +111,6 @@ extern Stage* st;
 4. 무기 :
 5. 아이템 :
 6. 보상 상자 :
-
-00. 세이브 데이터
-{
-	maps
-	player
-	monster
-	weapon
-	item
-	box
-}
 
 게임 종료 조건
 -player life = 0

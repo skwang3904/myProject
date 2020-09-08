@@ -18,6 +18,7 @@ struct MapTile
 	MapType state;
 	iImage* img;
 
+	int tileIndex;
 	int8* tile; // 타일 설정
 	iPoint tileOff;
 };
@@ -114,6 +115,6 @@ public:
 };
 
 
-void loadMap();
+void loadMap(bool loadFile = false);
 void freeMap();
 void drawMap(float dt);

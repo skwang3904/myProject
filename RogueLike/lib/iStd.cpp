@@ -1855,7 +1855,8 @@ bool containRect(iRect src, iRect dst)
 char* loadFile(const char* filePath, int& length)
 {
     FILE* pf = fopen(filePath, "rb");
-
+    if (pf == NULL)
+        return NULL;
     fseek(pf, 0, SEEK_END);
     length = ftell(pf);
     char* buf = (char*)calloc(sizeof(char), 1 + length);

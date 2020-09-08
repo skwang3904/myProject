@@ -58,7 +58,10 @@ void Weapon::dropWeapon()
 	for (int i = 0; i < weaponNum; i++)
 	{
 		if (weapon[i]->index > index)
+		{
 			weapon[i]->index--;
+			st->weaponData[i].index--;
+		}
 	}
 
 	get = false;

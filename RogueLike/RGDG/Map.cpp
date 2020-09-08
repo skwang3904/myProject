@@ -108,7 +108,8 @@ void createMap()
 
 	for (i = 0; i < TILE_TOTAL_NUM; i++)
 	{
-		maps[i]->state = maps[i]->state;
+		st->mapData[i].state = maps[i]->state;
+		st->mapData[i].tileIndex = maps[i]->tileIndex;
 	}
 }
 
@@ -185,8 +186,7 @@ void pathTileCheck(ConnectTile* c)
 #define TILECOPY(index, t) memcpy(maps[index]->tile, t, sizeof(int8) * TILE_NUM_X * TILE_NUM_Y)
 	TILECOPY(index, tileWay[pathNum]);
 
-	//stage data
-	st->mapData[index].tileIndex = pathNum;
+	maps[index]->tileIndex = pathNum;
 }
 
 //---------------------------------------------------------------------------------------------
@@ -482,6 +482,8 @@ void MapObjectDoor::action(Object* obj)
 
 	p->camera = iPointZero - maps[pm]->tileOff;
 	p->mapNumber = pm;
+
+	passMap->pass(pm);
 }
 
 //----------------------------------------------------------------------------------
@@ -505,7 +507,7 @@ MapObjectNextDoor::MapObjectNextDoor(int index, int8 mapNum, iPoint pos, int til
 	{
 		g->init(size);
 
-		if (i == 0) setRGBA(0.5f, 0, 0.5f, 1);
+		if (i == 0) setRGBA(1, 0, 1, 1);
 		else		setRGBA(0, 1, 0, 1);
 		g->fillRect(0, 0, size.width, size.height, 20);
 
@@ -542,9 +544,10 @@ void MapObjectNextDoor::paint(float dt, iPoint off)
 		// next stage
 		alive = false;
 		printf("next stage\n");
+		stageNum++;
 	}
 	
-	img->paint(dt, off);
+	img->paint(dt, position + off);
 }
 
 void MapObjectNextDoor::action(Object* obj)
@@ -722,7 +725,8 @@ void MapObjectItemBox::action(Object* obj)
 
 //----------------------------------------------------------------------------------
 
-void loadMap()
+void createMapImage();
+void loadMap(bool loadFile)
 {
 	int i, j, k, num = TILE_TOTAL_NUM;
 
@@ -742,21 +746,91 @@ void loadMap()
 		maps[i] = (MapTile*)malloc(sizeof(MapTile));
 		maps[i]->img = NULL;
 
+		maps[i]->tileIndex = -1;
 		maps[i]->tile = (int8*)calloc(sizeof(int8), TILE_NUM_X * TILE_NUM_Y);
 		maps[i]->tileOff = tileOffSet[i];
 	}
 
-#if 1 // file unload
-	createMap();
-#else // file load
+	if (loadFile)
+	{
+		for (i = 0; i < num; i++)
+		{
+			maps[i]->state = (MapType)st->mapData[i].state;
+			int index = st->mapData[i].tileIndex;
+			if (index != -1)
+				memcpy(maps[i]->tile, tileWay[index], sizeof(int8) * TILE_NUM_X * TILE_NUM_Y);
+		}
+	}
+	else
+	{
+		createMap();
+		saveStage();
+	}
+
+	createMapImage();
+}
+
+void freeMap()
+{
+	int i;
+	for (i = 0; i < TILE_TOTAL_NUM; i++)
+	{
+		if (maps[i]->img)
+			delete maps[i]->img;
+		free(maps[i]->tile);
+		free(maps[i]);
+	}
+	free(maps);
+
+	for (i = 0; i < mapObjNum; i++)
+		delete mapObj[i];
+	free(mapObj);
+}
+
+void drawMap(float dt)
+{
+	int i;
+	int num = TILE_TOTAL_NUM;
 	for (i = 0; i < num; i++)
 	{
-		maps[i]->state = st->mapData[i].state;
-		int index = st->mapData[i].tileIndex;
-		if (index != -1) 
-			memcpy(maps[i]->tile, tileWay[index], sizeof(int8) * TILE_NUM_X * TILE_NUM_Y);
+		if (i != player->mapNumber) 
+			continue;
+
+		MapTile* m = maps[i];
+		iPoint to = m->tileOff + DRAW_OFF;
+		if (m->img)
+			m->img->paint(dt, to);
 	}
+
+	num = mapObjNum;
+	for (i = 0; i < num; i++)
+	{
+		MapObject* mo = mapObj[i];
+		if(mo->mapNumber == player->mapNumber)
+			mo->paint(dt, DRAW_OFF);
+	}
+
+
+#if 0 // draw wall 
+	num = TILE_NUM_X * TILE_NUM_Y;
+	for (i = 0; i < num; i++)
+	{
+		uint8 a = maps[player->mapNumber]->tile[i];
+		if (a == WW)	setRGBA(1, 0, 0, 0.7f);
+		else			setRGBA(0, 0, 1, 0.7f);
+		
+		iPoint p = displayCenterPos;
+		fillRect(p.x + TILE_Width * (i % TILE_NUM_X), p.y + TILE_Height * (i / TILE_NUM_X),
+			TILE_Width, TILE_Height);
+	}
+	setRGBA(1, 1, 1, 1);
 #endif
+}
+
+void createMapImage()
+{
+	int i, j, k, num = TILE_TOTAL_NUM;
+
 	// map img
 	int t = TILE_NUM_X * TILE_NUM_Y;
 	iSize size = iSizeMake(TILE_NUM_X * TILE_Width, TILE_NUM_Y * TILE_Height);
@@ -787,10 +861,16 @@ void loadMap()
 			img->reverse = REVERSE_HEIGHT;
 			maps[i]->img = img;
 		}
-
 	}
 
 	//-----------------------------------------------------------------------------
+	
+	if (mapObj)
+	{
+		for (i = 0; i < mapObjNum; i++)
+			delete mapObj[i];
+		free(mapObj);
+	}
 
 	mapObj = (MapObject**)malloc(sizeof(MapObject*) * 200);
 	mapObjNum = 0;
@@ -812,7 +892,7 @@ void loadMap()
 				int tn = TILE_NUM_X * j + i;
 				MapTile* m = maps[k];
 				iPoint p = m->tileOff + iPointMake(TILE_Width * i, TILE_Height * j);
-				
+
 				switch (m->tile[tn])
 				{
 				case 01:
@@ -831,7 +911,7 @@ void loadMap()
 				{
 					bool exist = true;
 					int dir = 0;
-					if		(check[0] && i == 0)				dir = 0, check[0] = false, exist = false;
+					if (check[0] && i == 0)				dir = 0, check[0] = false, exist = false;
 					else if (check[1] && i == TILE_NUM_X - 1)	dir = 1, check[1] = false, exist = false;
 					else if (check[2] && j == 0)				dir = 2, check[2] = false, exist = false;
 					else if (check[3] && j == TILE_NUM_Y - 1)	dir = 3, check[3] = false, exist = false;
@@ -859,67 +939,16 @@ void loadMap()
 					mapObjNum++;
 					break;
 				}
-				default: printf("tile read error\n");	break;
+				default:
+					printf("tile read error\n");
+					break;
 				}
 			}
 		}
 
 		memset(check, true, sizeof(bool) * 4);
-	}
+				}
 
 	mapObj[mapObjNum] = new MapObjectNextDoor(0, 0, iPointZero, 0);
 	mapObjNum++;
-}
-
-void freeMap()
-{
-	int i;
-	for (i = 0; i < TILE_TOTAL_NUM; i++)
-	{
-		if (maps[i]->img)
-			delete maps[i]->img;
-		free(maps[i]->tile);
-		free(maps[i]);
-	}
-	free(maps);
-
-	for (i = 0; i < mapObjNum; i++)
-		delete mapObj[i];
-	free(mapObj);
-}
-
-void drawMap(float dt)
-{
-	int i;
-	int num = TILE_TOTAL_NUM;
-	for (i = 0; i < num; i++)
-	{
-		MapTile* m = maps[i];
-		iPoint to = m->tileOff + DRAW_OFF;
-		if (m->img)
-			m->img->paint(dt, to);
-	}
-
-	num = mapObjNum;
-	for (i = 0; i < num; i++)
-	{
-		MapObject* mo = mapObj[i];
-		mo->paint(dt, DRAW_OFF);
-	}
-
-
-#if 0 // draw wall 
-	num = TILE_NUM_X * TILE_NUM_Y;
-	for (i = 0; i < num; i++)
-	{
-		uint8 a = maps[player->mapNumber]->tile[i];
-		if (a == WW)	setRGBA(1, 0, 0, 0.7f);
-		else			setRGBA(0, 0, 1, 0.7f);
-		
-		iPoint p = displayCenterPos;
-		fillRect(p.x + TILE_Width * (i % TILE_NUM_X), p.y + TILE_Height * (i / TILE_NUM_X),
-			TILE_Width, TILE_Height);
-	}
-	setRGBA(1, 1, 1, 1);
-#endif
 }

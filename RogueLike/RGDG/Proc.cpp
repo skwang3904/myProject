@@ -10,18 +10,20 @@
 
 #include "Item.h"
 
+int stageNum = 0;
+
 void loadProc()
 {
 	loadNumberFont();
 
-	st = (Stage*)calloc(sizeof(Stage), 1);
-	st->loadStage();
-	loadMap();
+	bool success = loadStage();
+	loadMap(success);
 	loadPlayerChar();
 	loadMonster();
 	loadWeapon();
 	loadItem();
 
+	loadPassMap();
 
 	createPopState();
 	createPopProcButton();
@@ -34,18 +36,22 @@ void loadProc()
 	showPopProcButton(true);
 	showPopMiniMap(true);
 	showPopInven(true);
+
+
 }
 
 void freeProc()
 {
 	freeNumberFont();
 
+	freeStage();
 	freeMap();
 	freePlayerChar();
 	freeMonster();
 	freeWeapon();
 	freeItem();
 
+	freePassMap();
 
 	freePopState();
 	freePopProcButton();
@@ -53,29 +59,34 @@ void freeProc()
 	freePopInven();
 	freePopProcMenu();
 	freePopGameOver();
+
 }
 
 void drawProc(float dt)
 {
-	float _dt = dt;
+	float pop_dt = dt;
 	if (popProcMenu->bShow || 
 		popGameOver->bShow)
 		dt = 0.0f;
 
-	drawMap(dt);
-	drawPlayerChar(dt);
-	drawMonster(dt);
-	drawWeapon(dt);
-	drawItem(dt);
+	float pass_dt = dt;
+	if (passMap->passDt < passMap->_passDt)
+		pass_dt = 0.0f;
 
-	//stage->update(dt);
+	drawMap(pass_dt);
+	drawPlayerChar(pass_dt);
+	drawMonster(pass_dt);
+	drawWeapon(pass_dt);
+	drawItem(pass_dt);
+
+	passMap->update(dt);
 	
 	drawPopState(dt);
 	drawPopProcButton(dt);
 	drawPopMiniMap(dt);
 	drawPopInven(dt);
-	drawPopProcMenu(_dt);
-	drawPopGameOver(_dt);
+	drawPopProcMenu(pop_dt);
+	drawPopGameOver(pop_dt);
 	//numberFont->drawFont()
 }
 
@@ -93,14 +104,12 @@ void keyProc(iKeyState stat, iPoint point)
 //-----------------------------------------------------------
 
 Stage* st = NULL;
-void Stage::loadStage()
+#define FILE_PATH "save.sav"
+void Stage::create()
 {
 	int i, j, k, num = TILE_TOTAL_NUM;
 #if 0 // load file
-	currState = file;
-	prevMapNumber = file;
-	mapNumber = file;
-
+	currStage = 0;
 	for (i = 0; i < num; i++)
 	{
 		mapData[i].state = file;
@@ -140,8 +149,7 @@ void Stage::loadStage()
 		weaponData[i].index = file;
 
 #else // file == NULL
-	prevMapNumber = 0;
-	mapNumber = 0;
+	currStage = 0;
 	//maps
 	for (i = 0; i < num; i++)
 	{
@@ -152,7 +160,7 @@ void Stage::loadStage()
 	//player
 	PlayerData* pd = &playerData;
 	pd->index = 0;
-	pd->mapNum = mapNumber;
+	pd->mapNum = 0;
 	pd->position = iPointMake(TILE_NUM_X * TILE_Width / 2.0f,
 		TILE_NUM_Y * TILE_Height / 2.0f);
 
@@ -193,25 +201,150 @@ void Stage::loadStage()
 
 	for (int i = 0; i < 10; i++)
 		weaponData[i].index = -1;
-
 #endif
 }
 
-void Stage::saveStage()
+void Stage::setStage()
 {
-	// stage start -> save
+	int i, num = TILE_TOTAL_NUM;
 
-#if 0
-	// map
-#endif
+	currStage = stageNum;
+	for (i = 0; i < num; i++)
+	{
+		mapData[i].state = (int)maps[i]->state;
+		mapData[i].tileIndex = maps[i]->tileIndex;
+	}
+
+	// playerInfo
+	PlayerData* pd = &playerData;
+	PlayerChar* p = player;
+	pd->index = p->index;
+	pd->mapNum = p->mapNumber;
+	pd->position = p->position;
+
+	pd->hp = p->hp;
+	pd->_hp = p->_hp;
+	pd->attackPoint = p->attackPoint;
+	pd->_attackPoint = p->_attackPoint;
+	pd->attackSpeed = p->attackSpeed;
+	pd->_attackSpeed = p->_attackSpeed;
+	pd->moveSpeed = p->moveSpeed;
+
+	// stage별로 몬스터수, 구조체 만들것
+	// monsterInfo 
+	num = 0;
+	num += s_golemNomalNum;
+	num += s_golemBossNum;
+	for (i = 0; i < num; i++)
+	{
+		MonsterData* md =  &monsterData[i];
+		md->index;
+		md->mapNum;
+		md->position;
+	}
+
+	// weaponInfo
+	num = weaponNum;
+	for (i = 0; i < num; i++)
+	{
+		WeaponData* wd = &weaponData[i];
+		wd->index = weapon[i]->index;
+	}
+
+	saveStage();
 }
 
-void Stage::nextStage()
+bool loadStage()
+{
+	int length;
+	char* buf = loadFile(FILE_PATH, length);
+	if (buf)
+	{
+		st = (Stage*)buf;
+
+		return true;
+	}
+	else
+	{
+		st = (Stage*)calloc(sizeof(Stage), 1);
+		st->create();
+
+
+		return false;
+	}
+
+}
+
+void saveStage()
+{
+	saveFile(FILE_PATH, (char*)st, sizeof(Stage));
+}
+
+void freeStage()
+{
+	free(st);
+}
+
+PassMap* passMap;
+void PassMap::pass(int8 mapNum)
+{
+	if (mapNum == prevMapNumber)
+		return;
+
+	mapNumber = mapNum;
+	passDt = 0.0f;
+}
+
+void PassMap::update(float dt)
+{
+	if (passDt == _passDt)
+		return;
+
+	MapTile* prev = maps[prevMapNumber];
+	MapTile* curr = maps[mapNumber];
+
+	iPoint p = iPointZero;
+	switch (mapNumber - prevMapNumber)
+	{ //LRUD
+	case 1:					p = curr->tileOff + iPointMake(TILE_NUM_X * TILE_Width, 0);  break;
+	case -1:				p = curr->tileOff + iPointMake(-TILE_NUM_X * TILE_Width, 0);		break;
+	case TILE_TOTAL_SQRT:	p = curr->tileOff + iPointMake(0, TILE_NUM_Y * TILE_Height); break;
+	case -TILE_TOTAL_SQRT:	p = curr->tileOff + iPointMake(0, -TILE_NUM_Y * TILE_Height);	break;
+	default: printf("pass tile error\n");
+	}
+
+	passDt += dt;
+	if (passDt > _passDt)
+	{
+		passDt = _passDt;
+		prevMapNumber = mapNumber;
+	}
+
+	float d = passDt / _passDt;
+	iPoint pp = linear(d, curr->tileOff, prev->tileOff) + DRAW_OFF;
+	iPoint cp = linear(d, p, curr->tileOff) + DRAW_OFF;
+
+	setRGBA(0.3f, 0.3f, 0.3f, 1);
+	if (passDt < _passDt)
+		prev->img->paint(dt, pp);
+	curr->img->paint(dt, cp);
+	setRGBA(1, 1, 1, 1);
+}
+
+void PassMap::nextStage()
 {
 }
 
-void Stage::update(float dt)
+void loadPassMap()
 {
+	passMap = (PassMap*)calloc(sizeof(PassMap), 1);
+	passMap->passDt = passMap->_passDt = PASS_DT;
+	passMap->mapNumber = passMap->prevMapNumber = player->mapNumber;
+}
+
+void freePassMap()
+{
+	free(passMap);
 }
 
 //-----------------------------------------------------------

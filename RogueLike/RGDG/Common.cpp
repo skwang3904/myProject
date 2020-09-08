@@ -13,7 +13,6 @@ Object::Object(int index, int8 mapNum, iPoint pos)
 
 	this->position = pos;
 	vector = iPointZero;
-
 	touchRect = iRectZero;
 
 	prevHp = 0.0f;
@@ -31,3 +30,5 @@ Object::~Object()
 		delete imgs[i];
 	free(imgs);
 }
+
+//----------------------------------------------------------------------------

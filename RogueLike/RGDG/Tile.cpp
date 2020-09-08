@@ -1,7 +1,5 @@
 #include "Tile.h"
 
-TileWay* tileWay;
-
 extern int8 Tile0Way1[TILE_NUM_X * TILE_NUM_Y]; // 0way
 extern int8 Tile4Way1[TILE_NUM_X * TILE_NUM_Y]; // 4way
 
@@ -22,9 +20,7 @@ extern int8 Tile1Way2[TILE_NUM_X * TILE_NUM_Y]; // R
 extern int8 Tile1Way3[TILE_NUM_X * TILE_NUM_Y]; // U
 extern int8 Tile1Way4[TILE_NUM_X * TILE_NUM_Y]; // D
 
-void loadTile()
-{
-	int8* tileName[16] = {
+int8* tileWay[16] = {
 		Tile0Way1,
 		Tile4Way1,
 
@@ -32,37 +28,20 @@ void loadTile()
 		Tile3Way2,
 		Tile3Way3,
 		Tile3Way4,
-				 
+
 		Tile2Way1,
 		Tile2Way2,
 		Tile2Way3,
 		Tile2Way4,
 		Tile2Way5,
 		Tile2Way6,
-				 
+
 		Tile1Way1,
 		Tile1Way2,
 		Tile1Way3,
 		Tile1Way4,
-	};
+};
 
-
-	tileWay = (TileWay*)malloc(sizeof(TileWay) * 16);
-
-	for (int i = 0; i < 16; i++)
-	{
-		TileWay* tw = &tileWay[i];
-
-		tw->tile = tileName[i];
-	}
-}
-
-void freeTile()
-{
-	for (int i = 0; i < 16; i++)
-		free(tileWay[i].tile);
-	free(tileWay);
-}
 
 //------------------------------------------------------------------------------------------------
 

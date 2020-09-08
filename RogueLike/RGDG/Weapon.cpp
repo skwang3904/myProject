@@ -1,5 +1,6 @@
 #include "Weapon.h"
 
+#include "Proc.h"
 #include "ProcData.h"
 #include "PlayerChar.h"
 #include "Map.h"
@@ -26,42 +27,44 @@ Weapon::~Weapon()
 {
 }
 
-void Weapon::getWeapon(Weapon* me)
+void Weapon::getWeapon()
 {
-	Weapon* w = me;
-	for (int i = 0; i < weaponNum; i++)
-	{
-		if (weapon[i]->attacking)
-			return;
-	}
+	Weapon* w = (Weapon*)player->arrayWeapon->objectAtIndex(player->currWeaponIndex());
+	if (w->attacking)
+		return;
 
-	if (containRect(w->touchRect, player->touchRect))
+	if (containRect(touchRect, player->touchRect))
 	{
-		w->get = true;
-		player->addWeapon(w);
-		w->index = player->currWeaponIndex();
+		get = true;
+		player->addWeapon(this);
+		index = player->currWeaponIndex();
 	}
 }
 
-void Weapon::dropWeapon(Weapon* me)
+void Weapon::addThisWeapon()
+{
+	get = true;
+	player->addWeapon(this);
+	index = player->currWeaponIndex();
+}
+
+void Weapon::dropWeapon()
 {
 	if (player->arrayWeapon->count == 1)
 		return;
 
-	Weapon* w = me;
 	player->removeCurrWeapon();
 	
 	for (int i = 0; i < weaponNum; i++)
 	{
-		if (weapon[i]->index > w->index)
+		if (weapon[i]->index > index)
 			weapon[i]->index--;
 	}
 
-	w->get = false;
-	w->mapNumber = player->mapNumber;
-	w->position = player->position;
-	w->touchRect = iRectMake(w->position.x, w->position.y, w->img->tex->width, w->img->tex->height);
-	w->drawPos = iPointZero;
+	get = false;
+	position = player->position;
+	touchRect = iRectMake(position.x, position.y, img->tex->width, img->tex->height);
+	drawPos = iPointZero;
 }
 
 //--------------------------------------------------------
@@ -143,7 +146,7 @@ void Hammer::paint(float dt, iPoint off)
 			if (!attack(dt))
 			{
 				if (getKeyDown(keyboard_o))
-					dropWeapon(this);
+					dropWeapon();
 			}
 		}
 		else
@@ -154,7 +157,7 @@ void Hammer::paint(float dt, iPoint off)
 	else
 	{
 		if (getKeyDown(keyboard_i))
-			getWeapon(this);
+			getWeapon();
 	}
 
 	img->paint(dt, position + drawPos + off);
@@ -339,7 +342,7 @@ void Spear::paint(float dt, iPoint off)
 			if (!attack(dt))
 			{
 				if (getKeyDown(keyboard_o))
-					dropWeapon(this);
+					dropWeapon();
 			}
 		}
 		else
@@ -350,7 +353,7 @@ void Spear::paint(float dt, iPoint off)
 	else
 	{
 		if (getKeyDown(keyboard_i))
-			getWeapon(this);
+			getWeapon();
 	}
 
 	img->paint(dt, position + drawPos + off);
@@ -472,12 +475,19 @@ void loadWeapon()
 	weaponNum = 0;
 	weapon = (Weapon**)malloc(sizeof(Weapon*) * 10);
 
-	weapon[weaponNum] = new Hammer(0, 0, iPointZero);
-	weaponNum++;
+	weapon[weaponNum] = new Hammer(-1, 0, iPointZero); weaponNum++;
+	weapon[weaponNum] = new Spear(-1, 0, iPointZero);  weaponNum++;
 
-	weapon[weaponNum] = new Spear(0, 0, iPointZero);
-	weaponNum++;
-	
+	int index = 0;
+	for (int i = 0; i < weaponNum; i++)
+	{
+		if (st->weaponData[i].index == index)
+		{
+			weapon[i]->addThisWeapon();
+			i = -1;
+			index++;
+		}
+	}
 }
 
 void freeWeapon()

@@ -32,15 +32,7 @@
 #define WALLTILE_RGBA	0.5, 0.5, 0.5, 1
 #define FALLTILE_RGBA	0, 0, 0.3, 1
 
-struct TileWay
-{
-	int8* tile;
-	int** doorNum; // doorNum[4][4]
-};
-extern TileWay* tileWay;
-
-void loadTile();
-void freeTile();
+extern int8* tileWay[16];
 
 /*
      tileWay

@@ -2,6 +2,7 @@
 
 #include "Tile.h"
 #include "Map.h"
+#include "Proc.h"
 #include "PlayerChar.h"
 
 Item* item;

@@ -47,12 +47,12 @@ PlayerChar::PlayerChar(int index, int8 mapNum, iPoint pos) : Object(index, mapNu
 			imgs[count] = img;
 			count++;
 		}
-
+		
 		for (n = 0; n < num; n++)
 			freeImage(texs[n]);
 		free(texs);
 	}
-
+	
 	imgNum = 10;
 	this->imgs = (iImage**)malloc(sizeof(iImage*) * imgNum);
 
@@ -78,7 +78,7 @@ PlayerChar::PlayerChar(int index, int8 mapNum, iPoint pos) : Object(index, mapNu
 	//common data
 	this->img = this->imgs[5];
 
-
+	position = maps[mapNumber]->tileOff + pos;
 	vector = iPointZero;
 	touchRect = iRectZero;
 
@@ -94,11 +94,14 @@ PlayerChar::PlayerChar(int index, int8 mapNum, iPoint pos) : Object(index, mapNu
 	wpPosition = iPointZero;
 
 	PlayerInfo* pi = &playerInfo[index];
-	hp = _hp = pi->_hp;
-	attackPoint = _attackPoint = pi->_attackPoint;
-	attackSpeed = 0.0f;
-	_attackSpeed = pi->_attackSpeed;
-	moveSpeed = pi->moveSpeed;
+	PlayerData* pd = &st->playerData;
+	hp = pd->hp;
+	_hp = pd->_hp;
+	attackPoint = pd->attackPoint;
+	_attackPoint = pd->_attackPoint;
+	attackSpeed = pd->attackSpeed;
+	_attackSpeed = pd->_attackSpeed;
+	moveSpeed = pd->moveSpeed;
 
 #if 0
 	for (int i = 0; i < TILE_TOTAL_NUM; i++)
@@ -276,8 +279,8 @@ void PlayerChar::cbPlayerSetIdle(iImage* me)
 
 void loadPlayerChar()
 {
-	iPoint p = iPointMake(TILE_NUM_X * TILE_Width / 2.0f, TILE_NUM_Y * TILE_Height / 2.0f);
-	player = new PlayerChar(0, 0, p);
+	PlayerData* pd = &st->playerData;
+	player = new PlayerChar(pd->index, pd->mapNum, pd->position);
 }
 
 void freePlayerChar()

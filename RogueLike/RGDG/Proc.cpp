@@ -3,19 +3,19 @@
 #include "Tile.h"
 #include "Map.h"
 
+#include "ProcData.h"
 #include "PlayerChar.h"
 #include "Monster.h"
 #include "Weapon.h"
 
 #include "Item.h"
 
-Stage* stage = NULL;
-
 void loadProc()
 {
 	loadNumberFont();
 
-	loadTile();
+	st = (Stage*)calloc(sizeof(Stage), 1);
+	st->loadStage();
 	loadMap();
 	loadPlayerChar();
 	loadMonster();
@@ -40,7 +40,6 @@ void freeProc()
 {
 	freeNumberFont();
 
-	freeTile();
 	freeMap();
 	freePlayerChar();
 	freeMonster();
@@ -93,68 +92,122 @@ void keyProc(iKeyState stat, iPoint point)
 
 //-----------------------------------------------------------
 
-
+Stage* st = NULL;
 void Stage::loadStage()
 {
-	// loadfile
+	int i, j, k, num = TILE_TOTAL_NUM;
+#if 0 // load file
+	currState = file;
+	prevMapNumber = file;
+	mapNumber = file;
+
+	for (i = 0; i < num; i++)
+	{
+		mapData[i].state = file;
+		mapData[i].tileIndex = file;
+	}
+
+	// player
+	PlayerData* pd = &playerData;
+	pd->index = file;
+	pd->mapNum = mapNumber;
+	pd->position = file;
+
+	pd->hp = file;
+	pd->_hp = file;
+	pd->attackPoint = file;
+	pd->_attackPoint = file;
+	pd->attackSpeed = file;
+	pd->_attackSpeed = file;
+	pd->moveSpeed = file;
+
+
+	//monster
+	num = 0;
+	num += s_golemNomalNum = file;
+	num += s_golemBossNum = file;
+
+	for (int i = 0; i < num; i++)
+	{
+		monsterData[i].index = file;
+		monsterData[i].mapNum = file;
+		monsterData[i].position = file;
+	}
+
+	s_weaponNum = 0;
+	s_weapon = (Weapon**)malloc(sizeof(Weapon*) * 10);
+	for (int i = 0; i < 10; i++)
+		weaponData[i].index = file;
+
+#else // file == NULL
+	prevMapNumber = 0;
+	mapNumber = 0;
+	//maps
+	for (i = 0; i < num; i++)
+	{
+		mapData[i].state = MapType_Nomal;
+		mapData[i].tileIndex = -1;
+	}
+
+	//player
+	PlayerData* pd = &playerData;
+	pd->index = 0;
+	pd->mapNum = mapNumber;
+	pd->position = iPointMake(TILE_NUM_X * TILE_Width / 2.0f,
+		TILE_NUM_Y * TILE_Height / 2.0f);
+
+	PlayerInfo* pi = &playerInfo[pd->index];
+	pd->hp = pd->_hp = pi->_hp;
+	pd->attackPoint = pd->_attackPoint = pi->_attackPoint;
+	pd->attackSpeed = 0.0f;
+	pd->_attackSpeed = pi->_attackSpeed;
+	pd->moveSpeed = pi->moveSpeed;
+
+	//monster
+	num = 0;
+	num += st->s_golemNomalNum = GOLEM_NOMAL_NUM;
+	num += st->s_golemBossNum = GOLEM_BOSS_NUM;
+
+	int index = 0;
+	int8 mapNum = 0;
+	iPoint pos = iPointZero;
+	for (int i = 0; i < num; i++)
+	{
+		if (i < st->s_golemNomalNum)
+		{
+			index = 0;
+			mapNum = 0;
+			pos = iPointMake(300 + 100 * i, 300 + 200 * i);
+		}
+		else if (i < st->s_golemNomalNum + st->s_golemBossNum)
+		{
+			index = 0;
+			mapNum = 8;
+			pos = iPointMake(300, 300);
+		}
+
+		monsterData[i].index = index;
+		monsterData[i].mapNum = mapNum;
+		monsterData[i].position = pos;
+	}
+
+	for (int i = 0; i < 10; i++)
+		weaponData[i].index = -1;
+
+#endif
 }
 
 void Stage::saveStage()
 {
 	// stage start -> save
+
 #if 0
 	// map
-	if (s_maps == NULL)
-		s_maps = (MapTile**)calloc(sizeof(MapTile*), num);
-	for (int i = 0; i < TILE_TOTAL_NUM; i++)
-	{
-		if (s_maps[i] == NULL)
-		{
-			s_maps[i] = (MapTile*)malloc(sizeof(MapTile));
-		}
-		else
-		{
-			delete s_maps[i]->img;
-			free(s_maps[i]->tile);
-		}
-		s_maps[i]->img = (maps[i]->img ? maps[i]->img->copy() : NULL);
-
-		s_maps[i]->tile = (int8*)calloc(sizeof(int8), TILE_NUM_X * TILE_NUM_Y);
-		s_maps[i]->tileOff = maps[i]->tileOff;
-	}
-
-	//player
-	if (s_player == NULL)
-		s_player = new PlayerChar(player->index, player->mapNumber, player->position);
-
-	s_player->hp = player->hp;
-	s_player->_hp = player->_hp;
-	s_player->attackPoint = player->attackPoint;
-	s_player->_attackPoint = player->_attackPoint;
-	s_player->attackSpeed = player->attackSpeed;
-	s_player->_attackSpeed = player->_attackSpeed;
-	s_player->moveSpeed = player->moveSpeed;
-
-	s_player->arrayWeapon;
-
-	//monster
-	s_monsterNum = 0;
-
-	s_golemNomalNum = golemNomalNum;
-	s_golemBossNum = golemBossNum;
-	
-	int monNum[2] = { s_golemNomalNum, s_golemBossNum };
-	for (int i = 0; i < 2; i++)
-	{
-		for (int j = 0; j < monNum[i]; j++)
-		{
-			s_monster[s_monsterNum] = new GolemNomal();
-				s_monsterNum++;
-		}
-	}
-
-		
 #endif
+}
+
+void Stage::nextStage()
+{
 }
 
 void Stage::update(float dt)
@@ -385,6 +438,7 @@ void refreshMiniMap(Texture* tex)
 		fillRect(p.x + 1, p.y + 1, TILE_Width - 2, TILE_Height - 2 , 10);
 
 	}
+	setRGBA(1, 1, 1, 1);
 	setLineWidth(1);
 
 	fbo->unbind();

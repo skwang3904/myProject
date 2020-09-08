@@ -15,8 +15,9 @@ public:
 	virtual bool attack(float dt) = 0;
 	virtual void setPosition() = 0;
 
-	static void getWeapon(Weapon* me);
-	static void dropWeapon(Weapon* me);
+	void getWeapon();
+	void addThisWeapon();
+	void dropWeapon();
 
 public:
 	float attackDelay, _attackDelay;

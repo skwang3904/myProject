@@ -2,43 +2,75 @@
 
 #include "iStd.h"
 
+#include "Tile.h"
 void loadProc();
 void freeProc();
 void drawProc(float dt);
 void keyProc(iKeyState stat, iPoint point);
 
 class MapTile;
+class MapObject;
 class PlayerChar;
 class Monster;
 class Weapon;
 class Item;
 
+struct MapData
+{
+	int state;
+
+	int tileIndex;
+};
+
+struct PlayerData
+{
+	int index;
+	int8 mapNum;
+	iPoint position;
+
+	float hp, _hp;
+	float attackPoint, _attackPoint;
+	float attackSpeed, _attackSpeed;
+	float moveSpeed;
+};
+
+struct MonsterData 
+{
+	int index;
+	int8 mapNum;
+	iPoint position;
+};
+
+struct WeaponData
+{
+	int index;
+};
+
 struct Stage
 {
-	int8 s_prevMapNumber;
-	int8 s_mapNumber;
-
-	MapTile** s_maps = NULL;
-	// playerInfo
-	PlayerChar* s_player = NULL;
+	int currStage;
+	int8 prevMapNumber;
+	int8 mapNumber;
 	
+	MapData mapData[TILE_TOTAL_NUM];
+
+	// playerInfo
+	PlayerData playerData;
+
 	// monsterInfo
 	int s_golemNomalNum;
 	int s_golemBossNum;
-	Monster** s_monster = NULL;
-	int s_monsterNum;
+	MonsterData monsterData[30];
 
 	// weaponInfo
-	int s_weaponNum;
-	Weapon** s_weapon = NULL;
+	WeaponData weaponData[10];
 
-	int s_itemNum;
-	Item** s_item = NULL;
-	
 	void loadStage();
 	void saveStage();
+	void nextStage();
 	void update(float dt);
 };
+extern Stage* st;
 
 /* 4방향 순서 : LRUD (반드시 지킬것)*/
 #if 0

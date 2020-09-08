@@ -78,6 +78,7 @@ public:
 	virtual void paint(float dt, iPoint off);
 	virtual void action(Object* obj);
 
+	static void setNextDoor(Object* obj);
 public:
 
 };

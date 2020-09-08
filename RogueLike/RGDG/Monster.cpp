@@ -2,6 +2,7 @@
 
 #include "Tile.h"
 #include "Map.h"
+#include "Proc.h"
 #include "ProcData.h"
 #include "PlayerChar.h"
 
@@ -10,7 +11,6 @@
 Monster** monster;
 int monsterNum;
 
-Monster* cbMonster = NULL;
 Monster::Monster(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos)
 {
 	stateMethod[0] = &Monster::actionIdle;
@@ -23,16 +23,10 @@ Monster::Monster(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos
 	cbMethod = NULL;
 
 	state = monster_idle;
-	alive = false;
-	prevHp = 0.0f;
-	hp = _hp = 0.0f;
-	attackPoint =  _attackPoint = 0.0f;
-	attackSpeed =  _attackSpeed = 0.0f;
+
 	attackDt = _attackDt = 0.0f;
 	attackDelay =  _attackDelay = 0.0f;
-	actionDt = _actionDt = 0.0f;
 
-	moveSpeed = 0.0f;
 	lookDistance = 0.0f;
 	meleeDistance = 0.0f;
 	rangeDistance = 0.0f;
@@ -662,6 +656,7 @@ void GolemBoss::actionDeath(float dt)
 	{
 		img->startAnimation();
 		cbMethod = &Monster::cbMonsterSetAliveFalse;
+		MapObjectNextDoor::setNextDoor(this);
 	}
 }
 
@@ -677,29 +672,45 @@ void loadMonster()
 	monsterNum = 0;
 	monster = (Monster**)malloc(sizeof(Monster*) * 30);
 
-	golemNomalNum = GOLEM_NOMAL_NUM;
-	for (i = 0; i < golemNomalNum; i++)
-	{
-		monster[monsterNum] = new GolemNomal(0, 0, iPointMake(300 + 100 * i, 300 + 200 * i));
-		monsterNum++;
-	}
+	int num = 0;
+	num += st->s_golemNomalNum;
+	num += st->s_golemBossNum;
 
-	golemBossNum = GOLEM_BOSS_NUM;
-	for (i = 0; i < TILE_TOTAL_NUM; i++)
+	int index = 0;
+	int8 mapNum = 0;
+	iPoint pos = iPointZero;
+	for (i = 0; i < num; i++)
 	{
-		if (maps[i]->state == MapType_Boss)
+		MonsterData* md = &st->monsterData[i];
+		index = md->index;
+		mapNum = md->mapNum;
+		pos = md->position;
+		
+		if (i < st->s_golemNomalNum)
 		{
-			monster[monsterNum] = new GolemBoss(0, i, iPointMake(300 , 300));
+			monster[i] = new GolemNomal(index, mapNum, pos);
 			monsterNum++;
-			break;
+		}
+		else if (i < st->s_golemNomalNum + st->s_golemBossNum)
+		{
+			for (j = 0; j < TILE_TOTAL_NUM; j++)
+			{
+				if (maps[j]->state == MapType_Boss)
+				{
+					mapNum = j;
+					md->mapNum = j;
+					monster[i] = new GolemBoss(index, mapNum, pos);
+					monsterNum++;
+					break;
+				}
+			}
 		}
 	}
 }
 
 void freeMonster()
 {
-	int num = golemNomalNum + golemBossNum;
-	for (int i = 0; i < num; i++)
+	for (int i = 0; i < monsterNum; i++)
 		delete monster[i];
 	free(monster);
 }

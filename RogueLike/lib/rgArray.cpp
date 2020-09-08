@@ -151,18 +151,22 @@ void rgArray::remove(int index)
 
 void rgArray::removeAll()
 {
-	curr = tail->prev;
-	while (curr)
+	if (count)
 	{
-		rgxArray* c = curr->prev;
-		if (method)
-			method(curr->data);
-		free(curr);
-		curr = c;
+		curr = tail->prev;
+		while (curr)
+		{
+			rgxArray* c = curr->prev;
+			if (method)
+				method(curr->data);
+			free(curr);
+			curr = c;
 
-		if (curr == head)
-			break;
+			if (curr == head)
+				break;
+		}
 	}
+
 	count = 0;
 	currIndex = 0;
 }

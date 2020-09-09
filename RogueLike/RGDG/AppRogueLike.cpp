@@ -36,8 +36,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInst,
     wc.hIconSm = LoadIcon(wc.hInstance, MAKEINTRESOURCE(IDI_SMALL));
     RegisterClassExW(&wc);
 
+    // 창 크기 DEFALUT 값으로하면 크기안맞음
     hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+        300, 200, DEVSIZE_WIDTH * 0.67f, DEVSIZE_HEIGHT * 0.67f, nullptr, nullptr, hInstance, nullptr);
     hDC = GetDC(hWnd);
 
     RECT rect;
@@ -51,6 +52,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInst,
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow(hWnd);
 
+#if 0
+    RECT rt;
+    GetClientRect(hWnd, &rt);
+    resizeLib(rt.right - rt.left, rt.bottom - rt.top);
+    MoveWindow(hWnd, rt.left, rt.top, 1280, 960, false);
+#endif
+    
     isFullscreen = false;
 
     runWnd = true;
@@ -137,9 +145,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // window rect
         RECT& rect = *reinterpret_cast<LPRECT>(lParam);
         enforceResolution((int)wParam, rect, win_border_width, win_border_height);
+#if 0 //안그려야 부드러움
         //RECT rect;
         //GetClientRect(hWnd, &rect);
         resizeLib(rect.right - rect.left, rect.bottom - rect.top);
+#endif
 
         drawLib(drawGame);
         SwapBuffers(hDC);

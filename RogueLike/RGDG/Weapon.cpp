@@ -1,12 +1,11 @@
 #include "Weapon.h"
 
-#include "Proc.h"
+#include "Map.h"
 #include "ProcData.h"
 #include "PlayerChar.h"
-#include "Map.h"
 #include "Monster.h"
 
-Weapon** weapon;
+Weapon** weapon = NULL;
 int weaponNum;
 
 Weapon::Weapon(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos)
@@ -164,6 +163,10 @@ void Hammer::paint(float dt, iPoint off)
 	}
 
 	img->paint(dt, position + drawPos + off);
+}
+
+void Hammer::drawShadow(float dt, iPoint off)
+{
 }
 
 void Hammer::action(Object* obj)
@@ -362,6 +365,10 @@ void Spear::paint(float dt, iPoint off)
 	img->paint(dt, position + drawPos + off);
 }
 
+void Spear::drawShadow(float dt, iPoint off)
+{
+}
+
 void Spear::action(Object* obj)
 {
 }
@@ -478,8 +485,8 @@ void loadWeapon()
 	weaponNum = 0;
 	weapon = (Weapon**)malloc(sizeof(Weapon*) * 10);
 
-	weapon[weaponNum] = new Hammer(-1, 0, iPointZero); weaponNum++;
-	weapon[weaponNum] = new Spear(-1, 0, iPointZero);  weaponNum++;
+	weapon[weaponNum] = new Hammer(-1, player->mapNumber, iPointZero); weaponNum++;
+	weapon[weaponNum] = new Spear(-1, player->mapNumber, iPointZero);  weaponNum++;
 
 	int index = 0;
 	for (int i = 0; i < weaponNum; i++)

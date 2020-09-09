@@ -6,7 +6,7 @@
 #include "Map.h"
 #include "Weapon.h"
 
-PlayerChar* player;
+PlayerChar* player = NULL;
 PlayerChar::PlayerChar(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos)
 {
 	int i, j, k, n, num, count = 0;
@@ -78,7 +78,7 @@ PlayerChar::PlayerChar(int index, int8 mapNum, iPoint pos) : Object(index, mapNu
 	//common data
 	this->img = this->imgs[5];
 
-	position = maps[mapNumber]->tileOff + pos;
+	position = maps[mapNumber]->tileOff + position;
 	vector = iPointZero;
 	touchRect = iRectZero;
 
@@ -103,19 +103,6 @@ PlayerChar::PlayerChar(int index, int8 mapNum, iPoint pos) : Object(index, mapNu
 	_attackSpeed = pd->_attackSpeed;
 	moveSpeed = pd->moveSpeed;
 
-#if 0
-	for (int i = 0; i < TILE_TOTAL_NUM; i++)
-	{
-		int a = random() % TILE_TOTAL_NUM;
-		if (maps[a]->tile[0] != 0 && maps[a]->state == MapType_Nomal)
-		{
-			position = maps[a]->tileOff + TILE_CENTER;
-			camera = displayCenterPos - maps[a]->tileOff;
-			mapNumber = a;
-			break;
-		}
-	}
-#endif
 
 	arrayWeapon = new rgArray();
 }
@@ -233,6 +220,15 @@ void PlayerChar::paint(float dt, iPoint off)
 	}
 }
 
+void PlayerChar::drawShadow(float dt, iPoint off)
+{
+	iSize size = iSizeMake(img->tex->width, img->tex->height);
+	iPoint p = position + iPointMake(size.width / 2.0f, size.height * 0.6f) + off;
+	setRGBA(0, 0, 0, 0.3f);
+	fillEllipse(p.x, p.y, size.width, size.height * 0.5f);
+	setRGBA(1, 1, 1, 1);
+}
+
 void PlayerChar::action(Object* obj)
 {
 	hp -= obj->attackPoint;
@@ -290,5 +286,6 @@ void freePlayerChar()
 
 void drawPlayerChar(float dt)
 {
+	player->drawShadow(dt, DRAW_OFF);
 	player->paint(dt, DRAW_OFF);
 }

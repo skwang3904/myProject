@@ -21,6 +21,7 @@ public:
 	virtual ~PlayerChar();
 
 	virtual void paint(float dt, iPoint off);
+	virtual void drawShadow(float dt, iPoint off);
 	virtual void action(Object* obj);
 
 	void initData();

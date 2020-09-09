@@ -4,93 +4,11 @@
 
 #include "Tile.h"
 
-extern int stageNum;
 void loadProc();
 void freeProc();
 void drawProc(float dt);
 void keyProc(iKeyState stat, iPoint point);
 
-class MapTile;
-class MapObject;
-class PlayerChar;
-class Monster;
-class Weapon;
-class Item;
-
-struct MapData
-{
-	int state;
-
-	int tileIndex;
-};
-
-struct PlayerData
-{
-	int index;
-	int8 mapNum;
-	iPoint position;
-
-	float hp, _hp;
-	float attackPoint, _attackPoint;
-	float attackSpeed, _attackSpeed;
-	float moveSpeed;
-};
-
-struct MonsterData 
-{
-	int index;
-	int8 mapNum;
-	iPoint position;
-};
-
-struct WeaponData
-{
-	int index;
-};
-
-struct Stage
-{
-	int currStage;
-
-	MapData mapData[TILE_TOTAL_NUM];
-
-	// playerInfo
-	PlayerData playerData;
-
-	// monsterInfo
-	int s_golemNomalNum;
-	int s_golemBossNum;
-	MonsterData monsterData[30];
-
-	// weaponInfo
-	WeaponData weaponData[10];
-
-	void create();
-	void setStage();
-
-};
-extern Stage* st;
-
-bool loadStage();
-void saveStage();
-void freeStage();
-
-struct PassMap
-{
-	float passDt, _passDt;
-	int8 prevMapNumber;
-	int8 mapNumber;
-
-	void pass(int8 mapNum);
-	void update(float dt);
-
-	void nextStage();
-};
-extern PassMap* passMap;
-#define PASS_DT 0.5f
-
-void loadPassMap();
-void freePassMap();
 /* 4방향 순서 : LRUD (반드시 지킬것)*/
 #if 0
 0. 세이브 방법
@@ -111,6 +29,10 @@ void freePassMap();
 4. 무기 :
 5. 아이템 :
 6. 보상 상자 :
+
+game ui
+화면 하단에 소모item 목록
+function key or mouse or number key
 
 게임 종료 조건
 -player life = 0

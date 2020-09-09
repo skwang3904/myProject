@@ -2,6 +2,8 @@
 
 #include "iStd.h"
 
+#include "Common.h"
+
 struct PlayerInfo
 {
 	float _hp;
@@ -39,9 +41,6 @@ struct MonsterInfo
 	float rangeDistance;
 };
 extern MonsterInfo monsterInfo[3];
-#define GOLEM_NOMAL 0
-#define GOLEM_ELETE 1
-#define GOLEM_BOSS	2
 
 struct MonsterImageInfo
 {
@@ -50,6 +49,7 @@ struct MonsterImageInfo
 	float aniDt;
 	int repeatNum;
 	bool lastFrame;
+	iSize size;
 };
 extern MonsterImageInfo golemNomalImage[6];
 extern MonsterImageInfo golemBossImage[6];
@@ -65,3 +65,21 @@ struct WeaponInfo
 	float attackRange;
 };
 extern WeaponInfo weaponInfo[2];
+
+//----------------------------------------------------------------
+
+struct ItemInfo
+{
+	float value;
+	float _actionDt;
+};
+extern ItemInfo itemInfo[3];
+
+struct ItemImageInfo
+{
+	const char* strPath;
+	int imgNum;
+	float aniDt;
+	iSize size;
+};
+extern ItemImageInfo itemImageInfo[3];

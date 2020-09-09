@@ -7,17 +7,14 @@
 #include "PlayerChar.h"
 #include "Monster.h"
 #include "Weapon.h"
-
 #include "Item.h"
-
-int stageNum = 0;
 
 void loadProc()
 {
 	loadNumberFont();
 
-	bool success = loadStage();
-	loadMap(success);
+	loadMap();
+	loadStage();
 	loadPlayerChar();
 	loadMonster();
 	loadWeapon();
@@ -44,8 +41,8 @@ void freeProc()
 {
 	freeNumberFont();
 
-	freeStage();
 	freeMap();
+	freeStage();
 	freePlayerChar();
 	freeMonster();
 	freeWeapon();
@@ -99,252 +96,6 @@ void keyProc(iKeyState stat, iPoint point)
 		keyPopProcButton(stat, point) ||
 		keyPopState(stat, point))
 		return;
-}
-
-//-----------------------------------------------------------
-
-Stage* st = NULL;
-#define FILE_PATH "save.sav"
-void Stage::create()
-{
-	int i, j, k, num = TILE_TOTAL_NUM;
-#if 0 // load file
-	currStage = 0;
-	for (i = 0; i < num; i++)
-	{
-		mapData[i].state = file;
-		mapData[i].tileIndex = file;
-	}
-
-	// player
-	PlayerData* pd = &playerData;
-	pd->index = file;
-	pd->mapNum = mapNumber;
-	pd->position = file;
-
-	pd->hp = file;
-	pd->_hp = file;
-	pd->attackPoint = file;
-	pd->_attackPoint = file;
-	pd->attackSpeed = file;
-	pd->_attackSpeed = file;
-	pd->moveSpeed = file;
-
-
-	//monster
-	num = 0;
-	num += s_golemNomalNum = file;
-	num += s_golemBossNum = file;
-
-	for (int i = 0; i < num; i++)
-	{
-		monsterData[i].index = file;
-		monsterData[i].mapNum = file;
-		monsterData[i].position = file;
-	}
-
-	s_weaponNum = 0;
-	s_weapon = (Weapon**)malloc(sizeof(Weapon*) * 10);
-	for (int i = 0; i < 10; i++)
-		weaponData[i].index = file;
-
-#else // file == NULL
-	currStage = 0;
-	//maps
-	for (i = 0; i < num; i++)
-	{
-		mapData[i].state = MapType_Nomal;
-		mapData[i].tileIndex = -1;
-	}
-
-	//player
-	PlayerData* pd = &playerData;
-	pd->index = 0;
-	pd->mapNum = 0;
-	pd->position = iPointMake(TILE_NUM_X * TILE_Width / 2.0f,
-		TILE_NUM_Y * TILE_Height / 2.0f);
-
-	PlayerInfo* pi = &playerInfo[pd->index];
-	pd->hp = pd->_hp = pi->_hp;
-	pd->attackPoint = pd->_attackPoint = pi->_attackPoint;
-	pd->attackSpeed = 0.0f;
-	pd->_attackSpeed = pi->_attackSpeed;
-	pd->moveSpeed = pi->moveSpeed;
-
-	//monster
-	num = 0;
-	num += st->s_golemNomalNum = GOLEM_NOMAL_NUM;
-	num += st->s_golemBossNum = GOLEM_BOSS_NUM;
-
-	int index = 0;
-	int8 mapNum = 0;
-	iPoint pos = iPointZero;
-	for (int i = 0; i < num; i++)
-	{
-		if (i < st->s_golemNomalNum)
-		{
-			index = 0;
-			mapNum = 0;
-			pos = iPointMake(300 + 100 * i, 300 + 200 * i);
-		}
-		else if (i < st->s_golemNomalNum + st->s_golemBossNum)
-		{
-			index = 0;
-			mapNum = 8;
-			pos = iPointMake(300, 300);
-		}
-
-		monsterData[i].index = index;
-		monsterData[i].mapNum = mapNum;
-		monsterData[i].position = pos;
-	}
-
-	for (int i = 0; i < 10; i++)
-		weaponData[i].index = -1;
-#endif
-}
-
-void Stage::setStage()
-{
-	int i, num = TILE_TOTAL_NUM;
-
-	currStage = stageNum;
-	for (i = 0; i < num; i++)
-	{
-		mapData[i].state = (int)maps[i]->state;
-		mapData[i].tileIndex = maps[i]->tileIndex;
-	}
-
-	// playerInfo
-	PlayerData* pd = &playerData;
-	PlayerChar* p = player;
-	pd->index = p->index;
-	pd->mapNum = p->mapNumber;
-	pd->position = p->position;
-
-	pd->hp = p->hp;
-	pd->_hp = p->_hp;
-	pd->attackPoint = p->attackPoint;
-	pd->_attackPoint = p->_attackPoint;
-	pd->attackSpeed = p->attackSpeed;
-	pd->_attackSpeed = p->_attackSpeed;
-	pd->moveSpeed = p->moveSpeed;
-
-	// stage별로 몬스터수, 구조체 만들것
-	// monsterInfo 
-	num = 0;
-	num += s_golemNomalNum;
-	num += s_golemBossNum;
-	for (i = 0; i < num; i++)
-	{
-		MonsterData* md =  &monsterData[i];
-		md->index;
-		md->mapNum;
-		md->position;
-	}
-
-	// weaponInfo
-	num = weaponNum;
-	for (i = 0; i < num; i++)
-	{
-		WeaponData* wd = &weaponData[i];
-		wd->index = weapon[i]->index;
-	}
-
-	saveStage();
-}
-
-bool loadStage()
-{
-	int length;
-	char* buf = loadFile(FILE_PATH, length);
-	if (buf)
-	{
-		st = (Stage*)buf;
-
-		return true;
-	}
-	else
-	{
-		st = (Stage*)calloc(sizeof(Stage), 1);
-		st->create();
-
-
-		return false;
-	}
-
-}
-
-void saveStage()
-{
-	saveFile(FILE_PATH, (char*)st, sizeof(Stage));
-}
-
-void freeStage()
-{
-	free(st);
-}
-
-PassMap* passMap;
-void PassMap::pass(int8 mapNum)
-{
-	if (mapNum == prevMapNumber)
-		return;
-
-	mapNumber = mapNum;
-	passDt = 0.0f;
-}
-
-void PassMap::update(float dt)
-{
-	if (passDt == _passDt)
-		return;
-
-	MapTile* prev = maps[prevMapNumber];
-	MapTile* curr = maps[mapNumber];
-
-	iPoint p = iPointZero;
-	switch (mapNumber - prevMapNumber)
-	{ //LRUD
-	case 1:					p = curr->tileOff + iPointMake(TILE_NUM_X * TILE_Width, 0);  break;
-	case -1:				p = curr->tileOff + iPointMake(-TILE_NUM_X * TILE_Width, 0);		break;
-	case TILE_TOTAL_SQRT:	p = curr->tileOff + iPointMake(0, TILE_NUM_Y * TILE_Height); break;
-	case -TILE_TOTAL_SQRT:	p = curr->tileOff + iPointMake(0, -TILE_NUM_Y * TILE_Height);	break;
-	default: printf("pass tile error\n");
-	}
-
-	passDt += dt;
-	if (passDt > _passDt)
-	{
-		passDt = _passDt;
-		prevMapNumber = mapNumber;
-	}
-
-	float d = passDt / _passDt;
-	iPoint pp = linear(d, curr->tileOff, prev->tileOff) + DRAW_OFF;
-	iPoint cp = linear(d, p, curr->tileOff) + DRAW_OFF;
-
-	setRGBA(0.3f, 0.3f, 0.3f, 1);
-	if (passDt < _passDt)
-		prev->img->paint(dt, pp);
-	curr->img->paint(dt, cp);
-	setRGBA(1, 1, 1, 1);
-}
-
-void PassMap::nextStage()
-{
-}
-
-void loadPassMap()
-{
-	passMap = (PassMap*)calloc(sizeof(PassMap), 1);
-	passMap->passDt = passMap->_passDt = PASS_DT;
-	passMap->mapNumber = passMap->prevMapNumber = player->mapNumber;
-}
-
-void freePassMap()
-{
-	free(passMap);
 }
 
 //-----------------------------------------------------------
@@ -553,13 +304,14 @@ iImage* imgMiniMap;
 void refreshMiniMap(Texture* tex)
 {
 	fbo->bind(tex);
-	fbo->clear(1, 0, 0, 1);
+	fbo->clear(0, 0, 0, 0.2f);
 
 	setLineWidth(10);
 	for (int i = 0; i < TILE_TOTAL_NUM; i++)
 	{
-		if (maps[i]->tile[0] == 0)
+		if (maps[i]->tileIndex == -1)
 			continue;
+
 
 		iPoint p = iPointMake(TILE_Width * (i % TILE_TOTAL_SQRT), TILE_Height * (i / TILE_TOTAL_SQRT));
 		setRGBA(0, 0, 0, 1);
@@ -570,13 +322,16 @@ void refreshMiniMap(Texture* tex)
 
 		fillRect(p.x + 1, p.y + 1, TILE_Width - 2, TILE_Height - 2 , 10);
 
+		if (maps[i]->state == MapType_Boss)
+		{
+			setRGBA(1, 0, 0, 0.7f);
+			fillRect(p.x + 3, p.y + 3, TILE_Width - 6, TILE_Height - 6, 10);
+		}
 	}
 	setRGBA(1, 1, 1, 1);
 	setLineWidth(1);
 
 	fbo->unbind();
-
-
 }
 
 void createPopMiniMap()

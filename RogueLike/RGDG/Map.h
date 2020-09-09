@@ -41,6 +41,7 @@ public:
 	virtual ~MapObject();
 
 	virtual void paint(float dt, iPoint off) = 0;
+	virtual void drawShadow(float dt, iPoint off) = 0;
 	virtual void action(Object* obj) = 0;
 
 public:
@@ -62,6 +63,7 @@ public:
 	virtual ~MapObjectDoor();
 
 	virtual void paint(float dt, iPoint off);
+	virtual void drawShadow(float dt, iPoint off);
 	virtual void action(Object* obj);
 
 public:
@@ -77,6 +79,7 @@ public:
 	virtual ~MapObjectNextDoor();
 
 	virtual void paint(float dt, iPoint off);
+	virtual void drawShadow(float dt, iPoint off);
 	virtual void action(Object* obj);
 
 	static void setNextDoor(Object* obj);
@@ -93,6 +96,7 @@ public:
 	virtual ~MapObjectBarrel();
 
 	virtual void paint(float dt, iPoint off);
+	virtual void drawShadow(float dt, iPoint off);
 	virtual void action(Object* obj);
 
 public:
@@ -108,6 +112,7 @@ public:
 	virtual ~MapObjectItemBox();
 
 	virtual void paint(float dt, iPoint off);
+	virtual void drawShadow(float dt, iPoint off);
 	virtual void action(Object* obj);
 
 public:
@@ -115,6 +120,8 @@ public:
 };
 
 
-void loadMap(bool loadFile = false);
+void loadMap();
+void createMap(bool readFile); //true : read, false : newCreate
+void createMapImage();
 void freeMap();
 void drawMap(float dt);

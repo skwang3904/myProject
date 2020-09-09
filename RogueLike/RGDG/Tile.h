@@ -9,9 +9,9 @@
 #define TILE_CENTER iPointMake( TILE_NUM_X * TILE_Width / 2, \
 								  TILE_NUM_Y * TILE_Height / 2)
 
-#define TILE_CONNECT_NUM	9
-#define TILE_TOTAL_NUM		9 // 제곱수
-#define TILE_TOTAL_SQRT		3
+#define TILE_CONNECT_NUM	10
+#define TILE_TOTAL_NUM		25 // 제곱수
+#define TILE_TOTAL_SQRT		5
 
 #define TILE_MOVE       1
 #define TILE_WALL       2

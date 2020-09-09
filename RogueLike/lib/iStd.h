@@ -30,8 +30,8 @@
 
 extern int monitorSizeW, monitorSizeH;
 extern iSize devSize;
-#define DEVSIZE_WIDTH 1920
-#define DEVSIZE_HEIGHT 1080
+#define DEVSIZE_WIDTH 1280
+#define DEVSIZE_HEIGHT 960
 extern iRect viewport;
 
 void loadLib(HDC hDC);

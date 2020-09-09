@@ -17,6 +17,7 @@ enum MonsterState {
 	monster_hurt,
 	monster_death,
 };
+
 #if 0 // 이미지 번호
 [0] = Idle;
 [1] = Move;
@@ -36,6 +37,7 @@ public:
 	virtual ~Monster();
 
 	virtual void paint(float dt, iPoint off) = 0;
+	virtual void drawShadow(float dt, iPoint off);
 	virtual void action(Object* obj) = 0; // hurt
 
 	virtual void actionIdle(float dt) = 0;
@@ -47,7 +49,6 @@ public:
 
 	void showHPbar();
 	void drawHPbar(float dt, iPoint off);
-	void drawShadow(float dt, iPoint off);
 
 	void initOtherAct(int index);
 	void cbMonsterSetIdle();
@@ -74,6 +75,10 @@ public:
 	uint8 reverse;
 
 	float showHpDt, _showHpDt;
+
+	int itemTypeNum;
+	int itemNum;
+	int* itemIndex;
 };
 extern Monster** monster;
 extern int monsterNum;
@@ -87,6 +92,7 @@ public:
 	virtual ~GolemNomal();
 
 	virtual void paint(float dt, iPoint off);
+	virtual void drawShadow(float dt, iPoint off);
 	virtual void action(Object* obj);
 
 	virtual void actionIdle(float dt);
@@ -110,6 +116,7 @@ public:
 	virtual ~GolemElete();
 
 	virtual void paint(float dt, iPoint off);
+	virtual void drawShadow(float dt, iPoint off) ;
 	virtual void action(Object* obj) = 0;
 
 	virtual void actionIdle(float dt) = 0;
@@ -133,6 +140,7 @@ public:
 	virtual ~GolemBoss();
 
 	virtual void paint(float dt, iPoint off);
+	virtual void drawShadow(float dt, iPoint off) ;
 	virtual void action(Object* obj);
 
 	virtual void actionIdle(float dt);

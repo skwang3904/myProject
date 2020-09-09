@@ -47,34 +47,35 @@ struct MonsterImageInfo
 */
 
 // [ MONSTER_IMG_NUM 6 ] in "Monster.h"
+
 MonsterImageInfo golemNomalImage[6] = {
 	{ "assets/monster/golem1/Idle Blink/Golem_01_Idle Blinking_%d.png",
-		12, 0.08f, 0, false },
+		12, 0.08f, 0, false, iSizeMake(200, 150) },
 	{ "assets/monster/golem1/Walking/Golem_01_Walking_%d.png",
-		18, 0.08f, 0, false },
+		18, 0.08f, 0, false, iSizeMake(200, 150) },
 	{ "assets/monster/golem1/Attacking/Golem_01_Attacking_%d.png",
-		12, monsterInfo[GOLEM_NOMAL]._attackSpeed / 12.0f, 1, false },
-	{ "assets/monster/golem1/Idle Blink/Golem_01_Idle Blinking_%d.png",
-		1, 0.08f, 1, false },
+		12, monsterInfo[MT_golemNomal]._attackSpeed / 12.0f, 1, false, iSizeMake(200, 150) },
+	{ "assets/monster/golem1/Attacking/Golem_01_Attacking_%d.png",
+		12, monsterInfo[MT_golemNomal]._attackSpeed / 12.0f, 1, false, iSizeMake(200, 150) },
 	{ "assets/monster/golem1/Hurt/Golem_01_Hurt_%03d.png",
-		12, monsterInfo[GOLEM_NOMAL]._actionDt / 12.0f, 1, false },
+		12, monsterInfo[MT_golemNomal]._actionDt / 12.0f, 1, false, iSizeMake(200, 150) },
 	{ "assets/monster/golem1/Dying/Golem_01_Dying_%d.png",
-		15, 0.08f, 1, true},
+		15, 0.08f, 1, true, iSizeMake(200, 150)},
 };
 
 MonsterImageInfo golemBossImage[6] = {
 	{ "assets/monster/golemBoss/golemBoss - idle/golem-idle-%c-%02d.png",
-		20, 0.1f, 0, false},
+		20, 0.1f, 0, false, iSizeMake(378, 300) },
 	{ "assets/monster/golemBoss/golemBoss - move/golem-run-%c-%02d.png",
-		24, 0.1f, 0, false},
+		24, 0.1f, 0, false, iSizeMake(378, 300) },
 	{ "assets/monster/golemBoss/golemBoss - attack/golem-attack-%c-%02d.png",
-		28, monsterInfo[GOLEM_BOSS]._attackSpeed / (28 / 4), 1, false},
+		28, monsterInfo[MT_golemBoss]._attackSpeed / (28 / 4), 1, false, iSizeMake(378, 300) },
 	{ "assets/monster/golemBoss/golemBoss - attack/golem-attack-%c-%02d.png",
-		28, monsterInfo[GOLEM_BOSS]._attackSpeed / (28 / 4), 1, false},
+		28, monsterInfo[MT_golemBoss]._attackSpeed / (28 / 4), 1, false, iSizeMake(378, 300) },
 	{ "assets/monster/golemBoss/golemBoss - hurt/golem-hurt-%c-%02d.png",
-		12, monsterInfo[GOLEM_BOSS]._actionDt / (12 / 4), 1, false},
+		12, monsterInfo[MT_golemBoss]._actionDt / (12 / 4), 1, false, iSizeMake(378, 300) },
 	{ "assets/monster/golemBoss/golemBoss - death/golem-death-%c-%02d.png",
-		36, 0.15f, 1, true},
+		36, 0.15f, 1, true, iSizeMake(378, 300) },
 };
 
 //----------------------------------------------------------------
@@ -88,4 +89,21 @@ WeaponInfo weaponInfo[2] = {
 		50.0f, 0.5f, 1.0f,
 		0.0f, 100.0f
 	},
+};
+
+//----------------------------------------------------------------
+
+ItemInfo itemInfo[3] = {
+	{ 5.0f, 2.0f},
+	{ 10.0f, 2.0f},
+	{ 20.0f, 2.0f},
+};
+
+ItemImageInfo itemImageInfo[3] = {
+	{ "assets/item/PotionSmall.png",
+		1, 0.08f, iSizeMake(64, 64) },
+	{ "assets/item/PotionMiddle.png",
+		1, 0.08f, iSizeMake(64, 64) },
+	{ "assets/item/PotionLarge.png",
+		1, 0.08f, iSizeMake(64, 64) },
 };

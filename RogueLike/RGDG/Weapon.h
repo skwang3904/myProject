@@ -11,7 +11,9 @@ public:
 	virtual ~Weapon();
 
 	virtual void paint(float dt, iPoint off) = 0;
+	virtual void drawShadow(float dt, iPoint off) = 0;
 	virtual void action(Object* obj) = 0;
+
 	virtual bool attack(float dt) = 0;
 	virtual void setPosition() = 0;
 
@@ -42,6 +44,7 @@ public:
 	virtual ~Hammer();
 
 	virtual void paint(float dt, iPoint off);
+	virtual void drawShadow(float dt, iPoint off);
 	virtual void action(Object* obj);
 
 	virtual bool attack(float dt);
@@ -60,6 +63,7 @@ public:
 	virtual ~Spear();
 
 	virtual void paint(float dt, iPoint off);
+	virtual void drawShadow(float dt, iPoint off);
 	virtual void action(Object* obj);
 
 	virtual bool attack(float dt);

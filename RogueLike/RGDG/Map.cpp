@@ -1,7 +1,6 @@
 #include "Map.h"
 
 #include "Tile.h"
-#include "Proc.h"
 #include "PlayerChar.h"
 #include "Monster.h"
 
@@ -17,99 +16,106 @@ ConnectTile ct[TILE_TOTAL_NUM];
 void connectCheck(ConnectTile* c, int& count);
 void pathTileCheck(ConnectTile* c);
 
-MapTile** maps;
+MapTile** maps = NULL;
 iPoint displayCenterPos;
 
-void createMap()
+void createMap(bool readFile)
 {
-	int i, j;
-	bool randomOffCheck[TILE_TOTAL_NUM];
-	int m[TILE_CONNECT_NUM];
-	int conectCount = 0;
-	while (conectCount < TILE_CONNECT_NUM)
+	int i, j, num = TILE_TOTAL_NUM;
+
+	if (readFile)
 	{
+		for (i = 0; i < num; i++)
+		{
+			maps[i]->state = (MapType)st->mapData[i].state;
+			int index = st->mapData[i].tileIndex;
+			if (index != -1)
+				memcpy(maps[i]->tile, tileWay[index], sizeof(int8) * TILE_NUM_X * TILE_NUM_Y);
+			maps[i]->tileIndex = index;
+		}
+	}
+	else
+	{
+		bool randomOffCheck[TILE_TOTAL_NUM];
+		int m[TILE_CONNECT_NUM];
+		int conectCount = 0;
+		while (conectCount < TILE_CONNECT_NUM)
+		{
+			for (i = 0; i < TILE_TOTAL_NUM; i++)
+			{
+				MapTile* m = maps[i];
+				memset(m->tile, 0x00, sizeof(int8) * TILE_NUM_X * TILE_NUM_Y);
+				m->state = MapType_Nomal;
+
+				ConnectTile* c = &ct[i];
+				c->index = i;
+				c->value = false;
+				c->visit = false;
+				c->tileOff = m->tileOff;
+			}
+
+			memset(randomOffCheck, false, sizeof(bool) * TILE_TOTAL_NUM);
+			memset(m, -1, sizeof(int) * TILE_CONNECT_NUM);
+			for (i = 0; i < TILE_CONNECT_NUM; i++)
+			{
+				if (m[i] == -1 || randomOffCheck[m[i]])
+					m[i] = random() % TILE_TOTAL_NUM;
+
+				if (randomOffCheck[m[i]] == false)
+					randomOffCheck[m[i]] = true;
+				else
+					i--;
+			}
+
+			for (i = 0; i < TILE_CONNECT_NUM; i++)
+			{
+				memcpy(maps[m[i]]->tile, tileWay[1], sizeof(int8) * TILE_NUM_X * TILE_NUM_Y);
+				ConnectTile* c = &ct[m[i]];
+				c->value = true;
+			}
+
+			for (i = 0; i < TILE_TOTAL_NUM; i++)
+			{
+				ConnectTile* c = &ct[i];
+				connectCheck(c, conectCount);
+
+				if (conectCount == TILE_CONNECT_NUM)
+					break;
+				else if (conectCount > TILE_CONNECT_NUM)
+					printf("conectCount error\n");
+
+				for (j = 0; j < TILE_TOTAL_NUM; j++)
+					c->visit = false;
+				conectCount = 0;
+			}
+
+		}
+
 		for (i = 0; i < TILE_TOTAL_NUM; i++)
+		{
+			ConnectTile* c = &ct[i];
+			pathTileCheck(c);
+		}
+
+		for (i = 0; i < TILE_TOTAL_NUM; i++) // 임시
 		{
 			MapTile* m = maps[i];
-			memset(m->tile, 0x00, sizeof(int8) * TILE_NUM_X * TILE_NUM_Y);
-			m->state = MapType_Nomal;
-
-			ConnectTile* c = &ct[i];
-			c->index = i;
-			c->value = false;
-			c->visit = false;
-			c->tileOff = m->tileOff;
-
-			st->mapData[i].tileIndex = -1;
-		}
-
-		memset(randomOffCheck, false, sizeof(bool) * TILE_TOTAL_NUM);
-		memset(m, -1, sizeof(int) * TILE_CONNECT_NUM);
-		for (i = 0; i < TILE_CONNECT_NUM; i++)
-		{
-			if (m[i] == -1 || randomOffCheck[m[i]])
-				m[i] = random() % TILE_TOTAL_NUM;
-
-			if (randomOffCheck[m[i]] == false)
-				randomOffCheck[m[i]] = true;
-			else
-				i--;
-		}
-
-		for (i = 0; i < TILE_CONNECT_NUM; i++)
-		{
-			memcpy(maps[m[i]]->tile, tileWay[1], sizeof(int8) * TILE_NUM_X * TILE_NUM_Y);
-			ConnectTile* c = &ct[m[i]];
-			c->value = true;
-		}
-
-		for (i = 0; i < TILE_TOTAL_NUM; i++)
-		{
-			ConnectTile* c = &ct[i];
-			connectCheck(c, conectCount);
-
-			if (conectCount == TILE_CONNECT_NUM)
+			if (m->tileIndex != -1)
+			{
+				m->state = MapType_ItemBox;
 				break;
-			else if (conectCount > TILE_CONNECT_NUM)
-				printf("conectCount error\n");
-
-			for (j = 0; j < TILE_TOTAL_NUM; j++)
-				c->visit = false;
-			conectCount = 0;
+			}
 		}
 
-	}
-
-	for (i = 0; i < TILE_TOTAL_NUM; i++)
-	{
-		ConnectTile* c = &ct[i];
-		pathTileCheck(c);
-	}
-
-	for (i = 0; i < TILE_TOTAL_NUM; i++) // 임시
-	{
-		MapTile* m = maps[i];
-		if (m->tile[0] != 0)
+		for (i = TILE_TOTAL_NUM - 1; i > -1; i--) // 임시
 		{
-			m->state = MapType_ItemBox;
-			break;
+			MapTile* m = maps[i];
+			if (m->tileIndex != -1)
+			{
+				m->state = MapType_Boss;
+				break;
+			}
 		}
-	}
-
-	for (i = TILE_TOTAL_NUM - 1; i > -1; i--) // 임시
-	{
-		MapTile* m = maps[i];
-		if (m->tile[0] != 0)
-		{
-			m->state = MapType_Boss;
-			break;
-		}
-	}
-
-	for (i = 0; i < TILE_TOTAL_NUM; i++)
-	{
-		st->mapData[i].state = maps[i]->state;
-		st->mapData[i].tileIndex = maps[i]->tileIndex;
 	}
 }
 
@@ -452,6 +458,10 @@ void MapObjectDoor::paint(float dt, iPoint off)
 	img->paint(dt, position + off);
 }
 
+void MapObjectDoor::drawShadow(float dt, iPoint off)
+{
+}
+
 void MapObjectDoor::action(Object* obj)
 {
 	PlayerChar* p = (PlayerChar*)obj;
@@ -550,6 +560,10 @@ void MapObjectNextDoor::paint(float dt, iPoint off)
 	img->paint(dt, position + off);
 }
 
+void MapObjectNextDoor::drawShadow(float dt, iPoint off)
+{
+}
+
 void MapObjectNextDoor::action(Object* obj)
 {
 	// 보스 죽엇을때 생성
@@ -638,6 +652,10 @@ void MapObjectBarrel::paint(float dt, iPoint off)
 	img->paint(dt, position + off);
 }
 
+void MapObjectBarrel::drawShadow(float dt, iPoint off)
+{
+}
+
 void MapObjectBarrel::action(Object* obj)
 {
 }
@@ -717,6 +735,10 @@ void MapObjectItemBox::paint(float dt, iPoint off)
 	img->paint(dt, position + off);
 }
 
+void MapObjectItemBox::drawShadow(float dt, iPoint off)
+{
+}
+
 void MapObjectItemBox::action(Object* obj)
 {
 	img->startAnimation();
@@ -725,8 +747,7 @@ void MapObjectItemBox::action(Object* obj)
 
 //----------------------------------------------------------------------------------
 
-void createMapImage();
-void loadMap(bool loadFile)
+void loadMap()
 {
 	int i, j, k, num = TILE_TOTAL_NUM;
 
@@ -750,24 +771,6 @@ void loadMap(bool loadFile)
 		maps[i]->tile = (int8*)calloc(sizeof(int8), TILE_NUM_X * TILE_NUM_Y);
 		maps[i]->tileOff = tileOffSet[i];
 	}
-
-	if (loadFile)
-	{
-		for (i = 0; i < num; i++)
-		{
-			maps[i]->state = (MapType)st->mapData[i].state;
-			int index = st->mapData[i].tileIndex;
-			if (index != -1)
-				memcpy(maps[i]->tile, tileWay[index], sizeof(int8) * TILE_NUM_X * TILE_NUM_Y);
-		}
-	}
-	else
-	{
-		createMap();
-		saveStage();
-	}
-
-	createMapImage();
 }
 
 void freeMap()
@@ -836,31 +839,34 @@ void createMapImage()
 	iSize size = iSizeMake(TILE_NUM_X * TILE_Width, TILE_NUM_Y * TILE_Height);
 	for (i = 0; i < num; i++)
 	{
-		if (maps[i]->tile[0] != 0)
+		if (maps[i]->tileIndex == -1) continue;
+
+		Texture* tex = createTexture(size.width, size.height);
+		iImage* img = new iImage();
+
+		fbo->bind(tex);
+		for (j = 0; j < t; j++)
 		{
-			Texture* tex = createTexture(size.width, size.height);
-			iImage* img = new iImage();
+			int8 n = maps[i]->tile[j];
+			if (n == TILE_MOVE)			setRGBA(MOVETILE_RGBA);
+			else if (n == TILE_WALL)	setRGBA(WALLTILE_RGBA);
+			else if (n == TILE_FALL)	setRGBA(FALLTILE_RGBA);
+			else						setRGBA(1, 1, 1, 1);
 
-			fbo->bind(tex);
-			for (j = 0; j < t; j++)
-			{
-				int8 n = maps[i]->tile[j];
-				if (n == TILE_MOVE)			setRGBA(MOVETILE_RGBA);
-				else if (n == TILE_WALL)	setRGBA(WALLTILE_RGBA);
-				else if (n == TILE_FALL)	setRGBA(FALLTILE_RGBA);
-				else						setRGBA(1, 1, 1, 1);
-
-				fillRect(TILE_Width * (j % TILE_NUM_X), TILE_Height * (j / TILE_NUM_X),
-					TILE_Width, TILE_Height);
-			}
-			fbo->unbind();
-
-			img->addObject(tex);
-			freeImage(tex);
-
-			img->reverse = REVERSE_HEIGHT;
-			maps[i]->img = img;
+			fillRect(TILE_Width * (j % TILE_NUM_X), TILE_Height * (j / TILE_NUM_X),
+				TILE_Width, TILE_Height);
 		}
+		fbo->unbind();
+
+		img->addObject(tex);
+		freeImage(tex);
+
+		img->reverse = REVERSE_HEIGHT;
+
+		if (maps[i]->img)
+			delete maps[i]->img;
+		maps[i]->img = img;
+
 	}
 
 	//-----------------------------------------------------------------------------
@@ -885,12 +891,13 @@ void createMapImage()
 	bool check[4] = { true, true, true, true };
 	for (k = 0; k < num; k++)
 	{
+		MapTile* m = maps[k];
+		if (m->tileIndex == -1) continue;
 		for (i = 0; i < TILE_NUM_X; i++)
 		{
 			for (j = 0; j < TILE_NUM_Y; j++)
 			{
 				int tn = TILE_NUM_X * j + i;
-				MapTile* m = maps[k];
 				iPoint p = m->tileOff + iPointMake(TILE_Width * i, TILE_Height * j);
 
 				switch (m->tile[tn])

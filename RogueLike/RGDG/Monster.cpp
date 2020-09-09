@@ -2,13 +2,13 @@
 
 #include "Tile.h"
 #include "Map.h"
-#include "Proc.h"
 #include "ProcData.h"
 #include "PlayerChar.h"
+#include "Item.h"
 
 //---------------------------------------------------------------------------------------
 // monster parents class
-Monster** monster;
+Monster** monster = NULL;
 int monsterNum;
 
 Monster::Monster(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos)
@@ -35,6 +35,10 @@ Monster::Monster(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos
 	reverse = REVERSE_NONE;
 
 	showHpDt = _showHpDt = 0.0f;
+
+	itemTypeNum = 0;
+	itemNum = 0;
+	itemIndex = NULL;
 }
 
 Monster::~Monster()
@@ -102,6 +106,8 @@ void Monster::cbMonsterSetAliveFalse()
 	alive = false;
 
 	cbMethod = NULL;
+	//item drop
+	// tmp(itemIndex, itemNum);
 }
 
 void Monster::showHPbar()
@@ -131,22 +137,22 @@ void Monster::drawHPbar(float dt, iPoint p)
 
 //---------------------------------------------------------------------------------------
 // golemNomal
-int golemNomalNum;
 
 GolemNomal::GolemNomal(int index, int8 mapNum, iPoint pos) : Monster(index, mapNum, pos)
 {
 	int i, j;
 	iImage* img;
 	Texture* tex;
+	iSize size;
 
 	imgNum = MONSTER_IMG_NUM;
 	imgs = (iImage**)malloc(sizeof(iImage*) * imgNum);
-	iSize size = iSizeMake(200, 150);
+	
 	for (i = 0; i < imgNum; i++)
 	{
 		MonsterImageInfo* gni = &golemNomalImage[i];
 		img = new iImage();
-
+		size = gni->size;
 		for (j = 0; j < gni->imgNum; j++)
 		{
 			tex = createTexture(size.width, size.height);
@@ -173,9 +179,8 @@ GolemNomal::GolemNomal(int index, int8 mapNum, iPoint pos) : Monster(index, mapN
 	}
 
 	this->img = imgs[0];
-	mapNumber = mapNum;
 
-	position = maps[mapNumber]->tileOff + pos;
+	position = maps[mapNumber]->tileOff + position;
 	vector = iPointZero;
 
 	size = iSizeMake(this->img->tex->width, this->img->tex->height);
@@ -184,9 +189,8 @@ GolemNomal::GolemNomal(int index, int8 mapNum, iPoint pos) : Monster(index, mapN
 
 	alive = true;
 	state = monster_idle;
-	MonsterInfo* mi = &monsterInfo[GOLEM_NOMAL];
-	prevHp = 0.0f;
-	hp = _hp = mi->_hp;
+	MonsterInfo* mi = &monsterInfo[MT_golemNomal];
+	prevHp = hp = _hp = mi->_hp;
 	attackPoint = _attackPoint = mi->_attackPoint;
 	attackSpeed = 0.0f;
 	_attackSpeed = mi->_attackSpeed;
@@ -206,6 +210,13 @@ GolemNomal::GolemNomal(int index, int8 mapNum, iPoint pos) : Monster(index, mapN
 
 	showHpDt = 0.0f;
 	_showHpDt = 2.0f;
+
+
+	itemTypeNum = 2;
+	itemIndex = (int*)calloc(sizeof(int), itemTypeNum);
+	for (i = 0; i < itemTypeNum; i++)
+		itemIndex[i] = random() % item_max;
+	itemNum = 1;
 }
 
 GolemNomal::~GolemNomal()
@@ -279,6 +290,10 @@ void GolemNomal::paint(float dt, iPoint off)
 		if (img->animation == false)
 			(this->*cbMethod)();
 	}
+}
+
+void GolemNomal::drawShadow(float dt, iPoint off)
+{
 }
 
 void GolemNomal::action(Object* obj)
@@ -396,20 +411,24 @@ void GolemElete::paint(float dt, iPoint off)
 {
 }
 
+void GolemElete::drawShadow(float dt, iPoint off)
+{
+}
+
 //---------------------------------------------------------------------------------------
 // golemBoss
-int golemBossNum;
-// #bug
+
 GolemBoss::GolemBoss(int index, int8 mapNum, iPoint pos) : Monster(index, mapNum, pos)
 {
 	int i, j;
 	iImage* img;
 	Texture* tex;
+	iSize size;
 
 	// 4 dir Image
 	imgNum = MONSTER_IMG_NUM * 4;
 	imgs = (iImage**)malloc(sizeof(iImage*) * imgNum);
-	iSize size = iSizeMake(378, 300);
+	
 	char c[4] = { 'l', 'r', 't', 'd' };
 	setRGBA(1, 1, 1, 1);
 	for (i = 0; i < imgNum; i++)
@@ -418,6 +437,7 @@ GolemBoss::GolemBoss(int index, int8 mapNum, iPoint pos) : Monster(index, mapNum
 
 		MonsterImageInfo* gbi = &golemBossImage[i / 4];
 		int num = gbi->imgNum / 4;
+		size = gbi->size;
 		for (j = 0; j < num; j++)
 		{
 			tex = createTexture(size.width, size.height);
@@ -443,9 +463,8 @@ GolemBoss::GolemBoss(int index, int8 mapNum, iPoint pos) : Monster(index, mapNum
 		imgs[i] = img;
 	}
 	this->img = imgs[0];
-	mapNumber = mapNum;
 
-	position = maps[mapNumber]->tileOff + pos;
+	position = maps[mapNumber]->tileOff + position;
 	vector = iPointZero;
 
 	size = iSizeMake(this->img->tex->width, this->img->tex->height);
@@ -454,9 +473,8 @@ GolemBoss::GolemBoss(int index, int8 mapNum, iPoint pos) : Monster(index, mapNum
 
 	alive = true;
 	state = monster_idle;
-	MonsterInfo* mi = &monsterInfo[GOLEM_BOSS];
-	prevHp = 0.0f;
-	hp = _hp = mi->_hp;
+	MonsterInfo* mi = &monsterInfo[MT_golemBoss];
+	prevHp = hp = _hp = mi->_hp;
 	attackPoint = _attackPoint = mi->_attackPoint;
 	//attackSpeed = 0.0f;
 	_attackSpeed = mi->_attackSpeed;
@@ -559,6 +577,10 @@ void GolemBoss::paint(float dt, iPoint off)
 		if (img->animation == false)
 			(this->*cbMethod)();
 	}
+}
+
+void GolemBoss::drawShadow(float dt, iPoint off)
+{
 }
 
 void GolemBoss::action(Object* obj)
@@ -673,8 +695,8 @@ void loadMonster()
 	monster = (Monster**)malloc(sizeof(Monster*) * 30);
 
 	int num = 0;
-	num += st->s_golemNomalNum;
-	num += st->s_golemBossNum;
+	num += st->actMonsterNum[MT_golemNomal];
+	num += st->actMonsterNum[MT_golemBoss];
 
 	int index = 0;
 	int8 mapNum = 0;
@@ -686,12 +708,12 @@ void loadMonster()
 		mapNum = md->mapNum;
 		pos = md->position;
 		
-		if (i < st->s_golemNomalNum)
+		if (i < st->actMonsterNum[MT_golemNomal])
 		{
 			monster[i] = new GolemNomal(index, mapNum, pos);
 			monsterNum++;
 		}
-		else if (i < st->s_golemNomalNum + st->s_golemBossNum)
+		else if (i < st->actMonsterNum[MT_golemNomal] + st->actMonsterNum[MT_golemBoss])
 		{
 			for (j = 0; j < TILE_TOTAL_NUM; j++)
 			{
@@ -710,7 +732,11 @@ void loadMonster()
 
 void freeMonster()
 {
-	for (int i = 0; i < monsterNum; i++)
+	int i, num = 0;
+	for (i = 0; i < MT_max; i++)
+		num += st->actMonsterNum[i];
+
+	for (i = 0; i < num; i++)
 		delete monster[i];
 	free(monster);
 }

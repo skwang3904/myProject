@@ -4,7 +4,6 @@
 
 #include "Tile.h"
 
-extern int stageNum;
 //----------------------------------------------------------------------------
 // class
 
@@ -81,9 +80,10 @@ struct WeaponData
 	int index;
 };
 
+#define END_STAGE 3
 struct Stage
 {
-	int currStage;
+	int stageNum;
 
 	MapData mapData[TILE_TOTAL_NUM];
 
@@ -129,7 +129,8 @@ struct PassMap
 	bool nextStage(float dt);
 };
 extern PassMap* passMap;
-#define PASS_DT 0.5f
+#define STAGE_LOADING_DT 2.0f
+#define PASS_DT 0.3f
 
 void loadPassMap();
 void freePassMap();

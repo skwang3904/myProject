@@ -148,18 +148,27 @@ void Item::addItem(Object* obj, iPoint dropPos)
 void loadItem()
 {
 	int i, j;
-	itemNum = 0;
-	item = (Item**)malloc(sizeof(Item*) * 300);
-
-	_item = (Item***)malloc(sizeof(Item**) * item_max);
-	for (i = 0; i < item_max; i++)
+	if (item == NULL)
 	{
-		_item[i] = (Item**)malloc(sizeof(Item*) * ITEM_CREATE_NUM);
+		itemNum = 0;
+		item = (Item**)malloc(sizeof(Item*) * 300);
 
-		for (j = 0; j < ITEM_CREATE_NUM; j++)
+		_item = (Item***)malloc(sizeof(Item**) * item_max);
+		for (i = 0; i < item_max; i++)
 		{
-			_item[i][j] = new Item(i, 0, iPointZero);
+			_item[i] = (Item**)malloc(sizeof(Item*) * ITEM_CREATE_NUM);
+
+			for (j = 0; j < ITEM_CREATE_NUM; j++)
+			{
+				_item[i][j] = new Item(i, 0, iPointZero);
+			}
 		}
+	}
+	else
+	{
+		for (i = 0; i < itemNum; i++)
+			item[i]->alive = false;
+		itemNum = 0;
 	}
 }
 

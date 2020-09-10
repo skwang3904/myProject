@@ -184,6 +184,10 @@ void PlayerChar::paint(float dt, iPoint off)
 
 		vector = mp;	
 	}
+	else
+	{
+		vector = mp;
+	}
 
 	iPoint half = iPointMake(img->tex->width / 2.0f, img->tex->height / 2.0f);
 	iPoint sp = position + half;
@@ -211,6 +215,7 @@ void PlayerChar::paint(float dt, iPoint off)
 	if (state != player_jump)
 		imgs[headNum]->paint(dt, p + iPointMake(4, -43));
 
+	// change weapon
 	if (getKeyDown(keyboard_i) && state < player_attack)
 	{
 		for (int i = 0; i < weaponNum; i++)
@@ -281,6 +286,11 @@ int PlayerChar::currWeaponIndex()
 void PlayerChar::cbPlayerSetIdle(iImage* me)
 {
 	player->state = player_idle;
+}
+
+void PlayerChar::cbPlayerSetAttack(iImage* me)
+{
+	player->state = player_attack;
 }
 
 //-------------------------------------------------------------------------------------

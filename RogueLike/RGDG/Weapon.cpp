@@ -185,7 +185,10 @@ bool Hammer::attack(float dt)
 	if (attacking == false)
 	{
 		if (getKeyStat(keyboard_j))
+		{
 			attacking = true;
+			PlayerChar::cbPlayerSetAttack(NULL);
+		}
 		return false;
 	}
 
@@ -235,6 +238,7 @@ bool Hammer::attack(float dt)
 		hit = false;
 		img->angle = holdAngle;
 		img->position = iPointZero;
+		PlayerChar::cbPlayerSetIdle(NULL);
 
 		return false;
 	}
@@ -386,7 +390,10 @@ bool Spear::attack(float dt)
 	if (attacking == false)
 	{
 		if (getKeyStat(keyboard_j))
+		{
 			attacking = true;
+			PlayerChar::cbPlayerSetAttack(NULL);
+		}
 		return false;
 	}
 
@@ -437,6 +444,7 @@ bool Spear::attack(float dt)
 		hit = false;
 		img->angle = holdAngle;
 		img->position = iPointZero;
+		PlayerChar::cbPlayerSetIdle(NULL);
 
 		return false;
 	}

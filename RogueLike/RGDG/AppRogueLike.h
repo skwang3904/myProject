@@ -5,6 +5,7 @@
 #include "../resource.h"
 
 extern iPoint cursor;
+
 void loadCursor();
 void freeCursor();
 void drawCursor(float dt);

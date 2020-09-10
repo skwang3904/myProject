@@ -14,5 +14,6 @@ void main()
 {
 	float d = length(gl_FragCoord.xy - center);
 	d = clamp(d - radius, 0.0, 1.0);
+
 	fragColor = vec4(color.rgb, color.a * d);
 }

@@ -556,7 +556,6 @@ void MapObjectNextDoor::paint(float dt, iPoint off)
 		alive = false;
 		printf("next stage\n");
 		passMap->startNextStage();
-		stageNum++;
 	}
 	
 	img->paint(dt, position + off);

@@ -5,8 +5,7 @@
 #include "PlayerChar.h"
 #include "Monster.h"
 #include "Weapon.h"
-
-int stageNum = 0;
+#include "Item.h"
 
 //----------------------------------------------------------------------------
 
@@ -48,7 +47,7 @@ void Stage::create()
 {
 	int i, j = 0, k, num = TILE_TOTAL_NUM;
 
-	currStage = 0;
+	stageNum = 0;
 	//maps
 	for (i = 0; i < num; i++)
 	{
@@ -98,10 +97,8 @@ void Stage::create()
 
 void Stage::setStageData()
 {
-
 	int i, j = 0, num = TILE_TOTAL_NUM;
 
-	currStage = stageNum;
 	for (i = 0; i < num; i++)
 	{
 		mapData[i].state = (int)maps[i]->state;
@@ -137,7 +134,6 @@ void Stage::setStageData()
 	pd->moveSpeed = p->moveSpeed;
 
 	// monsterInfo 
-
 	setMonsterData(actMap, TILE_CONNECT_NUM);
 
 	// weaponInfo
@@ -165,22 +161,24 @@ void Stage::setPlayerData(int* actMap, int connectNum)
 
 void Stage::setMonsterData(int* actMap, int connectNum)
 {
-	int i, j = 0, num = MT_max;
+	int i, j = 0, num = 0;
 	int* am = actMap;
 	int cnNum = connectNum;
 
 	if (monster)
 	{
-		for (i = 0; i < num; i++)
+		for (i = 0; i < MT_max; i++)
 			num += actMonsterNum[i];
 
 		for (i = 0; i < num; i++)
-			delete monster[i];
+			delete _monster[i];
+		free(_monster);
+		_monster = NULL;
 		free(monster);
 		monster = NULL;
 	}
 
-	for (i = 0; i < num; i++)
+	for (i = 0; i < MT_max; i++)
 	{
 		int n = 0;
 		switch (i)
@@ -212,7 +210,6 @@ void Stage::setMonsterData(int* actMap, int connectNum)
 			md->position = iPointMake(450, 450);
 		}
 	}
-
 }
 
 void loadStage()
@@ -251,10 +248,11 @@ void freeStage()
 PassMap* passMap;
 void PassMap::init()
 {
-	nextDt = _nextDt = 10.0f;
+	nextDt = _nextDt = STAGE_LOADING_DT;
+	center = iPointMake(devSize.width, devSize.height) / 2.0f;
+
 	passDt = _passDt = PASS_DT;
 	mapNumber = prevMapNumber = player->mapNumber;
-	center = iPointZero;
 }
 
 void PassMap::pass(int8 mapNum)
@@ -302,10 +300,19 @@ void PassMap::update(float dt)
 	setRGBA(1, 1, 1, 1);
 }
 
+extern bool runWnd;
 void PassMap::startNextStage()
 {
-	nextDt = 0.0f;
-	center = iPointMake(devSize.width,devSize.height);
+	st->stageNum++;
+	if (st->stageNum < END_STAGE)
+	{
+		nextDt = 0.0f;
+	}
+	else
+	{
+		MessageBox(NULL, TEXT("GAME CLEAR"), TEXT("Congratulation"), MB_OK);
+		runWnd = false;
+	}
 }
 
 bool PassMap::nextStage(float dt)
@@ -319,31 +326,46 @@ bool PassMap::nextStage(float dt)
 	{
 		nextDt += dt;
 		if (nextDt > nd)
+		{
 			nextDt = nd;
+			createMap();
+			st->setStageData();
+			createMapImage();
+			loadPlayerChar();
+			loadMonster();
+			loadItem();
+		}
 
 		d = 1.0f - nextDt / nd;
 	}
 	else if (nextDt == nd)
 	{
-		createMap();
-		st->setStageData();
-		createMapImage();
-		loadPlayerChar();
-		loadMonster();
-
-		//center = maps[player->mapNumber]->tileOff + DRAW_OFF;
 		nextDt += 0.00001f;
 	}
-	else if( nextDt < _nextDt * 2.0f)
+	else if( nextDt < _nextDt)
 	{
 		nextDt += dt;
 		if (nextDt > _nextDt)
+		{
 			nextDt = _nextDt;
-		d = nextDt / _nextDt;
-		printf("%.2f\n", dt);
+			init();
+		}
+		d = nextDt / nd - 1.0f;
 	}
 
-	fillCircle(center, (devSize.width / 2.0f) * (1.0f - d), true);
+#if 1
+	float len = iPointLength(iPointMake(devSize.width / 2.0f, devSize.height / 2.0f));
+	setRGBA(0, 0, 0, 1);
+	fillCircle(center, len * d, true);
+	setRGBA(1, 1, 1, 1);
+
+#else
+	//fillCircle(center, (devSize.width / 2.0f) * d, false);
+	setLineWidth(10);
+	drawCircle(center, (devSize.width / 2.0f) * d);
+	setLineWidth(1);
+
+#endif
 	return true;
 }
 

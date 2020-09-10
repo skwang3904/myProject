@@ -33,6 +33,7 @@ public:
 	int currWeaponIndex();
 
 	static void cbPlayerSetIdle(iImage* me);
+	static void cbPlayerSetAttack(iImage* me);
 
 public:
 	uint8 headNum;

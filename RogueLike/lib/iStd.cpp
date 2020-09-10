@@ -828,10 +828,11 @@ void fillCircle(float x, float y, float radius, bool reverse)
     GLuint proID = getProgramGdiID(reverse ? iGDIID_fillReverseCircle : iGDIID_fillCircle);
     glUseProgram(proID);
 
+    iSize size = devSize * reverse;
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     float p[4][4] = {
-        {-radius, radius, 0, 1},    {radius, radius, 0, 1},
-        {-radius, -radius, 0, 1},   {radius, -radius, 0, 1}
+        {-radius - size.width, radius + size.height, 0, 1},    {radius + size.width, radius + size.height, 0, 1},
+        {-radius - size.width, -radius - size.height, 0, 1},   {radius + size.width, -radius - size.height, 0, 1}
 
     };
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float) * 16, p);

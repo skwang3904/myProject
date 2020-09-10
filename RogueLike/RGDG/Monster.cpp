@@ -8,9 +8,12 @@
 
 //---------------------------------------------------------------------------------------
 // monster parents class
+Monster** _monster = NULL;
 Monster** monster = NULL;
 int monsterNum;
 
+iImage** golemNomal_Image = NULL;
+iImage** golemBoss_Image = NULL;
 Monster::Monster(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos)
 {
 	stateMethod[0] = &Monster::actionIdle;
@@ -138,35 +141,42 @@ GolemNomal::GolemNomal(int index, int8 mapNum, iPoint pos) : Monster(index, mapN
 
 	imgNum = MONSTER_IMG_NUM;
 	imgs = (iImage**)malloc(sizeof(iImage*) * imgNum);
+	if (golemNomal_Image == NULL)
+		golemNomal_Image = (iImage**)calloc(sizeof(iImage*), imgNum);
 	
 	for (i = 0; i < imgNum; i++)
 	{
-		MonsterImageInfo* gni = &golemNomalImage[i];
-		img = new iImage();
-		size = gni->size;
-		for (j = 0; j < gni->imgNum; j++)
+		if (golemNomal_Image[i] == NULL)
 		{
-			tex = createTexture(size.width, size.height);
+			MonsterImageInfo* gni = &golemNomalImage[i];
+			img = new iImage();
+			size = gni->size;
+			for (j = 0; j < gni->imgNum; j++)
+			{
+				tex = createTexture(size.width, size.height);
 
-			fbo->bind(tex);
-			Texture* t = createImage(gni->strPath, j);
-			drawImage(t, size.width / 2.0f, size.height / 2.0f, 
-				0,0, t->width, t->height,
-				VCENTER | HCENTER, size.width / t->width, size.height / t->height,
-				2, 0, REVERSE_HEIGHT);
-			freeImage(t);
-			fbo->unbind();
+				fbo->bind(tex);
+				Texture* t = createImage(gni->strPath, j);
+				drawImage(t, size.width / 2.0f, size.height / 2.0f,
+					0, 0, t->width, t->height,
+					VCENTER | HCENTER, size.width / t->width, size.height / t->height,
+					2, 0, REVERSE_HEIGHT);
+				freeImage(t);
+				fbo->unbind();
 
-			img->addObject(tex);
-			freeImage(tex);
+				img->addObject(tex);
+				freeImage(tex);
+			}
+
+			img->_aniDt = gni->aniDt;
+			img->_repeatNum = gni->repeatNum;
+			img->animation = (gni->repeatNum == 0 ? true : false);
+			img->lastFrame = gni->lastFrame;
+			img->position = iPointMake(0, -size.height * 0.33f);
+			golemNomal_Image[i] = img;
 		}
 
-		img->_aniDt = gni->aniDt;
-		img->_repeatNum = gni->repeatNum;
-		img->animation = (gni->repeatNum == 0 ? true : false);
-		img->lastFrame = gni->lastFrame;
-		img->position = iPointMake(0, -size.height * 0.33f);
-		imgs[i] = img;
+		imgs[i] = golemNomal_Image[i]->copy();
 	}
 
 	this->img = imgs[0];
@@ -423,40 +433,48 @@ GolemBoss::GolemBoss(int index, int8 mapNum, iPoint pos) : Monster(index, mapNum
 	// 4 dir Image
 	imgNum = MONSTER_IMG_NUM * 4;
 	imgs = (iImage**)malloc(sizeof(iImage*) * imgNum);
-	
+	if (golemBoss_Image == NULL)
+		golemBoss_Image = (iImage**)calloc(sizeof(iImage*), imgNum);
+
 	char c[4] = { 'l', 'r', 't', 'd' };
 	setRGBA(1, 1, 1, 1);
 	for (i = 0; i < imgNum; i++)
 	{
-		img = new iImage();
-
-		MonsterImageInfo* gbi = &golemBossImage[i / 4];
-		int num = gbi->imgNum / 4;
-		size = gbi->size;
-		for (j = 0; j < num; j++)
+		if (golemBoss_Image[i] == NULL)
 		{
-			tex = createTexture(size.width, size.height);
+			img = new iImage();
 
-			fbo->bind(tex);
-			Texture* t = createImage(gbi->strPath, c[i % 4], j);
-			drawImage(t, size.width / 2.0f, size.height / 2.0f,
-				0, 0, t->width, t->height,
-				VCENTER | HCENTER, size.width / t->width, size.height / t->height,
-				2, 0, REVERSE_HEIGHT);
-			freeImage(t);
-			fbo->unbind();
+			MonsterImageInfo* gbi = &golemBossImage[i / 4];
+			int num = gbi->imgNum / 4;
+			size = gbi->size;
+			for (j = 0; j < num; j++)
+			{
+				tex = createTexture(size.width, size.height);
 
-			img->addObject(tex);
-			freeImage(tex);
+				fbo->bind(tex);
+				Texture* t = createImage(gbi->strPath, c[i % 4], j);
+				drawImage(t, size.width / 2.0f, size.height / 2.0f,
+					0, 0, t->width, t->height,
+					VCENTER | HCENTER, size.width / t->width, size.height / t->height,
+					2, 0, REVERSE_HEIGHT);
+				freeImage(t);
+				fbo->unbind();
+
+				img->addObject(tex);
+				freeImage(tex);
+			}
+
+			img->_aniDt = gbi->aniDt;
+			img->_repeatNum = gbi->repeatNum;
+			img->animation = (gbi->repeatNum == 0 ? true : false);
+			img->lastFrame = gbi->lastFrame;
+			img->position = iPointMake(0, -size.height * 0.33f);
+			golemBoss_Image[i] = img;
 		}
 
-		img->_aniDt = gbi->aniDt;
-		img->_repeatNum = gbi->repeatNum;
-		img->animation = (gbi->repeatNum == 0 ? true : false);
-		img->lastFrame = gbi->lastFrame;
-		img->position = iPointMake(0, -size.height * 0.33f);
-		imgs[i] = img;
+		imgs[i] = golemBoss_Image[i]->copy();
 	}
+
 	this->img = imgs[0];
 
 	position = maps[mapNumber]->tileOff + position;
@@ -689,20 +707,19 @@ void GolemBoss::actionDeath(float dt)
 }
 
 //---------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------
-
 
 void loadMonster()
 {
 	int i, j;
 
-	monsterNum = 0;
-	monster = (Monster**)malloc(sizeof(Monster*) * 30);
-
 	int num = 0;
 	num += st->actMonsterNum[MT_golemNomal];
 	num += st->actMonsterNum[MT_golemBoss];
+
+	monsterNum = 0;
+	_monster = (Monster**)malloc(sizeof(Monster*) * num);
+	monster = (Monster**)malloc(sizeof(Monster*) * num);
+
 
 	int index = 0;
 	int8 mapNum = 0;
@@ -716,7 +733,8 @@ void loadMonster()
 		
 		if (i < st->actMonsterNum[MT_golemNomal])
 		{
-			monster[i] = new GolemNomal(index, mapNum, pos);
+			_monster[i] = new GolemNomal(index, mapNum, pos);
+			monster[monsterNum] = _monster[i];
 			monsterNum++;
 		}
 		else if (i < st->actMonsterNum[MT_golemNomal] + st->actMonsterNum[MT_golemBoss])
@@ -727,13 +745,29 @@ void loadMonster()
 				{
 					mapNum = j;
 					md->mapNum = j;
-					monster[i] = new GolemBoss(index, mapNum, pos);
+					_monster[i] = new GolemBoss(index, mapNum, pos);
+					monster[monsterNum] = _monster[i];
 					monsterNum++;
 					break;
 				}
 			}
 		}
 	}
+}
+
+void freeMonsterImage()
+{
+	int i, num;
+
+	num = MONSTER_IMG_NUM;
+	for (i = 0; i < num; i++)
+		delete golemNomal_Image[i];
+	free(golemNomal_Image);
+	
+	num = MONSTER_IMG_NUM * 4;
+	for (i = 0; i < num; i++)
+		delete golemBoss_Image[i];
+	free(golemBoss_Image);
 }
 
 void freeMonster()
@@ -743,8 +777,11 @@ void freeMonster()
 		num += st->actMonsterNum[i];
 
 	for (i = 0; i < num; i++)
-		delete monster[i];
+		delete _monster[i];
+	free(_monster);
 	free(monster);
+
+	freeMonsterImage();
 }
 
 void drawMonster(float dt)
@@ -762,3 +799,6 @@ void drawMonster(float dt)
 		}
 	}
 }
+
+//---------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------

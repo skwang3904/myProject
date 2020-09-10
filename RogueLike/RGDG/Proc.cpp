@@ -60,8 +60,7 @@ void drawProc(float dt)
 {
 	// if(loading)
 	// return;
-	if (passMap->nextStage(dt))
-		return;
+
 
 	float pop_dt = dt;
 	if (popProcMenu->bShow || 
@@ -69,7 +68,8 @@ void drawProc(float dt)
 		dt = 0.0f;
 
 	float pass_dt = dt;
-	if (passMap->passDt < passMap->_passDt)
+	if (passMap->passDt < passMap->_passDt ||
+		passMap->nextDt < passMap->_nextDt)
 		pass_dt = 0.0f;
 
 	drawMap(pass_dt);
@@ -87,6 +87,9 @@ void drawProc(float dt)
 	drawPopProcMenu(pop_dt);
 	drawPopGameOver(pop_dt);
 	//numberFont->drawFont()
+
+	if (passMap->nextStage(dt))
+		return;
 }
 
 void keyProc(iKeyState stat, iPoint point)
@@ -119,7 +122,7 @@ void createPopState()
 	{
 		img = new iImage();
 		iStrTex* st = new iStrTex(methodStState);
-		st->setString("%d", 0);
+		st->setString("%d\n%d", 0, 0);
 
 		img->addObject(st->tex);
 		img->position = iPointMake(10, 100);
@@ -135,11 +138,12 @@ Texture* methodStState(const char* str)
 	int lineNum;
 	char** line = iString::getStringLine(str, lineNum);
 	int hp = atoi(line[0]);
+	int stage = atoi(line[1]);
 
 	iString::freeStringLine(line, lineNum);
 
 	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(128, 64);
+	iSize size = iSizeMake(128, 128);
 	g->init(size);
 
 	setRGBA(0, 0, 0.2f, 1);
@@ -147,10 +151,12 @@ Texture* methodStState(const char* str)
 	setRGBA(1, 1, 1, 1);
 
 	setStringRGBA(1, 1, 1, 1);
-	setStringSize(30);
+	setStringSize(25);
 	setStringBorder(0);
-	g->drawString(10, size.height / 2.0f, VCENTER | LEFT, "HP: ");
-	g->drawString(size.width / 2.0f, size.height / 2.0f, VCENTER | LEFT, "%d", hp);
+	g->drawString(10, size.height * 0.33f, VCENTER | LEFT, "HP: ");
+	g->drawString(10, size.height * 0.67f, VCENTER | LEFT, "Stage: ");
+	g->drawString(size.width / 2.0f, size.height * 0.33f, VCENTER | LEFT, "%d", hp);
+	g->drawString(size.width - 25, size.height * 0.67f, VCENTER | HCENTER, "%d", stage);
 
 	setStringRGBA(1, 1, 1, 1);
 	setStringSize(1);
@@ -175,7 +181,7 @@ void drawPopState(float dt)
 {
 	popState->paint(dt);
 
-	stState->setString("%.0f", player->hp);
+	stState->setString("%.0f\n%d", player->hp, stageNum + 1);
 }
 
 bool keyPopState(iKeyState stat, iPoint point)

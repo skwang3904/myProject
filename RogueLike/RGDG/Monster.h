@@ -76,6 +76,7 @@ public:
 
 	float showHpDt, _showHpDt;
 };
+extern Monster** _monster;
 extern Monster** monster;
 extern int monsterNum;
 

@@ -818,14 +818,14 @@ void drawCircle(float x, float y, float radius)
 
 }
 
-void fillCircle(iPoint p, float radius)
+void fillCircle(iPoint p, float radius, bool reverse)
 {
-    fillCircle(p.x, p.y, radius);
+    fillCircle(p.x, p.y, radius, reverse);
 }
 
-void fillCircle(float x, float y, float radius)
+void fillCircle(float x, float y, float radius, bool reverse)
 {
-    GLuint proID = getProgramGdiID(iGDIID_fillCircle);
+    GLuint proID = getProgramGdiID(reverse ? iGDIID_fillReverseCircle : iGDIID_fillCircle);
     glUseProgram(proID);
 
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -1484,57 +1484,6 @@ void drawImage(Texture* tex, int x, int y,
 
 }
 
-
-// 임시 // 무기 히트박스용
-iRect getHitBoxRect(Texture* tex, int x, int y, 
-    int ix, int iy, int iw, int ih,
-    int anc, float ratX, float ratY, 
-    int xyz, int degree)
-{
-    int width = tex->width * ratX;
-    int height = tex->height * ratY;
-    switch (anc) {
-    case TOP | LEFT:                                         break;
-    case TOP | HCENTER:     x -= width / 2;                  break;
-    case TOP | RIGHT:       x -= width;                      break;
-    case VCENTER | LEFT:                    y -= height / 2; break;
-    case VCENTER | HCENTER: x -= width / 2; y -= height / 2; break;
-    case VCENTER | RIGHT:   x -= width;     y -= height / 2; break;
-    case BOTTOM | LEFT:                     y -= height;     break;
-    case BOTTOM | HCENTER:  x -= width / 2; y -= height;     break;
-    case BOTTOM | RIGHT:    x -= width;     y -= height;     break;
-    }
-
-    // 수정 필요
-#if 1
-    iRect rt = iRectMake(x, y , width, height);
-	if (degree == 90 || degree == 270)
-    {
-        rt = iRectMake(x  + width/2 - height / 2, y  - width/2 + height / 2, height, width);
-    }
-#else
-#endif
-#if 1
-	iPoint p1 = iPointMake(rt.origin.x + width/2, rt.origin.y);
-	iPoint p2 = iPointMake(0, rt.size.height);
-
-	if (degree == 90 || degree == 270)
-	{
-		p1 = iPointMake(rt.origin.x, (rt.origin.y + width / 2));
-		p2 = iPointMake(rt.size.width, 0);
-	}
-#else
-	iPoint p1 = iPointMake(rt.origin.x + width / 2, rt.origin.y );
-	iPoint p2 = iPointMake(0, rt.size.height);
-
-	iPoint p = iPointRotate(p2 + p1, p1, degree);
-#endif
-	setRGBA(0, 0, 1, 1);
-	drawLine(p1, p1 + p2);
-	setRGBA(1,1,1,1);
-    return rt;
-}
-
 void setClip(int x, int y, int width, int height)
 {
     if (x == 0 && y == 0 && width == 0 && height == 0)
@@ -1875,4 +1824,33 @@ void saveFile(const char* filePath, char* buf, int bufLength)
     fwrite(buf, bufLength, 1, pf);
 
     fclose(pf);
+}
+
+static iCriticalSection* instanceCS = NULL;
+iCriticalSection::iCriticalSection()
+{
+    InitializeCriticalSection(&cs);
+}
+
+iCriticalSection::~iCriticalSection()
+{
+    DeleteCriticalSection(&cs);
+    instanceCS = NULL;
+}
+
+iCriticalSection* iCriticalSection::instance()
+{
+    if (instanceCS == NULL)
+        instanceCS = new iCriticalSection();
+    return instanceCS;
+}
+
+void iCriticalSection::start()
+{
+    EnterCriticalSection(&cs);
+}
+
+void iCriticalSection::end()
+{
+    LeaveCriticalSection(&cs);
 }

@@ -31,14 +31,19 @@ struct MonsterInfo
 	float _hp;
 	float _attackPoint;
 	float _attackSpeed;
+	float _actionDt;
+	float moveSpeed;
+
 	float _attackDt; // 공격 후 이 시간 이후 데미지판정
 	float _attackDelay;
-	float _actionDt;
-
-	float moveSpeed;
 	float lookDistance;
 	float meleeDistance;
 	float rangeDistance;
+
+	int itemDropNum;
+	int itemTypeKindNum;
+	int itemTypeKind[5];
+
 };
 extern MonsterInfo monsterInfo[3];
 

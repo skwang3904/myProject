@@ -22,32 +22,59 @@ PlayerImageInfo playerImageInfo[5] = {
 
 MonsterInfo monsterInfo[3] = {
 	{	//GOLEM_NOMAL
-		100.0f, 5.0f, 1.5f, 0.8f, 0.5f, 1.0f,
-		100.0f, 300.0f, 50.0f, 100.0f 
+		100.0f,
+		5.0f, 
+		1.5f, 
+		1.0f, 
+		100.0f,
+
+		0.8f, 
+		0.5f, 
+		300.0f, 
+		50.0f,
+		100.0f,
+
+		2, 
+		2, 
+		{0, 1}
 	},
 	{	//GOLEM_ELETE
-		150.0f, 7.0f, 1.5f, 0.8f, 0.5f, 1.0f,
-		150.0f, 300.0f, 50.0f, 100.0f
+		150.0f,
+		10.0f,
+		1.5f,
+		1.0f,
+		150.0f,
+
+		0.8f,
+		0.5f,
+		300.0f,
+		50.0f,
+		100.0f,
+
+		2,
+		2,
+		{0, 1}
 	},
 	{	//GOLEM_BOSS
-		200.0f, 10.0f, 1.0f, 0.6f, 0.3f, 1.0f,
-		200.0f, 300.0f, 100.0f, 150.0f
+		200.0f,
+		20.0f,
+		1.5f,
+		1.0f,
+		200.0f,
+
+		0.8f,
+		0.5f,
+		300.0f,
+		100.0f,
+		150.0f,
+
+		2,
+		2,
+		{1, 2}
 	},
 };
 
-/*
-struct MonsterImageInfo
-{
-	const char* strPath;
-	int imgNum;
-	float aniDt;
-	int repeatNum;
-	bool lastFrame;
-};
-*/
-
 // [ MONSTER_IMG_NUM 6 ] in "Monster.h"
-
 MonsterImageInfo golemNomalImage[6] = {
 	{ "assets/monster/golem1/Idle Blink/Golem_01_Idle Blinking_%d.png",
 		12, 0.08f, 0, false, iSizeMake(200, 150) },

@@ -6,8 +6,14 @@
 
 #define MONSTER_IMG_NUM		6
 
-#define GOLEM_NOMAL_NUM		2
-#define GOLEM_BOSS_NUM		1
+#if 0 // 이미지 번호
+[0] = Idle;
+[1] = Move;
+[2] = MeleeAttack;
+[3] = RangeAttack;
+[4] = Hurt;
+[5] = Death;
+#endif
 
 enum MonsterState {
 	monster_idle = 0,
@@ -17,15 +23,6 @@ enum MonsterState {
 	monster_hurt,
 	monster_death,
 };
-
-#if 0 // 이미지 번호
-[0] = Idle;
-[1] = Move;
-[2] = MeleeAttack;
-[3] = RangeAttack;
-[4] = Hurt;
-[5] = Death;
-#endif
 
 class Monster;
 typedef void (Monster::*CBMonster_Method)();
@@ -37,7 +34,7 @@ public:
 	virtual ~Monster();
 
 	virtual void paint(float dt, iPoint off) = 0;
-	virtual void drawShadow(float dt, iPoint off);
+	virtual void drawShadow(float dt, iPoint off) = 0;
 	virtual void action(Object* obj) = 0; // hurt
 
 	virtual void actionIdle(float dt) = 0;
@@ -66,19 +63,18 @@ public:
 	MonsterState state;
 	float attackDt, _attackDt;
 	float attackDelay, _attackDelay;
-
 	float lookDistance;
 	float meleeDistance;
 	float rangeDistance;
 	
+	int itemDropNum;
+	int itemTypeKindNum;
+	int itemTypeKind[5];
+
 	float distance;
 	uint8 reverse;
 
 	float showHpDt, _showHpDt;
-
-	int itemTypeNum;
-	int itemNum;
-	int* itemIndex;
 };
 extern Monster** monster;
 extern int monsterNum;

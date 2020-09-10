@@ -46,6 +46,7 @@ void createMap(bool readFile)
 				MapTile* m = maps[i];
 				memset(m->tile, 0x00, sizeof(int8) * TILE_NUM_X * TILE_NUM_Y);
 				m->state = MapType_Nomal;
+				m->tileIndex = -1;
 
 				ConnectTile* c = &ct[i];
 				c->index = i;
@@ -554,6 +555,7 @@ void MapObjectNextDoor::paint(float dt, iPoint off)
 		// next stage
 		alive = false;
 		printf("next stage\n");
+		passMap->startNextStage();
 		stageNum++;
 	}
 	
@@ -567,6 +569,8 @@ void MapObjectNextDoor::drawShadow(float dt, iPoint off)
 void MapObjectNextDoor::action(Object* obj)
 {
 	// 보스 죽엇을때 생성
+	mapNumber = obj->mapNumber;
+
 	alive = true;
 	position = obj->position;
 	touchRect = iRectMake(position.x, position.y, img->tex->width, img->tex->height);
@@ -954,7 +958,7 @@ void createMapImage()
 		}
 
 		memset(check, true, sizeof(bool) * 4);
-				}
+	}
 
 	mapObj[mapObjNum] = new MapObjectNextDoor(0, 0, iPointZero, 0);
 	mapObjNum++;

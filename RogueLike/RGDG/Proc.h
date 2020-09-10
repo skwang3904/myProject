@@ -39,7 +39,6 @@ function key or mouse or number key
 boss kill
 
 #endif
-
 //-----------------------------------------------------------
 // UI
 void createPopState();

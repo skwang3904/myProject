@@ -33,8 +33,6 @@ void loadProc()
 	showPopProcButton(true);
 	showPopMiniMap(true);
 	showPopInven(true);
-
-
 }
 
 void freeProc()
@@ -56,11 +54,15 @@ void freeProc()
 	freePopInven();
 	freePopProcMenu();
 	freePopGameOver();
-
 }
 
 void drawProc(float dt)
 {
+	// if(loading)
+	// return;
+	if (passMap->nextStage(dt))
+		return;
+
 	float pop_dt = dt;
 	if (popProcMenu->bShow || 
 		popGameOver->bShow)

@@ -114,14 +114,19 @@ void freeStage();
 
 struct PassMap
 {
+	float nextDt, _nextDt;
+	iPoint center;
+
 	float passDt, _passDt;
 	int8 prevMapNumber;
 	int8 mapNumber;
 
+	void init();
 	void pass(int8 mapNum);
 	void update(float dt);
 
-	void nextStage();
+	void startNextStage();
+	bool nextStage(float dt);
 };
 extern PassMap* passMap;
 #define PASS_DT 0.5f

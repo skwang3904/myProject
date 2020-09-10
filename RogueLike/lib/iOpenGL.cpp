@@ -194,7 +194,7 @@ void loadShader()
 		const char* strGdiList[iGDIID_Max] = {
 			"drawLine",
 			"drawRect","fillRect",
-			"drawCircle","fillCircle",
+			"drawCircle","fillCircle", "fillReverseCircle",
 			"drawEllipse","fillEllipse",
 		};
 

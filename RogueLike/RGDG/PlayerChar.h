@@ -24,7 +24,7 @@ public:
 	virtual void drawShadow(float dt, iPoint off);
 	virtual void action(Object* obj);
 
-	void initData();
+	void setNewStage(int index, int8 mapNum, iPoint pos);
 
 	void addWeapon(void* weapon);
 	void removeCurrWeapon();

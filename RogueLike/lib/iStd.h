@@ -123,8 +123,9 @@ void fillRect(float x, float y, float width, float height, float radius = 0.0f);
 
 void drawCircle(iPoint p, float radius);
 void drawCircle(float x, float y, float radius);
-void fillCircle(iPoint p, float radius);
-void fillCircle(float x, float y, float radius);
+void fillCircle(iPoint p, float radius, bool reverse = false);
+void fillCircle(float x, float y, float radius, bool reverse = false);
+
 
 void drawEllipse(float x, float y, float width, float height);
 void fillEllipse(float x, float y, float width, float height);
@@ -147,10 +148,6 @@ void drawImage(Texture* tex, int x, int y,
     int ix, int iy, int iw, int ih, int anc,
     float ratX, float ratY, int xyz, float degree,
     int reverse=REVERSE_NONE);
-
-iRect getHitBoxRect(Texture* tex, int x, int y,
-    int ix, int iy, int iw, int ih, int anc,
-    float ratX, float ratY, int xyz, int degree);
 
 void setClip(int x, int y, int width, int height);
 void setClip(iRect rect);
@@ -185,3 +182,18 @@ bool containRect(iRect src, iRect dst);
 
 char* loadFile(const char* filePath, int& length);
 void saveFile(const char* filePath, char* buf, int bufLength);
+
+class iCriticalSection
+{
+private:
+    iCriticalSection();
+public:
+    virtual ~iCriticalSection();
+    static iCriticalSection* instance();
+
+    void start();
+    void end();
+
+private:
+    CRITICAL_SECTION cs;
+};

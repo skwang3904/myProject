@@ -36,22 +36,13 @@ Monster::Monster(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos
 
 	showHpDt = _showHpDt = 0.0f;
 
-	itemTypeNum = 0;
-	itemNum = 0;
-	itemIndex = NULL;
+	itemDropNum = 0;
+	itemTypeKindNum = 0;
+	memset(itemTypeKind, 0x00, sizeof(itemTypeKind));
 }
 
 Monster::~Monster()
 {
-}
-
-void Monster::drawShadow(float dt, iPoint off)
-{
-	iSize size = iSizeMake(img->tex->width, img->tex->height);
-	iPoint p = position + iPointMake(size.width / 2.0f, size.height * 0.6f) + off;
-	setRGBA(0, 0, 0, 0.3f);
-	fillEllipse(p.x, p.y, size.width * 0.5f, size.height * 0.25f);
-	setRGBA(1, 1, 1, 1);
 }
 
 void Monster::initOtherAct(int index)
@@ -205,18 +196,16 @@ GolemNomal::GolemNomal(int index, int8 mapNum, iPoint pos) : Monster(index, mapN
 	meleeDistance = mi->meleeDistance;
 	rangeDistance = mi->rangeDistance;
 
+	itemDropNum = mi->itemDropNum;
+	itemTypeKindNum = mi->itemTypeKindNum;
+	for (i = 0; i < itemTypeKindNum; i++)
+		itemTypeKind[i] = mi->itemTypeKind[i];
+
 	distance = 0.0f;
 	reverse = REVERSE_NONE;
 
 	showHpDt = 0.0f;
 	_showHpDt = 2.0f;
-
-
-	itemTypeNum = 2;
-	itemIndex = (int*)calloc(sizeof(int), itemTypeNum);
-	for (i = 0; i < itemTypeNum; i++)
-		itemIndex[i] = random() % item_max;
-	itemNum = 1;
 }
 
 GolemNomal::~GolemNomal()
@@ -294,6 +283,11 @@ void GolemNomal::paint(float dt, iPoint off)
 
 void GolemNomal::drawShadow(float dt, iPoint off)
 {
+	iSize size = iSizeMake(img->tex->width, img->tex->height);
+	iPoint p = position + iPointMake(size.width / 2.0f, size.height * 0.6f) + off;
+	setRGBA(0, 0, 0, 0.3f);
+	fillEllipse(p.x, p.y, size.width * 0.5f, size.height * 0.25f);
+	setRGBA(1, 1, 1, 1);
 }
 
 void GolemNomal::action(Object* obj)
@@ -394,6 +388,7 @@ void GolemNomal::actionDeath(float dt)
 	{
 		img->startAnimation();
 		cbMethod = &Monster::cbMonsterSetAliveFalse;
+		dropMonsterItem(this);
 	}
 }
 
@@ -489,6 +484,11 @@ GolemBoss::GolemBoss(int index, int8 mapNum, iPoint pos) : Monster(index, mapNum
 	meleeDistance = mi->meleeDistance;
 	rangeDistance = mi->rangeDistance;
 
+	itemDropNum = mi->itemDropNum;
+	itemTypeKindNum = mi->itemTypeKindNum;
+	for (i = 0; i < itemTypeKindNum; i++)
+		itemTypeKind[i] = mi->itemTypeKind[i];
+
 	distance = 0.0f;
 	reverse = REVERSE_NONE;
 
@@ -581,6 +581,11 @@ void GolemBoss::paint(float dt, iPoint off)
 
 void GolemBoss::drawShadow(float dt, iPoint off)
 {
+	iSize size = iSizeMake(img->tex->width, img->tex->height);
+	iPoint p = position + iPointMake(size.width / 2.0f, size.height * 0.6f) + off;
+	setRGBA(0, 0, 0, 0.3f);
+	fillEllipse(p.x, p.y, size.width * 0.5f, size.height * 0.25f);
+	setRGBA(1, 1, 1, 1);
 }
 
 void GolemBoss::action(Object* obj)
@@ -679,6 +684,7 @@ void GolemBoss::actionDeath(float dt)
 		img->startAnimation();
 		cbMethod = &Monster::cbMonsterSetAliveFalse;
 		MapObjectNextDoor::setNextDoor(this);
+		dropMonsterItem(this);
 	}
 }
 

@@ -34,6 +34,7 @@ enum iGDIID{
 	iGDIID_fillRect,
 	iGDIID_drawCircle,
 	iGDIID_fillCircle,
+	iGDIID_fillReverseCircle,
 	iGDIID_drawEllipse,
 	iGDIID_fillEllipse,
 

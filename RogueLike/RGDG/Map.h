@@ -121,7 +121,7 @@ public:
 
 
 void loadMap();
-void createMap(bool readFile); //true : read, false : newCreate
+void createMap(bool readFile = false); //true : read, false : newCreate
 void createMapImage();
 void freeMap();
 void drawMap(float dt);

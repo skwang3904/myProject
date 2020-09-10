@@ -114,6 +114,8 @@ PlayerChar::~PlayerChar()
 
 void PlayerChar::paint(float dt, iPoint off)
 {
+	drawShadow(dt, off);
+
 	uint8 reverse = img->reverse;
 	iPoint mp = iPointZero;
 	uint32 key = getKeyStat();
@@ -236,9 +238,19 @@ void PlayerChar::action(Object* obj)
 		showPopGameOver(true);
 }
 
-void PlayerChar::initData()
+void PlayerChar::setNewStage(int index, int8 mapNum, iPoint pos)
 {
-	// 스테이지 넘어갈때 or 죽었을때
+	this->index = index;
+	mapNumber = mapNum;
+	position = maps[mapNumber]->tileOff + pos;
+
+	headNum = 0;
+	holdNum = 4;
+
+	state = player_idle;
+	camera = iPointZero - maps[mapNumber]->tileOff;
+	wpVector = iPointMake(0, 1);
+	wpPosition = iPointZero;
 }
 
 void PlayerChar::addWeapon(void* weapon)
@@ -276,7 +288,10 @@ void PlayerChar::cbPlayerSetIdle(iImage* me)
 void loadPlayerChar()
 {
 	PlayerData* pd = &st->playerData;
-	player = new PlayerChar(pd->index, pd->mapNum, pd->position);
+	if (player)
+		player->setNewStage(pd->index, pd->mapNum, pd->position);
+	else
+		player = new PlayerChar(pd->index, pd->mapNum, pd->position);
 }
 
 void freePlayerChar()
@@ -286,6 +301,5 @@ void freePlayerChar()
 
 void drawPlayerChar(float dt)
 {
-	player->drawShadow(dt, DRAW_OFF);
 	player->paint(dt, DRAW_OFF);
 }

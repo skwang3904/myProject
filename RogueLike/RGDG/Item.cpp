@@ -4,13 +4,16 @@
 #include "Map.h"
 #include "ProcData.h"
 #include "PlayerChar.h"
+#include "Monster.h"
+
+#define ITEM_DROP_DISTANCE 70
+static iPoint itemDropPosition[10];
 
 Item*** _item = NULL;
 Item** item = NULL;
 int itemNum;
 
 iImage** imgItems = NULL;
-
 void createItemImage();
 void freeItemImage();
 
@@ -39,13 +42,18 @@ Item::Item(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos)
 	actionDt = _actionDt = it->_actionDt;
 
 	dropPosition = iPointZero;
+	dropHeight = 50;
+
 	targetPosition = iPointZero;
 }
 
 Item::~Item()
 {
-	if (imgItems)
-		freeItemImage();
+	if (itemNum == 0)
+	{
+		if (imgItems)
+			freeItemImage();
+	}
 }
 
 void Item::paint(float dt, iPoint off)
@@ -54,6 +62,7 @@ void Item::paint(float dt, iPoint off)
 		return;
 
 	iPoint p = position;
+	float delta = actionDt / _actionDt;
 	if (get)
 	{
 		if (actionDt == _actionDt)
@@ -66,10 +75,10 @@ void Item::paint(float dt, iPoint off)
 			if (actionDt > _actionDt)
 			{
 				actionDt = _actionDt;
-				//alive = false;
+				alive = false;
 				touchRect = iRectZero;
 			}
-			p = linear(actionDt / _actionDt, position, targetPosition);
+			p = linear(delta, position, targetPosition);
 		}
 	}
 	else
@@ -88,10 +97,11 @@ void Item::paint(float dt, iPoint off)
 			if (actionDt > _actionDt)
 			{
 				actionDt = _actionDt;
-				position = dropPosition;
-				dropPosition = iPointZero;
+				position = dropPosition;	
+				touchRect = iRectMake(position.x, position.y, img->tex->width, img->tex->height);
 			}
-			p = linear(actionDt / _actionDt, position, dropPosition);
+			p = linear(delta, position, dropPosition);
+			p.y += -dropHeight * _sin(180 * delta) * _sin(180 * delta);
 		}
 	}
 
@@ -110,30 +120,27 @@ void Item::drawShadow(float dt, iPoint off)
 
 void Item::action(Object* obj)
 {
+	// get item
 	get = true;
 	actionDt = 0.0f;
 	targetPosition = maps[mapNumber]->tileOff + iPointMake(0, TILE_NUM_Y * TILE_Height - img->tex->height);
 }
 
-void Item::dropItem(int* index, int typeNum, int dropNum)
+void Item::aliveItem(Object* obj)
 {
-	int tn = typeNum;
-	int type;
 
-	for (int i = 0; i < dropNum; i++)
-	{
-		type = index[random() % typeNum];
-		for (int j = 0; j < ITEM_CREATE_NUM; j++)
-		{
-			Item* it = _item[type][j];
-			if (it->alive == false)
-			{
-				;
+}
 
-			}
+void Item::addItem(Object* obj, iPoint dropPos)
+{
+	mapNumber = obj->mapNumber;
+	position = obj->position;
+	touchRect = iRectZero;
 
-		}
-	}
+	alive = true;
+	get = false;
+	actionDt = 0.0f;
+	dropPosition = position + dropPos;
 }
 
 //-----------------------------------------------------------
@@ -154,19 +161,6 @@ void loadItem()
 			_item[i][j] = new Item(i, 0, iPointZero);
 		}
 	}
-
-#if 1
-	Item* it = _item[0][0];
-	it->mapNumber = player->mapNumber;
-	it->alive = true;
-	it->actionDt = 0.0f;
-	it->position = maps[it->mapNumber]->tileOff + iPointMake(300, 300);
-	it->dropPosition = it->position;
-	it->touchRect = iRectMake(it->position.x, it->position.y, it->img->tex->width, it->img->tex->height);
-
-	item[itemNum] = _item[0][0];
-	itemNum++;
-#endif
 }
 
 void freeItem()
@@ -248,3 +242,39 @@ void freeItemImage()
 	free(imgItems);
 	imgItems = NULL;
 }
+
+//-----------------------------------------------------------
+
+void setItemDropPosition(int dropNum)
+{
+	float distance = -1.0f * ((float)dropNum / 2.0f) * ITEM_DROP_DISTANCE;
+	for (int i = 0; i < dropNum; i++)
+	{
+		itemDropPosition[i] = iPointMake(distance + ITEM_DROP_DISTANCE * i, 0);
+	}
+}
+
+void dropMonsterItem(Monster* m)
+{
+	int i, j, num = m->itemDropNum;
+	setItemDropPosition(num);
+
+	int kind;
+	for (i = 0; i < num; i++)
+	{
+		for (j = 0; j < ITEM_CREATE_NUM; j++)
+		{
+			kind = m->itemTypeKind[random() % m->itemTypeKindNum];
+			Item* it = _item[kind][j];
+			if (it->alive == false)
+			{
+				it->addItem(m, itemDropPosition[i]);
+
+				item[itemNum] = it;
+				itemNum++;
+				break;
+			}
+		}
+	}
+}
+

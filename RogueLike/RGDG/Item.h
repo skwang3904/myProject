@@ -15,7 +15,6 @@ enum ItemList
 	item_max
 };
 
-
 class Item : public Object
 {
 public:
@@ -27,16 +26,20 @@ public:
 	virtual void action(Object* obj);
 	virtual void aliveItem(Object* obj); // 수정
 
-	static void dropItem(int* index, int typeNum, int dropNum);
+	void addItem(Object* obj, iPoint dropPos);
 
 public:
 	bool get;
 	float value;
 
 	iPoint dropPosition;
+	float dropHeight;
 	iPoint targetPosition;
 };
 
 void loadItem();
 void freeItem();
 void drawItem(float dt);
+
+class Monster;
+void dropMonsterItem(Monster* m);

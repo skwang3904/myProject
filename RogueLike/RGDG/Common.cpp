@@ -41,7 +41,7 @@ Object::~Object()
 }
 
 //----------------------------------------------------------------------------
-
+// Stage
 Stage* st = NULL;
 #define FILE_PATH "save.sav"
 void Stage::create()
@@ -98,7 +98,7 @@ void Stage::create()
 
 void Stage::setStageData()
 {
-	
+
 	int i, j = 0, num = TILE_TOTAL_NUM;
 
 	currStage = stageNum;
@@ -185,8 +185,8 @@ void Stage::setMonsterData(int* actMap, int connectNum)
 		int n = 0;
 		switch (i)
 		{
-		case MT_golemNomal: n = 1; break;
-		case MT_golemBoss: n = 5 + random() % 10; break;
+		case MT_golemNomal: n = 5 + random() % 10; break;
+		case MT_golemBoss: n = 1; break;
 		default: break;
 		}
 		actMonsterNum[i] = n;
@@ -249,6 +249,14 @@ void freeStage()
 //----------------------------------------------------------------------------
 // passMap
 PassMap* passMap;
+void PassMap::init()
+{
+	nextDt = _nextDt = 10.0f;
+	passDt = _passDt = PASS_DT;
+	mapNumber = prevMapNumber = player->mapNumber;
+	center = iPointZero;
+}
+
 void PassMap::pass(int8 mapNum)
 {
 	if (mapNum == prevMapNumber)
@@ -294,15 +302,55 @@ void PassMap::update(float dt)
 	setRGBA(1, 1, 1, 1);
 }
 
-void PassMap::nextStage()
+void PassMap::startNextStage()
 {
+	nextDt = 0.0f;
+	center = iPointMake(devSize.width,devSize.height);
+}
+
+bool PassMap::nextStage(float dt)
+{
+	if (nextDt == _nextDt)
+		return false;
+
+	float nd = _nextDt / 2.0f;
+	float d = 0.0f;
+	if (nextDt < nd)
+	{
+		nextDt += dt;
+		if (nextDt > nd)
+			nextDt = nd;
+
+		d = 1.0f - nextDt / nd;
+	}
+	else if (nextDt == nd)
+	{
+		createMap();
+		st->setStageData();
+		createMapImage();
+		loadPlayerChar();
+		loadMonster();
+
+		//center = maps[player->mapNumber]->tileOff + DRAW_OFF;
+		nextDt += 0.00001f;
+	}
+	else if( nextDt < _nextDt * 2.0f)
+	{
+		nextDt += dt;
+		if (nextDt > _nextDt)
+			nextDt = _nextDt;
+		d = nextDt / _nextDt;
+		printf("%.2f\n", dt);
+	}
+
+	fillCircle(center, (devSize.width / 2.0f) * (1.0f - d), true);
+	return true;
 }
 
 void loadPassMap()
 {
 	passMap = (PassMap*)calloc(sizeof(PassMap), 1);
-	passMap->passDt = passMap->_passDt = PASS_DT;
-	passMap->mapNumber = passMap->prevMapNumber = player->mapNumber;
+	passMap->init();
 }
 
 void freePassMap()

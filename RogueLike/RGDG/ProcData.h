@@ -4,6 +4,7 @@
 
 #include "Common.h"
 
+// Player Data
 struct PlayerInfo
 {
 	float _hp;
@@ -25,33 +26,36 @@ struct PlayerImageInfo
 extern PlayerImageInfo playerImageInfo[5];
 
 //----------------------------------------------------------------
-
+// Monster Data
+// base status : _stage status
 struct MonsterInfo
 {
-	float _hp;
-	float _attackPoint;
-	float _attackSpeed;
-	float _actionDt;
-	float moveSpeed;
+	float hp, _hp;
+	float attackPoint, _attackPoint;
+	float attackSpeed, _attackSpeed;
+	float actionDt, _actionDt;
+	float moveSpeed, _moveSpeed;
 
-	float _attackDt; // 공격 후 이 시간 이후 데미지판정
-	float _attackDelay;
-	float lookDistance;
-	float meleeDistance;
-	float rangeDistance;
+	float attackDt, _attackDt; // 공격 후 이 시간 이후 데미지판정
+	float attackDelay, _attackDelay;
+	float lookDistance, _lookDistance;
+	float meleeDistance, _meleeDistance;
+	float rangeDistance, _rangeDistance;
 
 	int itemDropNum;
 	int itemTypeKindNum;
 	int itemTypeKind[5];
 
+	float setMonsterStatus(float* base, int stage);
 };
-extern MonsterInfo monsterInfo[3];
+extern MonsterInfo monsterInfo[MT_max];
 
 struct MonsterImageInfo
 {
 	const char* strPath;
 	int imgNum;
 	float aniDt;
+	float _aniDt; // stage aniDt
 	int repeatNum;
 	bool lastFrame;
 	iSize size;
@@ -60,7 +64,7 @@ extern MonsterImageInfo golemNomalImage[6];
 extern MonsterImageInfo golemBossImage[6];
 
 //----------------------------------------------------------------
-
+// Weapon Data
 struct WeaponInfo
 {
 	float _attackPoint;
@@ -72,7 +76,7 @@ struct WeaponInfo
 extern WeaponInfo weaponInfo[2];
 
 //----------------------------------------------------------------
-
+// Item Data
 struct ItemInfo
 {
 	float value;

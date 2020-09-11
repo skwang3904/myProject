@@ -1,5 +1,6 @@
 #include "Monster.h"
 
+#include "Proc.h"
 #include "Tile.h"
 #include "Map.h"
 #include "ProcData.h"
@@ -138,6 +139,8 @@ GolemNomal::GolemNomal(int index, int8 mapNum, iPoint pos) : Monster(index, mapN
 	iImage* img;
 	Texture* tex;
 	iSize size;
+	int stage = st->stageNum;
+
 
 	imgNum = MONSTER_IMG_NUM;
 	imgs = (iImage**)malloc(sizeof(iImage*) * imgNum);
@@ -146,11 +149,11 @@ GolemNomal::GolemNomal(int index, int8 mapNum, iPoint pos) : Monster(index, mapN
 	
 	for (i = 0; i < imgNum; i++)
 	{
+		MonsterImageInfo* gni = &golemNomalImage[i];
+		size = gni->size;
 		if (golemNomal_Image[i] == NULL)
 		{
-			MonsterImageInfo* gni = &golemNomalImage[i];
 			img = new iImage();
-			size = gni->size;
 			for (j = 0; j < gni->imgNum; j++)
 			{
 				tex = createTexture(size.width, size.height);
@@ -168,13 +171,15 @@ GolemNomal::GolemNomal(int index, int8 mapNum, iPoint pos) : Monster(index, mapN
 				freeImage(tex);
 			}
 
-			img->_aniDt = gni->aniDt;
-			img->_repeatNum = gni->repeatNum;
-			img->animation = (gni->repeatNum == 0 ? true : false);
-			img->lastFrame = gni->lastFrame;
-			img->position = iPointMake(0, -size.height * 0.33f);
 			golemNomal_Image[i] = img;
 		}
+
+		img = golemNomal_Image[i];
+		img->_aniDt = gni->aniDt + gni->_aniDt / gni->imgNum * stage;
+		img->_repeatNum = gni->repeatNum;
+		img->animation = (gni->repeatNum == 0 ? true : false);
+		img->lastFrame = gni->lastFrame;
+		img->position = iPointMake(0, -size.height * 0.33f);
 
 		imgs[i] = golemNomal_Image[i]->copy();
 	}
@@ -191,20 +196,20 @@ GolemNomal::GolemNomal(int index, int8 mapNum, iPoint pos) : Monster(index, mapN
 	alive = true;
 	state = monster_idle;
 	MonsterInfo* mi = &monsterInfo[MT_golemNomal];
-	prevHp = hp = _hp = mi->_hp;
-	attackPoint = _attackPoint = mi->_attackPoint;
+	prevHp = hp = _hp = mi->setMonsterStatus(&mi->hp, stage);
+	attackPoint = _attackPoint = mi->setMonsterStatus(&mi->attackPoint, stage);
 	attackSpeed = 0.0f;
-	_attackSpeed = mi->_attackSpeed;
+	_attackSpeed = mi->setMonsterStatus(&mi->attackSpeed, stage);
 	attackDt = 0.0f;
-	_attackDt = mi->_attackDt;
+	_attackDt = mi->setMonsterStatus(&mi->attackDt, stage);
 	attackDelay = 0.0f;
-	_attackDelay = mi->_attackDelay;
-	_actionDt = mi->_actionDt;
+	_attackDelay = mi->setMonsterStatus(&mi->attackDelay, stage);
+	_actionDt = mi->setMonsterStatus(&mi->actionDt, stage);
 
-	moveSpeed = mi->moveSpeed;
-	lookDistance = mi->lookDistance;
-	meleeDistance = mi->meleeDistance;
-	rangeDistance = mi->rangeDistance;
+	moveSpeed = mi->setMonsterStatus(&mi->moveSpeed, stage);
+	lookDistance = mi->setMonsterStatus(&mi->lookDistance, stage);
+	meleeDistance = mi->setMonsterStatus(&mi->meleeDistance, stage);
+	rangeDistance = mi->setMonsterStatus(&mi->rangeDistance, stage);
 
 	itemDropNum = mi->itemDropNum;
 	itemTypeKindNum = mi->itemTypeKindNum;
@@ -216,6 +221,7 @@ GolemNomal::GolemNomal(int index, int8 mapNum, iPoint pos) : Monster(index, mapN
 
 	showHpDt = 0.0f;
 	_showHpDt = 2.0f;
+
 }
 
 GolemNomal::~GolemNomal()
@@ -429,6 +435,7 @@ GolemBoss::GolemBoss(int index, int8 mapNum, iPoint pos) : Monster(index, mapNum
 	iImage* img;
 	Texture* tex;
 	iSize size;
+	int stage = st->stageNum;
 
 	// 4 dir Image
 	imgNum = MONSTER_IMG_NUM * 4;
@@ -437,16 +444,15 @@ GolemBoss::GolemBoss(int index, int8 mapNum, iPoint pos) : Monster(index, mapNum
 		golemBoss_Image = (iImage**)calloc(sizeof(iImage*), imgNum);
 
 	char c[4] = { 'l', 'r', 't', 'd' };
-	setRGBA(1, 1, 1, 1);
 	for (i = 0; i < imgNum; i++)
 	{
+		MonsterImageInfo* gbi = &golemBossImage[i / 4];
+		int num = gbi->imgNum / 4;
+		size = gbi->size;
 		if (golemBoss_Image[i] == NULL)
 		{
 			img = new iImage();
 
-			MonsterImageInfo* gbi = &golemBossImage[i / 4];
-			int num = gbi->imgNum / 4;
-			size = gbi->size;
 			for (j = 0; j < num; j++)
 			{
 				tex = createTexture(size.width, size.height);
@@ -464,13 +470,15 @@ GolemBoss::GolemBoss(int index, int8 mapNum, iPoint pos) : Monster(index, mapNum
 				freeImage(tex);
 			}
 
-			img->_aniDt = gbi->aniDt;
-			img->_repeatNum = gbi->repeatNum;
-			img->animation = (gbi->repeatNum == 0 ? true : false);
-			img->lastFrame = gbi->lastFrame;
-			img->position = iPointMake(0, -size.height * 0.33f);
 			golemBoss_Image[i] = img;
 		}
+
+		img = golemBoss_Image[i];
+		img->_aniDt = gbi->aniDt + gbi->_aniDt / num * stage;
+		img->_repeatNum = gbi->repeatNum;
+		img->animation = (gbi->repeatNum == 0 ? true : false);
+		img->lastFrame = gbi->lastFrame;
+		img->position = iPointMake(0, -size.height * 0.33f);
 
 		imgs[i] = golemBoss_Image[i]->copy();
 	}
@@ -487,20 +495,20 @@ GolemBoss::GolemBoss(int index, int8 mapNum, iPoint pos) : Monster(index, mapNum
 	alive = true;
 	state = monster_idle;
 	MonsterInfo* mi = &monsterInfo[MT_golemBoss];
-	prevHp = hp = _hp = mi->_hp;
-	attackPoint = _attackPoint = mi->_attackPoint;
-	//attackSpeed = 0.0f;
-	_attackSpeed = mi->_attackSpeed;
-	//attackDt = 0.0f;
-	_attackDt = mi->_attackDt;
-	//attackDelay = 0.0f;
-	_attackDelay = mi->_attackDelay;
-	_actionDt = mi->_actionDt;
-
-	moveSpeed = mi->moveSpeed;
-	lookDistance = mi->lookDistance;
-	meleeDistance = mi->meleeDistance;
-	rangeDistance = mi->rangeDistance;
+	prevHp = hp = _hp =			 mi->setMonsterStatus(&mi->hp, stage);
+	attackPoint = _attackPoint = mi->setMonsterStatus(&mi->attackPoint, stage);
+	attackSpeed = 0.0f;								  
+	_attackSpeed =				 mi->setMonsterStatus(&mi->attackSpeed, stage);
+	attackDt = 0.0f;								  
+	_attackDt =		 			 mi->setMonsterStatus(&mi->attackDt, stage);
+	attackDelay = 0.0f;								  
+	_attackDelay =				 mi->setMonsterStatus(&mi->attackDelay, stage);
+	_actionDt =					 mi->setMonsterStatus(&mi->actionDt, stage);
+								 					  
+	moveSpeed =					 mi->setMonsterStatus(&mi->moveSpeed, stage);
+	lookDistance =				 mi->setMonsterStatus(&mi->lookDistance, stage);
+	meleeDistance =				 mi->setMonsterStatus(&mi->meleeDistance, stage);
+	rangeDistance =				 mi->setMonsterStatus(&mi->rangeDistance, stage);
 
 	itemDropNum = mi->itemDropNum;
 	itemTypeKindNum = mi->itemTypeKindNum;

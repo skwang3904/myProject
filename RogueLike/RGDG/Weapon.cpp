@@ -1,5 +1,6 @@
 #include "Weapon.h"
 
+#include "Proc.h"
 #include "Map.h"
 #include "ProcData.h"
 #include "PlayerChar.h"

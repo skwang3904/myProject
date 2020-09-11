@@ -2,8 +2,6 @@
 
 #include "iStd.h"
 
-#include "Tile.h"
-
 //----------------------------------------------------------------------------
 // class
 
@@ -40,97 +38,21 @@ public:
 };
 
 //----------------------------------------------------------------------------
-// Stage data
+// enum
 
-struct MapData
-{
-	int state;
-
-	int tileIndex;
+/*MapType*/
+enum MapType {
+	MapType_Nomal = 0,
+	MapType_Boss,
+	MapType_ItemBox,
+	MapType_Shop,
 };
 
-struct PlayerData
-{
-	int index;
-	int8 mapNum;
-	iPoint position;
-
-	float hp, _hp;
-	float attackPoint, _attackPoint;
-	float attackSpeed, _attackSpeed;
-	float moveSpeed;
-};
-
+/*MonsterType*/
 enum MonsterType {
 	MT_golemNomal = 0,
+	MT_golemElete,
 	MT_golemBoss,
 
 	MT_max
 };
-
-struct MonsterData
-{
-	int index;
-	int8 mapNum;
-	iPoint position;
-};
-
-struct WeaponData
-{
-	int index;
-};
-
-#define END_STAGE 3
-struct Stage
-{
-	int stageNum;
-
-	MapData mapData[TILE_TOTAL_NUM];
-
-	// playerInfo
-	PlayerData playerData;
-
-	// monsterInfo
-	int actMonsterNum[MT_max];
-	MonsterData monsterData[30];
-
-	// weaponInfo
-	WeaponData weaponData[10];
-
-	void create();
-	void setStageData();
-
-	void setPlayerData(int* actMap, int connectNum);
-	void setMonsterData(int* actMap, int connectNum);
-};
-extern Stage* st;
-
-void loadStage();
-void saveStage();
-void freeStage();
-
-//----------------------------------------------------------------------------
-// passMap
-
-struct PassMap
-{
-	float nextDt, _nextDt;
-	iPoint center;
-
-	float passDt, _passDt;
-	int8 prevMapNumber;
-	int8 mapNumber;
-
-	void init();
-	void pass(int8 mapNum);
-	void update(float dt);
-
-	void startNextStage();
-	bool nextStage(float dt);
-};
-extern PassMap* passMap;
-#define STAGE_LOADING_DT 2.0f
-#define PASS_DT 0.3f
-
-void loadPassMap();
-void freePassMap();

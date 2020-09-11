@@ -3,15 +3,10 @@
 #include "iStd.h"
 
 #include "Common.h"
+
 extern iPoint displayCenterPos;
 #define DRAW_OFF displayCenterPos + player->camera
 
-enum MapType {
-	MapType_Nomal = 0,
-	MapType_Boss,
-	MapType_ItemBox,
-	MapType_Shop,
-};
 
 struct MapTile
 {

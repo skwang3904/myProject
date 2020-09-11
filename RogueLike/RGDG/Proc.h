@@ -2,6 +2,7 @@
 
 #include "iStd.h"
 
+#include "Common.h"
 #include "Tile.h"
 
 void loadProc();
@@ -39,6 +40,116 @@ function key or mouse or number key
 boss kill
 
 #endif
+
+//----------------------------------------------------------------------------
+// Stage data
+
+struct MapData
+{
+	int state;
+
+	int tileIndex;
+};
+
+struct PlayerData
+{
+	int index;
+	int8 mapNum;
+	iPoint position;
+
+	float hp, _hp;
+	float attackPoint, _attackPoint;
+	float attackSpeed, _attackSpeed;
+	float moveSpeed;
+};
+
+struct MonsterData
+{
+	int index;
+	int8 mapNum;
+	iPoint position;
+};
+
+struct WeaponData
+{
+	int index;
+};
+
+#define END_STAGE 3
+struct Stage
+{
+	int stageNum;
+
+	MapData mapData[TILE_TOTAL_NUM];
+
+	// playerInfo
+	PlayerData playerData;
+
+	// monsterInfo
+	int actMonsterNum[MT_max];
+	MonsterData monsterData[30];
+
+	// weaponInfo
+	WeaponData weaponData[10];
+
+	void create();
+	void setStageData();
+
+	void setPlayerData(int* actMap, int connectNum);
+	void setMonsterData(int* actMap, int connectNum);
+};
+extern Stage* st;
+
+void loadStage();
+void saveStage();
+void freeStage();
+
+//----------------------------------------------------------------------------
+// passMap
+
+struct PassMap
+{
+	float nextDt, _nextDt;
+	iPoint center;
+
+	float popDt, _popDt;
+
+	float passDt, _passDt;
+	int8 prevMapNumber;
+	int8 mapNumber;
+
+	void init();
+	void pass(int8 mapNum);
+	void update(float dt);
+
+	void startNextStage();
+	bool nextStage(float dt);
+};
+extern PassMap* passMap;
+#define PASS_STAGE_DT 2.0f
+#define PASS_POP_DT 3.0f
+#define PASS_MAP_DT 0.3f
+
+void loadPassMap();
+void freePassMap();
+
+//-----------------------------------------------------------
+// stageLoading
+extern iPopup* popStageLoading;
+void createPopStageLoading();
+void freePopStageLoading();
+void showPopStageLoading(bool show);
+void drawPopStageLoading(float dt);
+bool keyPopStageLoading(iKeyState stat, iPoint point);
+
+//-----------------------------------------------------------
+// stageNum
+void createPopStageNum();
+void freePopStageNum();
+void showPopStageNum(bool show);
+void drawPopStageNum(float dt);
+bool keyPopStageNum(iKeyState stat, iPoint point);
+
 //-----------------------------------------------------------
 // UI
 void createPopState();

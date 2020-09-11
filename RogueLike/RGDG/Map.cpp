@@ -1,5 +1,6 @@
 #include "Map.h"
 
+#include "Proc.h"
 #include "Tile.h"
 #include "PlayerChar.h"
 #include "Monster.h"
@@ -415,9 +416,6 @@ MapObjectDoor::MapObjectDoor(int index, int8 mapNum, iPoint pos, int tileNumber)
 		}
 
 		setRGBA(1, 1, 1, 1);
-		setStringSize(1);
-		setStringRGBA(1, 1, 1, 1);
-		setStringBorder(0);
 	}
 	else
 	{
@@ -528,10 +526,6 @@ MapObjectNextDoor::MapObjectNextDoor(int index, int8 mapNum, iPoint pos, int til
 		img->addObject(tex);
 		freeImage(tex);
 	}
-	setRGBA(1, 1, 1, 1);
-	setStringSize(1);
-	setStringRGBA(1, 1, 1, 1);
-	setStringBorder(0);
 
 	//img->animation = true;
 	img->_aniDt = 1.0f;
@@ -627,10 +621,7 @@ MapObjectBarrel::MapObjectBarrel(int index, int8 mapNum, iPoint pos, int tileNum
 			img->addObject(tex);
 			freeImage(tex);
 		}
-		setRGBA(1, 1, 1, 1);
-		setStringSize(1);
-		setStringRGBA(1, 1, 1, 1);
-		setStringBorder(0);
+
 	}
 	else
 	{
@@ -710,10 +701,7 @@ MapObjectItemBox::MapObjectItemBox(int index, int8 mapNum, iPoint pos, int tileN
 			img->addObject(tex);
 			freeImage(tex);
 		}
-		setRGBA(1, 1, 1, 1);
-		setStringSize(1);
-		setStringRGBA(1, 1, 1, 1);
-		setStringBorder(0);
+
 	}
 	else
 	{
@@ -869,8 +857,8 @@ void createMapImage()
 		if (maps[i]->img)
 			delete maps[i]->img;
 		maps[i]->img = img;
-
 	}
+	setRGBA(1, 1, 1, 1);
 
 	//-----------------------------------------------------------------------------
 	

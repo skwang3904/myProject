@@ -1,6 +1,5 @@
 #include "Proc.h"
 
-#include "Tile.h"
 #include "Map.h"
 
 #include "ProcData.h"
@@ -22,6 +21,8 @@ void loadProc()
 
 	loadPassMap();
 
+	createPopStageLoading();
+	createPopStageNum();
 	createPopState();
 	createPopProcButton();
 	createPopMiniMap();
@@ -29,6 +30,7 @@ void loadProc()
 	createPopProcMenu();
 	createPopGameOver();
 
+	showPopStageNum(true);
 	showPopState(true);
 	showPopProcButton(true);
 	showPopMiniMap(true);
@@ -48,6 +50,8 @@ void freeProc()
 
 	freePassMap();
 
+	freePopStageLoading();
+	freePopStageNum();
 	freePopState();
 	freePopProcButton();
 	freePopMiniMap();
@@ -80,16 +84,22 @@ void drawProc(float dt)
 
 	passMap->update(dt);
 	
+
 	drawPopState(dt);
 	drawPopProcButton(dt);
 	drawPopMiniMap(dt);
 	drawPopInven(dt);
 	drawPopProcMenu(pop_dt);
 	drawPopGameOver(pop_dt);
+
+	drawPopStageNum(dt);
 	//numberFont->drawFont()
 
 	if (passMap->nextStage(dt))
+	{
+		drawPopStageLoading(dt);
 		return;
+	}
 }
 
 void keyProc(iKeyState stat, iPoint point)
@@ -99,8 +109,600 @@ void keyProc(iKeyState stat, iPoint point)
 		keyPopInven(stat,point)	||
 		keyPopMiniMap(stat, point) ||
 		keyPopProcButton(stat, point) ||
-		keyPopState(stat, point))
+		keyPopState(stat, point) ||
+		keyPopStageNum(stat, point) ||
+		keyPopStageLoading(stat, point))
 		return;
+}
+
+//----------------------------------------------------------------------------
+// Stage
+Stage* st = NULL;
+#define FILE_PATH "save.sav"
+void Stage::create()
+{
+	int i, j = 0, k, num = TILE_TOTAL_NUM;
+
+	stageNum = 0;
+	//maps
+	for (i = 0; i < num; i++)
+	{
+		st->mapData[i].state = maps[i]->state;
+		st->mapData[i].tileIndex = maps[i]->tileIndex;
+	}
+
+	int actMap[TILE_CONNECT_NUM];
+	for (i = 0; i < TILE_CONNECT_NUM; i++)
+	{
+		while (1)
+		{
+			if (maps[j]->tileIndex != -1)
+			{
+				actMap[i] = j;
+				j++;
+				break;
+			}
+			j++;
+		}
+	}
+
+	//player
+	setPlayerData(actMap, TILE_CONNECT_NUM);
+
+	PlayerData* pd = &playerData;
+	PlayerInfo* pi = &playerInfo[pd->index];
+	pd->hp = pd->_hp = pi->_hp;
+	pd->attackPoint = pd->_attackPoint = pi->_attackPoint;
+	pd->attackSpeed = 0.0f;
+	pd->_attackSpeed = pi->_attackSpeed;
+	pd->moveSpeed = pi->moveSpeed;
+
+	//monster
+	setMonsterData(actMap, TILE_CONNECT_NUM);
+
+	for (int i = 0; i < 10; i++)
+	{
+		int a = -1;
+		if (i == 0)
+			a = 1;
+		else if (i == 1)
+			a = 0;
+		weaponData[i].index = a;
+	}
+}
+
+void Stage::setStageData()
+{
+	int i, j = 0, num = TILE_TOTAL_NUM;
+
+	for (i = 0; i < num; i++)
+	{
+		mapData[i].state = (int)maps[i]->state;
+		mapData[i].tileIndex = maps[i]->tileIndex;
+	}
+
+	int actMap[TILE_CONNECT_NUM];
+	for (i = 0; i < TILE_CONNECT_NUM; i++)
+	{
+		while (1)
+		{
+			if (maps[j]->tileIndex != -1)
+			{
+				actMap[i] = j;
+				j++;
+				break;
+			}
+			j++;
+		}
+	}
+
+	// playerInfo
+	setPlayerData(actMap, TILE_CONNECT_NUM);
+
+	PlayerData* pd = &playerData;
+	PlayerChar* p = player;
+	pd->hp = p->hp;
+	pd->_hp = p->_hp;
+	pd->attackPoint = p->attackPoint;
+	pd->_attackPoint = p->_attackPoint;
+	pd->attackSpeed = p->attackSpeed;
+	pd->_attackSpeed = p->_attackSpeed;
+	pd->moveSpeed = p->moveSpeed;
+
+	// monsterInfo 
+	setMonsterData(actMap, TILE_CONNECT_NUM);
+
+	// weaponInfo
+	num = weaponNum;
+	for (i = 0; i < num; i++)
+	{
+		WeaponData* wd = &weaponData[i];
+		wd->index = weapon[i]->index;
+	}
+
+	saveStage();
+}
+
+void Stage::setPlayerData(int* actMap, int connectNum)
+{
+	int* am = actMap;
+	int cnNum = connectNum;
+
+	PlayerData* pd = &playerData;
+	pd->index = 0;
+	pd->mapNum = am[random() % cnNum];
+	pd->position = iPointMake(TILE_NUM_X * TILE_Width / 2.0f,
+		TILE_NUM_Y * TILE_Height / 2.0f);
+}
+
+void Stage::setMonsterData(int* actMap, int connectNum)
+{
+	int i, j = 0, num = 0;
+	int* am = actMap;
+	int cnNum = connectNum;
+
+	if (monster)
+	{
+		for (i = 0; i < MT_max; i++)
+			num += actMonsterNum[i];
+
+		for (i = 0; i < num; i++)
+			delete _monster[i];
+		free(_monster);
+		_monster = NULL;
+		free(monster);
+		monster = NULL;
+	}
+
+	for (i = 0; i < MT_max; i++)
+	{
+		int n = 0;
+		switch (i)
+		{
+		case MT_golemNomal: n = 5 + random() % 10; break;
+		case MT_golemBoss: n = 1; break;
+		default: break;
+		}
+		actMonsterNum[i] = n;
+	}
+
+	num = actMonsterNum[MT_golemNomal];
+	for (i = 0; i < num; i++)
+	{
+		MonsterData* md = &monsterData[i];
+		md->index = 0;
+		md->mapNum = am[random() % cnNum];
+		md->position = iPointMake(100 + 100 * (random() % 5), 150 + 50 * (random() % 10));
+	}
+
+	//num += actMonsterNum[golemBoss];
+	for (i = 0; i < cnNum; i++)
+	{
+		if (maps[am[i]]->state == MapType_Boss)
+		{
+			MonsterData* md = &monsterData[actMonsterNum[MT_golemNomal]];
+			md->index = 0;
+			md->mapNum = am[i];
+			md->position = iPointMake(450, 450);
+		}
+	}
+}
+
+void loadStage()
+{
+	int i, length;
+	char* buf = loadFile(FILE_PATH, length);
+	if (buf)
+	{
+		st = (Stage*)buf;
+		createMap(true);
+	}
+	else
+	{
+		createMap(false);
+
+		st = (Stage*)calloc(sizeof(Stage), 1);
+		st->create();
+		saveStage();
+	}
+
+	createMapImage();
+	setRGBA(1, 1, 1, 1);
+}
+
+void saveStage()
+{
+	saveFile(FILE_PATH, (char*)st, sizeof(Stage));
+}
+
+void freeStage()
+{
+	free(st);
+}
+
+//----------------------------------------------------------------------------
+// passMap
+PassMap* passMap;
+void PassMap::init()
+{
+	nextDt = _nextDt = PASS_STAGE_DT;
+	center = iPointMake(devSize.width, devSize.height) / 2.0f;
+
+	popDt = _popDt = PASS_POP_DT;
+
+	passDt = _passDt = PASS_MAP_DT;
+	mapNumber = prevMapNumber = player->mapNumber;
+}
+
+void PassMap::pass(int8 mapNum)
+{
+	if (mapNum == prevMapNumber)
+		return;
+
+	mapNumber = mapNum;
+	passDt = 0.0f;
+}
+
+void PassMap::update(float dt)
+{
+	if (passDt == _passDt)
+		return;
+
+	MapTile* prev = maps[prevMapNumber];
+	MapTile* curr = maps[mapNumber];
+
+	iPoint p = iPointZero;
+	switch (mapNumber - prevMapNumber)
+	{ //LRUD
+	case 1:					p = curr->tileOff + iPointMake(TILE_NUM_X * TILE_Width, 0);  break;
+	case -1:				p = curr->tileOff + iPointMake(-TILE_NUM_X * TILE_Width, 0);		break;
+	case TILE_TOTAL_SQRT:	p = curr->tileOff + iPointMake(0, TILE_NUM_Y * TILE_Height); break;
+	case -TILE_TOTAL_SQRT:	p = curr->tileOff + iPointMake(0, -TILE_NUM_Y * TILE_Height);	break;
+	default: printf("pass tile error\n");
+	}
+
+	passDt += dt;
+	if (passDt > _passDt)
+	{
+		passDt = _passDt;
+		prevMapNumber = mapNumber;
+	}
+
+	float d = passDt / _passDt;
+	iPoint pp = linear(d, curr->tileOff, prev->tileOff) + DRAW_OFF;
+	iPoint cp = linear(d, p, curr->tileOff) + DRAW_OFF;
+
+	setRGBA(0.3f, 0.3f, 0.3f, 1);
+	if (passDt < _passDt)
+		prev->img->paint(dt, pp);
+	curr->img->paint(dt, cp);
+	setRGBA(1, 1, 1, 1);
+}
+
+extern bool runWnd;
+void PassMap::startNextStage()
+{
+	st->stageNum++;
+	if (st->stageNum < END_STAGE)
+	{
+		nextDt = 0.0f;
+	}
+	else
+	{
+		MessageBox(NULL, TEXT("GAME CLEAR"), TEXT("Congratulation"), MB_OK);
+		runWnd = false;
+	}
+}
+
+bool PassMap::nextStage(float dt)
+{
+	if (nextDt == _nextDt)
+		return false;
+
+	float nd = _nextDt / 2.0f;
+	float d = 0.0f;
+	if (nextDt < nd)
+	{
+		nextDt += dt;
+		if (nextDt > nd)
+		{
+			nextDt = nd;
+			popDt = 0.0f;
+			createMap();
+			st->setStageData();
+			createMapImage();
+			loadPlayerChar();
+			loadMonster();
+			loadItem();
+
+			showPopStageLoading(true);
+		}
+
+		d = 1.0f - nextDt / nd;
+	}
+	else if (nextDt == nd)
+	{
+		if (popDt < _popDt)
+		{
+			if (popStageLoading->stat == iPopupStatProc)
+				popDt += dt;
+		}
+		else if (popDt == _popDt)
+		{
+			if (popStageLoading->bShow == false)
+				nextDt += 0.00001f;
+		}
+		else //if (popDt > _popDt)
+		{
+			popDt = _popDt;
+			showPopStageLoading(false);
+		}
+	}
+	else if (nextDt < _nextDt)
+	{
+		nextDt += dt;
+		if (nextDt > _nextDt)
+		{
+			nextDt = _nextDt;
+			init();
+			showPopStageNum(true);
+		}
+		d = nextDt / nd - 1.0f;
+	}
+
+	setRGBA(0, 0, 0, 1);
+	float len = iPointLength(iPointMake(devSize.width / 2.0f, devSize.height / 2.0f));
+	if (d > 0.0f)	fillCircle(center, len * d, true);
+	else			fillRect(0, 0, devSize.width, devSize.height);
+	setRGBA(1, 1, 1, 1);
+
+	return true;
+}
+
+void loadPassMap()
+{
+	passMap = (PassMap*)calloc(sizeof(PassMap), 1);
+	passMap->init();
+}
+
+void freePassMap()
+{
+	free(passMap);
+}
+
+//-----------------------------------------------------------
+// stageLoading
+iPopup* popStageLoading;
+iImage* imgStageLoadingChar;
+iImage** imgStageLoadingCase;
+
+void drawPopStageLoadingAfter(iPopup* me, iPoint p, float dt);
+
+void createPopStageLoading()
+{
+	int i, j;
+	Texture* tex, *t;
+	iImage* img;
+	iPopup* pop = new iPopup(iPopupStyleAlpha);
+	iSize size;
+
+	size = devSize;
+	img = new iImage();
+	tex = createTexture(size.width, size.height);
+	fbo->bind(tex);
+	fbo->clear(0.2f, 1, 0.5f, 1);
+	t = createImage("assets/loading/LoadingText.png");
+	drawImage(t, size.width / 2.0f, size.height - 150,
+		0, 0, t->width, t->height,
+		VCENTER | HCENTER, 1.0f, 1.0f,
+		2, 0, REVERSE_HEIGHT);
+	freeImage(t);
+	fbo->unbind();
+	img->addObject(tex);
+	freeImage(tex);
+	pop->addObject(img);
+
+	const char* strPath[3] = {
+	"assets/loading/LoadingCase.png", 
+	"assets/loading/LoadingChallenge.png", 
+	"assets/loading/LoadingClear.png",
+	};
+
+	imgStageLoadingCase = (iImage**)malloc(sizeof(iImage*) * END_STAGE);
+	size = iSizeMake(250, 250);
+	float ratio = 0.7f;
+	for (i = 0; i < END_STAGE; i++)
+	{
+		img = new iImage();
+		for (j = 0; j < 3; j++)
+		{
+			tex = createTexture(size.width, size.height);
+			fbo->bind(tex);
+			t = createImage(strPath[0]);
+			drawImage(t, size.width / 2.0f, size.height / 2.0f,
+				0, 0, t->width, t->height,
+				VCENTER | HCENTER, size.width / t->width, size.height / t->height,
+				2, 0, REVERSE_HEIGHT);
+			freeImage(t);
+			if (j != 0)
+			{
+				t = createImage(strPath[j]);
+				drawImage(t, size.width / 2.0f, size.height / 2.0f,
+					0, 0, t->width, t->height,
+					VCENTER | HCENTER, size.width / t->width * ratio, size.height / t->height * ratio,
+					2, 0, REVERSE_HEIGHT);
+				freeImage(t);
+			}
+			fbo->unbind();
+
+			img->addObject(tex);
+			freeImage(tex);
+		}
+		
+		float standard = (devSize.width - size.width * END_STAGE) / (END_STAGE + 1);
+		img->position = iPointMake(standard + (standard + size.width) * i, devSize.height * 0.33f);
+		imgStageLoadingCase[i] = img;
+		pop->addObject(img);
+	}
+
+	pop->_showDt = 5.0f;
+
+	pop->methodDrawAfter = drawPopStageLoadingAfter;
+	popStageLoading = pop;
+
+	imgStageLoadingChar = player->imgs[8];
+}
+
+void freePopStageLoading()
+{
+	delete popStageLoading;
+	free(imgStageLoadingCase);
+}
+
+void showPopStageLoading(bool show)
+{
+	popStageLoading->show(show);
+	if (show)
+	{
+		for (int i = 0; i < END_STAGE; i++)
+		{
+			iImage* img = imgStageLoadingCase[i];
+			int stage = st->stageNum;
+			int index = 0;
+			if (i < stage)
+				index = 2;
+			else if (i == stage)
+				index = 1;
+			else
+				index = 0;
+
+			img->setTexAtIndex(index);
+		}
+		iImage* img = imgStageLoadingChar;
+
+		float ratio = min(imgStageLoadingCase[0]->tex->width / img->tex->width, imgStageLoadingCase[0]->tex->height / img->tex->height);
+		img->animation = true;
+		img->_aniDt = 1.0f;
+		img->ratio = ratio;
+	}
+}
+
+void drawPopStageLoadingAfter(iPopup* me, iPoint p, float dt)
+{
+	iPoint curr = imgStageLoadingCase[st->stageNum - 1]->position;
+	iPoint next = imgStageLoadingCase[st->stageNum]->position;
+	
+	float d = passMap->popDt / passMap->_popDt;
+	iPoint pos = linear(d, curr, next);
+
+	iImage* img = imgStageLoadingChar;
+	img->position = pos + iPointMake(20, 40); // tmp
+
+	img->paint(dt, iPointZero);
+	if (me->bShow == false)
+	{
+		iImage* img = imgStageLoadingChar;
+		img->animation = false;
+		img->position = iPointZero;
+		img->ratio = 1.0f;
+	}
+}
+
+void drawPopStageLoading(float dt)
+{
+	popStageLoading->paint(dt);
+}
+
+bool keyPopStageLoading(iKeyState stat, iPoint point)
+{
+	return false;
+}
+
+//-----------------------------------------------------------
+// stageNum
+iPopup* popStageNum;
+iStrTex* stStageNum;
+
+Texture* methodStStageNum(const char* str);
+
+void createPopStageNum()
+{
+	int i, j;
+	Texture* tex, * t;
+	iImage* img;
+	iPopup* pop = new iPopup(iPopupStyleMove);
+	iSize size;
+
+	img = new iImage();
+	iStrTex* st = new iStrTex(methodStStageNum);
+	st->setString("%d", 0);
+	stStageNum = st;
+	img->addObject(st->tex);
+
+	pop->addObject(img);
+	iPoint p = iPointMake(devSize.width - img->tex->width, devSize.height - img->tex->height) / 2.0f;
+	pop->openPosition = iPointMake(p.x, -img->tex->height);
+	pop->closePosition = iPointMake(p.x, p.y);
+	
+	popStageNum = pop;
+}
+
+Texture* methodStStageNum(const char* str)
+{
+	int lineNum;
+	char** line = iString::getStringLine(str, lineNum);
+	int stage = atoi(line[0]) + 1;
+	iString::freeStringLine(line, lineNum);
+
+	iGraphics* g = iGraphics::instance();
+	iSize size = iSizeMake(devSize.width * 0.7f, devSize.height * 0.2);
+	g->init(size);
+
+	setRGBA(1, 1, 1, 1);
+	g->fillRect(0, 0, size.width, size.height, 20);
+
+	setStringSize(devSize.height * 0.18);
+	setStringRGBA(0, 1, 0.2f, 1);
+	setStringBorder(2);
+	setStringBorderRGBA(0, 0, 0, 1);
+	g->drawString(size.width / 2.0f, size.height / 2.0f, VCENTER | HCENTER, "Stage : %d", stage);
+
+	return g->getTexture();
+}
+
+void freePopStageNum()
+{
+	delete popStageNum;
+	delete stStageNum;
+}
+
+void showPopStageNum(bool show)
+{
+	popStageNum->show(show);
+	if(show)
+		passMap->popDt = 0.0f;
+}
+
+void drawPopStageNum(float dt)
+{
+	if (popStageNum->bShow)
+	{
+		passMap->popDt += dt;
+		if (passMap->popDt > passMap->_popDt)
+		{
+			passMap->popDt = passMap->_popDt;
+			showPopStageNum(false);
+		}
+	}
+
+	popStageNum->paint(dt);
+
+	stStageNum->setString("%d", st->stageNum);
+}
+
+bool keyPopStageNum(iKeyState stat, iPoint point)
+{
+	return false;
 }
 
 //-----------------------------------------------------------
@@ -158,10 +760,6 @@ Texture* methodStState(const char* str)
 	g->drawString(size.width / 2.0f, size.height * 0.33f, VCENTER | LEFT, "%d", hp);
 	g->drawString(size.width - 25, size.height * 0.67f, VCENTER | HCENTER, "%d", stage);
 
-	setStringRGBA(1, 1, 1, 1);
-	setStringSize(1);
-	setStringBorder(0);
-
 	return g->getTexture();
 }
 
@@ -181,7 +779,7 @@ void drawPopState(float dt)
 {
 	popState->paint(dt);
 
-	stState->setString("%.0f\n%d", player->hp, stageNum + 1);
+	stState->setString("%.0f\n%d", player->hp, st->stageNum + 1);
 }
 
 bool keyPopState(iKeyState stat, iPoint point)
@@ -223,9 +821,6 @@ void createPopProcButton()
 		freeImage(tex);
 	}
 	setRGBA(1, 1, 1, 1);
-	setStringRGBA(1, 1, 1, 1);
-	setStringSize(1);
-	setStringBorder(0);
 
 	imgProcButtonBtn = img;
 	pop->addObject(img);
@@ -579,9 +1174,6 @@ void createPopProcMenu()
 		pop->addObject(img);
 	}
 	setRGBA(1, 1, 1, 1);
-	setStringRGBA(1, 1, 1, 1);
-	setStringSize(1);
-	setStringBorder(0);
 
 	pop->methodDrawBefore = drawPopProcMenuBefore;
 	popProcMenu = pop;
@@ -693,9 +1285,6 @@ void createPopGameOver()
 	setStringSize(40);
 	setStringBorder(0);
 	g->drawString(size.width / 2.0f, 32, VCENTER | HCENTER, "Game Over");
-	setStringRGBA(1, 1, 1, 1);
-	setStringSize(1);
-	setStringBorder(0);
 
 	tex = g->getTexture();
 	img->addObject(tex);
@@ -728,13 +1317,9 @@ void createPopGameOver()
 			g->fillRect(0, 0, size.width, size.height, 5);
 			setRGBA(1, 1, 1, 1);
 
-
 			setStringSize(20);
 			setStringBorder(0);
 			g->drawString(size.width / 2.0f, size.height / 2.0f, VCENTER | HCENTER, strBtn[i]);
-			setStringRGBA(1, 1, 1, 1);
-			setStringSize(1);
-			setStringBorder(0);
 
 			tex = g->getTexture();
 			img->addObject(tex);

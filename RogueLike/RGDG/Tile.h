@@ -4,11 +4,12 @@
 
 #define TILE_NUM_X	32
 #define TILE_NUM_Y	32
-#define TILE_Width	24
-#define TILE_Height	24
+#define TILE_Width	20
+#define TILE_Height	20
 #define TILE_CENTER iPointMake( TILE_NUM_X * TILE_Width / 2, \
 								  TILE_NUM_Y * TILE_Height / 2)
 
+#define TILE_IMAGE_NUM 16 * 2
 #define TILE_CONNECT_NUM	10
 #define TILE_TOTAL_NUM		25 // 제곱수
 #define TILE_TOTAL_SQRT		5
@@ -20,19 +21,23 @@
 #define TILE_BARREL     5
 #define TILE_TRAPDOOR   6
 #define TILE_ITEMBOX    7
+#define TILE_MONSTER_SPAWN 100
 
+
+#define MV TILE_MOVE
 #define WW TILE_WALL
 #define FF TILE_FALL
 #define DR TILE_DOOR
 #define BA TILE_BARREL
 #define TD TILE_TRAPDOOR
 #define IB TILE_ITEMBOX
+#define MS TILE_MONSTER_SPAWN
 
 #define MOVETILE_RGBA	1, 1, 1, 1
 #define WALLTILE_RGBA	0.5, 0.5, 0.5, 1
 #define FALLTILE_RGBA	0, 0, 0.3, 1
 
-extern int8* tileWay[16];
+extern int8* tileWay[TILE_IMAGE_NUM];
 
 /*
      tileWay

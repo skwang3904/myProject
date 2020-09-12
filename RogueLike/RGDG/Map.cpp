@@ -191,6 +191,7 @@ void pathTileCheck(ConnectTile* c)
 		break;
 	}
 
+	pathNum = pathNum * 2 + random() % 2;
 #define TILECOPY(index, t) memcpy(maps[index]->tile, t, sizeof(int8) * TILE_NUM_X * TILE_NUM_Y)
 	TILECOPY(index, tileWay[pathNum]);
 
@@ -325,14 +326,12 @@ void wallCheck(Object* obj, iPoint mp)
 
 //-----------------------------------------------------------------------------
 // MapObject
+MapObject** _mapObj;
 MapObject** mapObj;
-int mapObjNum;
+int mapObjNum, _mapObjNum;
 
 MapObject::MapObject(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos)
 {
-	alive = false;
-	touchRect = iRectZero;
-
 	value = 0;
 
 	tileNumX = 0;
@@ -355,7 +354,7 @@ MapObjectDoor::MapObjectDoor(int index, int8 mapNum, iPoint pos, int tileNumber)
 	tileNumY = 4;
 	int num = tileNumX * tileNumY;
 	this->tileNumber = (int*)calloc(sizeof(int), num);
-
+	float angle = 0.0f;
 	iSize size = iSizeMake(TILE_Width * tileNumX, TILE_Height * tileNumY);
 	int tmp = 0;
 	switch (index)
@@ -365,6 +364,7 @@ MapObjectDoor::MapObjectDoor(int index, int8 mapNum, iPoint pos, int tileNumber)
 	{
 		tmp = TILE_NUM_X;
 		//size
+		angle = 90.0f + 180.0f * index;
 		break;
 	}
 	case 2: 
@@ -414,19 +414,20 @@ MapObjectDoor::MapObjectDoor(int index, int8 mapNum, iPoint pos, int tileNumber)
 			img->addObject(tex);
 			freeImage(tex);
 		}
-
 		setRGBA(1, 1, 1, 1);
+		imgMapObjDoor = img;
 	}
-	else
-	{
-		img = imgMapObjDoor->copy();
-	}
+
+	img = imgMapObjDoor->copy();
 
 	//img->animation = true;
 	img->_aniDt = 1.0f;
+	img->angle = angle;
+	img->lockAngle = true;
+	if(angle)
+		img->position = iPointZero + iPointMake(-img->tex->width + img->tex->height, img->tex->width - img->tex->height) / 2.0f;
 	this->img = img;
 	
-
 	touchRect = iRectMake(position, size);
 }
 
@@ -584,13 +585,11 @@ MapObjectBarrel::MapObjectBarrel(int index, int8 mapNum, iPoint pos, int tileNum
 	int num = tileNumX * tileNumY;
 	this->tileNumber = (int*)calloc(sizeof(int), num);
 
-	iSize size = iSizeMake(TILE_Width * tileNumX, TILE_Height * tileNumY);
-
 	for (int i = 0; i < num; i++)
 	{
 		int tn = tileNumber + TILE_NUM_X * (i / tileNumX) + (i % tileNumX);
 		this->tileNumber[i] = tn;
-		maps[mapNumber]->tile[tn] = WW;
+		maps[mapNumber]->tile[tn] = TILE_FALL;
 	}
 
 	//-----------------------------------------------------------------
@@ -598,6 +597,7 @@ MapObjectBarrel::MapObjectBarrel(int index, int8 mapNum, iPoint pos, int tileNum
 	int i, j;
 	iImage* img;
 	Texture* tex;
+	iSize size = iSizeMake(TILE_Width * tileNumX, TILE_Height * tileNumY);
 
 	if (imgMapObjBarrel == NULL)
 	{
@@ -622,11 +622,10 @@ MapObjectBarrel::MapObjectBarrel(int index, int8 mapNum, iPoint pos, int tileNum
 			freeImage(tex);
 		}
 
+		imgMapObjBarrel = img;
 	}
-	else
-	{
-		img = imgMapObjBarrel->copy();
-	}
+
+	img = imgMapObjBarrel->copy();
 
 	//img->animation = true;
 	img->_aniDt = 1.0f;
@@ -702,11 +701,10 @@ MapObjectItemBox::MapObjectItemBox(int index, int8 mapNum, iPoint pos, int tileN
 			freeImage(tex);
 		}
 
+		imgMapObjItemBox = img;
 	}
-	else
-	{
-		img = imgMapObjItemBox->copy();
-	}
+
+	img = imgMapObjItemBox->copy();
 
 	//img->animation = true;
 	img->_aniDt = 1.0f;
@@ -767,6 +765,7 @@ void loadMap()
 void freeMap()
 {
 	int i;
+
 	for (i = 0; i < TILE_TOTAL_NUM; i++)
 	{
 		if (maps[i]->img)
@@ -776,15 +775,34 @@ void freeMap()
 	}
 	free(maps);
 
-	for (i = 0; i < mapObjNum; i++)
-		delete mapObj[i];
+	for (i = 0; i < _mapObjNum; i++)
+		delete _mapObj[i];
+	free(_mapObj);
 	free(mapObj);
+
+	deleteMapImage();
 }
 
 void drawMap(float dt)
 {
-	int i;
+	int i, j;
 	int num = TILE_TOTAL_NUM;
+#if 1
+	int tileNum = TILE_NUM_X * TILE_NUM_Y;
+	iPoint tmp = iPointMake(devSize.width - TILE_Width * TILE_NUM_X, devSize.height - TILE_Height * TILE_NUM_Y) / 2.0f;
+	for (j = 0; j < tileNum; j++)
+	{
+		int8 n = maps[player->mapNumber]->tile[j];
+		if (n == TILE_MOVE)			setRGBA(MOVETILE_RGBA);
+		else if (n == TILE_WALL)	setRGBA(WALLTILE_RGBA);
+		else if (n == TILE_FALL)	setRGBA(FALLTILE_RGBA);
+		else						setRGBA(1, 1, 1, 1);
+
+		fillRect(tmp.x + TILE_Width * (j % TILE_NUM_X), tmp.y + TILE_Height * (j / TILE_NUM_X),
+			TILE_Width, TILE_Height);
+	}
+#endif
+	setRGBA(1, 1, 1, 0.6f);
 	for (i = 0; i < num; i++)
 	{
 		if (i != player->mapNumber) 
@@ -795,13 +813,22 @@ void drawMap(float dt)
 		if (m->img)
 			m->img->paint(dt, to);
 	}
+	setRGBA(1, 1, 1, 1);
 
-	num = mapObjNum;
-	for (i = 0; i < num; i++)
+	for (i = 0; i < mapObjNum; i++)
 	{
 		MapObject* mo = mapObj[i];
 		if(mo->mapNumber == player->mapNumber)
 			mo->paint(dt, DRAW_OFF);
+
+#if 0 // 아직 alive 사용안함
+		if (mo->alive == false)
+		{
+			mapObjNum--;
+			mapObj[i] = mapObj[mapObjNum];
+			i--;
+		}
+#endif
 	}
 
 
@@ -821,22 +848,26 @@ void drawMap(float dt)
 #endif
 }
 
+iImage** imgMaps = NULL;
 void createMapImage()
 {
 	int i, j, k, num = TILE_TOTAL_NUM;
-
+	Texture* tex, *t;
+	iImage* img;
+	iSize size;
 	// map img
-	int t = TILE_NUM_X * TILE_NUM_Y;
-	iSize size = iSizeMake(TILE_NUM_X * TILE_Width, TILE_NUM_Y * TILE_Height);
+#if 0 // 테스트용
+	size = iSizeMake(TILE_NUM_X * TILE_Width, TILE_NUM_Y * TILE_Height);
+	int tileNum = TILE_NUM_X * TILE_NUM_Y;
 	for (i = 0; i < num; i++)
 	{
 		if (maps[i]->tileIndex == -1) continue;
 
-		Texture* tex = createTexture(size.width, size.height);
-		iImage* img = new iImage();
+		tex = createTexture(size.width, size.height);
+		img = new iImage();
 
 		fbo->bind(tex);
-		for (j = 0; j < t; j++)
+		for (j = 0; j < tileNum; j++)
 		{
 			int8 n = maps[i]->tile[j];
 			if (n == TILE_MOVE)			setRGBA(MOVETILE_RGBA);
@@ -858,19 +889,89 @@ void createMapImage()
 			delete maps[i]->img;
 		maps[i]->img = img;
 	}
+#else
+	// from tile.cpp
+	const char* strPath[TILE_IMAGE_NUM] = {
+		"assets/maps/room4_0.png",		"assets/maps/room4_0.png",
+		"assets/maps/room4_0.png",		"assets/maps/room4_1.png",
+
+		"assets/maps/room3_RUD_0.png",	"assets/maps/room3_RUD_0.png",
+		"assets/maps/room3_LUD_0.png",	"assets/maps/room3_LUD_0.png",
+		"assets/maps/room3_LRD_0.png",	"assets/maps/room3_LRD_0.png",
+		"assets/maps/room3_LRU_0.png",	"assets/maps/room3_LRU_0.png",
+
+		"assets/maps/room2_LR_0.png",	"assets/maps/room2_LR_0.png",
+		"assets/maps/room2_UD_0.png",	"assets/maps/room2_UD_0.png",
+		"assets/maps/room2_LU_0.png",	"assets/maps/room2_LU_1.png",
+		"assets/maps/room2_RU_0.png",	"assets/maps/room2_RU_1.png",
+		"assets/maps/room2_LD_0.png",	"assets/maps/room2_LD_1.png",
+		"assets/maps/room2_RD_0.png",	"assets/maps/room2_RD_1.png",
+
+		"assets/maps/room1_L_0.png",	"assets/maps/room1_L_0.png",
+		"assets/maps/room1_R_0.png",	"assets/maps/room1_R_0.png",
+		"assets/maps/room1_U_0.png",	"assets/maps/room1_U_0.png",
+		"assets/maps/room1_D_0.png",	"assets/maps/room1_D_0.png",
+	};
+
+	float ratio = 1.5f;
+	iSize baseSize = iSizeMake(TILE_NUM_X * TILE_Width, TILE_NUM_Y * TILE_Height);
+	size = baseSize * ratio;
+
+	if (imgMaps == NULL)
+	{
+		imgMaps = (iImage**)calloc(sizeof(iImage*), TILE_IMAGE_NUM);
+		num = TILE_IMAGE_NUM;
+		for (i = 0; i < num; i++)
+		{
+			img = new iImage();
+			tex = createTexture(size.width, size.height);
+
+			fbo->bind(tex);
+			setRGBA(0.7f, 0.7f, 0.7f, 1);
+			t = createImage(strPath[i]);
+			drawImage(t, size.width / 2.0f, size.height / 2.0f,
+				0, 0, t->width, t->height,
+				VCENTER | HCENTER, size.width / t->width, size.height / t->height,
+				2, 0, REVERSE_HEIGHT);
+			freeImage(t);
+			setRGBA(1, 1, 1, 1);
+			fbo->unbind();
+
+			img->addObject(tex);
+			freeImage(tex);
+
+			img->position = iPointZero - iPointMake(size.width - baseSize.width, size.height - baseSize.height) * 0.5f;
+			imgMaps[i] = img;
+		}
+	}
+
+	num = TILE_TOTAL_NUM;
+	for (i = 0; i < num; i++)
+	{
+		int index = maps[i]->tileIndex;
+		if (index == -1) continue;
+
+		if (maps[i]->img)
+			delete maps[i]->img;
+		maps[i]->img = imgMaps[index]->copy();
+	}
+#endif
 	setRGBA(1, 1, 1, 1);
 
 	//-----------------------------------------------------------------------------
 	
-	if (mapObj)
+	if (_mapObj)
 	{
-		for (i = 0; i < mapObjNum; i++)
-			delete mapObj[i];
+		for (i = 0; i < _mapObjNum; i++)
+			delete _mapObj[i];
+		free(_mapObj);
 		free(mapObj);
+		_mapObj = NULL;
 	}
 
+	_mapObj = (MapObject**)malloc(sizeof(MapObject*) * 200);
 	mapObj = (MapObject**)malloc(sizeof(MapObject*) * 200);
-	mapObjNum = 0;
+	mapObjNum = _mapObjNum = 0;
 
 	for (i = 0; i < TILE_TOTAL_NUM; i++)
 	{
@@ -893,7 +994,7 @@ void createMapImage()
 
 				switch (m->tile[tn])
 				{
-				case 01:
+				case 01: // TILE_MOVE
 				{
 					break;
 				}
@@ -909,7 +1010,7 @@ void createMapImage()
 				{
 					bool exist = true;
 					int dir = 0;
-					if (check[0] && i == 0)				dir = 0, check[0] = false, exist = false;
+					if (check[0] && i == 0)						dir = 0, check[0] = false, exist = false;
 					else if (check[1] && i == TILE_NUM_X - 1)	dir = 1, check[1] = false, exist = false;
 					else if (check[2] && j == 0)				dir = 2, check[2] = false, exist = false;
 					else if (check[3] && j == TILE_NUM_Y - 1)	dir = 3, check[3] = false, exist = false;
@@ -917,13 +1018,15 @@ void createMapImage()
 					if (exist)
 						break;
 
-					mapObj[mapObjNum] = new MapObjectDoor(dir, k, p, tn);
+					_mapObj[mapObjNum] = new MapObjectDoor(dir, k, p, tn);
+					mapObj[mapObjNum] = _mapObj[mapObjNum];
 					mapObjNum++;
 					break;
 				}
 				case TILE_BARREL:
 				{
-					mapObj[mapObjNum] = new MapObjectBarrel(0, k, p, tn);
+					_mapObj[mapObjNum] = new MapObjectBarrel(0, k, p, tn);
+					mapObj[mapObjNum] = _mapObj[mapObjNum];
 					mapObjNum++;
 					break;
 				}
@@ -933,10 +1036,13 @@ void createMapImage()
 				}
 				case TILE_ITEMBOX:
 				{
-					mapObj[mapObjNum] = new MapObjectItemBox(0, k, p, tn);
+					_mapObj[mapObjNum] = new MapObjectItemBox(0, k, p, tn);
+					mapObj[mapObjNum] = _mapObj[mapObjNum];
 					mapObjNum++;
 					break;
 				}
+				case TILE_MONSTER_SPAWN: 
+					break;
 				default:
 					printf("tile read error\n");
 					break;
@@ -947,6 +1053,24 @@ void createMapImage()
 		memset(check, true, sizeof(bool) * 4);
 	}
 
-	mapObj[mapObjNum] = new MapObjectNextDoor(0, 0, iPointZero, 0);
+	_mapObj[mapObjNum] = new MapObjectNextDoor(0, 0, iPointZero, 0);
+	mapObj[mapObjNum] = _mapObj[mapObjNum];
 	mapObjNum++;
+
+	_mapObjNum = mapObjNum;
+}
+
+void deleteMapImage()
+{
+	int i;
+	// maps
+	for (i = 0; i < TILE_IMAGE_NUM; i++)
+		delete imgMaps[i];
+	free(imgMaps);
+
+	// mapObj
+	free(mapObjNextDoor);
+	delete imgMapObjDoor;
+	delete imgMapObjBarrel;
+	delete imgMapObjItemBox;
 }

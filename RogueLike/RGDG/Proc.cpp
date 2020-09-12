@@ -254,28 +254,37 @@ void Stage::setMonsterData(int* actMap, int connectNum)
 		monster = NULL;
 	}
 
+	int n = 0;
+	num = TILE_NUM_X * TILE_NUM_Y;
+	for (i = 0; i < TILE_TOTAL_NUM; i++)
+	{
+		MapTile* m = maps[i];
+		if (m->state == MapType_Boss) continue;
+		for (j = 0; j < num; j++)
+		{
+			if (m->tile[j] == TILE_MONSTER_SPAWN)
+			{
+				MonsterData* md = &monsterData[n];
+				md->index = 0;
+				md->mapNum = i;
+				md->position = iPointMake(TILE_Width * (j % TILE_NUM_X), TILE_Height * (j / TILE_NUM_X));
+				n++;
+			}
+		}
+	}
+
 	for (i = 0; i < MT_max; i++)
 	{
-		int n = 0;
 		switch (i)
 		{
-		case MT_golemNomal: n = 5 + random() % 10; break;
+		case MT_golemNomal: /*n = 5 + random() % 10;*/ break;
+		case MT_golemElete: n = 0;  break;
 		case MT_golemBoss: n = 1; break;
 		default: break;
 		}
 		actMonsterNum[i] = n;
 	}
 
-	num = actMonsterNum[MT_golemNomal];
-	for (i = 0; i < num; i++)
-	{
-		MonsterData* md = &monsterData[i];
-		md->index = 0;
-		md->mapNum = am[random() % cnNum];
-		md->position = iPointMake(100 + 100 * (random() % 5), 150 + 50 * (random() % 10));
-	}
-
-	//num += actMonsterNum[golemBoss];
 	for (i = 0; i < cnNum; i++)
 	{
 		if (maps[am[i]]->state == MapType_Boss)
@@ -283,7 +292,7 @@ void Stage::setMonsterData(int* actMap, int connectNum)
 			MonsterData* md = &monsterData[actMonsterNum[MT_golemNomal]];
 			md->index = 0;
 			md->mapNum = am[i];
-			md->position = iPointMake(450, 450);
+			md->position = iPointMake(TILE_Width * TILE_NUM_X, TILE_Height * TILE_NUM_Y) / 2.0f - iPointMake(100, 100);
 		}
 	}
 }
@@ -658,8 +667,9 @@ Texture* methodStStageNum(const char* str)
 	iSize size = iSizeMake(devSize.width * 0.7f, devSize.height * 0.2);
 	g->init(size);
 
+	setRGBA(0, 0, 0, 0.5);
+	g->fillRect(0, 0, size.width, size.height, 30);
 	setRGBA(1, 1, 1, 1);
-	g->fillRect(0, 0, size.width, size.height, 20);
 
 	setStringSize(devSize.height * 0.18);
 	setStringRGBA(0, 1, 0.2f, 1);

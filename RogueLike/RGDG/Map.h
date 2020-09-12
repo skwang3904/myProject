@@ -7,7 +7,6 @@
 extern iPoint displayCenterPos;
 #define DRAW_OFF displayCenterPos + player->camera
 
-
 struct MapTile
 {
 	MapType state;
@@ -47,6 +46,7 @@ public:
 	int tileNumY;
 	int* tileNumber;
 };
+extern MapObject** _mapObj;
 extern MapObject** mapObj;
 extern int mapObjNum;
 //-----------------------------------------------------------------------------
@@ -116,7 +116,10 @@ public:
 
 
 void loadMap();
+void freeMap();
+
 void createMap(bool readFile = false); //true : read, false : newCreate
 void createMapImage();
-void freeMap();
+void deleteMapImage();
+
 void drawMap(float dt);

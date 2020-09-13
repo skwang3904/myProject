@@ -218,7 +218,7 @@ void wallCheck(Object* obj, iPoint mp)
 		int LX = pos.x - to.x;						LX /= TILE_Width;
 		int TLY = pos.y - to.y;						TLY /= TILE_Height;
 		int BLY = pos.y + tmp.height - to.y;		BLY /= TILE_Height;
-		int min = to.x - size.width * 4.0f;
+		int min = to.x;
 	
 		for (i = LX - 1; i > -1; i--)
 		{
@@ -244,7 +244,7 @@ void wallCheck(Object* obj, iPoint mp)
 		int RX = pos.x + tmp.width - to.x;			RX /= TILE_Width;
 		int TRY = pos.y - to.y;						TRY /= TILE_Height;
 		int BRY = pos.y + tmp.height - to.y;		BRY /= TILE_Height;
-		int max = to.x + TILE_NUM_X * TILE_Width - 1 + size.width * 4.0f;
+		int max = to.x + TILE_NUM_X * TILE_Width - 1;
 	
 		for (i = RX + 1; i < TILE_NUM_X; i++)
 		{
@@ -272,7 +272,7 @@ void wallCheck(Object* obj, iPoint mp)
 		int TY = pos.y - to.y;							TY /= TILE_Height;
 		int TLX = pos.x - to.x;							TLX /= TILE_Width;
 		int TRX = pos.x + tmp.width - to.x;				TRX /= TILE_Width;
-		int min = to.y - size.height * 4.0f;
+		int min = to.y;
 	
 		for (j = TY - 1; j > -1; j--)
 		{
@@ -298,7 +298,7 @@ void wallCheck(Object* obj, iPoint mp)
 		int BY = pos.y + tmp.height - to.y;			BY /= TILE_Height;
 		int BLX = pos.x - to.x;						BLX /= TILE_Width;
 		int BRX = pos.x + tmp.width - to.x;			BRX /= TILE_Width;
-		int max = to.y + TILE_NUM_Y * TILE_Height - 1 + size.height * 4.0f;
+		int max = to.y + TILE_NUM_Y * TILE_Height - 1;
 	
 		for (j = BY + 1; j < TILE_NUM_Y; j++)
 		{
@@ -326,9 +326,12 @@ void wallCheck(Object* obj, iPoint mp)
 
 //-----------------------------------------------------------------------------
 // MapObject
-MapObject** _mapObj;
-MapObject** mapObj;
+MapObject** _mapObj = NULL;
+MapObject** mapObj = NULL;
 int mapObjNum, _mapObjNum;
+
+MapObject** mapObjBroken = NULL;
+int mapObjBrokenNum;
 
 MapObject::MapObject(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos)
 {
@@ -337,12 +340,24 @@ MapObject::MapObject(int index, int8 mapNum, iPoint pos) : Object(index, mapNum,
 	tileNumX = 0;
 	tileNumY = 0;
 	tileNumber = NULL;
+
+	if (mapObjBroken == NULL)
+	{
+		mapObjBroken = (MapObject**)malloc(sizeof(MapObject*) * 100);
+		mapObjBrokenNum = 0;
+	}
 }
 
 MapObject::~MapObject()
 {
-	if (tileNumber)
+	if(tileNumber)
 		free(tileNumber);
+
+	if (mapObjBroken)
+	{
+		free(mapObjBroken);
+		mapObjBroken = NULL;
+	}
 }
 
 //----------------------------------------------------------------------------------
@@ -351,29 +366,17 @@ iImage* imgMapObjDoor = NULL;
 MapObjectDoor::MapObjectDoor(int index, int8 mapNum, iPoint pos, int tileNumber) : MapObject(index, mapNum, pos)
 {
 	tileNumX = 1;
-	tileNumY = 4;
+	tileNumY = 6;
 	int num = tileNumX * tileNumY;
 	this->tileNumber = (int*)calloc(sizeof(int), num);
 	float angle = 0.0f;
-	iSize size = iSizeMake(TILE_Width * tileNumX, TILE_Height * tileNumY);
 	int tmp = 0;
 	switch (index)
 	{
 	case 0: 
-	case 1: 
-	{
-		tmp = TILE_NUM_X;
-		//size
-		angle = 90.0f + 180.0f * index;
-		break;
-	}
+	case 1: tmp = TILE_NUM_X; break;
 	case 2: 
-	case 3:
-	{
-		tmp = 1;
-		size = iSizeMake(size.height, size.width);
-		break;
-	}
+	case 3: tmp = 1; break;
 	default:
 		printf("Door index Error\n");
 		break;
@@ -390,50 +393,95 @@ MapObjectDoor::MapObjectDoor(int index, int8 mapNum, iPoint pos, int tileNumber)
 
 	int i, j;
 	iImage* img;
-	Texture* tex;
+	Texture* tex, *t;
+	iSize size = iSizeMake(TILE_Width * tileNumX * 6, TILE_Height * tileNumY);
 
 	if (imgMapObjDoor == NULL)
 	{
-		setStringSize(TILE_Height - 5);
-		setStringRGBA(0, 0, 0, 1);
-		setStringBorder(0);
-		img = new iImage();
+		const char* strPath[1] = {
+			"assets/object/door_east_%d.png",
+		};
 
-		iGraphics* g = iGraphics::instance();
+		img = new iImage();
 		for (i = 0; i < 2; i++)
 		{
-			g->init(size);
+			tex = createTexture(size.width, size.height);
 
-			if (i == 0) setRGBA(0, 0, 1, 1);
-			else		setRGBA(0, 1, 0, 1);
-			g->fillRect(0, 0, size.width, size.height, 10);
+			fbo->bind(tex);
+			t = createImage(strPath[0], i);
+			drawImage(t, size.width / 2.0f, size.height / 2.0f,
+				0, 0, t->width, t->height,
+				VCENTER | HCENTER, size.width / t->width, size.height / t->height,
+				2, 0, REVERSE_HEIGHT);
+			freeImage(t);
+			fbo->unbind();
 
-			g->drawString(size.width / 2, size.height / 2, VCENTER | HCENTER, "문");
-
-			tex = g->getTexture();
 			img->addObject(tex);
 			freeImage(tex);
 		}
-		setRGBA(1, 1, 1, 1);
+
 		imgMapObjDoor = img;
 	}
 
 	img = imgMapObjDoor->copy();
 
-	//img->animation = true;
-	img->_aniDt = 1.0f;
+	iPoint imgPos = iPointZero;
+	float w = img->tex->width / 2.0f;
+	float h = img->tex->height / 2.0f;
+	iRect rt = iRectZero;
+	switch (index)
+	{
+	case 0:
+	{
+		imgPos = iPointMake(-w * 2, 0);
+		angle = 180.0f;
+		rt = iRectMake(position.x, position.y, TILE_Width, size.height);
+		break;
+	}
+	case 1:
+	{
+		imgPos = iPointMake(TILE_Width, 0);
+		angle = 0.0f;
+		rt = iRectMake(position.x, position.y, TILE_Width, size.height);
+		break;
+	}
+	case 2:
+	{
+		imgPos = iPointMake(-w + h, w - h * 3);
+		angle = 90.0f;
+		rt = iRectMake(position.x, position.y, size.width, TILE_Height);
+		break;
+	}
+	case 3:
+	{
+		imgPos = iPointMake(-w + h, w - h + TILE_Height);
+		angle = 270.0f;
+		rt = iRectMake(position.x, position.y, size.width, TILE_Height);
+		break;
+	}
+	default:
+		printf("Door index Error\n");
+		break;
+	}
+
+	img->position = imgPos;
+	img->lastFrame = true;
 	img->angle = angle;
 	img->lockAngle = true;
-	if(angle)
-		img->position = iPointZero + iPointMake(-img->tex->width + img->tex->height, img->tex->width - img->tex->height) / 2.0f;
 	this->img = img;
-	
-	touchRect = iRectMake(position, size);
+
+	touchRect = rt;
 }
 
 MapObjectDoor::~MapObjectDoor()
 {
-	delete img; // test
+	delete img;
+
+	if (imgMapObjDoor)
+	{
+		delete imgMapObjDoor;
+		imgMapObjDoor = NULL;
+	}
 }
 
 void MapObjectDoor::paint(float dt, iPoint off)
@@ -441,12 +489,34 @@ void MapObjectDoor::paint(float dt, iPoint off)
 	if (mapNumber != player->mapNumber)
 		return;
 
+	bool empty = true;
+	for (int i = 0; i < monsterNum; i++)
+	{
+		Monster* m = monster[i];
+		if (m->mapNumber == mapNumber)
+		{
+			empty = false;
+			break;
+		}
+	}
+
+#if 0
+	if (empty)
+	{
+		img->setTexAtIndex(1);
+		if (containRect(touchRect, player->touchRect))
+		{
+			printf("touch obj\n");
+			action(player);
+		}
+	}
+#else
 	if (containRect(touchRect, player->touchRect))
 	{
 		printf("touch obj\n");
 		action(player);
 	}
-
+#endif
 #if 0
 	iRect rt = touchRect;
 	rt.origin += off;
@@ -454,7 +524,7 @@ void MapObjectDoor::paint(float dt, iPoint off)
 	fillRect(rt);
 	setRGBA(1, 1, 1, 1);
 #endif
-
+	img->setTexAtIndex(empty);
 	img->paint(dt, position + off);
 }
 
@@ -467,7 +537,7 @@ void MapObjectDoor::action(Object* obj)
 	PlayerChar* p = (PlayerChar*)obj;
 	int8 pm = p->mapNumber;
 
-	int d = 2; // 맵 이동 시 타일 간격 d개
+	int d = 3; // 맵 이동 시 타일 간격 d개
 	iSize size = iSizeMake(p->img->tex->width, p->img->tex->height);
 	switch (index)
 	{
@@ -487,11 +557,12 @@ void MapObjectDoor::action(Object* obj)
 		pm += TILE_TOTAL_SQRT;
 		p->position.y = maps[pm]->tileOff.y + d * TILE_Height;
 		break;
-
 	}
 
+#if 1
 	p->camera = iPointZero - maps[pm]->tileOff;
 	p->mapNumber = pm;
+#endif
 
 	passMap->pass(pm);
 }
@@ -499,58 +570,71 @@ void MapObjectDoor::action(Object* obj)
 //----------------------------------------------------------------------------------
 
 MapObjectNextDoor* mapObjNextDoor = NULL;
+iImage* imgObjNextDoor = NULL;
 MapObjectNextDoor::MapObjectNextDoor(int index, int8 mapNum, iPoint pos, int tileNumber) : MapObject(index, mapNum, pos)
 {
 	//-----------------------------------------------------------------
-
 	int i, j;
 	iImage* img;
-	Texture* tex;
-
-	setStringSize(TILE_Height);
-	setStringRGBA(0, 0, 0, 1);
-	setStringBorder(0);
-	img = new iImage();
+	Texture* tex, *t;
 	iSize size = iSizeMake(TILE_Width * 3, TILE_Height * 3);
-	iGraphics* g = iGraphics::instance();
-	for (i = 0; i < 2; i++)
+
+	if (imgObjNextDoor == NULL)
 	{
-		g->init(size);
+		const char* strPath[1] = {
+			"assets/object/trapdoor_%d.png",
+		};
 
-		if (i == 0) setRGBA(1, 0, 1, 1);
-		else		setRGBA(0, 1, 0, 1);
-		g->fillRect(0, 0, size.width, size.height, 20);
+		img = new iImage();
+		for (i = 0; i < 2; i++)
+		{
+			tex = createTexture(size.width, size.height);
 
-		g->drawString(size.width / 2, size.height / 2, VCENTER | HCENTER, "다음\n지역");
+			fbo->bind(tex);
+			t = createImage(strPath[0], i);
+			drawImage(t, size.width / 2.0f, size.height / 2.0f,
+				0, 0, t->width, t->height,
+				VCENTER | HCENTER, size.width / t->width, size.height / t->height,
+				2, 0, REVERSE_HEIGHT);
+			freeImage(t);
+			fbo->unbind();
 
-		tex = g->getTexture();
-		img->addObject(tex);
-		freeImage(tex);
+			img->addObject(tex);
+			freeImage(tex);
+		}
+
+		imgObjNextDoor = img;
 	}
 
-	//img->animation = true;
-	img->_aniDt = 1.0f;
+	img = imgObjNextDoor->copy();
+	img->lastFrame = true;
 	this->img = img;
 
+	touchRect = iRectMake(position.x, position.y, img->tex->width, img->tex->height);
 	mapObjNextDoor = this;
 }
 
 MapObjectNextDoor::~MapObjectNextDoor()
 {
 	delete img;
+
+	if (imgObjNextDoor)
+	{
+		delete imgObjNextDoor;
+		imgObjNextDoor = NULL;
+	}
 }
 
 void MapObjectNextDoor::paint(float dt, iPoint off)
 {
-	if (alive == false)
-		return;
-
-	if (containRect(touchRect, player->touchRect))
+	if (alive)
 	{
-		// next stage
-		alive = false;
-		printf("next stage\n");
-		passMap->startNextStage();
+		if (containRect(touchRect, player->touchRect))
+		{
+			// next stage
+			alive = false;
+			passMap->startNextStage();
+		}
 	}
 	
 	img->paint(dt, position + off);
@@ -563,11 +647,8 @@ void MapObjectNextDoor::drawShadow(float dt, iPoint off)
 void MapObjectNextDoor::action(Object* obj)
 {
 	// 보스 죽엇을때 생성
-	mapNumber = obj->mapNumber;
-
 	alive = true;
-	position = obj->position;
-	touchRect = iRectMake(position.x, position.y, img->tex->width, img->tex->height);
+	img->setTexAtIndex(1);
 }
 
 void MapObjectNextDoor::setNextDoor(Object* obj)
@@ -577,7 +658,7 @@ void MapObjectNextDoor::setNextDoor(Object* obj)
 
 //----------------------------------------------------------------------------------
 
-iImage* imgMapObjBarrel = NULL;
+iImage** imgMapObjBarrel = NULL;
 MapObjectBarrel::MapObjectBarrel(int index, int8 mapNum, iPoint pos, int tileNumber) : MapObject(index, mapNum, pos)
 {
 	tileNumX = 2;
@@ -589,43 +670,54 @@ MapObjectBarrel::MapObjectBarrel(int index, int8 mapNum, iPoint pos, int tileNum
 	{
 		int tn = tileNumber + TILE_NUM_X * (i / tileNumX) + (i % tileNumX);
 		this->tileNumber[i] = tn;
-		maps[mapNumber]->tile[tn] = TILE_FALL;
+		maps[mapNumber]->tile[tn] = TILE_WALL;
 	}
+
+	mapObjBroken[mapObjBrokenNum] = this;
+	mapObjBrokenNum++;
 
 	//-----------------------------------------------------------------
 
 	int i, j;
 	iImage* img;
-	Texture* tex;
+	Texture* tex, *t;
 	iSize size = iSizeMake(TILE_Width * tileNumX, TILE_Height * tileNumY);
 
 	if (imgMapObjBarrel == NULL)
 	{
-		setStringSize(TILE_Height);
-		setStringRGBA(0, 0, 0, 1);
-		setStringBorder(0);
-		img = new iImage();
+		imgMapObjBarrel = (iImage**)malloc(sizeof(iImage*) * 2);
 
-		iGraphics* g = iGraphics::instance();
+		const char* strPath[2] = {
+			"assets/object/barrel_%d.png",
+			"assets/object/pot_%d.png",
+		};
+
+		setRGBA(1, 1, 1, 1);
 		for (i = 0; i < 2; i++)
 		{
-			g->init(size);
+			img = new iImage();
+			for (j = 0; j < 2; j++)
+			{
+				tex = createTexture(size.width, size.height);
 
-			if (i == 0) setRGBA(1, 1, 0, 1);
-			else		setRGBA(1, 0, 1, 1);
-			g->fillRect(0, 0, size.width, size.height, 20);
+				fbo->bind(tex);
+				t = createImage(strPath[i], j);
+				drawImage(t, size.width / 2.0f, size.height / 2.0f,
+					0, 0, t->width, t->height,
+					VCENTER | HCENTER, size.width / t->width, size.height / t->height,
+					2, 0, REVERSE_HEIGHT);
+				freeImage(t);
+				fbo->unbind();
 
-			g->drawString(size.width / 2, size.height / 2, VCENTER | HCENTER, "나무");
+				img->addObject(tex);
+				freeImage(tex);
+			}
 
-			tex = g->getTexture();
-			img->addObject(tex);
-			freeImage(tex);
+			imgMapObjBarrel[i] = img;
 		}
-
-		imgMapObjBarrel = img;
 	}
 
-	img = imgMapObjBarrel->copy();
+	img = imgMapObjBarrel[random()%2]->copy();
 
 	//img->animation = true;
 	img->_aniDt = 1.0f;
@@ -637,11 +729,18 @@ MapObjectBarrel::MapObjectBarrel(int index, int8 mapNum, iPoint pos, int tileNum
 MapObjectBarrel::~MapObjectBarrel()
 {
 	delete img;
+
+	if (imgMapObjBarrel)
+	{
+		for (int i = 0; i < 2; i++)
+			delete imgMapObjBarrel[i];
+		free(imgMapObjBarrel);
+		imgMapObjBarrel = NULL;
+	}
 }
 
 void MapObjectBarrel::paint(float dt, iPoint off)
 {
-
 	img->paint(dt, position + off);
 }
 
@@ -659,44 +758,49 @@ iImage* imgMapObjItemBox = NULL;
 MapObjectItemBox::MapObjectItemBox(int index, int8 mapNum, iPoint pos, int tileNumber) : MapObject(index, mapNum, pos)
 {
 	tileNumX = 6;
-	tileNumY = 4;
+	tileNumY = 6;
 	int num = tileNumX * tileNumY;
 	this->tileNumber = (int*)calloc(sizeof(int), num);
 
-	iSize size = iSizeMake(TILE_Width * tileNumX, TILE_Height * tileNumY);
 
 	for (int i = 0; i < num; i++)
 	{
 		int tn = tileNumber + TILE_NUM_X * (i / tileNumX) + (i % tileNumX);
 		this->tileNumber[i] = tn;
-		maps[mapNumber]->tile[tn] = WW;
+		maps[mapNumber]->tile[tn] = TILE_WALL;
 	}
+
+	mapObjBroken[mapObjBrokenNum] = this;
+	mapObjBrokenNum++;
 
 	//-----------------------------------------------------------------
 
 	int i, j;
 	iImage* img;
-	Texture* tex;
+	Texture* tex, *t;
+	iSize size = iSizeMake(TILE_Width * tileNumX, TILE_Height * tileNumY);
 
 	if (imgMapObjItemBox == NULL)
 	{
-		setStringSize(TILE_Height);
-		setStringRGBA(0, 0, 0, 1);
-		setStringBorder(0);
-		img = new iImage();
+		const char* strPath[1] = {
+		"assets/object/chest_3_%d.png",
+		};
 
-		iGraphics* g = iGraphics::instance();
+		setRGBA(1, 1, 1, 1);
+		img = new iImage();
 		for (i = 0; i < 2; i++)
 		{
-			g->init(size);
+			tex = createTexture(size.width, size.height);
 
-			if (i == 0) setRGBA(0, 1, 1, 1);
-			else		setRGBA(0, 0, 1, 1);
-			g->fillRect(0, 0, size.width, size.height, 20);
+			fbo->bind(tex);
+			t = createImage(strPath[0], i);
+			drawImage(t, size.width / 2.0f, size.height / 2.0f,
+				0, 0, t->width, t->height,
+				VCENTER | HCENTER, size.width / t->width, size.height / t->height,
+				2, 0, REVERSE_HEIGHT);
+			freeImage(t);
+			fbo->unbind();
 
-			g->drawString(size.width / 2, size.height / 2, VCENTER | HCENTER, "상자");
-
-			tex = g->getTexture();
 			img->addObject(tex);
 			freeImage(tex);
 		}
@@ -705,18 +809,21 @@ MapObjectItemBox::MapObjectItemBox(int index, int8 mapNum, iPoint pos, int tileN
 	}
 
 	img = imgMapObjItemBox->copy();
-
-	//img->animation = true;
-	img->_aniDt = 1.0f;
+	img->lastFrame = true;
 	this->img = img;
 
 	touchRect = iRectMake(position, size);
-
 }
 
 MapObjectItemBox::~MapObjectItemBox()
 {
 	delete img;
+
+	if (imgMapObjItemBox)
+	{
+		delete imgMapObjItemBox;
+		imgMapObjItemBox = NULL;
+	}
 }
 
 void MapObjectItemBox::paint(float dt, iPoint off)
@@ -774,11 +881,14 @@ void freeMap()
 		free(maps[i]);
 	}
 	free(maps);
+	maps = NULL;
 
 	for (i = 0; i < _mapObjNum; i++)
 		delete _mapObj[i];
 	free(_mapObj);
+	_mapObj = NULL;
 	free(mapObj);
+	mapObj = NULL;
 
 	deleteMapImage();
 }
@@ -919,8 +1029,8 @@ void createMapImage()
 
 	if (imgMaps == NULL)
 	{
-		imgMaps = (iImage**)calloc(sizeof(iImage*), TILE_IMAGE_NUM);
 		num = TILE_IMAGE_NUM;
+		imgMaps = (iImage**)malloc(sizeof(iImage*) * num);
 		for (i = 0; i < num; i++)
 		{
 			img = new iImage();
@@ -940,7 +1050,8 @@ void createMapImage()
 			img->addObject(tex);
 			freeImage(tex);
 
-			img->position = iPointZero - iPointMake(size.width - baseSize.width, size.height - baseSize.height) * 0.5f;
+			img->position = iPointZero - iPointMake(size.width - baseSize.width, 
+												size.height - baseSize.height) * 0.5f;
 			imgMaps[i] = img;
 		}
 	}
@@ -948,11 +1059,12 @@ void createMapImage()
 	num = TILE_TOTAL_NUM;
 	for (i = 0; i < num; i++)
 	{
+		if (maps[i]->img)
+			delete maps[i]->img;
+
 		int index = maps[i]->tileIndex;
 		if (index == -1) continue;
 
-		if (maps[i]->img)
-			delete maps[i]->img;
 		maps[i]->img = imgMaps[index]->copy();
 	}
 #endif
@@ -976,11 +1088,15 @@ void createMapImage()
 	for (i = 0; i < TILE_TOTAL_NUM; i++)
 	{
 		if (maps[i]->state == MapType_ItemBox)
-			maps[i]->tile[TILE_NUM_X * 24 + TILE_NUM_X / 2] = IB;
+		{
+			maps[i]->tile[TILE_NUM_X * 18 + TILE_NUM_X / 2] = IB;
+			break;
+		}
 	}
 
 	// mapObj img
 	bool check[4] = { true, true, true, true };
+	iPoint p = iPointZero;
 	for (k = 0; k < num; k++)
 	{
 		MapTile* m = maps[k];
@@ -990,7 +1106,7 @@ void createMapImage()
 			for (j = 0; j < TILE_NUM_Y; j++)
 			{
 				int tn = TILE_NUM_X * j + i;
-				iPoint p = m->tileOff + iPointMake(TILE_Width * i, TILE_Height * j);
+				p = m->tileOff + iPointMake(TILE_Width * i, TILE_Height * j);
 
 				switch (m->tile[tn])
 				{
@@ -1053,9 +1169,17 @@ void createMapImage()
 		memset(check, true, sizeof(bool) * 4);
 	}
 
-	_mapObj[mapObjNum] = new MapObjectNextDoor(0, 0, iPointZero, 0);
-	mapObj[mapObjNum] = _mapObj[mapObjNum];
-	mapObjNum++;
+	for (i = 0; i < TILE_TOTAL_NUM; i++)
+	{
+		if (maps[i]->state == MapType_Boss)
+		{
+			p = maps[i]->tileOff + iPointMake(TILE_NUM_X * TILE_Width, TILE_NUM_Y * TILE_Height) / 2.0f;
+			_mapObj[mapObjNum] = new MapObjectNextDoor(0, i, p, 0);
+			mapObj[mapObjNum] = _mapObj[mapObjNum];
+			mapObjNum++;
+			break;
+		}
+	}
 
 	_mapObjNum = mapObjNum;
 }
@@ -1067,10 +1191,6 @@ void deleteMapImage()
 	for (i = 0; i < TILE_IMAGE_NUM; i++)
 		delete imgMaps[i];
 	free(imgMaps);
+	imgMaps = NULL;
 
-	// mapObj
-	free(mapObjNextDoor);
-	delete imgMapObjDoor;
-	delete imgMapObjBarrel;
-	delete imgMapObjItemBox;
 }

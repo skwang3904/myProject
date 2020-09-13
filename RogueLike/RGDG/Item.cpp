@@ -21,20 +21,8 @@ Item::Item(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos)
 {
 	if (imgItems == NULL)
 		createItemImage();
-	int i, j;
-	iImage* img;
-	Texture* tex;
-	iSize size;
 
-	imgNum = 1;
-	imgs = (iImage**)malloc(sizeof(iImage*) * imgNum);
-
-	for (i = 0; i < imgNum; i++)
-	{
-		imgs[i] = imgItems[index]->copy();
-	}
-
-	this->img = imgs[0];
+	this->img = imgItems[index]->copy();
 
 	get = false;
 	ItemInfo* it = &itemInfo[index];
@@ -49,11 +37,10 @@ Item::Item(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos)
 
 Item::~Item()
 {
-	if (itemNum == 0)
-	{
-		if (imgItems)
-			freeItemImage();
-	}
+	delete img;
+
+	if (imgItems)
+		freeItemImage();
 }
 
 void Item::paint(float dt, iPoint off)
@@ -123,7 +110,19 @@ void Item::action(Object* obj)
 	// get item
 	get = true;
 	actionDt = 0.0f;
-	targetPosition = maps[mapNumber]->tileOff + iPointMake(0, TILE_NUM_Y * TILE_Height - img->tex->height);
+	targetPosition = maps[mapNumber]->tileOff 
+		+ iPointMake(0, TILE_NUM_Y * TILE_Height - img->tex->height);
+
+	PlayerChar* p = player;
+	switch (index)
+	{
+	case 0: 
+	case 1: 
+	case 2: p->hp += value; break;
+	default:
+		break;
+	}
+	
 }
 
 void Item::aliveItem(Object* obj)
@@ -183,7 +182,9 @@ void freeItem()
 		free(_item[i]);
 	}
 	free(_item);
+	_item = NULL;
 	free(item);
+	item = NULL;
 }
 
 void drawItem(float dt)

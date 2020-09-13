@@ -126,9 +126,9 @@ WeaponInfo weaponInfo[2] = {
 //----------------------------------------------------------------
 
 ItemInfo itemInfo[3] = {
-	{ 5.0f, 2.0f},
-	{ 10.0f, 2.0f},
-	{ 20.0f, 2.0f},
+	{ 5.0f, 0.5f},
+	{ 10.0f, 0.8f},
+	{ 20.0f, 1.0f},
 };
 
 ItemImageInfo itemImageInfo[3] = {

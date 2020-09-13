@@ -771,11 +771,13 @@ void freeMonsterImage()
 	for (i = 0; i < num; i++)
 		delete golemNomal_Image[i];
 	free(golemNomal_Image);
+	golemNomal_Image = NULL;
 	
 	num = MONSTER_IMG_NUM * 4;
 	for (i = 0; i < num; i++)
 		delete golemBoss_Image[i];
 	free(golemBoss_Image);
+	golemBoss_Image = NULL;
 }
 
 void freeMonster()
@@ -787,7 +789,9 @@ void freeMonster()
 	for (i = 0; i < num; i++)
 		delete _monster[i];
 	free(_monster);
+	_monster = NULL;
 	free(monster);
+	monster = NULL;
 
 	freeMonsterImage();
 }

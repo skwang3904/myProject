@@ -4,7 +4,7 @@
 
 #include "Common.h"
 
-#define ITEM_CREATE_NUM 5
+#define ITEM_CREATE_NUM 20
 
 enum ItemList
 {

@@ -307,6 +307,7 @@ void loadPlayerChar()
 void freePlayerChar()
 {
 	delete player;
+	player = NULL;
 }
 
 void drawPlayerChar(float dt)

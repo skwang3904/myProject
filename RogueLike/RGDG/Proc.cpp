@@ -65,7 +65,6 @@ void drawProc(float dt)
 	// if(loading)
 	// return;
 
-
 	float pop_dt = dt;
 	if (popProcMenu->bShow || 
 		popGameOver->bShow)
@@ -363,9 +362,9 @@ void PassMap::update(float dt)
 	iPoint p = iPointZero;
 	switch (mapNumber - prevMapNumber)
 	{ //LRUD
-	case 1:					p = curr->tileOff + iPointMake(TILE_NUM_X * TILE_Width, 0);  break;
-	case -1:				p = curr->tileOff + iPointMake(-TILE_NUM_X * TILE_Width, 0);		break;
-	case TILE_TOTAL_SQRT:	p = curr->tileOff + iPointMake(0, TILE_NUM_Y * TILE_Height); break;
+	case 1:					p = curr->tileOff + iPointMake(TILE_NUM_X * TILE_Width, 0);		break;
+	case -1:				p = curr->tileOff + iPointMake(-TILE_NUM_X * TILE_Width, 0);	break;
+	case TILE_TOTAL_SQRT:	p = curr->tileOff + iPointMake(0, TILE_NUM_Y * TILE_Height);	break;
 	case -TILE_TOTAL_SQRT:	p = curr->tileOff + iPointMake(0, -TILE_NUM_Y * TILE_Height);	break;
 	default: printf("pass tile error\n");
 	}
@@ -375,16 +374,21 @@ void PassMap::update(float dt)
 	{
 		passDt = _passDt;
 		prevMapNumber = mapNumber;
+
+#if 0
+		player->camera = iPointZero - maps[mapNumber]->tileOff;
+		player->mapNumber = mapNumber;
+#endif 
 	}
 
 	float d = passDt / _passDt;
-	iPoint pp = linear(d, curr->tileOff, prev->tileOff) + DRAW_OFF;
-	iPoint cp = linear(d, p, curr->tileOff) + DRAW_OFF;
+	iPoint pp = linear(d, curr->tileOff, prev->tileOff);
+	iPoint cp = linear(d, p, curr->tileOff);
 
 	setRGBA(0.3f, 0.3f, 0.3f, 1);
 	if (passDt < _passDt)
-		prev->img->paint(dt, pp);
-	curr->img->paint(dt, cp);
+		prev->img->paint(dt, pp + DRAW_OFF);
+	curr->img->paint(dt, cp + DRAW_OFF);
 	setRGBA(1, 1, 1, 1);
 }
 

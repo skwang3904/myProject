@@ -78,32 +78,30 @@ Hammer::Hammer(int index, int8 mapNum, iPoint pos) : Weapon(index, mapNum, pos)
 {
 	int i, j;
 	iImage* img;
-	Texture* tex;
+	Texture* tex, * t;
+	iSize size = iSizeMake(60, 100);
 
-	imgNum = 1;
-	imgs = (iImage**)malloc(sizeof(iImage*) * imgNum);
+	img = new iImage();
+	tex = createTexture(size.width, size.height);
 
-	iSize size = iSizeMake(20, 50);
-	for (i = 0; i < imgNum; i++)
-	{
-		img = new iImage();
+	fbo->bind(tex);
+	t = createImage("assets/weapon/hammer.png");
+	drawImage(t, size.width / 2.0f, size.height / 2.0f,
+		0, 0, t->width, t->height,
+		VCENTER | HCENTER, size.width / t->width, size.height / t->height,
+		2, 0, REVERSE_HEIGHT);
+	freeImage(t);
+	fbo->unbind();
 
-		tex = createTexture(size.width, size.height);
-		fbo->bind(tex);
-		fbo->clear(0, 0.5f, 1, 1);
-		fbo->unbind();
+	img->addObject(tex);
+	freeImage(tex);
 
-		img->addObject(tex);
-		freeImage(tex);
+	//img->angle = 180;
+	img->lockAngle = true;
+	img->anc = VCENTER | HCENTER;
+	this->img = img;
 
-		imgs[i] = img;
-	}
-	this->img = imgs[0];
-	this->img->lockAngle = true;
-	this->img->anc = VCENTER | HCENTER;
-	mapNumber = 0;
 
-	position = player->position + iPointMake(30, 0);
 	touchRect = iRectMake(position.x - size.width / 2.0f, position.y - size.height / 2.0f,
 		size.width, size.height);
 
@@ -122,13 +120,11 @@ Hammer::Hammer(int index, int8 mapNum, iPoint pos) : Weapon(index, mapNum, pos)
 	hit = false;
 	get = false;
 	drawPos = iPointZero;
-
-	//player->addWeapon(this);
-	//this->index = player->currWeaponIndex();
 }
 
 Hammer::~Hammer()
 {
+	delete img;
 }
 
 void Hammer::paint(float dt, iPoint off)
@@ -257,23 +253,23 @@ void Hammer::setPosition()
 	if (v.x < 0.0f)
 	{
 		angle = 90.0f;
-		p = iPointMake(-size.height * 0.5f, size.width * 0.5f);
+		p = iPointMake(-size.height * 0.5f, 0);
 	}
 	else if (v.x > 0.0f)
 	{
 		angle = 270.0f;
-		p = iPointMake(size.height * 0.5f, size.width * 0.5f);
+		p = iPointMake(size.height * 0.5f, 0);
 
 	}
 	if (v.y < 0.0f)
 	{
-		angle = 180.0f;
-		p = iPointMake(size.width * 0.5f, -size.height * 0.5f);
+		angle = 0.0f;
+		p = iPointMake(0, -size.height * 0.5f);
 	}
 	else if (v.y > 0.0f)
 	{
-		angle = 0.0f;
-		p = iPointMake(-size.width * 0.5f, size.height * 0.5f);
+		angle = 180.0f;
+		p = iPointMake(0, size.height * 0.5f);
 	}
 
 	drawPos = p;
@@ -286,29 +282,30 @@ Spear::Spear(int index, int8 mapNum, iPoint pos) : Weapon(index, mapNum, pos)
 {
 	int i, j;
 	iImage* img;
-	Texture* tex;
+	Texture* tex, *t;
 
-	imgNum = 1;
-	imgs = (iImage**)malloc(sizeof(iImage*) * imgNum);
+	iSize size = iSizeMake(20, 100);
 
-	iSize size = iSizeMake(10, 100);
-	for (i = 0; i < imgNum; i++)
-	{
-		img = new iImage();
+	img = new iImage();
+	tex = createTexture(size.width, size.height);
 
-		tex = createTexture(size.width, size.height);
-		fbo->bind(tex);
-		fbo->clear(0, 0.5f, 1, 1);
-		fbo->unbind();
+	fbo->bind(tex);
+	t = createImage("assets/weapon/upg_spear.png");
+	drawImage(t, size.width / 2.0f, size.height / 2.0f,
+		0, 0, t->width, t->height,
+		VCENTER | HCENTER, size.width / t->width, size.height / t->height,
+		2, 0, REVERSE_HEIGHT);
+	freeImage(t);
+	fbo->unbind();
 
-		img->addObject(tex);
-		freeImage(tex);
+	img->addObject(tex);
+	freeImage(tex);
 
-		imgs[i] = img;
-	}
-	this->img = imgs[0];
-	this->img->lockAngle = true;
-	this->img->anc = VCENTER | HCENTER;
+	//img->angle = 180;
+	img->lockAngle = true;
+	img->anc = VCENTER | HCENTER;
+	this->img = img;
+
 
 	position = player->position + iPointMake(50, 50);
 	touchRect = iRectMake(position.x - size.width / 2.0f, position.y - size.height / 2.0f,
@@ -329,11 +326,11 @@ Spear::Spear(int index, int8 mapNum, iPoint pos) : Weapon(index, mapNum, pos)
 	hit = false;
 	get = false;
 	drawPos = iPointZero;
-
 }
 
 Spear::~Spear()
 {
+	delete img;
 }
 
 void Spear::paint(float dt, iPoint off)
@@ -453,7 +450,6 @@ bool Spear::attack(float dt)
 	return true;
 }
 
-
 void Spear::setPosition()
 {
 	iPoint v = player->wpVector;
@@ -464,23 +460,23 @@ void Spear::setPosition()
 	if (v.x < 0.0f)
 	{
 		angle = 90.0f;
-		p = iPointMake(-size.height * 0.5f, size.width * 0.5f);
+		p = iPointMake(-size.height * 0.5f, 0);
 	}
 	else if (v.x > 0.0f)
 	{
 		angle = 270.0f;
-		p = iPointMake(size.height * 0.5f, size.width * 0.5f);
+		p = iPointMake(size.height * 0.5f, 0);
 
 	}
 	if (v.y < 0.0f)
 	{
-		angle = 180.0f;
-		p = iPointMake(size.width * 0.5f, -size.height * 0.5f);
+		angle = 0.0f;
+		p = iPointMake(0, -size.height * 0.5f);
 	}
 	else if (v.y > 0.0f)
 	{
-		angle = 0.0f;
-		p = iPointMake(-size.width * 0.5f, size.height * 0.5f);
+		angle = 180.0f;
+		p = iPointMake(0, size.height * 0.5f);
 	}
 
 	drawPos = p;
@@ -494,8 +490,9 @@ void loadWeapon()
 	weaponNum = 0;
 	weapon = (Weapon**)malloc(sizeof(Weapon*) * 10);
 
-	weapon[weaponNum] = new Hammer(-1, player->mapNumber, iPointZero); weaponNum++;
-	weapon[weaponNum] = new Spear(-1, player->mapNumber, iPointZero);  weaponNum++;
+	iPoint p = player->position + iPointMake(30, 0);
+	weapon[weaponNum] = new Hammer(-1, player->mapNumber, p); weaponNum++;
+	weapon[weaponNum] = new Spear(-1, player->mapNumber, p);  weaponNum++;
 
 	int index = 0;
 	for (int i = 0; i < weaponNum; i++)
@@ -514,6 +511,7 @@ void freeWeapon()
 	for (int i = 0; i < weaponNum; i++)
 		delete weapon[i];
 	free(weapon);
+	weapon = NULL;
 }
 
 void drawWeapon(float dt)

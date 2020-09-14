@@ -15,6 +15,7 @@
 
 #include "iSort.h"
 #include "iShortestPath.h"
+#include "iShaderToy.h"
 
 #include "iFPS.h"
 

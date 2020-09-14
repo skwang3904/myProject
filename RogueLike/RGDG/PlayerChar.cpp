@@ -6,6 +6,9 @@
 #include "Map.h"
 #include "Weapon.h"
 
+#include "Projectile.h"
+
+
 PlayerChar* player = NULL;
 PlayerChar::PlayerChar(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos)
 {

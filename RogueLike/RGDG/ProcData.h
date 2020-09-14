@@ -33,7 +33,6 @@ struct MonsterInfo
 	float hp, _hp;
 	float attackPoint, _attackPoint;
 	float attackSpeed, _attackSpeed;
-	float actionDt, _actionDt;
 	float moveSpeed, _moveSpeed;
 
 	float attackDt, _attackDt; // 공격 후 이 시간 이후 데미지판정
@@ -67,13 +66,17 @@ extern MonsterImageInfo golemBossImage[6];
 // Weapon Data
 struct WeaponInfo
 {
-	float _attackPoint;
-	float _attackSpeed;
-	float _attackDelay;
+	float attackPoint;
+	float attackSpeed;
+	float attackDt;	// 공격속도 일정 비율이상에 hit판정
+	float attackDelay;
+	float actionDt;	// 피해대상 hit모션 시간
+
+	float moveSpeed;
 	float attackAngle;
 	float attackRange;
 };
-extern WeaponInfo weaponInfo[2];
+extern WeaponInfo weaponInfo[WT_max];
 
 //----------------------------------------------------------------
 // Item Data

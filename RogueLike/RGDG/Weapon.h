@@ -4,6 +4,10 @@
 
 #include "Common.h"
 
+void loadWeapon();
+void freeWeapon();
+void drawWeapon(float dt);
+
 class Weapon : public Object
 {
 public:
@@ -17,11 +21,13 @@ public:
 	virtual bool attack(float dt) = 0;
 	virtual void setPosition() = 0;
 
+	void attackMonster();
 	void getWeapon();
 	void addThisWeapon();
 	void dropWeapon();
 
 public:
+	float attackDt;
 	float attackDelay, _attackDelay;
 	float attackAngle;
 	float attackRange;
@@ -35,6 +41,8 @@ public:
 };
 extern Weapon** weapon;
 extern int weaponNum;
+
+/* Melee Weapon */
 //--------------------------------------------------------
 // Hammer
 class Hammer : public Weapon
@@ -73,7 +81,60 @@ public:
 
 };
 
+//--------------------------------------------------------
+// Cyclone
+class Cyclone : public Weapon
+{
+public:
+	Cyclone(int index, int8 mapNum, iPoint pos);
+	virtual ~Cyclone();
 
-void loadWeapon();
-void freeWeapon();
-void drawWeapon(float dt);
+	virtual void paint(float dt, iPoint off);
+	virtual void drawShadow(float dt, iPoint off);
+	virtual void action(Object* obj);
+
+	virtual bool attack(float dt);
+	virtual void setPosition();
+
+public:
+
+};
+
+/* Range Weapon */
+//--------------------------------------------------------
+// BowGun
+class BowGun : public Weapon
+{
+public:
+	BowGun(int index, int8 mapNum, iPoint pos);
+	virtual ~BowGun();
+
+	virtual void paint(float dt, iPoint off);
+	virtual void drawShadow(float dt, iPoint off);
+	virtual void action(Object* obj);
+
+	virtual bool attack(float dt);
+	virtual void setPosition();
+
+public:
+
+};
+
+//--------------------------------------------------------
+// MagicWand
+class MagicWand : public Weapon
+{
+public:
+	MagicWand(int index, int8 mapNum, iPoint pos);
+	virtual ~MagicWand();
+
+	virtual void paint(float dt, iPoint off);
+	virtual void drawShadow(float dt, iPoint off);
+	virtual void action(Object* obj);
+
+	virtual bool attack(float dt);
+	virtual void setPosition();
+
+public:
+
+};

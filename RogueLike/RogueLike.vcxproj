@@ -169,6 +169,7 @@
     <ClInclude Include="lib\iPoint.h" />
     <ClInclude Include="lib\iPopup.h" />
     <ClInclude Include="lib\iRect.h" />
+    <ClInclude Include="lib\iShaderToy.h" />
     <ClInclude Include="lib\iShortestPath.h" />
     <ClInclude Include="lib\iSize.h" />
     <ClInclude Include="lib\iSort.h" />
@@ -180,6 +181,7 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="RGDG\AppRogueLike.h" />
     <ClInclude Include="RGDG\Common.h" />
+    <ClInclude Include="RGDG\Effect.h" />
     <ClInclude Include="RGDG\Game.h" />
     <ClInclude Include="RGDG\intro.h" />
     <ClInclude Include="RGDG\Item.h" />
@@ -189,6 +191,7 @@
     <ClInclude Include="RGDG\PlayerChar.h" />
     <ClInclude Include="RGDG\Proc.h" />
     <ClInclude Include="RGDG\ProcData.h" />
+    <ClInclude Include="RGDG\Projectile.h" />
     <ClInclude Include="RGDG\Tile.h" />
     <ClInclude Include="RGDG\Weapon.h" />
   </ItemGroup>
@@ -205,6 +208,7 @@
     <ClCompile Include="lib\iPoint.cpp" />
     <ClCompile Include="lib\iPopup.cpp" />
     <ClCompile Include="lib\iRect.cpp" />
+    <ClCompile Include="lib\iShaderToy.cpp" />
     <ClCompile Include="lib\iShortestPath.cpp" />
     <ClCompile Include="lib\iSize.cpp" />
     <ClCompile Include="lib\iSort.cpp" />
@@ -214,6 +218,7 @@
     <ClCompile Include="lib\rgArray.cpp" />
     <ClCompile Include="RGDG\AppRogueLike.cpp" />
     <ClCompile Include="RGDG\Common.cpp" />
+    <ClCompile Include="RGDG\Effect.cpp" />
     <ClCompile Include="RGDG\Game.cpp" />
     <ClCompile Include="RGDG\glew.c" />
     <ClCompile Include="RGDG\intro.cpp" />
@@ -224,6 +229,7 @@
     <ClCompile Include="RGDG\PlayerChar.cpp" />
     <ClCompile Include="RGDG\Proc.cpp" />
     <ClCompile Include="RGDG\ProcData.cpp" />
+    <ClCompile Include="RGDG\Projectile.cpp" />
     <ClCompile Include="RGDG\Tile.cpp" />
     <ClCompile Include="RGDG\Weapon.cpp" />
   </ItemGroup>

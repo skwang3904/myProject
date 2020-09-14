@@ -17,7 +17,7 @@ struct MapTile
 	iPoint tileOff;
 };
 extern MapTile** maps;
-void wallCheck(Object* obj, iPoint mp);
+int wallCheck(Object* obj, iPoint mp);
 
 //-----------------------------------------------------------------------------
 // MapObject

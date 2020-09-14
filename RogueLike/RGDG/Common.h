@@ -56,3 +56,17 @@ enum MonsterType {
 
 	MT_max
 };
+
+/*Weapon Type*/
+enum WeaponType {
+	// melee
+	WT_Hammer = 0,
+	WT_Spear,
+	WT_Cyclone,
+
+	//range
+	WT_BowGun,
+	WT_MagicWand,
+
+	WT_max,
+};

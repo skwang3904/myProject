@@ -7,6 +7,7 @@
 #include "Monster.h"
 #include "Weapon.h"
 #include "Item.h"
+#include "Projectile.h"
 
 void loadProc()
 {
@@ -18,6 +19,7 @@ void loadProc()
 	loadMonster();
 	loadWeapon();
 	loadItem();
+	loadProjectile();
 
 	loadPassMap();
 
@@ -47,6 +49,7 @@ void freeProc()
 	freeMonster();
 	freeWeapon();
 	freeItem();
+	freeProjectile();
 
 	freePassMap();
 
@@ -80,6 +83,7 @@ void drawProc(float dt)
 	drawMonster(pass_dt);
 	drawWeapon(pass_dt);
 	drawItem(pass_dt);
+	drawProjectile(pass_dt);
 
 	passMap->update(dt);
 	
@@ -161,12 +165,13 @@ void Stage::create()
 
 	for (int i = 0; i < 10; i++)
 	{
+#if 0
 		int a = -1;
-		if (i == 0)
-			a = 1;
-		else if (i == 1)
-			a = 0;
-		weaponData[i].index = a;
+		if (i == 0)			a = 1;
+		else if (i == 1)	a = 0;
+		else if( i == 2)	a = 2;
+#endif
+		weaponData[i].index = i;
 	}
 }
 

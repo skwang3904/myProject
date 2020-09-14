@@ -200,12 +200,12 @@ void pathTileCheck(ConnectTile* c)
 
 //---------------------------------------------------------------------------------------------
 
-void wallCheck(Object* obj, iPoint mp)
+int wallCheck(Object* obj, iPoint mp)
 {
 	int i, j;
 	MapTile* t = maps[player->mapNumber];
-	if (t->tile == NULL)
-		return;
+	//if (t->tile == NULL)
+	//	return;
 
 	iPoint to = t->tileOff;
 	iSize size = iSizeMake(obj->img->tex->width, obj->img->tex->height) * 0.5f;
@@ -236,8 +236,11 @@ void wallCheck(Object* obj, iPoint mp)
 				break;
 		}
 		pos.x += mp.x;
-		if (pos.x < min + 1)
-			pos.x = min + 1;
+		if (pos.x < min)
+		{
+			pos.x = min;
+			return 0;
+		}
 	}
 	else if (mp.x > 0)
 	{
@@ -264,7 +267,10 @@ void wallCheck(Object* obj, iPoint mp)
 	
 		pos.x += mp.x;
 		if (pos.x > max - tmp.width - 1)
+		{
 			pos.x = max - tmp.width - 1;
+			return 1;
+		}
 	}
 	
 	if (mp.y < 0)
@@ -290,8 +296,11 @@ void wallCheck(Object* obj, iPoint mp)
 				break;
 		}
 		pos.y += mp.y;
-		if (pos.y < min + 1)
-			pos.y = min + 1;
+		if (pos.y < min)
+		{
+			pos.y = min;
+			return 2;
+		}
 	}
 	else if (mp.y > 0)
 	{
@@ -318,10 +327,14 @@ void wallCheck(Object* obj, iPoint mp)
 	
 		pos.y += mp.y;
 		if (pos.y > max - tmp.height - 1)
+		{
 			pos.y = max - tmp.height - 1;
+			return 3;
+		}
 	}
 
-	obj->position = pos -iPointMake(size.width, size.height);
+	obj->position = pos - iPointMake(size.width, size.height);
+	return -1;
 }
 
 //-----------------------------------------------------------------------------

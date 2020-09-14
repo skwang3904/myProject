@@ -86,7 +86,15 @@ iShaderToy::iShaderToy(STInput* si)
 			}
 			else if (input->channel[j].strPath)
 			{
+#if 1
+				if (input->channel[j].vFlip)
+					texBufChannel[i][j] = createReverseImage(input->channel[j].strPath);
+				else
+					texBufChannel[i][j] = createImage(input->channel[j].strPath);
+#else
 				texBufChannel[i][j] = createImage(input->channel[j].strPath);
+#endif
+
 			}
 
 			setbufChannel[i][j] = (GLenum*)calloc(sizeof(GLenum), 2);
@@ -159,6 +167,7 @@ void iShaderToy::paint(float dt)
 			{-1, 1, 0, 1},		{1, 1, 0, 1},
 			{-1,-1, 0, 1},		{1,-1, 0, 1}
 		};
+
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float) * 16, p);
 
@@ -265,8 +274,8 @@ void iShaderToy::key(iKeyState stat, iPoint point)
 	}
 }
 
-iShaderToy* st = NULL;
+iShaderToy* shaderToy = NULL;
 void keyShader(iKeyState stat, iPoint point)
 {
-	st->key(stat, point);
+	shaderToy->key(stat, point);
 }

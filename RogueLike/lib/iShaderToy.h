@@ -49,6 +49,6 @@ public:
 	float mouse[4];
 	bool keyboard[9];
 };
-extern iShaderToy* st;
+extern iShaderToy* shaderToy;
 
 void keyShader(iKeyState stat, iPoint point);

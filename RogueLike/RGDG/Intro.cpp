@@ -2,14 +2,17 @@
 
 void loadIntro()
 {
+    loadIntroShader();
 }
 
 void freeIntro()
 {
+    freeIntroShader();
 }
 
 void drawIntro(float dt)
 {
+    drawIntroShader(dt);
 }
 
 void keyIntro(iKeyState stat, iPoint point)
@@ -17,15 +20,15 @@ void keyIntro(iKeyState stat, iPoint point)
 }
 
 //------------------------------------------------------------------------
-#if 0
-void shadertest(float dt)
+// Shader
+void loadIntroShader()
 {
-    if (st == NULL)
+    if (shaderToy == NULL)
     {
         STInput si =
         {
-            "assets/shader/etc/MainCommon.frag",
-            // bufA
+            "assets/shader/toy/TextFontCommon.frag",
+           // bufA
                NULL,
                NULL,
                {
@@ -35,51 +38,59 @@ void shadertest(float dt)
                    -1, NULL, CLAMP, LINEAR, false,
                },
 
-               // bufB
-                  NULL,
-                  NULL,
-                  {
-                      -1, NULL, CLAMP, LINEAR, false,
-                      -1, NULL, CLAMP, LINEAR, false,
-                      -1, NULL, CLAMP, LINEAR, false,
-                      -1, NULL, CLAMP, LINEAR, false,
-                  },
+           // bufB
+               NULL,
+               NULL,
+               {
+                   -1, NULL, CLAMP, LINEAR, false,
+                   -1, NULL, CLAMP, LINEAR, false,
+                   -1, NULL, CLAMP, LINEAR, false,
+                   -1, NULL, CLAMP, LINEAR, false,
+               },
 
-                  // bufC
-                     NULL,
-                     NULL,
-                     {
-                         -1, NULL, CLAMP, LINEAR, false,
-                         -1, NULL, CLAMP, LINEAR, false,
-                         -1, NULL, CLAMP, LINEAR, false,
-                         -1, NULL, CLAMP, LINEAR, false,
-                     },
+           // bufC
+               NULL,
+               NULL,
+               {
+                   -1, NULL, CLAMP, LINEAR, false,
+                   -1, NULL, CLAMP, LINEAR, false,
+                   -1, NULL, CLAMP, LINEAR, false,
+                   -1, NULL, CLAMP, LINEAR, false,
+               },
 
-                     // bufD
-                        NULL,
-                        NULL,
-                        {
-                            -1, NULL, CLAMP, LINEAR, false,
-                            -1, NULL, CLAMP, LINEAR, false,
-                            -1, NULL, CLAMP, LINEAR, false,
-                            -1, NULL, CLAMP, LINEAR, false,
-                        },
+           // bufD
+               NULL,
+               NULL,
+               {
+                   -1, NULL, CLAMP, LINEAR, false,
+                   -1, NULL, CLAMP, LINEAR, false,
+                   -1, NULL, CLAMP, LINEAR, false,
+                   -1, NULL, CLAMP, LINEAR, false,
+               },
 
-                        // img
-                           "assets/shader/etc/TextFont.vert",
-                           "assets/shader/etc/TextFont.frag",
-                           {
-                               -1, "assets/textfont.png", REPEAT, MIPMAP, true,
-                               -1, "assets/background.jpg", CLAMP, MIPMAP, true,
-                               -1, NULL, CLAMP, LINEAR, false,
-                               -1, NULL, CLAMP, LINEAR, false,
-                           }
-
+           // img
+               "assets/shader/toy/TextFont.vert",
+               "assets/shader/toy/TextFont.frag",
+               {
+                   -1, "assets/shader/toy/TextFont.png", REPEAT, MIPMAP, true,
+                   -1, "assets/shader/toy/introBG.png", REPEAT, MIPMAP, true,
+                   -1, NULL, CLAMP, LINEAR, false,
+                   -1, NULL, CLAMP, LINEAR, false,
+               },
         };
 
-        st = new iShaderToy(&si);
+        shaderToy = new iShaderToy(&si);
     }
-
-    st->paint(dt);
 }
-#endif
+
+void freeIntroShader()
+{
+    delete shaderToy;
+}
+
+void drawIntroShader(float dt)
+{
+    shaderToy->paint(dt);
+}
+
+//------------------------------------------------------------------------

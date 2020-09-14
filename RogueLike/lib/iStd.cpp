@@ -113,8 +113,12 @@ void drawLib(Method_Paint method)
     fbo->bind();
     fbo->clear(0, 0, 0, 1);
 
-    method(delta);
+    //method(delta);
     keyDown = 0;
+
+    void shadertest(float dt);
+    shadertest(delta);
+
 
     extern void drawCursor(float dt);
     drawCursor(0.0f);
@@ -158,6 +162,70 @@ void drawLib(Method_Paint method)
 #endif
     }
 
+}
+
+void shadertest(float dt)
+{
+    if (shaderToy == NULL)
+    {
+        STInput si =
+        {
+            "assets/shader/toy/TextFontCommon.frag",
+            // bufA
+               NULL,
+               NULL,
+               {
+                   -1, NULL, CLAMP, LINEAR, false,
+                   -1, NULL, CLAMP, LINEAR, false,
+                   -1, NULL, CLAMP, LINEAR, false,
+                   -1, NULL, CLAMP, LINEAR, false,
+               },
+
+               // bufB
+                  NULL,
+                  NULL,
+                  {
+                      -1, NULL, CLAMP, LINEAR, false,
+                      -1, NULL, CLAMP, LINEAR, false,
+                      -1, NULL, CLAMP, LINEAR, false,
+                      -1, NULL, CLAMP, LINEAR, false,
+                  },
+
+                  // bufC
+                     NULL,
+                     NULL,
+                     {
+                         -1, NULL, CLAMP, LINEAR, false,
+                         -1, NULL, CLAMP, LINEAR, false,
+                         -1, NULL, CLAMP, LINEAR, false,
+                         -1, NULL, CLAMP, LINEAR, false,
+                     },
+
+                     // bufD
+                        NULL,
+                        NULL,
+                        {
+                            -1, NULL, CLAMP, LINEAR, false,
+                            -1, NULL, CLAMP, LINEAR, false,
+                            -1, NULL, CLAMP, LINEAR, false,
+                            -1, NULL, CLAMP, LINEAR, false,
+                        },
+
+                        // img
+                           "assets/shader/toy/TextFont.vert",
+                           "assets/shader/toy/TextFont.frag",
+                           {
+                               -1, "assets/shader/toy/TextFont.png", REPEAT, MIPMAP, true,
+                               -1, "assets/shader/toy/introBG.png", REPEAT, MIPMAP, true,
+                               -1, NULL, CLAMP, LINEAR, false,
+                               -1, NULL, CLAMP, LINEAR, false,
+                           }
+        };
+
+        shaderToy = new iShaderToy(&si);
+    }
+
+    shaderToy->paint(dt);
 }
 
 static void keyLib(uint32& key, iKeyState stat, int c)
@@ -1148,6 +1216,47 @@ Texture* createImage(const char* szFormat, ...)
 
     Texture* tex = createImageWithRGBA(rgba, width, height);
     free(rgba);
+
+    return tex;
+}
+
+uint8* convertHorizonReverse(uint8* rgba, int width, int height)
+{
+    int potWidth = nextPOT(width);
+    int potHeight = nextPOT(height);
+    uint8* buf = (uint8*)calloc(sizeof(uint8), potWidth * potHeight * 4);
+    for (int j = 0; j < height; j++)
+    {
+        uint8* dst = &buf[potWidth * j * 4];
+        uint8* src = &rgba[potWidth * (height - j - 1) * 4];
+        memcpy(dst, src, sizeof(uint8) * 4 * potWidth);
+    }
+
+    return buf;
+}
+
+Texture* createReverseImage(const char* szFormat, ...)
+{
+    va_list args;
+    va_start(args, szFormat);
+
+    char szText[1024];
+    _vsnprintf(szText, sizeof(szText), szFormat, args);
+    va_end(args);
+
+    wchar_t* ws = utf8_to_utf16(szText);
+    Bitmap* bmp = new Bitmap(ws);
+    free(ws);
+
+    int width, height;
+    uint8* rgba = bmp2rgba(bmp, width, height);
+    delete bmp;
+
+    uint8* reverseRGBA = convertHorizonReverse(rgba, width, height);
+    free(rgba);
+
+    Texture* tex = createImageWithRGBA(reverseRGBA, width, height);
+    free(reverseRGBA);
 
     return tex;
 }

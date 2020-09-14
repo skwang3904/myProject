@@ -138,6 +138,7 @@ Texture* createTexture(int width, int height, bool rgba32f=false);
 void setTexture(TextureWrap wrap, TextureFilter filter);
 
 Texture* createImage(const char* szFormat, ...);
+Texture* createReverseImage(const char* szFormat, ...);
 Texture* createGreyImage(const char* szFormat, ...);
 Texture* createReflectImage(float rateY, const char* szFormat, ...);
 Texture** createDivideImage(int wNum, int hNum, const char* szFormat, ...);

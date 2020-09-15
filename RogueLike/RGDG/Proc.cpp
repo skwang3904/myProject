@@ -121,7 +121,6 @@ void keyProc(iKeyState stat, iPoint point)
 //----------------------------------------------------------------------------
 // Stage
 Stage* st = NULL;
-#define FILE_PATH "save.sav"
 void Stage::create()
 {
 	int i, j = 0, k, num = TILE_TOTAL_NUM;
@@ -301,26 +300,33 @@ void Stage::setMonsterData(int* actMap, int connectNum)
 	}
 }
 
-void loadStage()
+void loadStageNew()
 {
-	int i, length;
-	char* buf = loadFile(FILE_PATH, length);
-	if (buf)
-	{
-		st = (Stage*)buf;
-		createMap(true);
-	}
-	else
-	{
-		createMap(false);
-
-		st = (Stage*)calloc(sizeof(Stage), 1);
-		st->create();
-		saveStage();
-	}
+	createMap(false);
+	st = (Stage*)calloc(sizeof(Stage), 1);
+	st->create();
+	saveStage();
 
 	createMapImage();
 	setRGBA(1, 1, 1, 1);
+}
+
+void loadStageContinue()
+{
+	int length;
+	char* buf = loadFile(FILE_PATH, length);
+	st = (Stage*)buf;
+	createMap(true);
+
+	createMapImage();
+	setRGBA(1, 1, 1, 1);
+}
+
+bool isNewGame = true;
+void loadStage()
+{
+	if (isNewGame)	loadStageNew();
+	else			loadStageContinue();
 }
 
 void saveStage()
@@ -537,10 +543,7 @@ void createPopStageLoading()
 			tex = createTexture(size.width, size.height);
 			fbo->bind(tex);
 			t = createImage(strPath[0]);
-			drawImage(t, size.width / 2.0f, size.height / 2.0f,
-				0, 0, t->width, t->height,
-				VCENTER | HCENTER, size.width / t->width, size.height / t->height,
-				2, 0, REVERSE_HEIGHT);
+			DRAWIMAGE(t, size);
 			freeImage(t);
 			if (j != 0)
 			{

@@ -227,10 +227,7 @@ void createItemImage()
 			fbo->bind(tex);
 			//Texture* t = createImage(iti->strPath, j);
 			Texture* t = createImage(iti->strPath);
-			drawImage(t, size.width / 2.0f, size.height / 2.0f,
-				0, 0, t->width, t->height,
-				VCENTER | HCENTER, size.width / t->width, size.height / t->height,
-				2, 0, REVERSE_HEIGHT);
+			DRAWIMAGE(t, size);
 			freeImage(t);
 			fbo->unbind();
 			

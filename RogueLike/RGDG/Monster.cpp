@@ -160,10 +160,7 @@ GolemNomal::GolemNomal(int index, int8 mapNum, iPoint pos) : Monster(index, mapN
 
 				fbo->bind(tex);
 				Texture* t = createImage(gni->strPath, j);
-				drawImage(t, size.width / 2.0f, size.height / 2.0f,
-					0, 0, t->width, t->height,
-					VCENTER | HCENTER, size.width / t->width, size.height / t->height,
-					2, 0, REVERSE_HEIGHT);
+				DRAWIMAGE(t, size);
 				freeImage(t);
 				fbo->unbind();
 
@@ -464,10 +461,7 @@ GolemBoss::GolemBoss(int index, int8 mapNum, iPoint pos) : Monster(index, mapNum
 
 				fbo->bind(tex);
 				Texture* t = createImage(gbi->strPath, c[i % 4], j);
-				drawImage(t, size.width / 2.0f, size.height / 2.0f,
-					0, 0, t->width, t->height,
-					VCENTER | HCENTER, size.width / t->width, size.height / t->height,
-					2, 0, REVERSE_HEIGHT);
+				DRAWIMAGE(t, size);
 				freeImage(t);
 				fbo->unbind();
 

@@ -1,13 +1,20 @@
 #include "Game.h"
 
+#include "Common.h"
+#include "Loading.h"
+#include "Intro.h"
 #include "Proc.h"
 
-int8 gamestat;
 
 void loadGame()
 {
+#if 1
+	loadIntro();
+	gamestat = gamestat_intro;
+#else
 	loadProc();
 	gamestat = gamestat_proc;
+#endif
 
 	//--------------------------------------------------------
 	// sound // itunes로 변환해서 사용
@@ -27,7 +34,7 @@ void loadGame()
 void freeGame()
 {
 	switch (gamestat) {
-	//case gamestat_intro:freeIntro();	break;
+	case gamestat_intro:freeIntro();	break;
 	//case gamestat_menu:	freeMenu();	break;
 	case gamestat_proc:	freeProc();	break;
 	}
@@ -37,27 +44,32 @@ void freeGame()
 
 void drawGame(float dt)
 {
+	float _dt = dt;
+	if (nowLoading())
+		dt = 0.0f;
+
 	switch (gamestat) {
-	//case gamestat_intro:	drawIntro(dt);	break;
+	case gamestat_intro:	drawIntro(dt);	break;
 	//case gamestat_menu:	drawMenu(dt);		break;
 	case gamestat_proc:		drawProc(dt);		break;
 	}
 
-	//drawLoading(_dt);
+	drawLoading(_dt);
 }
 
 void keyGame(iKeyState stat, iPoint point)
 {
-	//if (keyLoading(stat, point))
-	//	return;
+	if (keyLoading(stat, point) ||
+		keyPopOption(stat, point))
+		return;
 
 	//if (stat == iKeyStateBegan)
 	//	zoomLib(point, 2.0f);
 
 	switch (gamestat) {
-	//case gamestat_intro:	keyIntro(stat, point);	break;
-	//case gamestat_menu:	keyMenu(stat, point);		break;
-	case gamestat_proc:		keyProc(stat, point);		break;
+	case gamestat_intro:	keyIntro(stat, point);	break;
+	//case gamestat_menu:	keyMenu(stat, point);	break;
+	case gamestat_proc:		keyProc(stat, point);	break;
 	}
 
 }

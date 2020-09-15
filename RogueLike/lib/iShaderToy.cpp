@@ -4,11 +4,11 @@
 iShaderToy::iShaderToy(STInput* si)
 {
 	int i, j;
-	texBuf = (Texture***)malloc(sizeof(Texture**) * 4);
+	texBuf = (Texture***)calloc(sizeof(Texture**), 4);
 	programID = (GLuint*)calloc(sizeof(GLuint), 5);
-	texBufChannel = (Texture***)malloc(sizeof(Texture**) * 5);
+	texBufChannel = (Texture***)calloc(sizeof(Texture**), 5);
 	setbufChannel = (GLenum***)malloc(sizeof (GLenum**) * 5);
-	bufIndex = (int8**)malloc(sizeof(int8*) * 5);
+	bufIndex = (int8**)calloc(sizeof(int8*), 5);
 
 	int lenCommon;
 	char* strCommon = loadFile(si->strCommonPath, lenCommon);
@@ -60,7 +60,7 @@ iShaderToy::iShaderToy(STInput* si)
 
 		if (i < 4)
 		{
-			texBuf[i] = (Texture**)malloc(sizeof(Texture*) * 2);
+			texBuf[i] = (Texture**)calloc(sizeof(Texture*), 2);
 			for (j = 0; j < 2; j++)
 				texBuf[i][j] = createTexture(devSize.width, devSize.height, true);
 		}
@@ -86,15 +86,10 @@ iShaderToy::iShaderToy(STInput* si)
 			}
 			else if (input->channel[j].strPath)
 			{
-#if 1
 				if (input->channel[j].vFlip)
 					texBufChannel[i][j] = createReverseImage(input->channel[j].strPath);
 				else
 					texBufChannel[i][j] = createImage(input->channel[j].strPath);
-#else
-				texBufChannel[i][j] = createImage(input->channel[j].strPath);
-#endif
-
 			}
 
 			setbufChannel[i][j] = (GLenum*)calloc(sizeof(GLenum), 2);
@@ -122,11 +117,16 @@ iShaderToy::~iShaderToy()
 		
 		for (int j = 0; j < 4; j++)
 		{
-			if (texBufChannel[i][j])
-				freeImage(texBufChannel[i][j]);
+			if (texBufChannel[i])
+			{
+				if (texBufChannel[i][j])
+					freeImage(texBufChannel[i][j]);
+			}
 		}
-		free(texBufChannel[i]);
-		free(bufIndex[i]);
+		if(texBufChannel[i])
+			free(texBufChannel[i]);
+		if(bufIndex[i])
+			free(bufIndex[i]);
 	}
 	free(texBufChannel);
 	free(bufIndex);
@@ -134,12 +134,15 @@ iShaderToy::~iShaderToy()
 
 	for (i = 0; i < 4; i++)
 	{
-		for (j = 0; j < 2; j++)
+		if (texBuf[i])
 		{
-			if (texBuf[i][j])
-				freeImage(texBuf[i][j]);
+			for (j = 0; j < 2; j++)
+			{
+				if (texBuf[i][j])
+					freeImage(texBuf[i][j]);
+			}
+			free(texBuf[i]);
 		}
-		free(texBuf[i]);
 	}
 	free(texBuf);
 }

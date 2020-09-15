@@ -32,3 +32,67 @@ Object::~Object()
 	free(imgs);
 }
 
+//----------------------------------------------------------------------------
+// Pop Option
+iPopup* popOption;
+iImage** imgOption;
+void createPopOption()
+{
+	int i, j;
+	iImage* img;
+	Texture* tex, *t;
+	iPopup* pop = new iPopup(iPopupStyleMove);
+	iSize size;
+
+	// bgm, sfx, 적용, 닫기
+	imgOption = (iImage**)malloc(sizeof(iImage*) * 3);
+
+	size = iSizeMake(devSize.width * 0.5f, devSize.height * 0.7f);
+	for (i = 0; i < 3; i++)
+	{
+		img = new iImage();
+		for (j = 0; j < 2; j++)
+		{
+			tex = createTexture(size.width, size.height);
+			fbo->bind(tex);
+
+			fbo->unbind();
+
+			img->addObject(tex);
+			freeImage(tex);
+		}
+		imgOption[i] = img;
+	}
+
+	pop->openPosition;
+	pop->closePosition;
+	pop->methodDrawBefore;
+	pop->_showDt;
+	popOption = pop;
+}
+
+void freePopOption()
+{
+	delete popOption;
+}
+
+void showPopOption(bool show)
+{
+	popOption->show(show);
+}
+
+void drawPopOption(float dt)
+{
+	popOption->paint(dt);
+}
+
+bool keyPopOption(iKeyState stat, iPoint point)
+{
+	if (popOption->bShow == false)
+		return false;
+
+	if (popOption->stat != iPopupStatProc)
+		return false;
+
+	return true;
+}

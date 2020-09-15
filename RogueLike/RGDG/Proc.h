@@ -75,6 +75,7 @@ struct WeaponData
 	int index;
 };
 
+#define FILE_PATH "save.sav"
 #define END_STAGE 3
 struct Stage
 {
@@ -100,6 +101,7 @@ struct Stage
 };
 extern Stage* st;
 
+extern bool isNewGame;
 void loadStage();
 void saveStage();
 void freeStage();

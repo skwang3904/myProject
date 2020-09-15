@@ -113,12 +113,8 @@ void drawLib(Method_Paint method)
     fbo->bind();
     fbo->clear(0, 0, 0, 1);
 
-    //method(delta);
+    method(delta);
     keyDown = 0;
-
-    void shadertest(float dt);
-    shadertest(delta);
-
 
     extern void drawCursor(float dt);
     drawCursor(0.0f);
@@ -162,70 +158,6 @@ void drawLib(Method_Paint method)
 #endif
     }
 
-}
-
-void shadertest(float dt)
-{
-    if (shaderToy == NULL)
-    {
-        STInput si =
-        {
-            "assets/shader/toy/TextFontCommon.frag",
-            // bufA
-               NULL,
-               NULL,
-               {
-                   -1, NULL, CLAMP, LINEAR, false,
-                   -1, NULL, CLAMP, LINEAR, false,
-                   -1, NULL, CLAMP, LINEAR, false,
-                   -1, NULL, CLAMP, LINEAR, false,
-               },
-
-               // bufB
-                  NULL,
-                  NULL,
-                  {
-                      -1, NULL, CLAMP, LINEAR, false,
-                      -1, NULL, CLAMP, LINEAR, false,
-                      -1, NULL, CLAMP, LINEAR, false,
-                      -1, NULL, CLAMP, LINEAR, false,
-                  },
-
-                  // bufC
-                     NULL,
-                     NULL,
-                     {
-                         -1, NULL, CLAMP, LINEAR, false,
-                         -1, NULL, CLAMP, LINEAR, false,
-                         -1, NULL, CLAMP, LINEAR, false,
-                         -1, NULL, CLAMP, LINEAR, false,
-                     },
-
-                     // bufD
-                        NULL,
-                        NULL,
-                        {
-                            -1, NULL, CLAMP, LINEAR, false,
-                            -1, NULL, CLAMP, LINEAR, false,
-                            -1, NULL, CLAMP, LINEAR, false,
-                            -1, NULL, CLAMP, LINEAR, false,
-                        },
-
-                        // img
-                           "assets/shader/toy/TextFont.vert",
-                           "assets/shader/toy/TextFont.frag",
-                           {
-                               -1, "assets/shader/toy/TextFont.png", REPEAT, MIPMAP, true,
-                               -1, "assets/shader/toy/introBG.png", REPEAT, MIPMAP, true,
-                               -1, NULL, CLAMP, LINEAR, false,
-                               -1, NULL, CLAMP, LINEAR, false,
-                           }
-        };
-
-        shaderToy = new iShaderToy(&si);
-    }
-
-    shaderToy->paint(dt);
 }
 
 static void keyLib(uint32& key, iKeyState stat, int c)
@@ -1933,6 +1865,17 @@ void saveFile(const char* filePath, char* buf, int bufLength)
     fwrite(buf, bufLength, 1, pf);
 
     fclose(pf);
+}
+
+bool existFile(const char* filePath)
+{
+    FILE* pf = fopen(filePath, "rb");
+    if (pf)
+    {
+        fclose(pf);
+        return true;
+    }
+    return false;
 }
 
 static iCriticalSection* instanceCS = NULL;

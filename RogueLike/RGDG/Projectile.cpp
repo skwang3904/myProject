@@ -54,10 +54,7 @@ BowGunArrow::BowGunArrow(int index, int8 mapNum, iPoint pos) : Projectile(index,
 
 		fbo->bind(tex);
 		t = createImage("assets/weapon/Projectile/arrow0.png");
-		drawImage(t, size.width / 2.0f, size.height / 2.0f,
-			0, 0, t->width, t->height,
-			VCENTER | HCENTER, size.width / t->width, size.height / t->height,
-			2, 0, REVERSE_HEIGHT);
+		DRAWIMAGE(t, size);
 		freeImage(t);
 		fbo->unbind();
 
@@ -92,7 +89,8 @@ void BowGunArrow::paint(float dt, iPoint off)
 		return;
 	
 	iPoint mp = vector * (moveSpeed * dt);
-	if (wallCheck(this, mp))
+	int check = wallCheck(this, mp);
+	if (check != -1)
 	{
 		alive = false;
 		return;
@@ -129,7 +127,7 @@ void BowGunArrow::addProjectile(Weapon* atk)
 	mapNumber = player->mapNumber;
 	img->angle = atk->holdAngle;
 
-	position = atk->position + atk->drawPos * 2.0f;
+	position = atk->position + atk->drawPos;// *2.0f;
 	vector = atk->vector;
 
 	attackPoint = atk->attackPoint;
@@ -159,10 +157,7 @@ FireBall::FireBall(int index, int8 mapNum, iPoint pos) : Projectile(index, mapNu
 			tex = createTexture(size.width, size.height);
 			fbo->bind(tex);
 			t = texs[i];
-			drawImage(t, size.width / 2.0f, size.height / 2.0f,
-				0, 0, t->width, t->height,
-				VCENTER | HCENTER, size.width / t->width, size.height / t->height,
-				2, 0);
+			DRAWIMAGE(t, size);
 			freeImage(t);
 			fbo->unbind();
 

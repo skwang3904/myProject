@@ -20,7 +20,7 @@ const float PI=3.14159265;
 vec3 GetReflection(vec3 rayDir)
 {
 	vec3 tex = texture(iChannel1, -rayDir.xy).xyz;
-	return tex * tex;
+	return tex * tex * tex;
 }
 
 vec2 matmin(vec2 a, vec2 b)
@@ -317,7 +317,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     vec2 uv = fragCoord/iResolution.xy;
     // Render entire font texture for the first few seconds.
     float letters = texture(iChannel0, uv, -1.0).x;
-    finalColor = mix(finalColor, vec3(1.0, 1.0, 1.0)*letters, saturate(0.9-iTime*0.7));
+    finalColor = mix(finalColor, vec3(1.0, 1.0, 1.0)*letters, saturate(0.0));
 
     fragColor = vec4(sqrt(clamp(finalColor, 0.0, 1.0)),1.0);
 }

@@ -144,12 +144,18 @@ Texture* createReflectImage(float rateY, const char* szFormat, ...);
 Texture** createDivideImage(int wNum, int hNum, const char* szFormat, ...);
 void freeImage(Texture* tex);
 
+
 void drawImageLikeCircle(Texture* tex, int x, int y, float rate);
 void drawImage(Texture* tex, int x, int y, int anc);
 void drawImage(Texture* tex, int x, int y,
     int ix, int iy, int iw, int ih, int anc,
     float ratX, float ratY, int xyz, float degree,
     int reverse=REVERSE_NONE);
+
+#define DRAWIMAGE(t, size) 	drawImage(t, size.width / 2.0f, size.height / 2.0f,\
+                                      0, 0, t->width, t->height,\
+                                      VCENTER | HCENTER, size.width / t->width, size.height / t->height,\
+                                      2, 0, REVERSE_HEIGHT);
 
 void setClip(int x, int y, int width, int height);
 void setClip(iRect rect);
@@ -184,6 +190,7 @@ bool containRect(iRect src, iRect dst);
 
 char* loadFile(const char* filePath, int& length);
 void saveFile(const char* filePath, char* buf, int bufLength);
+bool existFile(const char* filePath);
 
 class iCriticalSection
 {

@@ -422,10 +422,7 @@ MapObjectDoor::MapObjectDoor(int index, int8 mapNum, iPoint pos, int tileNumber)
 
 			fbo->bind(tex);
 			t = createImage(strPath[0], i);
-			drawImage(t, size.width / 2.0f, size.height / 2.0f,
-				0, 0, t->width, t->height,
-				VCENTER | HCENTER, size.width / t->width, size.height / t->height,
-				2, 0, REVERSE_HEIGHT);
+			DRAWIMAGE(t, size);
 			freeImage(t);
 			fbo->unbind();
 
@@ -605,10 +602,7 @@ MapObjectNextDoor::MapObjectNextDoor(int index, int8 mapNum, iPoint pos, int til
 
 			fbo->bind(tex);
 			t = createImage(strPath[0], i);
-			drawImage(t, size.width / 2.0f, size.height / 2.0f,
-				0, 0, t->width, t->height,
-				VCENTER | HCENTER, size.width / t->width, size.height / t->height,
-				2, 0, REVERSE_HEIGHT);
+			DRAWIMAGE(t, size);
 			freeImage(t);
 			fbo->unbind();
 
@@ -715,10 +709,7 @@ MapObjectBarrel::MapObjectBarrel(int index, int8 mapNum, iPoint pos, int tileNum
 
 				fbo->bind(tex);
 				t = createImage(strPath[i], j);
-				drawImage(t, size.width / 2.0f, size.height / 2.0f,
-					0, 0, t->width, t->height,
-					VCENTER | HCENTER, size.width / t->width, size.height / t->height,
-					2, 0, REVERSE_HEIGHT);
+				DRAWIMAGE(t, size);
 				freeImage(t);
 				fbo->unbind();
 
@@ -807,10 +798,7 @@ MapObjectItemBox::MapObjectItemBox(int index, int8 mapNum, iPoint pos, int tileN
 
 			fbo->bind(tex);
 			t = createImage(strPath[0], i);
-			drawImage(t, size.width / 2.0f, size.height / 2.0f,
-				0, 0, t->width, t->height,
-				VCENTER | HCENTER, size.width / t->width, size.height / t->height,
-				2, 0, REVERSE_HEIGHT);
+			DRAWIMAGE(t, size);
 			freeImage(t);
 			fbo->unbind();
 
@@ -1052,10 +1040,7 @@ void createMapImage()
 			fbo->bind(tex);
 			setRGBA(0.7f, 0.7f, 0.7f, 1);
 			t = createImage(strPath[i]);
-			drawImage(t, size.width / 2.0f, size.height / 2.0f,
-				0, 0, t->width, t->height,
-				VCENTER | HCENTER, size.width / t->width, size.height / t->height,
-				2, 0, REVERSE_HEIGHT);
+			DRAWIMAGE(t, size);
 			freeImage(t);
 			setRGBA(1, 1, 1, 1);
 			fbo->unbind();

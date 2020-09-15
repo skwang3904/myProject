@@ -185,6 +185,7 @@
     <ClInclude Include="RGDG\Game.h" />
     <ClInclude Include="RGDG\intro.h" />
     <ClInclude Include="RGDG\Item.h" />
+    <ClInclude Include="RGDG\Loading.h" />
     <ClInclude Include="RGDG\Map.h" />
     <ClInclude Include="RGDG\Menu.h" />
     <ClInclude Include="RGDG\Monster.h" />
@@ -223,6 +224,7 @@
     <ClCompile Include="RGDG\glew.c" />
     <ClCompile Include="RGDG\intro.cpp" />
     <ClCompile Include="RGDG\Item.cpp" />
+    <ClCompile Include="RGDG\Loading.cpp" />
     <ClCompile Include="RGDG\Map.cpp" />
     <ClCompile Include="RGDG\Menu.cpp" />
     <ClCompile Include="RGDG\Monster.cpp" />

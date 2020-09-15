@@ -100,10 +100,7 @@ Hammer::Hammer(int index, int8 mapNum, iPoint pos) : Weapon(index, mapNum, pos)
 
 	fbo->bind(tex);
 	t = createImage("assets/weapon/hammer_0.png");
-	drawImage(t, size.width / 2.0f, size.height / 2.0f,
-		0, 0, t->width, t->height,
-		VCENTER | HCENTER, size.width / t->width, size.height / t->height,
-		2, 0, REVERSE_HEIGHT);
+	DRAWIMAGE(t, size);
 	freeImage(t);
 	fbo->unbind();
 
@@ -311,10 +308,7 @@ Spear::Spear(int index, int8 mapNum, iPoint pos) : Weapon(index, mapNum, pos)
 
 	fbo->bind(tex);
 	t = createImage("assets/weapon/upg_spear.png");
-	drawImage(t, size.width / 2.0f, size.height / 2.0f,
-		0, 0, t->width, t->height,
-		VCENTER | HCENTER, size.width / t->width, size.height / t->height,
-		2, 0, REVERSE_HEIGHT);
+	DRAWIMAGE(t, size);
 	freeImage(t);
 	fbo->unbind();
 
@@ -525,10 +519,7 @@ Cyclone::Cyclone(int index, int8 mapNum, iPoint pos) : Weapon(index, mapNum, pos
 
 	fbo->bind(tex);
 	t = createImage("assets/weapon/upg_axeDouble.png");
-	drawImage(t, size.width / 2.0f, size.height / 2.0f,
-		0, 0, t->width, t->height,
-		VCENTER | HCENTER, size.width / t->width, size.height / t->height,
-		2, 0, REVERSE_HEIGHT);
+	DRAWIMAGE(t, size);
 	freeImage(t);
 	fbo->unbind();
 
@@ -728,10 +719,7 @@ BowGun::BowGun(int index, int8 mapNum, iPoint pos) : Weapon(index, mapNum, pos)
 
 	fbo->bind(tex);
 	t = createImage("assets/weapon/BowGun.png");
-	drawImage(t, size.width / 2.0f, size.height / 2.0f,
-		0, 0, t->width, t->height,
-		VCENTER | HCENTER, size.width / t->width, size.height / t->height,
-		2, 0, REVERSE_HEIGHT);
+	DRAWIMAGE(t, size);
 	freeImage(t);
 	fbo->unbind();
 
@@ -899,10 +887,7 @@ MagicWand::MagicWand(int index, int8 mapNum, iPoint pos) : Weapon(index, mapNum,
 
 	fbo->bind(tex);
 	t = createImage("assets/weapon/MagicWand.png");
-	drawImage(t, size.width / 2.0f, size.height / 2.0f,
-		0, 0, t->width, t->height,
-		VCENTER | HCENTER, size.width / t->width, size.height / t->height,
-		2, 0, REVERSE_HEIGHT);
+	DRAWIMAGE(t, size);
 	freeImage(t);
 	fbo->unbind();
 

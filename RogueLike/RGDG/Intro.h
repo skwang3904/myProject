@@ -28,4 +28,25 @@ void freeIntroShader();
 void drawIntroShader(float dt);
 
 //------------------------------------------------------------------------
+// PressAnyKey
+void createPopPressAnyKey();
+void freePopPressAnyKey();
+void showPopPressAnyKey(bool show);
+void drawPopPressAnyKey(float dt);
+bool keyPopPressAnyKey(iKeyState stat, iPoint point);
 
+//------------------------------------------------------------------------
+// IntroButton
+void createPopIntroButton();
+void freePopIntroButton();
+void showPopIntroButton(bool show);
+void drawPopIntroButton(float dt);
+bool keyPopIntroButton(iKeyState stat, iPoint point);
+
+//------------------------------------------------------------------------
+// SelectStart
+void createPopIntroSelectStart();
+void freePopIntroSelectStart();
+void showPopIntroSelectStart(bool show);
+void drawPopIntroSelectStart(float dt);
+bool keyPopIntroSelectStart(iKeyState stat, iPoint point);

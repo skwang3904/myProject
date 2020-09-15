@@ -28,6 +28,42 @@ Weapon::~Weapon()
 {
 }
 
+void Weapon::paint(float dt, iPoint off)
+{
+#if 0
+	if (mapNumber != player->mapNumber)
+		return;
+#endif
+
+	if (get)
+	{
+		if (index == player->currWeaponIndex())
+		{
+			setPosition();
+			position = player->wpPosition;
+			img->angle = holdAngle;
+
+			if (!attack(dt))
+			{
+				if (getKeyDown(keyboard_o))
+					dropWeapon();
+			}
+		}
+		else
+		{
+			position = iPointMake(-3000, -3000);
+		}
+	}
+	else
+	{
+		if (getKeyDown(keyboard_i))
+			getWeapon();
+	}
+
+	img->paint(dt, position + drawPos + off);
+
+}
+
 void Weapon::attackMonster()
 {
 	for (int i = 0; i < monsterNum; i++)
@@ -78,6 +114,7 @@ void Weapon::dropWeapon()
 		}
 	}
 
+	index = -1;
 	get = false;
 	position = player->position;
 	touchRect = iRectMake(position.x, position.y, img->tex->width, img->tex->height);
@@ -141,6 +178,7 @@ Hammer::~Hammer()
 	delete img;
 }
 
+#if 0
 void Hammer::paint(float dt, iPoint off)
 {
 #if 0
@@ -175,6 +213,7 @@ void Hammer::paint(float dt, iPoint off)
 
 	img->paint(dt, position + drawPos + off);
 }
+#endif
 
 void Hammer::drawShadow(float dt, iPoint off)
 {
@@ -352,6 +391,7 @@ Spear::~Spear()
 	delete img;
 }
 
+#if 0
 void Spear::paint(float dt, iPoint off)
 {
 #if 0
@@ -385,6 +425,7 @@ void Spear::paint(float dt, iPoint off)
 
 	img->paint(dt, position + drawPos + off);
 }
+#endif
 
 void Spear::drawShadow(float dt, iPoint off)
 {
@@ -562,6 +603,7 @@ Cyclone::~Cyclone()
 	delete img;
 }
 
+#if 0
 void Cyclone::paint(float dt, iPoint off)
 {
 #if 0
@@ -595,8 +637,8 @@ void Cyclone::paint(float dt, iPoint off)
 	}
 
 	img->paint(dt, position + drawPos + off);
-
 }
+#endif
 
 void Cyclone::drawShadow(float dt, iPoint off)
 {
@@ -759,6 +801,7 @@ BowGun::~BowGun()
 	delete img;
 }
 
+#if 0
 void BowGun::paint(float dt, iPoint off)
 {
 #if 0
@@ -792,8 +835,8 @@ void BowGun::paint(float dt, iPoint off)
 	}
 
 	img->paint(dt, position + drawPos + off);
-
 }
+#endif
 
 void BowGun::drawShadow(float dt, iPoint off)
 {
@@ -927,6 +970,7 @@ MagicWand::~MagicWand()
 	delete img;
 }
 
+#if 0
 void MagicWand::paint(float dt, iPoint off)
 {
 #if 0
@@ -960,9 +1004,8 @@ void MagicWand::paint(float dt, iPoint off)
 	}
 
 	img->paint(dt, position + drawPos + off);
-
-
 }
+#endif
 
 void MagicWand::drawShadow(float dt, iPoint off)
 {

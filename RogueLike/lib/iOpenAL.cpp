@@ -85,23 +85,6 @@ typedef struct _WaveHeader1 {
 	unsigned int dataSize;
 } WaveHeader1;
 
-void printfAL(WaveHeader0* head, WaveHeader1* head1)
-{ //아이튠즈로 파일 수정
-	printf("riffSize = %d\n", head->riffSize);
-	printf("fmtSize = %d\n", head->fmtSize);
-	printf("format = %d\n", head->format);
-	printf("channels = %d\n", head->channels);
-	printf("samplesPerSec = %d\n", head->samplesPerSec);
-	printf("bytesPerSec = %d\n", head->bytesPerSec);
-	printf("blockAlign = %d\n", head->blockAlign);
-	printf("bitsPerSample = %d\n", head->bitsPerSample);
-
-	printf("dataSize = %d\n", head1->dataSize);
-
-	printf("\n");
-	//(﻿BitsPerSample / 8) * NumChannels * 실제 샘플수
-}
-
 void iOpenAL::initBuffer(int idx, const char* szFormat, ...)
 {
 	va_list args;
@@ -280,3 +263,8 @@ void audioVolume(float bgm, float sfx, int sfxNum)
 	al->bgm = bgm;
 }
 
+void audioGetVolume(float& bgm, float& sfx)
+{
+	bgm = al->bgm;
+	sfx = al->sfx;
+}

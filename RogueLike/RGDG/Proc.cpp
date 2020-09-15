@@ -929,7 +929,7 @@ iImage* imgMiniMap;
 void refreshMiniMap(Texture* tex)
 {
 	fbo->bind(tex);
-	fbo->clear(0, 0, 0, 0.2f);
+	fbo->clear(0, 0, 0, 0);
 
 	setLineWidth(10);
 	for (int i = 0; i < TILE_TOTAL_NUM; i++)
@@ -947,7 +947,12 @@ void refreshMiniMap(Texture* tex)
 
 		fillRect(p.x + 1, p.y + 1, TILE_Width - 2, TILE_Height - 2 , 10);
 
-		if (maps[i]->state == MapType_Boss)
+		if (maps[i]->state == MapType_ItemBox)
+		{
+			setRGBA(0, 0, 1, 0.7f);
+			fillRect(p.x + 3, p.y + 3, TILE_Width - 6, TILE_Height - 6, 10);
+		}
+		else if (maps[i]->state == MapType_Boss)
 		{
 			setRGBA(1, 0, 0, 0.7f);
 			fillRect(p.x + 3, p.y + 3, TILE_Width - 6, TILE_Height - 6, 10);

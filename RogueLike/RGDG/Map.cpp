@@ -1058,7 +1058,10 @@ void createMapImage()
 	for (i = 0; i < num; i++)
 	{
 		if (maps[i]->img)
+		{
 			delete maps[i]->img;
+			maps[i]->img = NULL;
+		}
 
 		int index = maps[i]->tileIndex;
 		if (index == -1) continue;

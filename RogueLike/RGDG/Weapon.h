@@ -14,7 +14,7 @@ public:
 	Weapon(int index, int8 mapNum, iPoint pos);
 	virtual ~Weapon();
 
-	virtual void paint(float dt, iPoint off) = 0;
+	virtual void paint(float dt, iPoint off);
 	virtual void drawShadow(float dt, iPoint off) = 0;
 	virtual void action(Object* obj) = 0;
 
@@ -26,6 +26,7 @@ public:
 	void addThisWeapon();
 	void dropWeapon();
 
+	//static void dropWeaponFromItemBox();
 public:
 	float attackDt;
 	float attackDelay, _attackDelay;
@@ -51,7 +52,7 @@ public:
 	Hammer(int index, int8 mapNum, iPoint pos);
 	virtual ~Hammer();
 
-	virtual void paint(float dt, iPoint off);
+	//virtual void paint(float dt, iPoint off);
 	virtual void drawShadow(float dt, iPoint off);
 	virtual void action(Object* obj);
 
@@ -70,7 +71,7 @@ public:
 	Spear(int index, int8 mapNum, iPoint pos);
 	virtual ~Spear();
 
-	virtual void paint(float dt, iPoint off);
+	//virtual void paint(float dt, iPoint off);
 	virtual void drawShadow(float dt, iPoint off);
 	virtual void action(Object* obj);
 
@@ -89,7 +90,7 @@ public:
 	Cyclone(int index, int8 mapNum, iPoint pos);
 	virtual ~Cyclone();
 
-	virtual void paint(float dt, iPoint off);
+	//virtual void paint(float dt, iPoint off);
 	virtual void drawShadow(float dt, iPoint off);
 	virtual void action(Object* obj);
 
@@ -109,7 +110,7 @@ public:
 	BowGun(int index, int8 mapNum, iPoint pos);
 	virtual ~BowGun();
 
-	virtual void paint(float dt, iPoint off);
+	//virtual void paint(float dt, iPoint off);
 	virtual void drawShadow(float dt, iPoint off);
 	virtual void action(Object* obj);
 
@@ -128,7 +129,7 @@ public:
 	MagicWand(int index, int8 mapNum, iPoint pos);
 	virtual ~MagicWand();
 
-	virtual void paint(float dt, iPoint off);
+	//virtual void paint(float dt, iPoint off);
 	virtual void drawShadow(float dt, iPoint off);
 	virtual void action(Object* obj);
 

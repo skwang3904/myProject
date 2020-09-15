@@ -41,4 +41,4 @@ void audioPlay(int sndIdx);
 void audioStop();
 void audioStop(int sndIdx);
 void audioVolume(float bgm, float sfx, int sfxNum);
-
+void audioGetVolume(float& bgm, float& sfx);

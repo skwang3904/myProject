@@ -29,6 +29,7 @@ void loadGame()
 
 	loadAudio(ai, 6);
 
+	createPopOption();
 }
 
 void freeGame()
@@ -40,6 +41,8 @@ void freeGame()
 	}
 
 	freeAudio();
+
+	freePopOption();
 }
 
 void drawGame(float dt)
@@ -54,6 +57,7 @@ void drawGame(float dt)
 	case gamestat_proc:		drawProc(dt);		break;
 	}
 
+	drawPopOption(dt);
 	drawLoading(_dt);
 }
 

@@ -29,6 +29,8 @@ Item::Item(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos)
 	value = it->value;
 	actionDt = _actionDt = it->_actionDt;
 
+
+	touchSize = iSizeMake(this->img->tex->width, this->img->tex->height);
 	dropPosition = iPointZero;
 	dropHeight = 50;
 
@@ -52,6 +54,7 @@ void Item::paint(float dt, iPoint off)
 	float delta = actionDt / _actionDt;
 	if (get)
 	{
+		targetPosition = player->position;
 		if (actionDt == _actionDt)
 		{
 			p = targetPosition;
@@ -110,15 +113,20 @@ void Item::action(Object* obj)
 	// get item
 	get = true;
 	actionDt = 0.0f;
-	targetPosition = maps[mapNumber]->tileOff 
-		+ iPointMake(0, TILE_NUM_Y * TILE_Height - img->tex->height);
+	//targetPosition = obj->position;
 
 	PlayerChar* p = player;
 	switch (index)
 	{
-	case 0: 
-	case 1: 
-	case 2: p->hp += value; break;
+	case 0:
+	case 1:
+	case 2: 
+	{
+		p->hp += value;
+		if (p->hp > 100.0f)
+			p->hp = 100.0f;
+		break;
+	}
 	default:
 		break;
 	}

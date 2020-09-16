@@ -1,7 +1,9 @@
 #include "Proc.h"
 
-#include "Map.h"
+#include "Loading.h"
+#include "Intro.h"
 
+#include "Map.h"
 #include "ProcData.h"
 #include "PlayerChar.h"
 #include "Monster.h"
@@ -44,7 +46,6 @@ void freeProc()
 	freeNumberFont();
 
 	freeMap();
-	freeStage();
 	freePlayerChar();
 	freeMonster();
 	freeWeapon();
@@ -52,6 +53,7 @@ void freeProc()
 	freeProjectile();
 
 	freePassMap();
+	freeStage();
 
 	freePopStageLoading();
 	freePopStageNum();
@@ -731,28 +733,106 @@ bool keyPopStageNum(iKeyState stat, iPoint point)
 // UI
 iPopup* popState;
 iStrTex* stState;
+iStrTex* stDisplayStageNum;
 
+iImage** imgState;
 Texture* methodStState(const char* str);
+Texture* methodStDisplayStageNum(const char* str);
 
 void createPopState()
 {
 	int i, j;
 	iImage* img;
-	Texture* tex;
-
+	Texture* tex, *t;
 	iPopup* pop = new iPopup(iPopupStyleNone);
+	iSize size;
 
-	for (i = 0; i < 1; i++)
+	const char* strIcon[2] = {
+		"assets/PlayerUI/heart.png",
+		"assets/PlayerUI/tmp.png",
+	};
+
+	size = iSizeMake(64, 64);
+	for (i = 0; i < 2; i++)
 	{
 		img = new iImage();
-		iStrTex* st = new iStrTex(methodStState);
-		st->setString("%d\n%d", 0, 0);
+		tex = createTexture(size.width, size.height);
 
-		img->addObject(st->tex);
-		img->position = iPointMake(10, 100);
-		stState = st;
+		fbo->bind(tex);
+		t = createImage(strIcon[i]);
+		DRAWIMAGE(t, size);
+		freeImage(t);
+		fbo->unbind();
+
+		img->addObject(tex);
+		freeImage(tex);
+
+		img->position = iPointMake(32, 32 + 74 * i);
 		pop->addObject(img);
 	}
+
+	size = iSizeMake(256, 32);
+	for (i = 0; i < 2; i++)
+	{
+		img = new iImage();
+		tex = createTexture(size.width, size.height);
+
+		fbo->bind(tex);
+		t = createImage("assets/PlayerUI/Bar_empty.png");
+		DRAWIMAGE(t, size);
+		freeImage(t);
+		fbo->unbind();
+
+		img->addObject(tex);
+		freeImage(tex);
+		img->position = iPointMake(96, 64 + 74 * i);
+
+		pop->addObject(img);
+	}
+	
+	imgState = (iImage**)malloc(sizeof(iImage*) * 2);
+	const char* strBar[2] = {
+		"assets/PlayerUI/Bar_heart.png",
+		"assets/PlayerUI/Bar_tmp.png",
+	};
+
+	for (i = 0; i < 2; i++)
+	{
+		img = new iImage();
+		tex = createTexture(size.width, size.height);
+
+		fbo->bind(tex);
+		t = createImage(strBar[i]);
+		DRAWIMAGE(t, size);
+		freeImage(t);
+		fbo->unbind();
+
+		img->addObject(tex);
+		freeImage(tex);
+
+		img->position = iPointMake(96, 64 + 74 * i);
+		imgState[i] = img;
+
+		pop->addObject(img);
+	}
+
+	img = new iImage();
+	iStrTex* st = new iStrTex(methodStState);
+	st->setString("%d\n%d", 0, 0);
+	img->addObject(st->tex);
+	img->position = iPointMake(100, 24);
+	stState = st;
+	pop->addObject(img);
+
+
+	img = new iImage();
+	size = iSizeMake(128, 64);
+	st = new iStrTex(methodStDisplayStageNum);
+	st->setString("%d", 0);
+	img->addObject(st->tex);
+	img->position = iPointMake((devSize.width - size.width) * 0.5f, 10);
+	stDisplayStageNum = st;
+	pop->addObject(img);
 
 	popState = pop;
 }
@@ -762,34 +842,49 @@ Texture* methodStState(const char* str)
 	int lineNum;
 	char** line = iString::getStringLine(str, lineNum);
 	int hp = atoi(line[0]);
-	int stage = atoi(line[1]);
-
+	int _hp = atoi(line[1]);
 	iString::freeStringLine(line, lineNum);
 
 	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(128, 128);
+	iSize size = iSizeMake(256, 32);
 	g->init(size);
 
-	setRGBA(0, 0, 0.2f, 1);
-	g->fillRect(0, 0, size.width, size.height,3);
-	setRGBA(1, 1, 1, 1);
+	g->fillRect(0, 0, size.width, size.height,5);
 
-	setStringRGBA(1, 1, 1, 1);
+	setStringRGBA(0, 0, 0, 1);
 	setStringSize(25);
 	setStringBorder(0);
-	g->drawString(10, size.height * 0.33f, VCENTER | LEFT, "HP: ");
-	g->drawString(10, size.height * 0.67f, VCENTER | LEFT, "Stage: ");
-	g->drawString(size.width / 2.0f, size.height * 0.33f, VCENTER | LEFT, "%d", hp);
-	g->drawString(size.width - 25, size.height * 0.67f, VCENTER | HCENTER, "%d", stage);
+	g->drawString(size.width / 2.0f, size.height / 2.0f, VCENTER | HCENTER, "HP : %d / %d", hp, _hp);
 
 	return g->getTexture();
 }
 
+Texture* methodStDisplayStageNum(const char* str)
+{
+	int stage = atoi(str);
+
+	iGraphics* g = iGraphics::instance();
+	iSize size = iSizeMake(160, 64);
+	g->init(size);
+
+	setRGBA(0.5f, 0.5f, 0.5f, 1);
+	g->fillRect(0, 0, size.width, size.height, 15);
+	setRGBA(1, 1, 1, 1);
+
+	setStringSize(32);
+	setStringRGBA(1, 1, 1, 1);
+	setStringBorder(0);
+	g->drawString(size.width / 2.0f, size.height / 2.0f, VCENTER | HCENTER, "Stage: %d", stage);
+
+	return g->getTexture();
+}
 
 void freePopState()
 {
 	delete popState;
 	delete stState;
+	delete stDisplayStageNum;
+	free(imgState);
 }
 
 void showPopState(bool show)
@@ -801,7 +896,13 @@ void drawPopState(float dt)
 {
 	popState->paint(dt);
 
-	stState->setString("%.0f\n%d", player->hp, st->stageNum + 1);
+#if 1
+	imgState[0]->texCoordx = player->hp / player->_hp;
+	imgState[1]->texCoordx = player->hp / player->_hp;
+#endif
+
+	stState->setString("%.0f\n%.0f", player->hp, player->_hp);
+	stDisplayStageNum->setString("%d", st->stageNum + 1);
 }
 
 bool keyPopState(iKeyState stat, iPoint point)
@@ -812,43 +913,65 @@ bool keyPopState(iKeyState stat, iPoint point)
 //-----------------------------------------------------------
 // ProcButton
 iPopup* popProcButton;
-iImage* imgProcButtonBtn;
+iImage** imgProcButtonBtn;
 
 void createPopProcButton()
 {
 	int i, j;
 	iImage* img;
-	Texture* tex;
+	Texture* tex, *t;
 	iPopup* pop = new iPopup(iPopupStyleMove);
+	iSize size;
 
-	img = new iImage();
+
+	//menu, inven
+	imgProcButtonBtn = (iImage**)malloc(sizeof(iImage*) * 2);
+
 	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(128, 64);
-
-
 	setStringRGBA(0, 0, 0, 1);
 	setStringSize(30);
 	setStringBorder(0);
 	for (i = 0; i < 2; i++)
 	{
-		g->init(size);
-		
-		if (i == 0) 	setRGBA(1, 1, 1, 1);
-		else 	setRGBA(0, 1, 0, 1);
-		g->fillRect(0, 0, size.width, size.height, 10);
-		g->drawString(size.width / 2.0f, size.height / 2.0f, VCENTER | HCENTER, "menu");
+		img = new iImage();
 
-		tex = g->getTexture();
-		img->addObject(tex);
-		freeImage(tex);
+		for (j = 0; j < 2; j++)
+		{
+			if (i == 0)
+			{
+				size = iSizeMake(128, 64);
+				g->init(size);
+				if (j == 0) 	setRGBA(1, 1, 1, 1);
+				else 	setRGBA(0, 1, 0, 1);
+				g->fillRect(0, 0, size.width, size.height, 10);
+				g->drawString(size.width / 2.0f, size.height / 2.0f, VCENTER | HCENTER, "menu");
+
+				tex = g->getTexture();
+				img->addObject(tex);
+				freeImage(tex);
+			}
+			else if (i == 1)
+			{
+				tex = createTexture(size.width, size.height);
+				fbo->bind(tex);
+				if (j == 0) setRGBA(1, 0, 1, 1);
+				else		setRGBA(0, 1, 0, 1);
+				fillRect(0, 0, size.width, size.height, 15);
+				fbo->unbind();
+
+				img->addObject(tex);
+				freeImage(tex);
+			}
+		}
+
+		imgProcButtonBtn[i] = img;
 	}
 	setRGBA(1, 1, 1, 1);
 
-	imgProcButtonBtn = img;
 	pop->addObject(img);
 
-	pop->openPosition = iPointMake(devSize.width / 2.0f - size.width / 2.0f, -100);
-	pop->closePosition = iPointMake(devSize.width / 2.0f - size.width / 2.0f, 10);
+	pop->openPosition = iPointMake(10, devSize.height);
+	pop->closePosition = iPointMake(10, (devSize.height - size.height - 10));
 	popProcButton = pop;
 }
 
@@ -924,8 +1047,10 @@ bool keyPopProcButton(iKeyState stat, iPoint point)
 //-----------------------------------------------------------
 // MiniMap
 iPopup* popMiniMap;
+iPopup* popMiniMapState;
 iImage* imgMiniMap;
 
+#define MINIMAP_SIZE 10
 void refreshMiniMap(Texture* tex)
 {
 	fbo->bind(tex);
@@ -937,7 +1062,6 @@ void refreshMiniMap(Texture* tex)
 		if (maps[i]->tileIndex == -1)
 			continue;
 
-
 		iPoint p = iPointMake(TILE_Width * (i % TILE_TOTAL_SQRT), TILE_Height * (i / TILE_TOTAL_SQRT));
 		setRGBA(0, 0, 0, 1);
 		fillRect(p.x, p.y, TILE_Width, TILE_Height);
@@ -945,17 +1069,17 @@ void refreshMiniMap(Texture* tex)
 		if (i == player->mapNumber) setRGBA(0, 1, 0, 1);
 		else						setRGBA(1, 1, 1, 1);
 
-		fillRect(p.x + 1, p.y + 1, TILE_Width - 2, TILE_Height - 2 , 10);
+		fillRect(p.x + 1, p.y + 1, TILE_Width - 2, TILE_Height - 2 , 5);
 
 		if (maps[i]->state == MapType_ItemBox)
 		{
 			setRGBA(0, 0, 1, 0.7f);
-			fillRect(p.x + 3, p.y + 3, TILE_Width - 6, TILE_Height - 6, 10);
+			fillRect(p.x + 3, p.y + 3, TILE_Width - 6, TILE_Height - 6, 5);
 		}
 		else if (maps[i]->state == MapType_Boss)
 		{
 			setRGBA(1, 0, 0, 0.7f);
-			fillRect(p.x + 3, p.y + 3, TILE_Width - 6, TILE_Height - 6, 10);
+			fillRect(p.x + 3, p.y + 3, TILE_Width - 6, TILE_Height - 6, 5);
 		}
 	}
 	setRGBA(1, 1, 1, 1);
@@ -980,31 +1104,104 @@ void createPopMiniMap()
 
 	img->reverse = REVERSE_HEIGHT;
 	img->ratio = 2.0f;
-	img->position = iPointMake(devSize.width - size.width * img->ratio - 50, 50);
 	imgMiniMap = img;
 	pop->addObject(img);
 
+	pop->openPosition = 
+	pop->closePosition = iPointMake(devSize.width - size.width * img->ratio - 50, 50);
 	popMiniMap = pop;
+
+	const char* strState[2] = {
+		"Boss", "ItemBox"
+	};
+	pop = new iPopup(iPopupStyleNone);
+	iGraphics* g = iGraphics::instance();
+	size = iSizeMake(120,100);
+	setStringSize(20);
+	setStringRGBA(0, 0.7f, 0, 1);
+	setStringBorder(0);
+	g->init(size);
+	g->fillRect(0, 0, size.width, size.height, 5);
+	for (i = 0; i < 2; i++)
+	{
+		img = new iImage();
+		if (i == 0) setRGBA(1, 0, 0, 1);
+		else		setRGBA(0, 0, 1, 1);
+		g->fillRect(5, 5 + 50 * i, 40, 40, 3);
+		g->drawString(size.width * 0.95f, 25 + 50 * i, VCENTER | RIGHT, strState[i]);
+	}
+	setRGBA(1, 1, 1, 1);
+	tex = g->getTexture();
+	img->addObject(tex);
+	freeImage(tex);
+	pop->addObject(img);
+
+	pop->openPosition =
+	pop->closePosition = iPointMake(devSize.width - size.width * img->ratio - 50, 50)
+						+ iPointMake(0, (TILE_Height + 20) * TILE_TOTAL_SQRT);
+	popMiniMapState = pop;
 }
 
 void freePopMiniMap()
 {
 	delete popMiniMap;
+	delete popMiniMapState;
 }
 
 void showPopMiniMap(bool show)
 {
 	popMiniMap->show(show);
+	popMiniMapState->show(show);
 }
 
 void drawPopMiniMap(float dt)
 {
-	refreshMiniMap(imgMiniMap->tex);
+	iImage* img = imgMiniMap;
+	refreshMiniMap(img->tex);
+	if (getKeyDown(keyboard_tab))
+	{
+		if (img->ratio == 2.0f)
+		{
+			img->ratio = 4.0f;
+			iPoint p = iPointMake(img->tex->width, img->tex->height) * img->ratio;
+			popMiniMap->closePosition = iPointMake((devSize.width - p.x) / 2.0f, (devSize.height - p.y) / 2.0f);
+		}
+		else
+		{
+			img->ratio = 2.0f;
+			popMiniMap->closePosition = iPointMake(devSize.width - img->tex->width * img->ratio - 50, 50);
+		}
+	}
+
 	popMiniMap->paint(dt);
+	popMiniMapState->paint(dt);
 }
 
 bool keyPopMiniMap(iKeyState stat, iPoint point)
 {
+	int i, j= -1;
+	switch (stat)
+	{
+	case iKeyStateBegan:
+	{
+
+		break;
+	}
+	case iKeyStateMoved:
+	{
+
+
+		break;
+	}
+	case iKeyStateEnded:
+	{
+
+		break;
+	}
+	}
+
+
+
 	return false;
 }
 
@@ -1162,16 +1359,31 @@ void createPopProcMenu()
 	iImage* img;
 	Texture* tex;
 	iPopup* pop = new iPopup(iPopupStyleMove);
-	imgProcMenu = (iImage**)malloc(sizeof(iImage*) * 2);
+	iSize size;
+	imgProcMenu = (iImage**)malloc(sizeof(iImage*) * 3);
+
+	img = new iImage();
+	iSize frameSize = iSizeMake(160, 250);
+	tex = createTexture(frameSize.width, frameSize.height);
+
+	fbo->bind(tex);
+	fbo->clear(1, 1, 1, 1);
+	fbo->unbind();
+
+	img->addObject(tex);
+	freeImage(tex);
+	pop->addObject(img);
+	
 
 	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(128, 64);
-	const char* strBtn[2] = {
-		"RESUME", "EXIT"
+	size = iSizeMake(128, 64);
+	const char* strBtn[3] = {
+		"Resume", "Option", "Exit",
 	};
+
 	setStringSize(30);
 	setStringBorder(0);
-	for (i = 0; i < 2; i++)
+	for (i = 0; i < 3; i++)
 	{
 		img = new iImage();
 		for (j = 0; j < 2; j++)
@@ -1196,12 +1408,14 @@ void createPopProcMenu()
 			freeImage(tex);
 		}
 
-		img->position = iPointMake((devSize.width - size.width) / 2.0f, devSize.height / 2.0f - 64 + 74 * i);
+		img->position = iPointMake((frameSize.width-size.width) * 0.5f, frameSize.height * 0.1f + (size.height + 10) * i);
 		imgProcMenu[i] = img;
 		pop->addObject(img);
 	}
 	setRGBA(1, 1, 1, 1);
 
+	pop->openPosition = iPointMake((devSize.width - size.width) / 2.0f, -300);
+	pop->closePosition = iPointMake((devSize.width - size.width) / 2.0f, devSize.height / 2.0f - 100);
 	pop->methodDrawBefore = drawPopProcMenuBefore;
 	popProcMenu = pop;
 }
@@ -1219,7 +1433,7 @@ void showPopProcMenu(bool show)
 
 void drawPopProcMenuBefore(iPopup* me, iPoint p, float dt)
 {
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 3; i++)
 		imgProcMenu[i]->setTexAtIndex(i == popProcMenu->selected);
 }
 
@@ -1252,14 +1466,18 @@ bool keyPopProcMenu(iKeyState stat, iPoint point)
 		}
 		else if (i == 1)
 		{
+			showPopOption(true);
+		}
+		else if (i == 2)
+		{
 			//나가기
-			showPopProcMenu(false);
+			setLoading(gamestat_intro, freeProc, loadIntro);
 		}
 		return true;
 	}
 	case iKeyStateMoved:
 	{
-		for (i = 0; i < 2; i++)
+		for (i = 0; i < 3; i++)
 		{
 			if (containPoint(point, imgProcMenu[i]->touchRect(popProcMenu->closePosition)))
 			{
@@ -1301,17 +1519,18 @@ void createPopGameOver()
 	
 	img = new iImage();
 	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(256, 256);
-	g->init(size);
+	iSize size;
+	iSize frameSize = iSizeMake(512, 512);
+	g->init(frameSize);
 
 	setRGBA(0, 1, 0, 1);
-	g->fillRect(0, 0, size.width, size.height, 20);
+	g->fillRect(0, 0, frameSize.width, frameSize.height, 20);
 	setRGBA(1, 1, 1, 1);
 
 	setStringRGBA(0, 0, 0, 1);
 	setStringSize(40);
 	setStringBorder(0);
-	g->drawString(size.width / 2.0f, 32, VCENTER | HCENTER, "Game Over");
+	g->drawString(frameSize.width / 2.0f, 32, VCENTER | HCENTER, "Game Over");
 
 	tex = g->getTexture();
 	img->addObject(tex);
@@ -1321,9 +1540,9 @@ void createPopGameOver()
 
 	imgGameOverBtn = (iImage**)malloc(sizeof(iImage*) * 2);
 	const char* strBtn[2] = {
-	"Main Menu", "Game Exit"
+		"Menu", "Exit"
 	};
-	size = iSizeMake(240, 48);
+	size = iSizeMake(312, 128);
 	for (i = 0; i < 2; i++)
 	{
 		img = new iImage();
@@ -1333,7 +1552,7 @@ void createPopGameOver()
 
 			if (j == 0)
 			{
-				setRGBA(0, 0, 1, 1);
+				setRGBA(0, 0.5f, 0.5f, 1);
 				setStringRGBA(1, 1, 1, 1);
 			}
 			else
@@ -1344,7 +1563,7 @@ void createPopGameOver()
 			g->fillRect(0, 0, size.width, size.height, 5);
 			setRGBA(1, 1, 1, 1);
 
-			setStringSize(20);
+			setStringSize(50);
 			setStringBorder(0);
 			g->drawString(size.width / 2.0f, size.height / 2.0f, VCENTER | HCENTER, strBtn[i]);
 
@@ -1352,13 +1571,13 @@ void createPopGameOver()
 			img->addObject(tex);
 			freeImage(tex);
 		}
-		img->position = iPointMake(8 , 80 + 58 * i);
+		img->position = iPointMake((frameSize.width- size.width) * 0.5f, 80 + size.height * 1.2 * i);
 		imgGameOverBtn[i] = img;
 		pop->addObject(img);
 	}
 
-	pop->openPosition = iPointMake(devSize.width/2.0f - 128, -128);
-	pop->closePosition = iPointMake(devSize.width / 2.0f - 128, devSize.height / 2.0f - 64);
+	pop->openPosition = iPointMake((devSize.width - frameSize.width) / 2.0f, -128);
+	pop->closePosition = iPointMake((devSize.width - frameSize.width) / 2.0f, (devSize.height - frameSize.height) / 2.0f);
 	pop->methodDrawBefore = drawPopGameOverBefore;
 	popGameOver = pop;
 }
@@ -1406,11 +1625,13 @@ bool keyPopGameOver(iKeyState stat, iPoint point)
 		{
 			// main
 			showPopGameOver(false);
+			setLoading(gamestat_intro, freeProc, loadIntro);
 		}
 		else if (i == 1)
 		{
 			//exit
 			showPopGameOver(false);
+			runWnd = false;
 		}
 		break;
 	}

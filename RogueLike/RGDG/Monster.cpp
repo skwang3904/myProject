@@ -187,7 +187,9 @@ GolemNomal::GolemNomal(int index, int8 mapNum, iPoint pos) : Monster(index, mapN
 	vector = iPointZero;
 
 	size = iSizeMake(this->img->tex->width, this->img->tex->height);
-	touchRect = iRectMake(position, size);
+	touchSize = size * 0.33f;
+	iPoint p = position + iPointMake(size.width, size.height) * 0.33f;
+	touchRect = iRectMake(p, touchSize);
 
 
 	alive = true;
@@ -280,7 +282,7 @@ void GolemNomal::paint(float dt, iPoint off)
 
 	(this->*stateMethod[state])(dt);
 
-	touchRect = iRectMake(position.x, position.y, img->tex->width, img->tex->height);
+	//touchRect = iRectMake(position.x, position.y, img->tex->width, img->tex->height);
 	img->reverse = reverse;
 	iPoint p = position + off;
 	img->paint(dt, p);
@@ -292,6 +294,14 @@ void GolemNomal::paint(float dt, iPoint off)
 		if (img->animation == false)
 			(this->*cbMethod)();
 	}
+
+#if 1 //draw touchRect
+	setRGBA(1, 0, 0, 0.5f);
+	iRect rt = touchRect;
+	rt.origin += DRAW_OFF;
+	fillRect(rt);
+	setRGBA(1, 1, 1, 1);
+#endif
 }
 
 void GolemNomal::drawShadow(float dt, iPoint off)
@@ -488,7 +498,9 @@ GolemBoss::GolemBoss(int index, int8 mapNum, iPoint pos) : Monster(index, mapNum
 	vector = iPointZero;
 
 	size = iSizeMake(this->img->tex->width, this->img->tex->height);
-	touchRect = iRectMake(position, size);
+	touchSize = size * 0.33f;
+	iPoint p = position + iPointMake(size.width, size.height) * 0.33f;
+	touchRect = iRectMake(p, touchSize);
 
 
 	alive = true;
@@ -542,7 +554,6 @@ void GolemBoss::paint(float dt, iPoint off)
 		else if (angle > 225 && angle < 315)	{ dir = 3; }
 	}
 
-
 	if (actionDt < _actionDt)
 		actionDt += dt;
 
@@ -551,7 +562,6 @@ void GolemBoss::paint(float dt, iPoint off)
 		state = monster_death;
 		// start death ani
 		// alive false = after death ani
-
 	}
 	else
 	{
@@ -590,7 +600,6 @@ void GolemBoss::paint(float dt, iPoint off)
 
 	(this->*stateMethod[state])(dt);
 
-	touchRect = iRectMake(position.x, position.y, img->tex->width, img->tex->height);
 	//img->reverse = reverse;
 	iPoint p = position + off;
 	img->paint(dt, p);
@@ -602,6 +611,14 @@ void GolemBoss::paint(float dt, iPoint off)
 		if (img->animation == false)
 			(this->*cbMethod)();
 	}
+
+#if 1 //draw touchRect
+	setRGBA(1, 0, 0, 0.5f);
+	iRect rt = touchRect;
+	rt.origin += DRAW_OFF;
+	fillRect(rt);
+	setRGBA(1, 1, 1, 1);
+#endif
 }
 
 void GolemBoss::drawShadow(float dt, iPoint off)

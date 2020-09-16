@@ -25,6 +25,8 @@ iImage::iImage()
 	anc = TOP | LEFT;
 	reverse = REVERSE_NONE;
 	ratio = 1.0f;
+	texCoordx = 1.0f;
+	texCoordy = 1.0f;
 	location = 2; // 0.x 1.y 2.z
 	reverseRotate = false;
 	angle = 0.0f;
@@ -163,17 +165,19 @@ void iImage::paint(float dt, iPoint off)
 	}
 	else if (lockAngle)
 	{
-		p.x += tex->width / 2 * ratio;
-		p.y += tex->height / 2 * ratio;
-		drawImage(tex, p.x, p.y, 0, 0, tex->width, tex->height,
-			VCENTER | HCENTER, s * ratio, s * ratio, location, angle, reverse);
+		p.x += tex->width / 2 * ratio * texCoordx;
+		p.y += tex->height / 2 * ratio * texCoordy;
+		drawImage(tex, p.x, p.y, 
+			0, 0, tex->width * texCoordx, tex->height * texCoordy,
+			VCENTER | HCENTER, s * ratio * texCoordx, s * ratio * texCoordy, location, angle, reverse);
 	}
 	else
 	{
-		p.x += tex->width / 2 * ratio;
-		p.y += tex->height / 2 * ratio;
-		drawImage(tex, p.x, p.y, 0, 0, tex->width, tex->height,
-			VCENTER | HCENTER, s * ratio, s * ratio, location, a, reverse);
+		p.x += tex->width / 2 * ratio * texCoordx;
+		p.y += tex->height / 2 * ratio * texCoordy;
+		drawImage(tex, p.x, p.y,
+			0, 0, tex->width * texCoordx, tex->height * texCoordy,
+			VCENTER | HCENTER, s * ratio * texCoordx, s * ratio * texCoordy, location, a, reverse);
 	}
 }
 

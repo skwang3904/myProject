@@ -83,7 +83,11 @@ PlayerChar::PlayerChar(int index, int8 mapNum, iPoint pos) : Object(index, mapNu
 
 	position = maps[mapNumber]->tileOff + position;
 	vector = iPointZero;
-	touchRect = iRectZero;
+
+	size = iSizeMake(this->img->tex->width, this->img->tex->height);
+	touchSize = size * 0.33f;
+	iPoint p = position + iPointMake(size.width, size.height) * 0.33f;
+	touchRect = iRectMake(p, touchSize);
 
 	//------------------------------------------------------------------------------------------
 	// init data
@@ -123,93 +127,87 @@ void PlayerChar::paint(float dt, iPoint off)
 	iPoint mp = iPointZero;
 	uint32 key = getKeyStat();
 
-	if (key && state < player_attack)
+	if (dt > 0.0f)
 	{
-		state = player_move;
-		if (key & keyboard_left)
+		if (key && state < player_attack)
 		{
-			headNum = 0;
-			img = imgs[6];
-			reverse = REVERSE_WIDTH;
-			mp.x -= 1.0f;
-			holdNum = 4;
+			state = player_move;
+			if (key & keyboard_left)
+			{
+				headNum = 0;
+				img = imgs[6];
+				reverse = REVERSE_WIDTH;
+				mp.x -= 1.0f;
+				holdNum = 4;
 
-			wpVector.x = -1.0f;
-			wpVector.y = 0.0f;
+				wpVector.x = -1.0f;
+				wpVector.y = 0.0f;
+			}
+			else if (key & keyboard_right)
+			{
+				headNum = 1;
+				img = imgs[6];
+				reverse = REVERSE_NONE;
+				mp.x += 1.0f;
+				holdNum = 4;
+
+				wpVector.x = 1.0f;
+				wpVector.y = 0.0f;
+			}
+			if (key & keyboard_up)
+			{
+				headNum = 2;
+				img = imgs[7];
+				reverse = REVERSE_WIDTH;
+				mp.y -= 1.0f;
+				holdNum = 5;
+
+				wpVector.x = 0.0f;
+				wpVector.y = -1.0f;
+			}
+			else if (key & keyboard_down)
+			{
+				headNum = 3;
+				img = imgs[7];
+				reverse = REVERSE_NONE;
+				mp.y += 1.0f;
+				holdNum = 5;
+
+				wpVector.x = 0.0f;
+				wpVector.y = 1.0f;
+			}
+
+			if (getKeyDown(keyboard_space))
+			{
+				state = player_jump;
+				img = imgs[9];
+				img->startAnimation(cbPlayerSetIdle);
+			}
+
+			vector = iPointVector(mp);
 		}
-		else if (key & keyboard_right)
+		else if (key == 0 && state < player_attack)
 		{
-			headNum = 1;
-			img = imgs[6];
-			reverse = REVERSE_NONE;
-			mp.x += 1.0f;
-			holdNum = 4;
+			state = player_idle;
+			img = imgs[holdNum];
 
-			wpVector.x = 1.0f;
-			wpVector.y = 0.0f;
+			vector = mp;
 		}
-		if (key & keyboard_up)
+		else
 		{
-			headNum = 2;
-			img = imgs[7];
-			reverse = REVERSE_WIDTH;
-			mp.y -= 1.0f;
-			holdNum = 5;
-
-			wpVector.x = 0.0f;
-			wpVector.y = -1.0f;
+			vector = mp;
 		}
-		else if (key & keyboard_down)
-		{
-			headNum = 3;
-			img = imgs[7];
-			reverse = REVERSE_NONE;
-			mp.y += 1.0f;
-			holdNum = 5;
-
-			wpVector.x = 0.0f;
-			wpVector.y = 1.0f;
-		}
-
-		if (getKeyDown(keyboard_space))
-		{
-			state = player_jump;
-			img = imgs[9];
-			img->startAnimation(cbPlayerSetIdle);
-		}
-
-		vector = iPointVector(mp);
 	}
-	else if (key == 0 && state < player_attack)
-	{
-		state = player_idle;
-		img = imgs[holdNum];
 
-		vector = mp;	
-	}
-	else
-	{
-		vector = mp;
-	}
-
-	iPoint half = iPointMake(img->tex->width / 2.0f, img->tex->height / 2.0f);
+	iPoint half = iPointMake(img->tex->width * 0.5f, img->tex->height * 0.5f);
 	iPoint sp = position + half;
 
 	wpPosition = sp + iPointMake(-wpVector.y * 32, wpVector.x * 24);
-
 	mp = vector * (moveSpeed * dt);
 	wallCheck(this, mp);
 	
 	iPoint rp = position + half * 0.5f;
-	touchRect = iRectMake(rp.x, rp.y, half.x, half.y);
-
-#if 0 //draw touchRect
-	setRGBA(1, 0, 0, 1);
-	iRect rt = touchRect;
-	rt.origin += DRAW_OFF + img->position;
-	fillRect(rt);
-	setRGBA(1, 1, 1, 1);
-#endif
+	//touchRect = iRectMake(rp.x, rp.y, half.x, half.y);
 
 	//evasion
 	iPoint p = position + DRAW_OFF;
@@ -228,6 +226,14 @@ void PlayerChar::paint(float dt, iPoint off)
 		}
 		selectWeapon(arrayWeapon->currIndex - 1);
 	}
+
+#if 1 //draw touchRect
+	setRGBA(1, 0, 0, 0.5f);
+	iRect rt = touchRect;
+	rt.origin += DRAW_OFF;
+	fillRect(rt);
+	setRGBA(1, 1, 1, 1);
+#endif
 }
 
 void PlayerChar::drawShadow(float dt, iPoint off)

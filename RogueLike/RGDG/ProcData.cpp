@@ -23,8 +23,8 @@ PlayerImageInfo playerImageInfo[5] = {
 MonsterInfo monsterInfo[MT_max] = {
 	{	//GOLEM_NOMAL
 		100.0f,		20.0f,
-		5.0f,		3.0f,
-		1.5f,		-0.1f,
+		10.0f,		3.0f,
+		1.0f,		-0.1f,
 		100.0f,		10.0f,
 
 		0.75f,		-0.05f,
@@ -55,8 +55,8 @@ MonsterInfo monsterInfo[MT_max] = {
 	},
 	{	//GOLEM_BOSS
 		100.0f,		20.0f,
-		5.0f,		3.0f,
-		1.5f,		-0.1f,
+		20.0f,		3.0f,
+		0.5f,		-0.1f,
 		100.0f,		10.0f,
 
 		0.75f,		-0.05f,
@@ -77,6 +77,7 @@ float MonsterInfo::setMonsterStatus(float* base, int stage)
 }
 
 // [ MONSTER_IMG_NUM 6 ] in "Monster.h"
+#if 0
 MonsterImageInfo golemNomalImage[6] = {
 	{ "assets/monster/golem1/Idle Blink/Golem_01_Idle Blinking_%d.png",	12,
 		1.0f, 0.0f, 0, false, iSizeMake(200, 150) },
@@ -89,6 +90,21 @@ MonsterImageInfo golemNomalImage[6] = {
 	{ "assets/monster/golem1/Hurt/Golem_01_Hurt_%03d.png", 12,
 		1.0f, 0.0f , 1, false, iSizeMake(200, 150) },
 	{ "assets/monster/golem1/Dying/Golem_01_Dying_%d.png", 15,
+		1.2f, 0.0f, 1, true, iSizeMake(200, 150)},
+};
+#endif
+MonsterImageInfo golemNomalImage[6] = {
+	{ "assets/monster/demon_axe_red/Idle/ready_%d.png",	7,
+		1.0f, 0.0f, 0, false, iSizeMake(200, 150) },
+	{ "assets/monster/demon_axe_red/Walking/walk_%d.png", 7,
+		1.0f, 0.0f, 0, false, iSizeMake(200, 150) },
+	{ "assets/monster/demon_axe_red/Attacking/attack1_%d.png", 7,
+		monsterInfo[MT_golemNomal].attackSpeed , monsterInfo[MT_golemNomal]._attackSpeed, 1, false, iSizeMake(200, 150) },
+	{ "assets/monster/demon_axe_red/Attacking/attack1_%d.png", 7,
+		monsterInfo[MT_golemNomal].attackSpeed , monsterInfo[MT_golemNomal]._attackSpeed, 1, false, iSizeMake(200, 150) },
+	{ "assets/monster/demon_axe_red/Hurt/hit_%d.png", 4,
+		1.0f, 0.0f , 1, false, iSizeMake(200, 150) },
+	{ "assets/monster/demon_axe_red/Dying/dead_%d.png", 5,
 		1.2f, 0.0f, 1, true, iSizeMake(200, 150)},
 };
 

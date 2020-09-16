@@ -63,6 +63,7 @@ public:
 
 	iPoint position;
 	iPoint vector;
+	iSize touchSize;
 	iRect touchRect;
 
 	float prevHp;

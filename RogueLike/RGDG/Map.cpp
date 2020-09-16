@@ -207,17 +207,16 @@ int wallCheck(Object* obj, iPoint mp)
 	//if (t->tile == NULL)
 	//	return;
 
+	int r = -1;
 	iPoint to = t->tileOff;
-	iSize size = iSizeMake(obj->img->tex->width, obj->img->tex->height) * 0.5f;
-	iPoint pos = obj->position + iPointMake(size.width, size.height);
-
-	iSize tmp = size * 2.0f * 0;
+	iPoint size = iPointMake(obj->img->tex->width, obj->img->tex->height) * 0.33f;;
+	iPoint pos = obj->position + size;
 	
 	if (mp.x < 0)
 	{
 		int LX = pos.x - to.x;						LX /= TILE_Width;
 		int TLY = pos.y - to.y;						TLY /= TILE_Height;
-		int BLY = pos.y + tmp.height - to.y;		BLY /= TILE_Height;
+		int BLY = pos.y + size.y - to.y;		BLY /= TILE_Height;
 		int min = to.x;
 	
 		for (i = LX - 1; i > -1; i--)
@@ -239,14 +238,14 @@ int wallCheck(Object* obj, iPoint mp)
 		if (pos.x < min)
 		{
 			pos.x = min;
-			return 0;
+			r = 0;
 		}
 	}
 	else if (mp.x > 0)
 	{
-		int RX = pos.x + tmp.width - to.x;			RX /= TILE_Width;
+		int RX = pos.x + size.x - to.x;			RX /= TILE_Width;
 		int TRY = pos.y - to.y;						TRY /= TILE_Height;
-		int BRY = pos.y + tmp.height - to.y;		BRY /= TILE_Height;
+		int BRY = pos.y + size.y - to.y;		BRY /= TILE_Height;
 		int max = to.x + TILE_NUM_X * TILE_Width - 1;
 	
 		for (i = RX + 1; i < TILE_NUM_X; i++)
@@ -266,10 +265,10 @@ int wallCheck(Object* obj, iPoint mp)
 		}
 	
 		pos.x += mp.x;
-		if (pos.x > max - tmp.width - 1)
+		if (pos.x > max - size.x - 1)
 		{
-			pos.x = max - tmp.width - 1;
-			return 1;
+			pos.x = max - size.x - 1;
+			r = 1;
 		}
 	}
 	
@@ -277,7 +276,7 @@ int wallCheck(Object* obj, iPoint mp)
 	{
 		int TY = pos.y - to.y;							TY /= TILE_Height;
 		int TLX = pos.x - to.x;							TLX /= TILE_Width;
-		int TRX = pos.x + tmp.width - to.x;				TRX /= TILE_Width;
+		int TRX = pos.x + size.x - to.x;				TRX /= TILE_Width;
 		int min = to.y;
 	
 		for (j = TY - 1; j > -1; j--)
@@ -299,14 +298,14 @@ int wallCheck(Object* obj, iPoint mp)
 		if (pos.y < min)
 		{
 			pos.y = min;
-			return 2;
+			r = 2;
 		}
 	}
 	else if (mp.y > 0)
 	{
-		int BY = pos.y + tmp.height - to.y;			BY /= TILE_Height;
+		int BY = pos.y + size.y - to.y;			BY /= TILE_Height;
 		int BLX = pos.x - to.x;						BLX /= TILE_Width;
-		int BRX = pos.x + tmp.width - to.x;			BRX /= TILE_Width;
+		int BRX = pos.x + size.x- to.x;			BRX /= TILE_Width;
 		int max = to.y + TILE_NUM_Y * TILE_Height - 1;
 	
 		for (j = BY + 1; j < TILE_NUM_Y; j++)
@@ -326,15 +325,16 @@ int wallCheck(Object* obj, iPoint mp)
 		}
 	
 		pos.y += mp.y;
-		if (pos.y > max - tmp.height - 1)
+		if (pos.y > max - size.y - 1)
 		{
-			pos.y = max - tmp.height - 1;
-			return 3;
+			pos.y = max - size.y - 1;
+			r = 3;
 		}
 	}
 
-	obj->position = pos - iPointMake(size.width, size.height);
-	return -1;
+	obj->position = pos - size;
+	obj->touchRect.origin = pos;
+	return r;
 }
 
 //-----------------------------------------------------------------------------
@@ -587,7 +587,7 @@ MapObjectNextDoor::MapObjectNextDoor(int index, int8 mapNum, iPoint pos, int til
 	int i, j;
 	iImage* img;
 	Texture* tex, *t;
-	iSize size = iSizeMake(TILE_Width * 3, TILE_Height * 3);
+	iSize size = iSizeMake(TILE_Width * 6, TILE_Height * 6);
 
 	if (imgObjNextDoor == NULL)
 	{
@@ -617,7 +617,8 @@ MapObjectNextDoor::MapObjectNextDoor(int index, int8 mapNum, iPoint pos, int til
 	img->lastFrame = true;
 	this->img = img;
 
-	touchRect = iRectMake(position.x, position.y, img->tex->width, img->tex->height);
+	touchSize = iSizeMake(img->tex->width, img->tex->height);
+	touchRect = iRectMake(position, touchSize);
 	mapObjNextDoor = this;
 }
 
@@ -1174,7 +1175,7 @@ void createMapImage()
 	{
 		if (maps[i]->state == MapType_Boss)
 		{
-			p = maps[i]->tileOff + iPointMake(TILE_NUM_X * TILE_Width, TILE_NUM_Y * TILE_Height) / 2.0f;
+			p = maps[i]->tileOff + iPointMake(TILE_NUM_X * TILE_Width, TILE_NUM_Y * TILE_Height) * 0.3f;
 			_mapObj[mapObjNum] = new MapObjectNextDoor(0, i, p, 0);
 			mapObj[mapObjNum] = _mapObj[mapObjNum];
 			mapObjNum++;

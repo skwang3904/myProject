@@ -14,6 +14,7 @@ Object::Object(int index, int8 mapNum, iPoint pos)
 
 	this->position = pos;
 	vector = iPointZero;
+	touchSize = iSizeZero;
 	touchRect = iRectZero;
 
 	prevHp = 0.0f;
@@ -38,13 +39,14 @@ Object::~Object()
 iPopup* popOption;
 iImage** imgOption;
 
+void drawPopOptionOpen(iPopup* me);
 void drawPopOptionBefore(iPopup* me, iPoint p, float dt);
 
 void createPopOption()
 {
 	int i, j;
 	iImage* img;
-	Texture* tex, *t;
+	Texture* tex, *t, *text;
 	iPopup* pop = new iPopup(iPopupStyleMove);
 	iSize size;
 
@@ -53,30 +55,61 @@ void createPopOption()
 
 	img = new iImage();
 	iSize frameSize = iSizeMake(devSize.width * 0.5f, devSize.height * 0.7f);
-	tex = createTexture(frameSize.width, frameSize.height);
 
+	size = iSizeMake(frameSize.width * 0.6f, frameSize.height * 0.2f);
+	iGraphics* g = iGraphics::instance();
+	g->init(size);
+	setStringSize(size.height * 0.5f);
+	setStringRGBA(0, 0, 0, 1);
+	setStringBorder(0);
+	g->drawString(size.width / 2.0f, size.height / 2.0f, VCENTER | HCENTER, "Option");
+	text = g->getTexture();
+
+	size = frameSize;
+	tex = createTexture(size.width, size.height);
 	fbo->bind(tex);
-	//t = createImage();
-	fbo->clear(0.6f, 0.4f, 0, 1);
+	fbo->clear(0.5, 0.2, 0.1, 1);
+	setRGBA(0, 1, 0, 1);
+	fillRect(devSize.width * 0.2f, devSize.height * 0.6f, devSize.width * 0.6f, 10);
+	fillRect(devSize.width * 0.2f, devSize.height * 0.4f, devSize.width * 0.6f, 10);
+	setRGBA(1, 1, 1, 1);
+	drawImage(text, size.width / 2.0f, text->height,
+		0, 0, text->width, text->height,
+		VCENTER | HCENTER, 1.0f, 1.0f,
+		2, 0, REVERSE_HEIGHT);
+	freeImage(text);
 	fbo->unbind();
 
 	img->addObject(tex);
 	freeImage(tex);
 	pop->addObject(img);
 
+	const char* strBtn[4] = {
+		"Apply",
+		"Close",
+		"BGM",
+		"SFX",
+	};
+
 	size = iSizeMake(devSize.width * 0.1f, devSize.width * 0.1f);
-	for (i = 0; i < OPTION_BUTTON_NUM; i++)
+	setStringSize(size.height * 0.3f);
+	setStringRGBA(0, 0, 0, 1);
+	setStringBorder(0);
+	for (i = 0; i < OPTION_BUTTON_NUM; i++) // apply, close, bgm, sfx
 	{
 		img = new iImage();
 		for (j = 0; j < 2; j++)
 		{
 			tex = createTexture(size.width, size.height);
 
+			g->init(size);
+			g->drawString(size.width / 2.0f, size.height / 2.0f, VCENTER | HCENTER, strBtn[i]);
+			text = g->getTexture();
+
 			fbo->bind(tex);
-			//if (j == 0) setRGBA(1, 1, 1, 1);
-			//else setRGBA(0, 1, 0, 1);			
-			if (j == 0) fbo->clear(1, 1, 1, 1);
+			if (j == 0) fbo->clear(1, 0, 1, 1);
 			else fbo->clear(0, 1, 0, 1);
+			DRAWIMAGE(text, size);
 			fbo->unbind();
 
 			img->addObject(tex);
@@ -94,7 +127,8 @@ void createPopOption()
 
 	pop->openPosition = iPointMake((devSize.width - frameSize.width) / 2.0f, -frameSize.height);
 	pop->closePosition = iPointMake((devSize.width - frameSize.width) / 2.0f, (devSize.height - frameSize.height) / 2.0f);;
-	pop->methodDrawBefore;
+	pop->methodOpen = drawPopOptionOpen;
+	pop->methodDrawBefore = drawPopOptionBefore;
 	pop->_showDt = 0.5f;
 	popOption = pop;
 }
@@ -108,6 +142,14 @@ void freePopOption()
 void showPopOption(bool show)
 {
 	popOption->show(show);
+}
+
+void drawPopOptionOpen(iPopup* me)
+{
+	float bgm, sfx;
+	audioGetVolume(bgm, sfx);
+	imgOption[2]->position.x = 100.0f + bgm * 300.0f;
+	imgOption[3]->position.x = 100.0f + sfx * 300.0f;
 }
 
 void drawPopOptionBefore(iPopup* me, iPoint p, float dt)
@@ -129,21 +171,29 @@ iPoint prevOptionPoint = iPointZero;
 void optionBgm(iPoint point)
 {
 	imgOption[2]->position.x += point.x - prevOptionPoint.x;
+	if (imgOption[2]->position.x < 100.0f)
+		imgOption[2]->position.x = 100.0f;
+	else if (imgOption[2]->position.x > 400.0f)
+			 imgOption[2]->position.x = 400.0f;
 	prevOptionPoint = point;
 }
 
 void optionSfx(iPoint point)
 {
 	imgOption[3]->position.x += point.x - prevOptionPoint.x;
+	if (imgOption[3]->position.x < 100.0f)
+		imgOption[3]->position.x = 100.0f;
+	else if (imgOption[3]->position.x > 400.0f)
+			 imgOption[3]->position.x = 400.0f;
 	prevOptionPoint = point;
 }
 
 void setOptionSound()
 {
-	//float bgm = imgOption[2]->position;
-	//float sfx = imgOption[3]->position;
+	float bgm = (imgOption[2]->position.x - 100.0f) / 300.0f;
+	float sfx = (imgOption[3]->position.x - 100.0f) / 300.0f;
 
-	//audioVolume(bgm, sfx, SFX_NUM);
+	audioVolume(bgm, sfx, SFX_NUM);
 }
 
 bool keyPopOption(iKeyState stat, iPoint point)
@@ -166,7 +216,7 @@ bool keyPopOption(iKeyState stat, iPoint point)
 		if (i == 0)
 		{
 			// apply
-			//setOptionSound();
+			setOptionSound();
 			showPopOption(false);
 		}
 		else if (i == 1)

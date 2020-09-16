@@ -36,9 +36,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInst,
     wc.hIconSm = LoadIcon(wc.hInstance, MAKEINTRESOURCE(IDI_SMALL));
     RegisterClassExW(&wc);
 
-    // 창 크기 DEFALUT 값으로하면 크기안맞음
+    int mw = GetSystemMetrics(SM_CXSCREEN);
+    int mh = GetSystemMetrics(SM_CYSCREEN);
+    int w = DEVSIZE_WIDTH * 0.8f + (GetSystemMetrics(SM_CXFRAME) + GetSystemMetrics(SM_CXPADDEDBORDER)) * 2;
+    int h = DEVSIZE_HEIGHT * 0.8f + GetSystemMetrics(SM_CYCAPTION) + (GetSystemMetrics(SM_CYFRAME) + GetSystemMetrics(SM_CXPADDEDBORDER)) * 2;
     hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-        300, 200, DEVSIZE_WIDTH * 0.67f, DEVSIZE_HEIGHT * 0.67f, nullptr, nullptr, hInstance, nullptr);
+        (mw - w) / 2, (mh - h) / 2, w, h, nullptr, nullptr, hInstance, nullptr);
+
     hDC = GetDC(hWnd);
 
     RECT rect;

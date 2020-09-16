@@ -45,6 +45,8 @@ public:
 	int anc;
 	uint8 reverse;
 	float ratio;
+	float texCoordx;
+	float texCoordy;
 	int location;
 	bool reverseRotate;
 	float angle;

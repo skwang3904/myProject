@@ -11,12 +11,7 @@ void loadIntro()
     createPopIntroButton();
     createPopIntroSelectStart();
 
-    createPopOption();
-
-
     showPopPressAnyKey(true);
-
-    showPopOption(true);
 }
 
 void freeIntro()
@@ -25,7 +20,6 @@ void freeIntro()
     freePopPressAnyKey();
     freePopIntroButton();
     freePopIntroSelectStart();
-    freePopOption();
 }
 
 void drawIntro(float dt)
@@ -35,14 +29,10 @@ void drawIntro(float dt)
     drawPopIntroButton(dt);
     drawPopIntroSelectStart(dt);
 
-    drawPopOption(dt);
 }
 
 void keyIntro(iKeyState stat, iPoint point)
 {
-    if (keyPopOption(stat, point))
-        return;
-
     if (keyPopIntroSelectStart(stat, point) ||
         keyPopIntroButton(stat, point) ||
         keyPopPressAnyKey(stat, point))

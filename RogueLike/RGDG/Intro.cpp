@@ -12,6 +12,8 @@ void loadIntro()
     createPopIntroSelectStart();
 
     showPopPressAnyKey(true);
+
+    audioPlay(AUDIO_INTRO);
 }
 
 void freeIntro()

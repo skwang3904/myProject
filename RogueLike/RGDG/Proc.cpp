@@ -458,15 +458,15 @@ bool PassMap::nextStage(float dt)
 			if (popStageLoading->stat == iPopupStatProc)
 				popDt += dt;
 		}
+		else if (popDt > _popDt)
+		{
+			popDt = _popDt;
+			showPopStageLoading(false);
+		}
 		else if (popDt == _popDt)
 		{
 			if (popStageLoading->bShow == false)
 				nextDt += 0.00001f;
-		}
-		else //if (popDt > _popDt)
-		{
-			popDt = _popDt;
-			showPopStageLoading(false);
 		}
 	}
 	else if (nextDt < _nextDt)
@@ -1586,12 +1586,14 @@ bool keyPopProcMenu(iKeyState stat, iPoint point)
 		}
 		else if (i == 1)
 		{
+			// 옵션
 			showPopOption(true);
 		}
 		else if (i == 2)
 		{
 			//나가기
 			setLoading(gamestat_intro, freeProc, loadIntro);
+			audioStop(AUDIO_GameMusic);
 		}
 		audioPlay(AUDIO_MenuSelected);
 		return true;
@@ -1756,9 +1758,9 @@ bool keyPopGameOver(iKeyState stat, iPoint point)
 			//exit
 			showPopGameOver(false);
 			runWnd = false;
-			audioStop(AUDIO_GameMusic);
 		}
 		audioPlay(AUDIO_MenuSelected);
+		audioStop(AUDIO_GameMusic);
 		break;
 	}
 	case iKeyStateMoved:

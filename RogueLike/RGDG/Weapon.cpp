@@ -468,8 +468,7 @@ bool Spear::attack(float dt)
 	//attack	
 	float standSpeed = _attackSpeed;
 	float d = attackSpeed / standSpeed;
-	if(d > attackDt)
-		PRINTF(d);
+
 	typedef float (*FUNC_METHOD)(float, float, float);
 	FUNC_METHOD fmethod[3] = { linear, easeIn, easeOut };
 	FUNC_METHOD m = fmethod[1];

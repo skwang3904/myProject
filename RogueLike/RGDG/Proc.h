@@ -129,7 +129,7 @@ struct PassMap
 };
 extern PassMap* passMap;
 #define PASS_STAGE_DT 2.0f
-#define PASS_POP_DT 3.0f
+#define PASS_POP_DT 2.0f
 #define PASS_MAP_DT 0.3f
 
 void loadPassMap();

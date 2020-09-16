@@ -203,7 +203,7 @@ GolemNomal::GolemNomal(int index, int8 mapNum, iPoint pos) : Monster(index, mapN
 	_attackDt = mi->setMonsterStatus(&mi->attackDt, stage);
 	attackDelay = 0.0f;
 	_attackDelay = mi->setMonsterStatus(&mi->attackDelay, stage);
-	actionDt = _actionDt = 0.0f;
+	actionDt = _actionDt = 3.0f;
 
 	moveSpeed = mi->setMonsterStatus(&mi->moveSpeed, stage);
 	lookDistance = mi->setMonsterStatus(&mi->lookDistance, stage);
@@ -218,7 +218,7 @@ GolemNomal::GolemNomal(int index, int8 mapNum, iPoint pos) : Monster(index, mapN
 	distance = 0.0f;
 	reverse = REVERSE_NONE;
 
-	showHpDt = 0.0f;
+	showHpDt = 
 	_showHpDt = 2.0f;
 
 }
@@ -322,8 +322,8 @@ void GolemNomal::action(Object* obj)
 		return;
 
 	audioPlay(AUDIO_EnemyHit);
-	_actionDt = obj->_actionDt;
 	actionDt = 0.0f;
+	_actionDt = obj->_actionDt;
 	prevHp = hp;
 	hp -= obj->attackPoint;
 	if (hp < 0.0f)
@@ -521,7 +521,7 @@ GolemBoss::GolemBoss(int index, int8 mapNum, iPoint pos) : Monster(index, mapNum
 	_attackDt =		 			 mi->setMonsterStatus(&mi->attackDt, stage);
 	attackDelay = 0.0f;								  
 	_attackDelay =				 mi->setMonsterStatus(&mi->attackDelay, stage);
-	actionDt = _actionDt = 0.0f;
+	actionDt = _actionDt = 3.0f;
 								 					  
 	moveSpeed =					 mi->setMonsterStatus(&mi->moveSpeed, stage);
 	lookDistance =				 mi->setMonsterStatus(&mi->lookDistance, stage);
@@ -536,7 +536,7 @@ GolemBoss::GolemBoss(int index, int8 mapNum, iPoint pos) : Monster(index, mapNum
 	distance = 0.0f;
 	reverse = REVERSE_NONE;
 
-	showHpDt = 0.0f;
+	showHpDt = 
 	_showHpDt = 2.0f;
 	dir = 0;
 }
@@ -647,8 +647,10 @@ void GolemBoss::action(Object* obj)
 
 	audioPlay(AUDIO_EnemyHit);
 	actionDt = 0.0f;
+	_actionDt = obj->_actionDt;
 	prevHp = hp;
 	hp -= obj->attackPoint;
+	PRINTF(actionDt);
 	if (hp < 0.0f)
 	{
 		audioPlay(AUDIO_EnemyDeath);
@@ -690,7 +692,6 @@ void GolemBoss::actionMeleeAttack(float dt)
 
 			attackDt = _attackDt;
 		}
-
 		return;
 	}
 

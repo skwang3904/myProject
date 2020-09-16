@@ -1,61 +1,76 @@
-﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(459,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (TowerDefense.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+﻿D:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(467,5): warning MSB8028: 중간 디렉터리(Debug\)에 다른 프로젝트(TowerDefense.vcxproj)에서 공유하는 파일이 포함되어 있습니다.  이로 인해 잘못된 정리 및 다시 빌드 동작이 수행될 수 있습니다.
   Proc.cpp
-C:\Users\user\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(16,17): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(18,25): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(128,16): warning C4101: 'k' :참조되지 않은 지역 변수입니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(275,74): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(275,42): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(517,38): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(517,26): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(522,20): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(522,10): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(521,46): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(521,26): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(545,40): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(545,28): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(548,4): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(554,23): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(554,13): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(553,49): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(553,29): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(654,11): warning C4101: 'tex' :참조되지 않은 지역 변수입니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(653,9): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(653,6): warning C4101: 'i' :참조되지 않은 지역 변수입니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(657,8): warning C4101: 'size' :참조되지 않은 지역 변수입니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(654,18): warning C4101: 't' :참조되지 않은 지역 변수입니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(681,62): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(688,31): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(759,39): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(759,27): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(763,3): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(770,37): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(778,39): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(778,27): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(782,3): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(788,37): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(802,39): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(802,27): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(806,3): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(813,37): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(744,9): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(920,9): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1009,4): warning C4390: ';': 제어된 빈 문이 있습니다. 이 문이 필요합니까?
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1043,73): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1043,36): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1078,38): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1078,26): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1108,20): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1109,40): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1071,9): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1160,6): warning C4101: 'i' :참조되지 않은 지역 변수입니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1223,40): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1223,28): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1274,35): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1274,30): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1310,4): warning C4390: ';': 제어된 빈 문이 있습니다. 이 문이 필요합니까?
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1345,48): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1345,31): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1468,4): warning C4390: ';': 제어된 빈 문이 있습니다. 이 문이 필요합니까?
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1552,71): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1628,4): warning C4390: ';': 제어된 빈 문이 있습니다. 이 문이 필요합니까?
-  RogueLike.vcxproj -> C:\Users\user\Documents\GitHub\myProject\Debug\RogueLike.exe
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(16,17): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(18,25): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(184,16): warning C4101: 'k' :참조되지 않은 지역 변수입니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(334,74): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(334,42): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(577,38): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(577,26): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(582,20): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(582,10): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(581,46): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(581,26): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(605,40): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(605,28): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(608,4): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(614,23): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(614,13): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(613,49): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(613,29): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(714,11): warning C4101: 'tex' :참조되지 않은 지역 변수입니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(713,9): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(713,6): warning C4101: 'i' :참조되지 않은 지역 변수입니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(717,8): warning C4101: 'size' :참조되지 않은 지역 변수입니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(714,18): warning C4101: 't' :참조되지 않은 지역 변수입니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(741,62): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(748,31): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(819,39): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(819,27): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(823,3): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(830,37): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(838,39): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(838,27): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(842,3): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(848,37): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(862,39): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(862,27): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(866,3): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(873,37): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(804,9): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1022,41): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1022,29): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1028,5): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1046,38): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1046,26): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1050,2): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1087,20): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1087,10): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1086,46): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1086,26): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1175,73): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1175,36): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1210,38): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1210,26): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1240,20): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1241,40): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1203,9): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1292,6): warning C4101: 'i' :참조되지 않은 지역 변수입니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1341,48): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1341,31): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1356,24): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1356,12): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1372,40): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1372,28): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1383,43): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1390,54): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1390,34): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1331,17): warning C4101: 't' :참조되지 않은 지역 변수입니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1443,22): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1443,12): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1442,48): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1442,28): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1539,48): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1539,31): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\qkrtn\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1750,71): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  RogueLike.vcxproj -> C:\Users\qkrtn\Documents\GitHub\myProject\Debug\RogueLike.exe

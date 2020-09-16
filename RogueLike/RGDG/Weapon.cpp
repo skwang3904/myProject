@@ -234,8 +234,9 @@ bool Hammer::attack(float dt)
 
 	if (attacking == false)
 	{
-		if (getKeyStat(keyboard_j))
+		if (getKeyDown(keyboard_j))
 		{
+			audioPlay(AUDIO_HammerAttack);
 			attacking = true;
 			PlayerChar::cbPlayerSetAttack(NULL);
 		}
@@ -252,7 +253,7 @@ bool Hammer::attack(float dt)
 
 	float ang = m(d, 0.0f, attackAngle * 2) - attackAngle;
 	//float ang = linear(d, 0.0f, 0.0f);
-	float ran = m(d, 0.0f, attackRange);
+	float ran = m(d, 0.0f, attackRange) + 50;
 
 	iPoint pdp = position + drawPos;
 	iPoint rp = iPointRotate(pdp, position, ang);
@@ -265,6 +266,14 @@ bool Hammer::attack(float dt)
 		img->position = rp - pdp;
 
 		attackMonster();
+		
+		for (int i = 0; i < mapObjBrokenNum; i++)
+		{
+			if (containRect(touchRect, mapObjBroken[i]->touchRect))
+			{
+				mapObjBroken[i]->action(this);
+			}
+		}
 	}
 	else
 	{
@@ -273,7 +282,7 @@ bool Hammer::attack(float dt)
 		img->position = rp - pdp;
 	}
 
-#if 1
+#if SHOW_TOUCHRECT
 	iRect rt = touchRect;
 	rt.origin += DRAW_OFF;
 	setRGBA(1, 0, 0, 1);
@@ -447,8 +456,9 @@ bool Spear::attack(float dt)
 
 	if (attacking == false)
 	{
-		if (getKeyStat(keyboard_j))
+		if (getKeyDown(keyboard_j))
 		{
+			audioPlay(AUDIO_SpearAttack);
 			attacking = true;
 			PlayerChar::cbPlayerSetAttack(NULL);
 		}
@@ -479,6 +489,14 @@ bool Spear::attack(float dt)
 		img->position = rp - pdp + (player->wpVector * attackRange);
 
 		attackMonster();
+
+		for (int i = 0; i < mapObjBrokenNum; i++)
+		{
+			if (containRect(touchRect, mapObjBroken[i]->touchRect))
+			{
+				mapObjBroken[i]->action(this);
+			}
+		}
 	}
 	else
 	{
@@ -487,7 +505,7 @@ bool Spear::attack(float dt)
 		img->position = rp - pdp + (player->wpVector * 0);
 	}
 
-#if 1
+#if SHOW_TOUCHRECT
 	iRect rt = touchRect;
 	rt.origin += DRAW_OFF;
 	setRGBA(1, 0, 0, 1);
@@ -659,8 +677,9 @@ bool Cyclone::attack(float dt)
 
 	if (attacking == false)
 	{
-		if (getKeyStat(keyboard_j))
+		if (getKeyDown(keyboard_j))
 		{
+			audioPlay(AUDIO_CyclonAttack);
 			attacking = true;
 			PlayerChar::cbPlayerSetAttack(NULL);
 		}
@@ -685,10 +704,18 @@ bool Cyclone::attack(float dt)
 
 	attackMonster();
 
+	for (int i = 0; i < mapObjBrokenNum; i++)
+	{
+		if (containRect(touchRect, mapObjBroken[i]->touchRect))
+		{
+			mapObjBroken[i]->action(this);
+		}
+	}
+
 	img->angle = holdAngle + ang;
 	img->position = rp - pdp;
 
-#if 1
+#if SHOW_TOUCHRECT
 	iRect rt = touchRect;
 	rt.origin += DRAW_OFF;
 	setRGBA(1, 0, 0, 1);
@@ -699,6 +726,7 @@ bool Cyclone::attack(float dt)
 	attackSpeed += dt;
 	if (attackSpeed > standSpeed)
 	{
+		audioStop(AUDIO_CyclonAttack);
 		attackSpeed = 0.0f;
 		attackDelay = 0.0f;
 		attacking = false;
@@ -1094,7 +1122,7 @@ void loadWeapon()
 	weaponNum = 0;
 	weapon = (Weapon**)malloc(sizeof(Weapon*) * WT_max);
 
-	iPoint p = player->position + iPointMake(30, 0);
+	iPoint p = iPointMake(-3000, -3000);
 	weapon[weaponNum] = new Hammer(-1, player->mapNumber, p); weaponNum++;
 	weapon[weaponNum] = new Spear(-1, player->mapNumber, p);  weaponNum++;
 	weapon[weaponNum] = new Cyclone(-1, player->mapNumber, p);  weaponNum++;

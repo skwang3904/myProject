@@ -4,8 +4,21 @@
 
 //----------------------------------------------------------------------------
 // macro
-#define SFX_NUM 4
+#define SHOW_TOUCHRECT 0
 
+#define SFX_NUM 9
+
+#define AUDIO_HammerAttack	0
+#define AUDIO_SpearAttack	1
+#define AUDIO_CyclonAttack	2
+#define AUDIO_EnemyHit		3
+#define AUDIO_EnemyDeath	4
+#define AUDIO_NextStageMove	5
+#define AUDIO_ItemPickUp	6
+#define AUDIO_MenuMouseOver	7
+#define AUDIO_MenuSelected	8
+#define AUDIO_GameMusic 9
+#define AUDIO_INTRO		10
 //----------------------------------------------------------------------------
 // enum
 /*MapType*/

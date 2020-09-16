@@ -227,7 +227,7 @@ void PlayerChar::paint(float dt, iPoint off)
 		selectWeapon(arrayWeapon->currIndex - 1);
 	}
 
-#if 1 //draw touchRect
+#if SHOW_TOUCHRECT
 	setRGBA(1, 0, 0, 0.5f);
 	iRect rt = touchRect;
 	rt.origin += DRAW_OFF;

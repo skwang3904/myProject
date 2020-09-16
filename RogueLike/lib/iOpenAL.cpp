@@ -112,14 +112,14 @@ void iOpenAL::initBuffer(int idx, const char* szFormat, ...)
 
 	char* data = &buf[sizeof(WaveHeader0) + (head0->fmtSize - 16) + sizeof(WaveHeader1)];
 
-	if (idx == 2 )
-	{
-		head1->dataSize = 84000;
-	}
-	if (idx == 5)
-	{
-		head1->dataSize = 700000;
-	}
+	//if (idx == 2 )
+	//{
+	//	head1->dataSize = 84000;
+	//}
+	//if (idx == 5)
+	//{
+	//	head1->dataSize = 700000;
+	//}
 	int dataLength = head1->dataSize;
 
 	//printf("%d번째------------------- \n",idx );

@@ -188,6 +188,7 @@ bool keyPopPressAnyKey(iKeyState stat, iPoint point)
         showPopPressAnyKey(false);
         popPressAnyKey->_showDt = 0.5f;
         showPopIntroButton(true);
+        audioPlay(AUDIO_MenuSelected);
     }
 
     return true;
@@ -330,8 +331,10 @@ bool keyPopIntroButton(iKeyState stat, iPoint point)
         {
             //exit
             runWnd = false;
+            audioStop(AUDIO_INTRO);
         }
         popIntroButton->selected = -1;
+        audioPlay(AUDIO_MenuSelected);
         break;
     }
     case iKeyStateMoved:
@@ -502,6 +505,8 @@ bool keyPopIntroSelectStart(iKeyState stat, iPoint point)
             showPopIntroButton(true);
         }
         popSelectStart->selected = -1;
+        audioPlay(AUDIO_MenuSelected);
+        audioStop(AUDIO_INTRO);
         break;
     }
     case iKeyStateMoved:

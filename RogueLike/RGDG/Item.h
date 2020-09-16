@@ -36,6 +36,9 @@ public:
 	float dropHeight;
 	iPoint targetPosition;
 };
+extern Item** item;
+extern int itemNum;
+
 
 void loadItem();
 void freeItem();

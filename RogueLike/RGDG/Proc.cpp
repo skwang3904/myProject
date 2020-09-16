@@ -38,7 +38,8 @@ void loadProc()
 	showPopState(true);
 	showPopProcButton(true);
 	showPopMiniMap(true);
-	showPopInven(true);
+
+	audioPlay(AUDIO_GameMusic);
 }
 
 void freeProc()
@@ -86,9 +87,9 @@ void drawProc(float dt)
 	drawWeapon(pass_dt);
 	drawItem(pass_dt);
 	drawProjectile(pass_dt);
-
-	passMap->update(dt);
 	
+	passMap->update(dt);
+
 
 	drawPopState(dt);
 	drawPopProcButton(dt);
@@ -172,7 +173,10 @@ void Stage::create()
 		else if (i == 1)	a = 0;
 		else if( i == 2)	a = 2;
 #endif
-		weaponData[i].index = i;
+		if (i < 4)
+			weaponData[i].index = i;
+		else
+			weaponData[i].index = -1;
 	}
 }
 
@@ -417,6 +421,7 @@ void PassMap::startNextStage()
 	{
 		MessageBox(NULL, TEXT("GAME CLEAR"), TEXT("Congratulation"), MB_OK);
 		runWnd = false;
+		audioStop(AUDIO_GameMusic);
 	}
 }
 
@@ -915,6 +920,10 @@ bool keyPopState(iKeyState stat, iPoint point)
 iPopup* popProcButton;
 iImage** imgProcButtonBtn;
 
+iImage* imgInvenWeaponBtn;
+
+void drawPopProcButtonBefore(iPopup* me, iPoint p, float dt);
+
 void createPopProcButton()
 {
 	int i, j;
@@ -949,35 +958,57 @@ void createPopProcButton()
 				tex = g->getTexture();
 				img->addObject(tex);
 				freeImage(tex);
+
+				img->position = iPointMake(devSize.width / 2.0f, devSize.height - size.height - 32);
 			}
 			else if (i == 1)
 			{
+				size = iSizeMake(128, 128);
 				tex = createTexture(size.width, size.height);
+
 				fbo->bind(tex);
-				if (j == 0) setRGBA(1, 0, 1, 1);
+				if (j == 0) setRGBA(1, 1, 1, 1);
 				else		setRGBA(0, 1, 0, 1);
-				fillRect(0, 0, size.width, size.height, 15);
+				t = createImage("assets/menu/selectButton1.png");
+				DRAWIMAGE(t, size);
+				freeImage(t);
 				fbo->unbind();
 
 				img->addObject(tex);
 				freeImage(tex);
+
+				img->position = iPointMake(devSize.width - size.width - 32, devSize.height - size.height - 32);
 			}
 		}
 
 		imgProcButtonBtn[i] = img;
+		pop->addObject(img);
 	}
 	setRGBA(1, 1, 1, 1);
 
+	img = new iImage();
+	size = iSizeMake(100, 100);
+	tex = createTexture(size.width, size.height);
+	fbo->bind(tex);
+	Weapon* w = (Weapon*)player->arrayWeapon->objectAtIndex(player->currWeaponIndex());
+	t = w->img->tex;
+	DRAWIMAGE(t, size);
+	fbo->unbind();
+	img->addObject(tex);
+	freeImage(tex);
+	
+	img->position = iPointMake(devSize.width - size.width - 42, devSize.height - size.height - 42);
+	imgInvenWeaponBtn = img;
 	pop->addObject(img);
 
-	pop->openPosition = iPointMake(10, devSize.height);
-	pop->closePosition = iPointMake(10, (devSize.height - size.height - 10));
+	pop->methodDrawBefore = drawPopProcButtonBefore;
 	popProcButton = pop;
 }
 
 void freePopProcButton()
 {
 	delete popProcButton;
+	free(imgProcButtonBtn);
 }
 
 void showPopProcButton(bool show)
@@ -985,11 +1016,27 @@ void showPopProcButton(bool show)
 	popProcButton->show(show);
 }
 
+void drawPopProcButtonBefore(iPopup* me, iPoint p, float dt)
+{
+	for (int i = 0; i < 2; i++)
+		imgProcButtonBtn[i]->setTexAtIndex(i == popProcButton->selected);
+
+	Weapon* w = (Weapon*)player->arrayWeapon->objectAtIndex(player->currWeaponIndex());
+	Texture* t = w->img->tex;
+	iSize size = iSizeMake(100, 100);
+	float r = min(size.width / t->width, size.height / t->height);
+
+	fbo->bind(imgInvenWeaponBtn->tex);
+	fbo->clear(0, 0, 0, 0);
+	drawImage(t, size.width / 2.0f, size.height / 2.0f,
+		0, 0, t->width, t->height,
+		VCENTER | HCENTER, r, r,
+		2, 0, REVERSE_HEIGHT);
+	fbo->unbind();
+}
+
 void drawPopProcButton(float dt)
 {
-	for (int i = 0; i < 1; i++)
-		imgProcButtonBtn->setTexAtIndex(i == popProcButton->selected);
-
 	popProcButton->paint(dt);
 }
 
@@ -1008,27 +1055,35 @@ bool keyPopProcButton(iKeyState stat, iPoint point)
 	{
 		i = popProcButton->selected;
 		if (i == -1)
+		{
+			audioPlay(AUDIO_MenuSelected);
 			break;
+		}
 
 		if (i == 0)
 		{
 			showPopProcMenu(true);
 		}
+		else if (i == 1)
+		{	
+			showPopInven(true);
+		}
+		audioPlay(AUDIO_MenuSelected);
 		break;
 	}
 	case iKeyStateMoved:
 	{
-		for (i = 0; i < 1; i++)
+		for (i = 0; i < 2; i++)
 		{
-			if (containPoint(point, imgProcButtonBtn->touchRect(popProcButton->closePosition)))
+			if (containPoint(point, imgProcButtonBtn[i]->touchRect(popProcButton->closePosition)))
 			{
 				j = i;
 				break;
 			}
 		}
 		
-		if (popProcButton->selected != j)
-			;
+		if (popProcButton->selected != j && j != -1)
+			audioPlay(AUDIO_MenuMouseOver);
 
 		popProcButton->selected = j;
 
@@ -1209,21 +1264,8 @@ bool keyPopMiniMap(iKeyState stat, iPoint point)
 // Inven
 iPopup* popInven;
 iImage** imgInvenBtn;
+iImage** imgInveWeapon;
 
-Texture* texInvenWeapon;
-
-void drawPopInvenWeapon(float dt)
-{
-	if (player->arrayWeapon->count == 0)
-	{
-		texInvenWeapon = NULL;
-		return;
-	}
-
-	Weapon* w = (Weapon*)player->arrayWeapon->objectAtIndex(player->currWeaponIndex());
-	
-	texInvenWeapon = w->img->tex;
-}
 
 void drawPopInvenBefore(iPopup* me, iPoint p, float dt);
 
@@ -1231,39 +1273,83 @@ void createPopInven()
 {
 	int i, j;
 	iImage* img;
-	Texture* tex;
+	Texture* tex, *t, *text;
 	iPopup* pop = new iPopup(iPopupStyleMove);
+	iSize size;
 
-	imgInvenBtn = (iImage**)malloc(sizeof(iImage*) * 4);
-	iSize size = iSizeMake(128, 128);
-	for (i = 0; i < 1; i++)
+	imgInvenBtn = (iImage**)malloc(sizeof(iImage*) * 8);
+	imgInveWeapon = (iImage**)malloc(sizeof(iImage*) * 8);
+
+
+	img = new iImage();
+	iSize frameSize = iSizeMake(devSize.width / 2.0f, devSize.height / 2.0f);
+	tex = createTexture(frameSize.width, frameSize.height);
+	iGraphics* g = iGraphics::instance();
+	g->init(frameSize);
+	setRGBA(0, 0, 0, 1);
+	g->fillRect(0, 0, frameSize.width, frameSize.height);
+	setStringSize(40);
+	setStringRGBA(1, 1, 1, 1);
+	setStringBorder(0);
+	g->drawString(frameSize.width / 2.0f, 50, VCENTER | HCENTER, "Inventory");
+	setRGBA(1, 1, 1, 1);
+	text = g->getTexture();
+
+	fbo->bind(tex);
+	fbo->clear(0, 0.5f, 0.2f, 1);
+	drawImage(text, 0, 0,
+		0,0, text->width,text->height,
+		TOP|LEFT,1.0f,1.0f,
+		2, 0, REVERSE_HEIGHT);
+	freeImage(text);
+	fbo->unbind();
+
+	img->addObject(tex);
+	freeImage(tex);
+	pop->addObject(img);
+
+	size = frameSize * 0.2f;
+	for (i = 0; i < 8; i++)
 	{
 		img = new iImage();
-
 		for (j = 0; j < 2; j++)
 		{
 			tex = createTexture(size.width, size.height);
+
 			fbo->bind(tex);
-			
-			if (j == 0) setRGBA(1, 0, 1, 1);
-			else		setRGBA(0, 1, 0, 1);
-			
-			fillRect(0, 0, size.width, size.height, 15);
+			if (j == 0) setRGBA(0.5f, 0.2f, 0.1f, 1);
+			else setRGBA(0, 1, 0, 1);
+			fillRect(0, 0, size.width, size.height);
 			fbo->unbind();
 
 			img->addObject(tex);
 			freeImage(tex);
 		}
-		img->position = iPointMake((size.width + 10) * (i % 2),
-			(size.height + 10) * (i / 2));
-
+		iPoint p = iPointMake(size.width * 0.05 + size.width * 1.05f * (i % 4),
+			size.height * 2.0f + size.height * 1.1f * (i / 4));
+		img->position = p;
 		imgInvenBtn[i] = img;
 		pop->addObject(img);
-	}
-	iPoint p = iPointMake(devSize.width - size.width * 1 - 30, devSize.height - size.height * 1 - 30);
 
-	pop->openPosition = p + iPointMake(500, 0);
-	pop->closePosition = p;
+		img = new iImage();
+		tex = createTexture(size.width * 0.8f, size.height * 0.8f);
+		
+		fbo->bind(tex); // 무기이미지
+		setRGBA(1, 0.5f, 0.2f, 1);
+		fillRect(0, 0, size.width, size.height);
+		fbo->unbind();
+
+		img->addObject(tex);
+		freeImage(tex);
+
+		img->position = p + iPointMake(size.width * 0.1f, size.height * 0.1f);
+		imgInveWeapon[i] = img;
+		pop->addObject(img);
+	}
+	setRGBA(1, 1, 1, 1);
+
+	pop->openPosition =
+	pop->closePosition = iPointMake((devSize.width - frameSize.width) / 2.0f, (devSize.height - frameSize.height) / 2.0f);
 	pop->methodDrawBefore = drawPopInvenBefore;
 	popInven = pop;
 }
@@ -1281,23 +1367,50 @@ void showPopInven(bool show)
 
 void drawPopInvenBefore(iPopup* me, iPoint p, float dt)
 {
-	for (int i = 0; i < 1; i++)
+	int i;
+	Texture* tex, *t;
+	iSize size;
+	for (i = 0; i < 8; i++)
 		imgInvenBtn[i]->setTexAtIndex(i == popInven->selected);
 
-	drawPopInvenWeapon(dt);
+	for (i = 0; i < 8; i++)
+	{
+		tex = imgInveWeapon[i]->tex;
+		size = iSizeMake(tex->width, tex->height);
+		fbo->bind(tex);
+		fbo->clear(0, 0, 0, 0);
+		if (i < player->arrayWeapon->count)
+		{
+			Weapon* w = (Weapon*)player->arrayWeapon->objectAtIndex(i);
+			t = w->img->tex;
+			float r = min(size.width / t->width, size.height / t->height);
+			drawImage(t, size.width / 2.0f, size.height / 2.0f,
+				0, 0, t->width, t->height,
+				VCENTER | HCENTER, r, r,
+				2, 0, REVERSE_HEIGHT);
+		}
+		else
+		{
+			setRGBA(1, 0.5f, 0.2f, 1);
+			fillRect(0, 0, size.width, size.height);
+		}
+		fbo->unbind();
+	}
+	setRGBA(1, 1, 1, 1);
 }
 
 void drawPopInven(float dt)
 {
 	popInven->paint(dt);
-
-	iPoint p = popInven->closePosition + iPointMake(64,64);
-	if(texInvenWeapon)
-		drawImage(texInvenWeapon, p.x, p.y, VCENTER | HCENTER);
 }
 
 bool keyPopInven(iKeyState stat, iPoint point)
 {
+	if (popInven->bShow == false)
+		return false;
+
+	if (popInven->stat != iPopupStatProc)
+		return false;
 
 	int i, j = -1;
 	switch (stat)
@@ -1306,20 +1419,24 @@ bool keyPopInven(iKeyState stat, iPoint point)
 	{
 		i = popInven->selected;
 		if (i == -1)
+		{
+			showPopInven(false);
+			audioPlay(AUDIO_MenuSelected);
 			break;
+		}
 
-		if (i == 0)
+		if (i < player->arrayWeapon->count)
 		{
-			printf("click inven\n");
+			player->selectWeapon(i);
+			showPopInven(false);
 		}
-		else if (i == 1)
-		{
-		}
+		popInven->selected = -1;
+		audioPlay(AUDIO_MenuSelected);
 		return true;
 	}
 	case iKeyStateMoved:
 	{
-		for (i = 0; i < 1; i++)
+		for (i = 0; i < 8; i++)
 		{
 			if (containPoint(point, imgInvenBtn[i]->touchRect(popInven->closePosition)))
 			{
@@ -1328,8 +1445,8 @@ bool keyPopInven(iKeyState stat, iPoint point)
 			}
 		}
 
-		if (popInven->selected != j)
-			;
+		if (popInven->selected != j && j != -1)
+			audioPlay(AUDIO_MenuMouseOver);
 
 		popInven->selected = j;
 
@@ -1343,7 +1460,7 @@ bool keyPopInven(iKeyState stat, iPoint point)
 	}
 
 
-	return false;
+	return true;
 }
 
 //-----------------------------------------------------------
@@ -1457,7 +1574,10 @@ bool keyPopProcMenu(iKeyState stat, iPoint point)
 	{
 		i = popProcMenu->selected;
 		if (i == -1)
+		{
+			audioPlay(AUDIO_MenuSelected);
 			break;
+		}
 
 		if (i == 0)
 		{
@@ -1473,6 +1593,7 @@ bool keyPopProcMenu(iKeyState stat, iPoint point)
 			//나가기
 			setLoading(gamestat_intro, freeProc, loadIntro);
 		}
+		audioPlay(AUDIO_MenuSelected);
 		return true;
 	}
 	case iKeyStateMoved:
@@ -1486,8 +1607,8 @@ bool keyPopProcMenu(iKeyState stat, iPoint point)
 			}
 		}
 
-		if (popProcMenu->selected != j)
-			;
+		if (popProcMenu->selected != j && j != -1)
+			audioPlay(AUDIO_MenuMouseOver);
 
 		popProcMenu->selected = j;
 
@@ -1619,7 +1740,10 @@ bool keyPopGameOver(iKeyState stat, iPoint point)
 	{
 		i = popGameOver->selected;
 		if (i == -1)
+		{
+			audioPlay(AUDIO_MenuSelected);
 			break;
+		}
 
 		if (i == 0)
 		{
@@ -1632,7 +1756,9 @@ bool keyPopGameOver(iKeyState stat, iPoint point)
 			//exit
 			showPopGameOver(false);
 			runWnd = false;
+			audioStop(AUDIO_GameMusic);
 		}
+		audioPlay(AUDIO_MenuSelected);
 		break;
 	}
 	case iKeyStateMoved:
@@ -1646,8 +1772,8 @@ bool keyPopGameOver(iKeyState stat, iPoint point)
 			}
 		}
 
-		if (popGameOver->selected != j)
-			;
+		if (popProcMenu->selected != j && j != -1)
+			audioPlay(AUDIO_MenuMouseOver);
 
 		popGameOver->selected = j;
 

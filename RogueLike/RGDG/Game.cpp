@@ -8,26 +8,34 @@
 
 void loadGame()
 {
-#if 1
-	loadIntro();
-	gamestat = gamestat_intro;
-#else
-	loadProc();
-	gamestat = gamestat_proc;
-#endif
 
 	//--------------------------------------------------------
 	// sound // itunes로 변환해서 사용
-	AudioInfo ai[6] = {
-	{"assets/snd/swing.wav", false, 0.4f},
-	{"assets/snd/jump.wav", false, 0.1f},
-	{"assets/snd/falling.wav", false, 0.3f},
-	{"assets/snd/enemy-hit.wav", false, 1.0f},
-	{"assets/snd/killEnemy.wav", false, 0.3f},
-	{"assets/snd/legacy-loop.wav", true, 0.15f},
+	AudioInfo ai[11] = {
+	{"assets/snd/sfx_HammerAttack.wav", false, 1.0f},
+	{"assets/snd/sfx_SpearAttack.wav", false, 1.0f},
+	{"assets/snd/sfx_CyclonAttack.wav", true, 1.0f},
+	{"assets/snd/sfx_EnemyHit.wav", false, 1.0f},
+	{"assets/snd/sfx_EnemyDeath.wav", false, 1.0f},
+	{"assets/snd/sfx_NextStageMove.wav", false, 0.3f},
+	{"assets/snd/sfx_ItemPickUP.wav", false, 1.0f},
+	{"assets/snd/sfx_Menu MouseOver.wav", false, 0.7f},
+	{"assets/snd/sfx_Menu Selection.wav", false, 0.7f},
+	{"assets/snd/bgm_gameMusic.wav", true, 0.3f},
+	{"assets/snd/bgm_IntroMusic.wav", true, 0.3f},
 	};
 
-	loadAudio(ai, 6);
+	loadAudio(ai, 11);
+
+#if 1
+	loadIntro();
+	gamestat = gamestat_intro;
+	audioPlay(AUDIO_INTRO);
+#else
+	loadProc();
+	gamestat = gamestat_proc;
+	audioPlay(AUDIO_GAMEMUSIC);
+#endif
 
 	createPopOption();
 }
@@ -35,9 +43,9 @@ void loadGame()
 void freeGame()
 {
 	switch (gamestat) {
-	case gamestat_intro:freeIntro();	break;
-	//case gamestat_menu:	freeMenu();	break;
-	case gamestat_proc:	freeProc();	break;
+	case gamestat_intro:	freeIntro();	break;
+	//case gamestat_menu:	freeMenu();		break;
+	case gamestat_proc:		freeProc();		break;
 	}
 
 	freeAudio();

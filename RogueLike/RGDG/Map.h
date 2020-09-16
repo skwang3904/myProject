@@ -49,6 +49,8 @@ public:
 extern MapObject** _mapObj;
 extern MapObject** mapObj;
 extern int mapObjNum;
+extern MapObject** mapObjBroken;
+extern int mapObjBrokenNum;
 //-----------------------------------------------------------------------------
 
 class MapObjectDoor : public MapObject

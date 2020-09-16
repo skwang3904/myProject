@@ -77,7 +77,7 @@ void Item::paint(float dt, iPoint off)
 		{
 			if (containRect(touchRect, player->touchRect))
 			{
-				printf("touch item\n");
+				audioPlay(AUDIO_ItemPickUp);
 				action(player);
 			}
 		}
@@ -95,11 +95,13 @@ void Item::paint(float dt, iPoint off)
 		}
 	}
 
+#if SHOW_TOUCHRECT
 	iRect rt = touchRect;
 	rt.origin += off;
 	setRGBA(1, 0, 0, 1);
 	fillRect(rt);
 	setRGBA(1, 1, 1, 1);
+#endif
 
 	img->paint(dt, p + off);
 }

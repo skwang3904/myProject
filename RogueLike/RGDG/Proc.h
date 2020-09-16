@@ -162,6 +162,7 @@ bool keyPopState(iKeyState stat, iPoint point);
 
 //-----------------------------------------------------------
 // ProcButton
+extern iImage* imgInvenWeaponBtn;
 void createPopProcButton();
 void freePopProcButton();
 void showPopProcButton(bool show);

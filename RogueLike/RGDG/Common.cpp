@@ -39,7 +39,7 @@ Object::~Object()
 iPopup* popOption;
 iImage** imgOption;
 
-void drawPopOptionOpen(iPopup* me);
+void drawPopOptionClose(iPopup* me);
 void drawPopOptionBefore(iPopup* me, iPoint p, float dt);
 
 void createPopOption()
@@ -73,7 +73,7 @@ void createPopOption()
 	fillRect(devSize.width * 0.2f, devSize.height * 0.6f, devSize.width * 0.6f, 10);
 	fillRect(devSize.width * 0.2f, devSize.height * 0.4f, devSize.width * 0.6f, 10);
 	setRGBA(1, 1, 1, 1);
-	drawImage(text, size.width / 2.0f, text->height,
+	drawImage(text, size.width / 2.0f, devSize.height - text->height,
 		0, 0, text->width, text->height,
 		VCENTER | HCENTER, 1.0f, 1.0f,
 		2, 0, REVERSE_HEIGHT);
@@ -119,7 +119,7 @@ void createPopOption()
 		if (i < 2) // button
 			img->position = iPointMake(devSize.width * 0.1f + size.width * 2 * i, devSize.height * 0.55f);
 		else	//bgm, sfx
-			img->position = iPointMake(devSize.width * 0.2f, devSize.height * 0.2f + size.height * 1.2 * (i - 2));
+			img->position = iPointMake(400, devSize.height * 0.2f + size.height * 1.2 * (i - 2));
 
 		imgOption[i] = img;
 		pop->addObject(img);
@@ -127,7 +127,7 @@ void createPopOption()
 
 	pop->openPosition = iPointMake((devSize.width - frameSize.width) / 2.0f, -frameSize.height);
 	pop->closePosition = iPointMake((devSize.width - frameSize.width) / 2.0f, (devSize.height - frameSize.height) / 2.0f);;
-	pop->methodOpen = drawPopOptionOpen;
+	pop->methodClose = drawPopOptionClose;
 	pop->methodDrawBefore = drawPopOptionBefore;
 	pop->_showDt = 0.5f;
 	popOption = pop;
@@ -144,7 +144,7 @@ void showPopOption(bool show)
 	popOption->show(show);
 }
 
-void drawPopOptionOpen(iPopup* me)
+void drawPopOptionClose(iPopup* me)
 {
 	float bgm, sfx;
 	audioGetVolume(bgm, sfx);
@@ -238,6 +238,7 @@ bool keyPopOption(iKeyState stat, iPoint point)
 		}
 
 		popOption->selected = -1;
+		audioPlay(AUDIO_MenuSelected);
 		break;
 	}
 	case iKeyStateMoved:
@@ -251,8 +252,8 @@ bool keyPopOption(iKeyState stat, iPoint point)
 			}
 		}
 
-		if (popOption->selected != j)
-			;
+		if (popOption->selected != j && j != -1)
+			audioPlay(AUDIO_MenuMouseOver);
 
 		popOption->selected = j;
 

@@ -127,7 +127,7 @@ MonsterImageInfo golemBossImage[6] = {
 
 WeaponInfo weaponInfo[WT_max] = {
 	{
-		20.0f,
+		50.0f,
 		0.5f,
 		0.7f,
 		1.0f,
@@ -149,8 +149,8 @@ WeaponInfo weaponInfo[WT_max] = {
 		100.0f
 	},
 	{
-		50.0f,
-		1.0f,
+		15.0f,
+		0.5f,
 		0.0f,
 		1.0f,
 		0.2f, 
@@ -187,8 +187,8 @@ WeaponInfo weaponInfo[WT_max] = {
 
 ItemInfo itemInfo[3] = {
 	{ 5.0f, 0.5f},
-	{ 10.0f, 0.8f},
-	{ 20.0f, 1.0f},
+	{ 10.0f, 0.5f},
+	{ 20.0f, 0.5f},
 };
 
 ItemImageInfo itemImageInfo[3] = {

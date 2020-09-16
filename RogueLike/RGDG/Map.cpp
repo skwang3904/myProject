@@ -4,6 +4,7 @@
 #include "Tile.h"
 #include "PlayerChar.h"
 #include "Monster.h"
+#include "Weapon.h"
 
 struct ConnectTile
 {
@@ -640,6 +641,7 @@ void MapObjectNextDoor::paint(float dt, iPoint off)
 		if (containRect(touchRect, player->touchRect))
 		{
 			// next stage
+			audioPlay(AUDIO_NextStageMove);
 			alive = false;
 			passMap->startNextStage();
 		}
@@ -772,7 +774,7 @@ MapObjectItemBox::MapObjectItemBox(int index, int8 mapNum, iPoint pos, int tileN
 	{
 		int tn = tileNumber + TILE_NUM_X * (i / tileNumX) + (i % tileNumX);
 		this->tileNumber[i] = tn;
-		maps[mapNumber]->tile[tn] = TILE_WALL;
+		maps[mapNumber]->tile[tn] = 01;
 	}
 
 	mapObjBroken[mapObjBrokenNum] = this;
@@ -812,6 +814,7 @@ MapObjectItemBox::MapObjectItemBox(int index, int8 mapNum, iPoint pos, int tileN
 
 	img = imgMapObjItemBox->copy();
 	img->lastFrame = true;
+	img->_repeatNum = 1;
 	this->img = img;
 
 	touchRect = iRectMake(position, size);
@@ -840,6 +843,15 @@ void MapObjectItemBox::drawShadow(float dt, iPoint off)
 void MapObjectItemBox::action(Object* obj)
 {
 	img->startAnimation();
+	
+	for (int i = 0; i < weaponNum; i++)
+	{
+		if (weapon[i]->index == -1)
+		{
+			weapon[i]->position = position + iPointMake(img->tex->width / 2.0f, img->tex->height);
+			break;
+		}
+	}
 }
 
 
@@ -899,7 +911,7 @@ void drawMap(float dt)
 {
 	int i, j;
 	int num = TILE_TOTAL_NUM;
-#if 1
+#if SHOW_TOUCHRECT
 	int tileNum = TILE_NUM_X * TILE_NUM_Y;
 	iPoint tmp = iPointMake(devSize.width - TILE_Width * TILE_NUM_X, devSize.height - TILE_Height * TILE_NUM_Y) / 2.0f;
 	for (j = 0; j < tileNum; j++)
@@ -913,8 +925,9 @@ void drawMap(float dt)
 		fillRect(tmp.x + TILE_Width * (j % TILE_NUM_X), tmp.y + TILE_Height * (j / TILE_NUM_X),
 			TILE_Width, TILE_Height);
 	}
-#endif
 	setRGBA(1, 1, 1, 0.6f);
+#endif
+
 	for (i = 0; i < num; i++)
 	{
 		if (i != player->mapNumber) 
@@ -927,11 +940,13 @@ void drawMap(float dt)
 	}
 	setRGBA(1, 1, 1, 1);
 
+#if 0
 	for (i = 0; i < mapObjNum; i++)
 	{
 		MapObject* mo = mapObj[i];
 		if(mo->mapNumber == player->mapNumber)
 			mo->paint(dt, DRAW_OFF);
+#endif
 
 #if 0 // 아직 alive 사용안함
 		if (mo->alive == false)
@@ -941,23 +956,7 @@ void drawMap(float dt)
 			i--;
 		}
 #endif
-	}
 
-
-#if 0 // draw wall 
-	num = TILE_NUM_X * TILE_NUM_Y;
-	for (i = 0; i < num; i++)
-	{
-		uint8 a = maps[player->mapNumber]->tile[i];
-		if (a == WW)	setRGBA(1, 0, 0, 0.7f);
-		else			setRGBA(0, 0, 1, 0.7f);
-		
-		iPoint p = displayCenterPos;
-		fillRect(p.x + TILE_Width * (i % TILE_NUM_X), p.y + TILE_Height * (i / TILE_NUM_X),
-			TILE_Width, TILE_Height);
-	}
-	setRGBA(1, 1, 1, 1);
-#endif
 }
 
 iImage** imgMaps = NULL;

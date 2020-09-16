@@ -295,7 +295,7 @@ void GolemNomal::paint(float dt, iPoint off)
 			(this->*cbMethod)();
 	}
 
-#if 1 //draw touchRect
+#if SHOW_TOUCHRECT
 	setRGBA(1, 0, 0, 0.5f);
 	iRect rt = touchRect;
 	rt.origin += DRAW_OFF;
@@ -315,15 +315,23 @@ void GolemNomal::drawShadow(float dt, iPoint off)
 
 void GolemNomal::action(Object* obj)
 {
+	if (hp == 0.0f)
+		return;
+
 	if (actionDt < _actionDt)
 		return;
 
+	audioPlay(AUDIO_EnemyHit);
 	_actionDt = obj->_actionDt;
 	actionDt = 0.0f;
 	prevHp = hp;
 	hp -= obj->attackPoint;
 	if (hp < 0.0f)
+	{
+		audioPlay(AUDIO_EnemyDeath);
 		hp = 0.0f;
+	}
+
 
 	if (state != monster_meleeAttack)
 		state = monster_hurt;
@@ -403,7 +411,6 @@ void GolemNomal::actionHurt(float dt)
 		cbMethod = &Monster::cbMonsterSetIdle;
 	}
 }
-
 
 void GolemNomal::actionDeath(float dt)
 {
@@ -612,7 +619,7 @@ void GolemBoss::paint(float dt, iPoint off)
 			(this->*cbMethod)();
 	}
 
-#if 1 //draw touchRect
+#if SHOW_TOUCHRECT
 	setRGBA(1, 0, 0, 0.5f);
 	iRect rt = touchRect;
 	rt.origin += DRAW_OFF;
@@ -632,14 +639,21 @@ void GolemBoss::drawShadow(float dt, iPoint off)
 
 void GolemBoss::action(Object* obj)
 {
+	if (hp == 0.0f)
+		return;
+
 	if (actionDt < _actionDt)
 		return;
 
+	audioPlay(AUDIO_EnemyHit);
 	actionDt = 0.0f;
 	prevHp = hp;
 	hp -= obj->attackPoint;
 	if (hp < 0.0f)
+	{
+		audioPlay(AUDIO_EnemyDeath);
 		hp = 0.0f;
+	}
 
 	if (state != monster_meleeAttack)
 		state = monster_hurt;

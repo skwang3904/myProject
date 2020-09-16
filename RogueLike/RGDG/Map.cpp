@@ -940,13 +940,11 @@ void drawMap(float dt)
 	}
 	setRGBA(1, 1, 1, 1);
 
-#if 0
 	for (i = 0; i < mapObjNum; i++)
 	{
 		MapObject* mo = mapObj[i];
-		if(mo->mapNumber == player->mapNumber)
+		if (mo->mapNumber == player->mapNumber)
 			mo->paint(dt, DRAW_OFF);
-#endif
 
 #if 0 // 아직 alive 사용안함
 		if (mo->alive == false)
@@ -956,7 +954,7 @@ void drawMap(float dt)
 			i--;
 		}
 #endif
-
+	}
 }
 
 iImage** imgMaps = NULL;

@@ -217,12 +217,14 @@ bool keyPopOption(iKeyState stat, iPoint point)
 		{
 			// apply
 			setOptionSound();
+			popOption->selected = -1;
 			showPopOption(false);
 		}
 		else if (i == 1)
 		{
 			// close
 			showPopOption(false);
+			popOption->selected = -1;
 		}
 		else if (i == 2)
 		{
@@ -237,25 +239,27 @@ bool keyPopOption(iKeyState stat, iPoint point)
 			prevOptionPoint = point;
 		}
 
-		popOption->selected = -1;
 		audioPlay(AUDIO_MenuSelected);
 		break;
 	}
 	case iKeyStateMoved:
 	{
-		for (i = 0; i < OPTION_BUTTON_NUM; i++)
+		if (methodOption == NULL)
 		{
-			if (containPoint(point, imgOption[i]->touchRect(popOption->closePosition)))
+			for (i = 0; i < OPTION_BUTTON_NUM; i++)
 			{
-				j = i;
-				break;
+				if (containPoint(point, imgOption[i]->touchRect(popOption->closePosition)))
+				{
+					j = i;
+					break;
+				}
 			}
-		}
 
 		if (popOption->selected != j && j != -1)
 			audioPlay(AUDIO_MenuMouseOver);
 
 		popOption->selected = j;
+		}
 
 		if (methodOption)
 			methodOption(point);

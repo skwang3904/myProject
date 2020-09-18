@@ -172,11 +172,14 @@ void Stage::create()
 		if (i == 0)			a = 1;
 		else if (i == 1)	a = 0;
 		else if( i == 2)	a = 2;
-#endif
+#elif 0
 		if (i < 4)
 			weaponData[i].index = i;
 		else
 			weaponData[i].index = -1;
+#else
+		weaponData[i].index = i;
+#endif
 	}
 }
 
@@ -456,7 +459,11 @@ bool PassMap::nextStage(float dt)
 		if (popDt < _popDt)
 		{
 			if (popStageLoading->stat == iPopupStatProc)
+			{
 				popDt += dt;
+				if (popDt == _popDt)
+					popDt += 0.00001f;
+			}
 		}
 		else if (popDt > _popDt)
 		{

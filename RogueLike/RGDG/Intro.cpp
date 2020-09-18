@@ -493,12 +493,14 @@ bool keyPopIntroSelectStart(iKeyState stat, iPoint point)
             // new start
             isNewGame = true;
             setLoading(gamestat_proc, freeIntro, loadProc);
+            audioStop(AUDIO_INTRO);
         }
         else if (i == 1)
         {
             //continue
             isNewGame = false;
             setLoading(gamestat_proc, freeIntro, loadProc);
+            audioStop(AUDIO_INTRO);
         }
         else if (i == 2)
         {
@@ -508,7 +510,7 @@ bool keyPopIntroSelectStart(iKeyState stat, iPoint point)
         }
         popSelectStart->selected = -1;
         audioPlay(AUDIO_MenuSelected);
-        audioStop(AUDIO_INTRO);
+
         break;
     }
     case iKeyStateMoved:

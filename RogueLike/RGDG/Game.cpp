@@ -25,16 +25,21 @@ void loadGame()
 	{"assets/snd/bgm_IntroMusic.wav", true, 0.3f},
 	};
 
+#if 1
+	for (int i = 0; i < 11; i++)
+		ai[i].volume = 0.0f;
+#endif
+
 	loadAudio(ai, 11);
 
-#if 1
+#if 0
 	loadIntro();
 	gamestat = gamestat_intro;
 	audioPlay(AUDIO_INTRO);
 #else
 	loadProc();
 	gamestat = gamestat_proc;
-	audioPlay(AUDIO_GAMEMUSIC);
+	audioPlay(AUDIO_GameMusic);
 #endif
 
 	createPopOption();

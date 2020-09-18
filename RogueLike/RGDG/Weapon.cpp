@@ -30,6 +30,7 @@ Weapon::~Weapon()
 
 void Weapon::paint(float dt, iPoint off)
 {
+	drawShadow(dt, off);
 #if 0
 	if (mapNumber != player->mapNumber)
 		return;
@@ -40,9 +41,6 @@ void Weapon::paint(float dt, iPoint off)
 		if (index == player->currWeaponIndex())
 		{
 			setPosition();
-			position = player->wpPosition;
-			img->angle = holdAngle;
-
 			if (!attack(dt))
 			{
 				if (getKeyDown(keyboard_o))
@@ -64,6 +62,15 @@ void Weapon::paint(float dt, iPoint off)
 
 }
 
+void Weapon::drawShadow(float dt, iPoint off)
+{
+	iPoint p = position + drawPos + off;
+	setRGBA(0, 0, 0, 0.3f);
+	iPoint v = iPointMake(fabs(vector.x), fabs(vector.y));
+	fillEllipse(p.x, p.y, 25 + v.x * 25, 25 + v.y * 25);
+	setRGBA(1, 1, 1, 1);
+}
+
 void Weapon::attackMonster()
 {
 	for (int i = 0; i < monsterNum; i++)
@@ -75,6 +82,42 @@ void Weapon::attackMonster()
 				m->action(this);
 		}
 	}
+}
+
+void Weapon::setPosition()
+{
+	iPoint v = player->wpVector;
+	float angle = holdAngle;
+	iPoint p = drawPos;
+	iSize size = iSizeMake(img->tex->width, img->tex->height);
+
+	if (v.x < 0.0f)
+	{
+		angle = 90.0f;
+		p = iPointMake(-size.height * 0.5f, 0);
+	}
+	else if (v.x > 0.0f)
+	{
+		angle = 270.0f;
+		p = iPointMake(size.height * 0.5f, 0);
+
+	}
+	if (v.y < 0.0f)
+	{
+		angle = 0.0f;
+		p = iPointMake(0, -size.height * 0.5f);
+	}
+	else if (v.y > 0.0f)
+	{
+		angle = 180.0f;
+		p = iPointMake(0, size.height * 0.5f);
+	}
+
+	position = player->wpPosition;
+	vector = player->wpVector;
+	drawPos = p;
+	holdAngle = angle;
+	img->angle = angle;
 }
 
 void Weapon::getWeapon()
@@ -191,8 +234,6 @@ void Hammer::paint(float dt, iPoint off)
 		if (index == player->currWeaponIndex())
 		{
 			setPosition();
-			position = player->wpPosition;
-			img->angle = holdAngle;
 
 			if (!attack(dt))
 			{
@@ -215,10 +256,6 @@ void Hammer::paint(float dt, iPoint off)
 }
 #endif
 
-void Hammer::drawShadow(float dt, iPoint off)
-{
-}
-
 void Hammer::action(Object* obj)
 {
 }
@@ -238,6 +275,7 @@ bool Hammer::attack(float dt)
 		{
 			audioPlay(AUDIO_HammerAttack);
 			attacking = true;
+			img->ratio = 1.3f;
 			PlayerChar::cbPlayerSetAttack(NULL);
 		}
 		return false;
@@ -251,20 +289,17 @@ bool Hammer::attack(float dt)
 	FUNC_METHOD fmethod[3] = { linear, easeIn, easeOut };
 	FUNC_METHOD m = fmethod[2];
 
-	float ang = m(d, 0.0f, attackAngle * 2) - attackAngle;
+	float ang = m(d * d, 0.0f, attackAngle * 2) - attackAngle;
 	//float ang = linear(d, 0.0f, 0.0f);
-	float ran = m(d, 0.0f, attackRange) + 50;
+	float ran = m(d, 0.0f, attackRange);
 
-	iPoint pdp = position + drawPos;
-	iPoint rp = iPointRotate(pdp, position, ang);
-	touchRect = iRectMake(rp.x - 15, rp.y - 15, 30, 30);
+	iPoint rp = iPointRotate(drawPos, iPointZero, ang);
+	rp += position;
+	position = rp - drawPos;
+	touchRect = iRectMake(rp.x- 30, rp.y - 30, 60, 60);
 
 	if (d > attackDt)
 	{
-		img->angle = holdAngle + attackAngle;
-		rp = iPointRotate(pdp, position, attackAngle);
-		img->position = rp - pdp;
-
 		attackMonster();
 		
 		for (int i = 0; i < mapObjBrokenNum; i++)
@@ -275,12 +310,8 @@ bool Hammer::attack(float dt)
 			}
 		}
 	}
-	else
-	{
-		img->angle = holdAngle - attackAngle;
-		rp = iPointRotate(pdp, position, -attackAngle);
-		img->position = rp - pdp;
-	}
+
+	img->angle = holdAngle + ang;
 
 #if SHOW_TOUCHRECT
 	iRect rt = touchRect;
@@ -297,48 +328,14 @@ bool Hammer::attack(float dt)
 		attackDelay = 0.0f;
 		attacking = false;
 		hit = false;
+		img->ratio = 1.0f;
 		img->angle = holdAngle;
-		img->position = iPointZero;
 		PlayerChar::cbPlayerSetIdle(NULL);
 
 		return false;
 	}
 
 	return true;
-}
-
-void Hammer::setPosition()
-{
-	iPoint v = player->wpVector;
-	float angle = holdAngle;
-	iPoint p = drawPos;
-	iSize size = iSizeMake(img->tex->width, img->tex->height);
-
-	if (v.x < 0.0f)
-	{
-		angle = 90.0f;
-		p = iPointMake(-size.height * 0.5f, 0);
-	}
-	else if (v.x > 0.0f)
-	{
-		angle = 270.0f;
-		p = iPointMake(size.height * 0.5f, 0);
-
-	}
-	if (v.y < 0.0f)
-	{
-		angle = 0.0f;
-		p = iPointMake(0, -size.height * 0.5f);
-	}
-	else if (v.y > 0.0f)
-	{
-		angle = 180.0f;
-		p = iPointMake(0, size.height * 0.5f);
-	}
-
-	vector = player->wpVector;
-	drawPos = p;
-	holdAngle = angle;
 }
 
 //---------------------------------------------------------------------------------------------
@@ -413,8 +410,6 @@ void Spear::paint(float dt, iPoint off)
 		if (index == player->currWeaponIndex())
 		{
 			setPosition();
-			position = player->wpPosition;
-			img->angle = holdAngle;
 			if (!attack(dt))
 			{
 				if (getKeyDown(keyboard_o))
@@ -436,10 +431,6 @@ void Spear::paint(float dt, iPoint off)
 }
 #endif
 
-void Spear::drawShadow(float dt, iPoint off)
-{
-}
-
 void Spear::action(Object* obj)
 {
 }
@@ -460,6 +451,7 @@ bool Spear::attack(float dt)
 		{
 			audioPlay(AUDIO_SpearAttack);
 			attacking = true;
+			img->ratio = 1.2f;
 			PlayerChar::cbPlayerSetAttack(NULL);
 		}
 		return false;
@@ -471,22 +463,19 @@ bool Spear::attack(float dt)
 
 	typedef float (*FUNC_METHOD)(float, float, float);
 	FUNC_METHOD fmethod[3] = { linear, easeIn, easeOut };
-	FUNC_METHOD m = fmethod[1];
+	FUNC_METHOD m = fmethod[2];
 
-	float ang = m(d, 0.0f, attackAngle * 2) - attackAngle;
-	//float ang = linear(d, 0.0f, 0.0f);
-	float ran = m(d, 0.0f, attackRange);
+	float ran = m(d, attackRange, 0.0f);
 
-	iPoint pdp = position + drawPos + (player->wpVector * ran) * 1.5f;
-	iPoint rp = iPointRotate(pdp, position, ang);
-	touchRect = iRectMake(rp.x - 15, rp.y - 15, 30, 30);
+	iPoint rp = vector * ran + position + drawPos;
+	position = rp - drawPos;
 
-	if (d > attackDt)
+	float x = (vector.x == 0.0f ? img->tex->width : img->tex->height) * img->ratio * 0.5f;
+	float y = (vector.y == 0.0f ? img->tex->width : img->tex->height) * img->ratio * 0.5f;
+	touchRect = iRectMake(rp.x - x, rp.y - y, x * 2.0f, y * 2.0f);
+
+	if (d < 1.0f - attackDt)
 	{
-		img->angle = holdAngle + attackAngle;
-		rp = iPointRotate(pdp, position, attackAngle);
-		img->position = rp - pdp + (player->wpVector * attackRange);
-
 		attackMonster();
 
 		for (int i = 0; i < mapObjBrokenNum; i++)
@@ -497,17 +486,11 @@ bool Spear::attack(float dt)
 			}
 		}
 	}
-	else
-	{
-		img->angle = holdAngle - attackAngle;
-		rp = iPointRotate(pdp, position, -attackAngle);
-		img->position = rp - pdp + (player->wpVector * 0);
-	}
 
 #if SHOW_TOUCHRECT
 	iRect rt = touchRect;
 	rt.origin += DRAW_OFF;
-	setRGBA(1, 0, 0, 1);
+	setRGBA(1, 0, 0, 0.7f);
 	fillRect(rt);
 	setRGBA(1, 1, 1, 1);
 #endif
@@ -519,48 +502,14 @@ bool Spear::attack(float dt)
 		attackDelay = 0.0f;
 		attacking = false;
 		hit = false;
+		img->ratio = 1.0f;
 		img->angle = holdAngle;
-		img->position = iPointZero;
 		PlayerChar::cbPlayerSetIdle(NULL);
 
 		return false;
 	}
 
 	return true;
-}
-
-void Spear::setPosition()
-{
-	iPoint v = player->wpVector;
-	float angle = holdAngle;
-	iPoint p = drawPos;
-	iSize size = iSizeMake(img->tex->width, img->tex->height);
-
-	if (v.x < 0.0f)
-	{
-		angle = 90.0f;
-		p = iPointMake(-size.height * 0.5f, 0);
-	}
-	else if (v.x > 0.0f)
-	{
-		angle = 270.0f;
-		p = iPointMake(size.height * 0.5f, 0);
-
-	}
-	if (v.y < 0.0f)
-	{
-		angle = 0.0f;
-		p = iPointMake(0, -size.height * 0.5f);
-	}
-	else if (v.y > 0.0f)
-	{
-		angle = 180.0f;
-		p = iPointMake(0, size.height * 0.5f);
-	}
-
-	vector = player->wpVector;
-	drawPos = p;
-	holdAngle = angle;
 }
 
 //--------------------------------------------------------
@@ -613,6 +562,7 @@ Cyclone::Cyclone(int index, int8 mapNum, iPoint pos) : Weapon(index, mapNum, pos
 	hit = false;
 	get = false;
 	drawPos = iPointZero;
+	position = iPointZero;
 }
 
 Cyclone::~Cyclone()
@@ -657,10 +607,6 @@ void Cyclone::paint(float dt, iPoint off)
 }
 #endif
 
-void Cyclone::drawShadow(float dt, iPoint off)
-{
-}
-
 void Cyclone::action(Object* obj)
 {
 }
@@ -680,6 +626,7 @@ bool Cyclone::attack(float dt)
 		{
 			audioPlay(AUDIO_CyclonAttack);
 			attacking = true;
+			img->ratio = 1.2f;
 			PlayerChar::cbPlayerSetAttack(NULL);
 		}
 		return false;
@@ -694,15 +641,17 @@ bool Cyclone::attack(float dt)
 	FUNC_METHOD m = fmethod[0];
 
 	float ang = m(d, 0.0f, attackAngle);
-	//float ang = linear(d, 0.0f, 0.0f);
-	float ran = m(d, 0.0f, attackRange);
+	float ran = _sin(180 * d) * 50;
 
-	iPoint pdp = position + drawPos;
-	iPoint rp = iPointRotate(pdp, position, ang);
-	touchRect = iRectMake(rp.x - 15, rp.y - 15, 30, 30);
+	iPoint v = iPointVector(drawPos);
+	iPoint rp = iPointRotate(drawPos + v * 20, iPointZero, ang);
+	rp += position;
+	position = rp - drawPos;
+
+	img->angle = holdAngle + ang;
+	touchRect = iRectMake(rp.x - 30, rp.y - 30, 60, 60);
 
 	attackMonster();
-
 	for (int i = 0; i < mapObjBrokenNum; i++)
 	{
 		if (containRect(touchRect, mapObjBroken[i]->touchRect))
@@ -710,9 +659,6 @@ bool Cyclone::attack(float dt)
 			mapObjBroken[i]->action(this);
 		}
 	}
-
-	img->angle = holdAngle + ang;
-	img->position = rp - pdp;
 
 #if SHOW_TOUCHRECT
 	iRect rt = touchRect;
@@ -730,48 +676,14 @@ bool Cyclone::attack(float dt)
 		attackDelay = 0.0f;
 		attacking = false;
 		hit = false;
+		img->ratio = 1.0f;
 		img->angle = holdAngle;
-		img->position = iPointZero;
 		PlayerChar::cbPlayerSetIdle(NULL);
 
 		return false;
 	}
 
 	return true;
-}
-
-void Cyclone::setPosition()
-{
-	iPoint v = player->wpVector;
-	float angle = holdAngle;
-	iPoint p = drawPos;
-	iSize size = iSizeMake(img->tex->width, img->tex->height);
-
-	if (v.x < 0.0f)
-	{
-		angle = 90.0f;
-		p = iPointMake(-size.height * 0.5f, 0);
-	}
-	else if (v.x > 0.0f)
-	{
-		angle = 270.0f;
-		p = iPointMake(size.height * 0.5f, 0);
-
-	}
-	if (v.y < 0.0f)
-	{
-		angle = 0.0f;
-		p = iPointMake(0, -size.height * 0.5f);
-	}
-	else if (v.y > 0.0f)
-	{
-		angle = 180.0f;
-		p = iPointMake(0, size.height * 0.5f);
-	}
-
-	vector = player->wpVector;
-	drawPos = p;
-	holdAngle = angle;
 }
 
 //---------------------------------------------------------------------------------------------
@@ -841,8 +753,6 @@ void BowGun::paint(float dt, iPoint off)
 		if (index == player->currWeaponIndex())
 		{
 			setPosition();
-			position = player->wpPosition;
-			img->angle = holdAngle;
 
 			if (!attack(dt))
 			{
@@ -865,10 +775,6 @@ void BowGun::paint(float dt, iPoint off)
 }
 #endif
 
-void BowGun::drawShadow(float dt, iPoint off)
-{
-}
-
 void BowGun::action(Object* obj)
 {
 }
@@ -887,16 +793,22 @@ bool BowGun::attack(float dt)
 		if (getKeyStat(keyboard_j))
 		{
 			attacking = true;
-			Projectile::fire(Projectile_BowGunArrow, this);
 			PlayerChar::cbPlayerSetAttack(NULL);
 		}
 		return false;
 	}
 
+	float d = attackSpeed / _attackSpeed;
+	iPoint v = vector * -1.0f;
+	position += v * d * 50;
+
+
 	//attack	
 	attackSpeed += dt;
 	if (attackSpeed > _attackSpeed)
 	{
+		Projectile::fire(Projectile_BowGunArrow, this);
+
 		attackSpeed = 0.0f;
 		attackDelay = 0.0f;
 		attacking = false;
@@ -907,40 +819,6 @@ bool BowGun::attack(float dt)
 	}
 
 	return true;
-}
-
-void BowGun::setPosition()
-{
-	iPoint v = player->wpVector;
-	float angle = holdAngle;
-	iPoint p = drawPos;
-	iSize size = iSizeMake(img->tex->width, img->tex->height);
-
-	if (v.x < 0.0f)
-	{
-		angle = 90.0f;
-		p = iPointMake(-size.height * 0.5f, 0);
-	}
-	else if (v.x > 0.0f)
-	{
-		angle = 270.0f;
-		p = iPointMake(size.height * 0.5f, 0);
-
-	}
-	if (v.y < 0.0f)
-	{
-		angle = 0.0f;
-		p = iPointMake(0, -size.height * 0.5f);
-	}
-	else if (v.y > 0.0f)
-	{
-		angle = 180.0f;
-		p = iPointMake(0, size.height * 0.5f);
-	}
-
-	vector = player->wpVector;
-	drawPos = p;
-	holdAngle = angle;
 }
 
 //---------------------------------------------------------------------------------------------
@@ -990,6 +868,7 @@ MagicWand::MagicWand(int index, int8 mapNum, iPoint pos) : Weapon(index, mapNum,
 	hit = false;
 	get = false;
 	drawPos = iPointZero;
+	position = iPointZero;
 }
 
 MagicWand::~MagicWand()
@@ -1010,8 +889,6 @@ void MagicWand::paint(float dt, iPoint off)
 		if (index == player->currWeaponIndex())
 		{
 			setPosition();
-			position = player->wpPosition;
-			img->angle = holdAngle;
 
 			if (!attack(dt))
 			{
@@ -1033,10 +910,6 @@ void MagicWand::paint(float dt, iPoint off)
 	img->paint(dt, position + drawPos + off);
 }
 #endif
-
-void MagicWand::drawShadow(float dt, iPoint off)
-{
-}
 
 void MagicWand::action(Object* obj)
 {
@@ -1076,41 +949,6 @@ bool MagicWand::attack(float dt)
 	}
 
 	return true;
-
-}
-
-void MagicWand::setPosition()
-{
-	iPoint v = player->wpVector;
-	float angle = holdAngle;
-	iPoint p = drawPos;
-	iSize size = iSizeMake(img->tex->width, img->tex->height);
-
-	if (v.x < 0.0f)
-	{
-		angle = 90.0f;
-		p = iPointMake(-size.height * 0.5f, 0);
-	}
-	else if (v.x > 0.0f)
-	{
-		angle = 270.0f;
-		p = iPointMake(size.height * 0.5f, 0);
-
-	}
-	if (v.y < 0.0f)
-	{
-		angle = 0.0f;
-		p = iPointMake(0, -size.height * 0.5f);
-	}
-	else if (v.y > 0.0f)
-	{
-		angle = 180.0f;
-		p = iPointMake(0, size.height * 0.5f);
-	}
-
-	vector = player->wpVector;
-	drawPos = p;
-	holdAngle = angle;
 
 }
 

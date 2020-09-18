@@ -146,7 +146,7 @@ WeaponInfo weaponInfo[WT_max] = {
 
 		0.0f,
 		0.0f,
-		100.0f
+		50.0f
 	},
 	{
 		15.0f,

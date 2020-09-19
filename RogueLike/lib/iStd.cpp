@@ -146,9 +146,9 @@ void drawLib(Method_Paint method)
         //    0, 0, tex->width, tex->height, VCENTER | HCENTER,
         //    2.0f, 2.0f, 2, 0, REVERSE_HEIGHT);
 #if 1
-		drawImage(tex, viewport.origin.x + viewport.size.width / 2, viewport.origin.y + viewport.size.height / 2,
+		drawImage(tex, viewport.origin.x * 0.5f + viewport.size.width / 2.0f, viewport.origin.y * 0.5f + viewport.size.height / 2.0f,
 			0, 0, tex->width, tex->height, 
-            VCENTER | HCENTER,	viewport.size.width / tex->width, viewport.size.height / tex->height, 
+            VCENTER | HCENTER,	(viewport.size.width - viewport.origin.x) / tex->width, (viewport.size.height - viewport.origin.y) / tex->height,
             2, 0, REVERSE_HEIGHT);
 #else
         drawImage(tex, viewport.size.width / 2, viewport.size.height / 2,

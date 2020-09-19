@@ -6,6 +6,7 @@
 // macro
 #define SHOW_TOUCHRECT 1
 
+/* Sound */
 #define SFX_NUM 9
 
 #define AUDIO_HammerAttack	0
@@ -19,6 +20,20 @@
 #define AUDIO_MenuSelected	8
 #define AUDIO_GameMusic 9
 #define AUDIO_INTRO		10
+
+/* Player */
+#define PLAYER_IMG_NUM 5
+
+/* Monster */
+#define MONSTER_IMG_NUM		6
+
+/* Weapon */
+#define WEAPON_IMG_COUNT 5
+
+/* Item */
+#define ITEM_KINDS 3
+#define ITEM_IMG_COUNT 3
+
 //----------------------------------------------------------------------------
 // enum
 /*MapType*/

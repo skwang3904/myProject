@@ -27,7 +27,8 @@ public:
 	void addThisWeapon();
 	void dropWeapon();
 
-	//static void dropWeaponFromItemBox();
+	void rootWeapon(iPoint pos);
+
 public:
 	float attackDt;
 	float attackDelay, _attackDelay;
@@ -40,6 +41,9 @@ public:
 	bool get;
 	
 	iPoint drawPos;
+
+	iPoint rootPos;
+	float rootDt, _rootDt;
 };
 extern Weapon** weapon;
 extern int weaponNum;

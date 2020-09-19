@@ -5,17 +5,17 @@ PlayerInfo playerInfo[2] = {
 	{100.0f, 10.0f, 1.0f, 400.0f},
 };
 
-PlayerImageInfo playerImageInfo[5] = {
+PlayerImageInfo playerImageInfo[PLAYER_IMG_NUM] = {
 	{"assets/char/CharHead%d.png",	
-	4, 2, false, 0.08f, iSizeMake(60, 45) * 2.0f},
+	4, 2, false, 0.08f, iSizeMake(60, 45) * 1.5f},
 	{"assets/char/CharBodyR%d.png",	
-	1, 10, true, 0.1f, iSizeMake(64, 40) * 2.0f},
+	1, 10, true, 0.1f, iSizeMake(64, 40) * 1.5f},
 	{"assets/char/CharBodyUD%d.png",
-	1, 10, true, 0.1f, iSizeMake(64, 40) * 2.0f},
+	1, 10, true, 0.1f, iSizeMake(64, 40) * 1.5f},
 	{"assets/char/CharGood%d.png",	
-	1, 4, false, 0.3f, iSizeMake(97, 60) * 2.0f},
+	1, 4, false, 0.3f, iSizeMake(97, 60) * 1.5f},
 	{"assets/char/CharJump%d.png",	
-	1, 4, false, 0.3f, iSizeMake(97, 60) * 2.0f},
+	1, 4, false, 0.3f, iSizeMake(97, 60) * 1.5f},
 };
 
 //----------------------------------------------------------------
@@ -76,9 +76,8 @@ float MonsterInfo::setMonsterStatus(float* base, int stage)
 	return base[0] + base[1] * stage;
 }
 
-// [ MONSTER_IMG_NUM 6 ] in "Monster.h"
 #if 0
-MonsterImageInfo golemNomalImage[6] = {
+MonsterImageInfo golemNomalImage[MONSTER_IMG_NUM] = {
 	{ "assets/monster/golem1/Idle Blink/Golem_01_Idle Blinking_%d.png",	12,
 		1.0f, 0.0f, 0, false, iSizeMake(200, 150) },
 	{ "assets/monster/golem1/Walking/Golem_01_Walking_%d.png", 18, 
@@ -93,7 +92,7 @@ MonsterImageInfo golemNomalImage[6] = {
 		1.2f, 0.0f, 1, true, iSizeMake(200, 150)},
 };
 #endif
-MonsterImageInfo golemNomalImage[6] = {
+MonsterImageInfo golemNomalImage[MONSTER_IMG_NUM] = {
 	{ "assets/monster/demon_axe_red/Idle/ready_%d.png",	7,
 		1.0f, 0.0f, 0, false, iSizeMake(200, 150) },
 	{ "assets/monster/demon_axe_red/Walking/walk_%d.png", 7,
@@ -108,7 +107,7 @@ MonsterImageInfo golemNomalImage[6] = {
 		1.2f, 0.0f, 1, true, iSizeMake(200, 150)},
 };
 
-MonsterImageInfo golemBossImage[6] = {
+MonsterImageInfo golemBossImage[MONSTER_IMG_NUM] = {
 	{ "assets/monster/golemBoss/golemBoss - idle/golem-idle-%c-%02d.png", 20,
 		0.5f, 0.0f, 0, false, iSizeMake(378, 300) },
 	{ "assets/monster/golemBoss/golemBoss - move/golem-run-%c-%02d.png", 24,
@@ -183,15 +182,28 @@ WeaponInfo weaponInfo[WT_max] = {
 	},
 };
 
+WeaponImageInfo weaponImageInfo[WEAPON_IMG_COUNT] = {
+	{ "assets/weapon/hammer_0.png",
+		iSizeMake(60, 100) * 0.7f },
+	{ "assets/weapon/upg_spear.png",
+		iSizeMake(20, 100) * 0.7f },
+	{ "assets/weapon/upg_axeDouble.png",
+		iSizeMake(60, 100) * 0.7f },
+	{ "assets/weapon/BowGun.png",
+		iSizeMake(80, 100) * 0.7f },
+	{ "assets/weapon/MagicWand.png",
+		iSizeMake(100, 100) * 0.7f },
+};
+
 //----------------------------------------------------------------
 
-ItemInfo itemInfo[3] = {
+ItemInfo itemInfo[ITEM_KINDS] = {
 	{ 5.0f, 0.5f},
 	{ 10.0f, 0.5f},
 	{ 20.0f, 0.5f},
 };
 
-ItemImageInfo itemImageInfo[3] = {
+ItemImageInfo itemImageInfo[ITEM_IMG_COUNT] = {
 	{ "assets/item/PotionSmall.png",
 		1, 0.08f, iSizeMake(64, 64) },
 	{ "assets/item/PotionMiddle.png",

@@ -22,6 +22,10 @@ Weapon::Weapon(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos)
 	get = false;
 
 	drawPos = iPointZero;
+
+	rootPos = iPointZero;
+	rootDt =
+	_rootDt = 2.0f;
 }
 
 Weapon::~Weapon()
@@ -50,16 +54,35 @@ void Weapon::paint(float dt, iPoint off)
 		else
 		{
 			position = iPointMake(-3000, -3000);
+			return;
 		}
 	}
 	else
 	{
-		if (getKeyDown(keyboard_i))
-			getWeapon();
+		if (rootDt < _rootDt)
+		{
+			rootDt += dt;
+			if (rootDt > _rootDt)
+				rootDt = _rootDt;
+			float d = rootDt / _rootDt;
+			position.y = rootPos.y - _sin(180 * d) * 100;
+		}
+		else if (rootDt == _rootDt)
+		{
+			if (getKeyDown(keyboard_i))
+				getWeapon();
+		}
+
+#if SHOW_TOUCHRECT
+		setRGBA(0, 1, 1, 0.5f);
+		iRect rt = touchRect;
+		rt.origin += DRAW_OFF;
+		fillRect(rt);
+		setRGBA(1, 1, 1, 1);
+#endif
 	}
 
 	img->paint(dt, position + drawPos + off);
-
 }
 
 void Weapon::drawShadow(float dt, iPoint off)
@@ -160,8 +183,21 @@ void Weapon::dropWeapon()
 	index = -1;
 	get = false;
 	position = player->position;
-	touchRect = iRectMake(position.x, position.y, img->tex->width, img->tex->height);
+	float w = img->tex->width;
+	float h = img->tex->height;
+	touchRect = iRectMake(position.x - w / 2.0f, position.y - h / 2.0f, w, h);
 	drawPos = iPointZero;
+}
+
+void Weapon::rootWeapon(iPoint pos)
+{
+	// drop test
+	position = pos;
+	rootPos = pos;
+	float w = img->tex->width;
+	float h = img->tex->height;
+	touchRect = iRectMake(position.x - w / 2.0f, position.y - h / 2.0f, w, h);
+	rootDt = 0.0f;
 }
 
 //--------------------------------------------------------
@@ -173,13 +209,15 @@ Hammer::Hammer(int index, int8 mapNum, iPoint pos) : Weapon(index, mapNum, pos)
 	int i, j;
 	iImage* img;
 	Texture* tex, * t;
-	iSize size = iSizeMake(60, 100);
+	iSize size;
 
 	img = new iImage();
+	WeaponImageInfo* wii = &weaponImageInfo[0];
+	size = wii->size;
 	tex = createTexture(size.width, size.height);
 
 	fbo->bind(tex);
-	t = createImage("assets/weapon/hammer_0.png");
+	t = createImage(wii->strPath);
 	DRAWIMAGE(t, size);
 	freeImage(t);
 	fbo->unbind();
@@ -258,6 +296,7 @@ void Hammer::paint(float dt, iPoint off)
 
 void Hammer::action(Object* obj)
 {
+	actionDt = 0.0f;
 }
 
 bool Hammer::attack(float dt)
@@ -282,16 +321,14 @@ bool Hammer::attack(float dt)
 	}
 
 	//attack	
-	float standSpeed = _attackSpeed;
-	float d = attackSpeed / standSpeed;
+	float d = attackSpeed / _attackSpeed;
 
 	typedef float (*FUNC_METHOD)(float, float, float);
 	FUNC_METHOD fmethod[3] = { linear, easeIn, easeOut };
 	FUNC_METHOD m = fmethod[2];
 
-	float ang = m(d * d, 0.0f, attackAngle * 2) - attackAngle;
-	//float ang = linear(d, 0.0f, 0.0f);
-	float ran = m(d, 0.0f, attackRange);
+	d *= d;
+	float ang = m(d, 0.0f, attackAngle * 2) - attackAngle;
 
 	iPoint rp = iPointRotate(drawPos, iPointZero, ang);
 	rp += position;
@@ -322,7 +359,7 @@ bool Hammer::attack(float dt)
 #endif
 
 	attackSpeed += dt;
-	if (attackSpeed > standSpeed)
+	if (attackSpeed > _attackSpeed)
 	{
 		attackSpeed = 0.0f;
 		attackDelay = 0.0f;
@@ -345,20 +382,22 @@ Spear::Spear(int index, int8 mapNum, iPoint pos) : Weapon(index, mapNum, pos)
 	int i, j;
 	iImage* img;
 	Texture* tex, *t;
-
-	iSize size = iSizeMake(20, 100);
+	iSize size;
 
 	img = new iImage();
+	WeaponImageInfo* wii = &weaponImageInfo[1];
+	size = wii->size;
 	tex = createTexture(size.width, size.height);
 
 	fbo->bind(tex);
-	t = createImage("assets/weapon/upg_spear.png");
+	t = createImage(wii->strPath);
 	DRAWIMAGE(t, size);
 	freeImage(t);
 	fbo->unbind();
 
 	img->addObject(tex);
 	freeImage(tex);
+
 
 	//img->angle = 180;
 	img->lockAngle = true;
@@ -433,6 +472,7 @@ void Spear::paint(float dt, iPoint off)
 
 void Spear::action(Object* obj)
 {
+	actionDt = 0.0f;
 }
 
 
@@ -519,19 +559,22 @@ Cyclone::Cyclone(int index, int8 mapNum, iPoint pos) : Weapon(index, mapNum, pos
 	int i, j;
 	iImage* img;
 	Texture* tex, * t;
-	iSize size = iSizeMake(60, 100);
+	iSize size;
 
 	img = new iImage();
+	WeaponImageInfo* wii = &weaponImageInfo[2];
+	size = wii->size;
 	tex = createTexture(size.width, size.height);
 
 	fbo->bind(tex);
-	t = createImage("assets/weapon/upg_axeDouble.png");
+	t = createImage(wii->strPath);
 	DRAWIMAGE(t, size);
 	freeImage(t);
 	fbo->unbind();
 
 	img->addObject(tex);
 	freeImage(tex);
+
 
 	//img->angle = 180;
 	img->lockAngle = true;
@@ -609,6 +652,7 @@ void Cyclone::paint(float dt, iPoint off)
 
 void Cyclone::action(Object* obj)
 {
+	actionDt = 0.0f;
 }
 
 bool Cyclone::attack(float dt)
@@ -640,7 +684,7 @@ bool Cyclone::attack(float dt)
 	FUNC_METHOD fmethod[3] = { linear, easeIn, easeOut };
 	FUNC_METHOD m = fmethod[0];
 
-	float ang = m(d, 0.0f, attackAngle);
+	float ang = m(d, 0.0f, attackAngle + 30);
 	float ran = _sin(180 * d) * 50;
 
 	iPoint v = iPointVector(drawPos);
@@ -693,19 +737,22 @@ BowGun::BowGun(int index, int8 mapNum, iPoint pos) : Weapon(index, mapNum, pos)
 	int i, j;
 	iImage* img;
 	Texture* tex, * t;
-	iSize size = iSizeMake(100, 100);
+	iSize size;
 
 	img = new iImage();
+	WeaponImageInfo* wii = &weaponImageInfo[3];
+	size = wii->size;
 	tex = createTexture(size.width, size.height);
 
 	fbo->bind(tex);
-	t = createImage("assets/weapon/BowGun.png");
+	t = createImage(wii->strPath);
 	DRAWIMAGE(t, size);
 	freeImage(t);
 	fbo->unbind();
 
 	img->addObject(tex);
 	freeImage(tex);
+
 
 	//img->angle = 180;
 	img->lockAngle = true;
@@ -777,6 +824,7 @@ void BowGun::paint(float dt, iPoint off)
 
 void BowGun::action(Object* obj)
 {
+	actionDt = 0.0f;
 }
 
 bool BowGun::attack(float dt)
@@ -800,8 +848,8 @@ bool BowGun::attack(float dt)
 
 	float d = attackSpeed / _attackSpeed;
 	iPoint v = vector * -1.0f;
+	img->ratio = 1.0f - _sin(180 * d) * 0.3f;
 	position += v * d * 50;
-
 
 	//attack	
 	attackSpeed += dt;
@@ -813,6 +861,7 @@ bool BowGun::attack(float dt)
 		attackDelay = 0.0f;
 		attacking = false;
 		hit = false;
+		img->ratio = 1.0f;
 		PlayerChar::cbPlayerSetIdle(NULL);
 
 		return false;
@@ -828,13 +877,15 @@ MagicWand::MagicWand(int index, int8 mapNum, iPoint pos) : Weapon(index, mapNum,
 	int i, j;
 	iImage* img;
 	Texture* tex, * t;
-	iSize size = iSizeMake(100, 100);
+	iSize size;
 
 	img = new iImage();
+	WeaponImageInfo* wii = &weaponImageInfo[4];
+	size = wii->size;
 	tex = createTexture(size.width, size.height);
 
 	fbo->bind(tex);
-	t = createImage("assets/weapon/MagicWand.png");
+	t = createImage(wii->strPath);
 	DRAWIMAGE(t, size);
 	freeImage(t);
 	fbo->unbind();
@@ -913,6 +964,7 @@ void MagicWand::paint(float dt, iPoint off)
 
 void MagicWand::action(Object* obj)
 {
+	actionDt = 0.0f;
 }
 
 bool MagicWand::attack(float dt)

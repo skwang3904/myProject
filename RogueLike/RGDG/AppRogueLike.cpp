@@ -149,7 +149,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // window rect
         RECT& rect = *reinterpret_cast<LPRECT>(lParam);
         enforceResolution((int)wParam, rect, win_border_width, win_border_height);
-#if 0 //안그려야 부드러움
+#if 1 //안그려야 부드러움
         //RECT rect;
         //GetClientRect(hWnd, &rect);
         resizeLib(rect.right - rect.left, rect.bottom - rect.top);
@@ -246,7 +246,7 @@ bool updateCursor(bool inClient)
         return false;
     bCursor = inClient;
 
-    //ShowCursor(bCursor ? FALSE : TRUE);// Fucking ms
+    //ShowCursor(bCursor ? FALSE : TRUE);// ms bug
     if (bCursor)
     {
         while (1)

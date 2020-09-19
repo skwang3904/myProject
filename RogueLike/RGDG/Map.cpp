@@ -848,7 +848,7 @@ void MapObjectItemBox::action(Object* obj)
 	{
 		if (weapon[i]->index == -1)
 		{
-			weapon[i]->position = position + iPointMake(img->tex->width / 2.0f, img->tex->height);
+			weapon[i]->rootWeapon(position + iPointMake(img->tex->width / 2.0f, img->tex->height));
 			break;
 		}
 	}

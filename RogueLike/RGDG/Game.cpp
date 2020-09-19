@@ -32,7 +32,7 @@ void loadGame()
 
 	loadAudio(ai, 11);
 
-#if 0
+#if 1
 	loadIntro();
 	gamestat = gamestat_intro;
 	audioPlay(AUDIO_INTRO);

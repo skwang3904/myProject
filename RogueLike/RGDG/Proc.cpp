@@ -87,7 +87,7 @@ void drawProc(float dt)
 	drawWeapon(pass_dt);
 	drawItem(pass_dt);
 	drawProjectile(pass_dt);
-	
+
 	passMap->update(dt);
 
 
@@ -172,7 +172,7 @@ void Stage::create()
 		if (i == 0)			a = 1;
 		else if (i == 1)	a = 0;
 		else if( i == 2)	a = 2;
-#elif 0
+#elif 1
 		if (i < 4)
 			weaponData[i].index = i;
 		else

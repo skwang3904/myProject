@@ -23,7 +23,7 @@ struct PlayerImageInfo
 	float aniDt;
 	iSize size;
 };
-extern PlayerImageInfo playerImageInfo[5];
+extern PlayerImageInfo playerImageInfo[PLAYER_IMG_NUM];
 
 //----------------------------------------------------------------
 // Monster Data
@@ -59,8 +59,8 @@ struct MonsterImageInfo
 	bool lastFrame;
 	iSize size;
 };
-extern MonsterImageInfo golemNomalImage[6];
-extern MonsterImageInfo golemBossImage[6];
+extern MonsterImageInfo golemNomalImage[MONSTER_IMG_NUM];
+extern MonsterImageInfo golemBossImage[MONSTER_IMG_NUM];
 
 //----------------------------------------------------------------
 // Weapon Data
@@ -78,6 +78,12 @@ struct WeaponInfo
 };
 extern WeaponInfo weaponInfo[WT_max];
 
+struct WeaponImageInfo
+{
+	const char* strPath;
+	iSize size;
+};
+extern WeaponImageInfo weaponImageInfo[WEAPON_IMG_COUNT];
 //----------------------------------------------------------------
 // Item Data
 struct ItemInfo
@@ -85,7 +91,7 @@ struct ItemInfo
 	float value;
 	float _actionDt;
 };
-extern ItemInfo itemInfo[3];
+extern ItemInfo itemInfo[ITEM_KINDS];
 
 struct ItemImageInfo
 {
@@ -94,4 +100,4 @@ struct ItemImageInfo
 	float aniDt;
 	iSize size;
 };
-extern ItemImageInfo itemImageInfo[3];
+extern ItemImageInfo itemImageInfo[ITEM_IMG_COUNT];

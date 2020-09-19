@@ -75,7 +75,8 @@ PlayerChar::PlayerChar(int index, int8 mapNum, iPoint pos) : Object(index, mapNu
 	imgs[7]->_repeatNum = 1;
 	imgs[7]->_aniDt = 0.1f;
 	imgs[7]->lastFrame = true;
-	imgs[7]->position = iPointMake(-imgs[7]->tex->width * 0.22f, -imgs[7]->tex->height);
+	imgs[7]->position = iPointMake(0, -imgs[7]->tex->height);
+	//imgs[7]->position = iPointMake(-imgs[7]->tex->width * 0.22f, -imgs[7]->tex->height);
 	this->imgs[9] = imgs[7];
 
 	//common data
@@ -214,7 +215,7 @@ void PlayerChar::paint(float dt, iPoint off)
 	img->reverse = reverse;
 	img->paint(dt, p);
 	if (state != player_jump)
-		imgs[headNum]->paint(dt, p + iPointMake(4, -43));
+		imgs[headNum]->paint(dt, p + iPointMake(4, -img->tex->height / 1.8f));
 
 	// change weapon
 	if (getKeyDown(keyboard_i) && state < player_attack)

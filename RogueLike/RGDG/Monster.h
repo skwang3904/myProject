@@ -4,8 +4,6 @@
 
 #include "Common.h"
 
-#define MONSTER_IMG_NUM		6
-
 #if 0 // 이미지 번호
 [0] = Idle;
 [1] = Move;

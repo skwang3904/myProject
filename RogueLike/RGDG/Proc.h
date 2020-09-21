@@ -5,6 +5,9 @@
 #include "Common.h"
 #include "Tile.h"
 
+#define SORTING 1
+extern iSort* procSort;
+
 void loadProc();
 void freeProc();
 void drawProc(float dt);
@@ -163,6 +166,7 @@ bool keyPopState(iKeyState stat, iPoint point);
 //-----------------------------------------------------------
 // ProcButton
 extern iImage* imgInvenWeaponBtn;
+extern iImage** imgProcButtonBtn;
 void createPopProcButton();
 void freePopProcButton();
 void showPopProcButton(bool show);

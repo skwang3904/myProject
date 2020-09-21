@@ -1,8 +1,9 @@
 #include "Common.h"
 
 #include "AppRogueLike.h"
-//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
+Object** objects = NULL;
 Object::Object(int index, int8 mapNum, iPoint pos)
 {
 	this->index = index;
@@ -57,15 +58,16 @@ void createPopOption()
 	img = new iImage();
 	iSize frameSize = iSizeMake(devSize.width * 0.5f, devSize.height * 0.7f);
 
-	size = iSizeMake(frameSize.width * 0.6f, frameSize.height * 0.5f);
+	size = iSizeMake(frameSize.width, frameSize.height);
 	iGraphics* g = iGraphics::instance();
 	g->init(size);
 	setStringSize(frameSize.height * 0.075f);
 	setStringRGBA(0, 0, 0, 1);
 	setStringBorder(0);
-	g->drawString(size.width / 2.0f, size.height * 0.15f, VCENTER | HCENTER, "Setting");
-	g->drawString(size.width / 2.0f, size.height * 0.35f, VCENTER | HCENTER, "BGM");
-	g->drawString(size.width / 2.0f, size.height * 0.75f, VCENTER | HCENTER, "SFX");
+	g->drawString(size.width / 2.0f, size.height * 0.075f, VCENTER | HCENTER, "Setting");
+	g->drawString(size.width / 2.0f, size.height * 0.175f, VCENTER | HCENTER, "BGM");
+	g->drawString(size.width / 2.0f, size.height * 0.375f, VCENTER | HCENTER, "SFX");
+	g->drawString(size.width / 2.0f, size.height * 0.625f, VCENTER | RIGHT, "FullScreen");
 	text = g->getTexture();
 
 	size = frameSize;
@@ -89,9 +91,9 @@ void createPopOption()
 	const char* strBtn[OPTION_BUTTON_NUM] = {
 		"assets/setting/Accept%d.png",
 		"assets/setting/Close%d.png",
-		"BGM",
-		"SFX",
-		"fullscreenBtn",
+		"BGM img",
+		"SFX img",
+		"fullscreenBtn img",
 	};
 
 	iSize sizeBtn[OPTION_BUTTON_NUM] = {
@@ -127,15 +129,13 @@ void createPopOption()
 			}
 			else
 			{
-				fbo->clear(1, 0.8f, 0.2f, 1);
-				
 				if (j == 0)
 				{
 					setRGBA(1, 1, 1, 0.2f);
 					t = createImage(strBtn[0], 1);
 					drawImage(t, 0, 0,
 						0, 0, t->width, t->height,
-						TOP | LEFT, size.width * 0.45f / t->width, size.height / t->height,
+						TOP | LEFT, size.width * 0.5f / t->width, size.height / t->height,
 						2, 0, REVERSE_HEIGHT);
 					freeImage(t);
 
@@ -143,7 +143,7 @@ void createPopOption()
 					t = createImage(strBtn[1], 0);
 					drawImage(t, size.width, 0,
 						0, 0, t->width, t->height,
-						TOP | RIGHT, size.width * 0.4f / t->width, size.height / t->height,
+						TOP | RIGHT, size.width * 0.5f / t->width, size.height / t->height,
 						2, 0, REVERSE_HEIGHT);
 					freeImage(t);
 					setRGBA(1, 1, 1, 1);
@@ -154,7 +154,7 @@ void createPopOption()
 					t = createImage(strBtn[0], 1);
 					drawImage(t, 0, 0,
 						0, 0, t->width, t->height,
-						TOP | LEFT, size.width * 0.45f / t->width, size.height / t->height,
+						TOP | LEFT, size.width * 0.5f / t->width, size.height / t->height,
 						2, 0, REVERSE_HEIGHT);
 					freeImage(t);
 
@@ -162,7 +162,7 @@ void createPopOption()
 					t = createImage(strBtn[1], 0);
 					drawImage(t, size.width, 0,
 						0, 0, t->width, t->height,
-						TOP | RIGHT, size.width * 0.45f / t->width, size.height / t->height,
+						TOP | RIGHT, size.width * 0.5f / t->width, size.height / t->height,
 						2, 0, REVERSE_HEIGHT);
 					freeImage(t);
 					setRGBA(1, 1, 1, 1);

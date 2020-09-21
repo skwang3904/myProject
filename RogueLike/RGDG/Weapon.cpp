@@ -1040,6 +1040,15 @@ void freeWeapon()
 
 void drawWeapon(float dt)
 {
+#if SORTING
+	for (int i = 0; i < weaponNum; i++)
+	{
+		Weapon* w = weapon[i];
+		objects[procSort->sdNum] = w;
+		procSort->add(w->position.y);
+	}
+#else
 	for (int i = 0; i < weaponNum; i++)
 		weapon[i]->paint(dt, DRAW_OFF);
+#endif
 }

@@ -11,8 +11,12 @@
 #include "Item.h"
 #include "Projectile.h"
 
+iSort* procSort = NULL;
 void loadProc()
 {
+	objects = (Object**)malloc(sizeof(Object*) * _sdNum);
+	procSort = new iSort();
+
 	loadNumberFont();
 
 	loadMap();
@@ -25,14 +29,15 @@ void loadProc()
 
 	loadPassMap();
 
-	createPopStageLoading();
-	createPopStageNum();
 	createPopState();
 	createPopProcButton();
 	createPopMiniMap();
 	createPopInven();
+	createPopStageNum();
 	createPopProcMenu();
 	createPopGameOver();
+
+	createPopStageLoading();
 
 	showPopStageNum(true);
 	showPopState(true);
@@ -44,6 +49,7 @@ void loadProc()
 
 void freeProc()
 {
+	delete procSort;
 	freeNumberFont();
 
 	freeMap();
@@ -56,20 +62,22 @@ void freeProc()
 	freePassMap();
 	freeStage();
 
-	freePopStageLoading();
-	freePopStageNum();
 	freePopState();
 	freePopProcButton();
 	freePopMiniMap();
 	freePopInven();
+	freePopStageNum();
 	freePopProcMenu();
 	freePopGameOver();
+
+	freePopStageLoading();
 }
 
 void drawProc(float dt)
 {
-	// if(loading)
-	// return;
+#if SORTING
+	procSort->init();
+#endif
 
 	float pop_dt = dt;
 	if (popProcMenu->bShow || 
@@ -86,19 +94,23 @@ void drawProc(float dt)
 	drawMonster(pass_dt);
 	drawWeapon(pass_dt);
 	drawItem(pass_dt);
+#if SORTING
+	procSort->update();
+	for(int i=0; i<procSort->sdNum;i++)
+		objects[procSort->get(i)]->paint(dt, DRAW_OFF);
+#endif
 	drawProjectile(pass_dt);
 
 	passMap->update(dt);
-
 
 	drawPopState(dt);
 	drawPopProcButton(dt);
 	drawPopMiniMap(dt);
 	drawPopInven(dt);
+	drawPopStageNum(dt);
 	drawPopProcMenu(pop_dt);
 	drawPopGameOver(pop_dt);
 
-	drawPopStageNum(dt);
 	//numberFont->drawFont()
 
 	if (passMap->nextStage(dt))
@@ -462,7 +474,7 @@ bool PassMap::nextStage(float dt)
 			{
 				popDt += dt;
 				if (popDt == _popDt)
-					popDt += 0.00001f;
+					popDt += 1.0f;
 			}
 		}
 		else if (popDt > _popDt)
@@ -527,14 +539,16 @@ void createPopStageLoading()
 	size = devSize;
 	img = new iImage();
 	tex = createTexture(size.width, size.height);
+
 	fbo->bind(tex);
-	fbo->clear(0.2f, 1, 0.5f, 1);
+	fbo->clear(0.2f, 0.2f, 0.2f, 1);
 	t = createImage("assets/loading/LoadingText.png");
 	drawImage(t, size.width / 2.0f, size.height - 150,
 		0, 0, t->width, t->height,
 		VCENTER | HCENTER, 1.0f, 1.0f,
 		2, 0, REVERSE_HEIGHT);
 	freeImage(t);
+
 	fbo->unbind();
 	img->addObject(tex);
 	freeImage(tex);
@@ -669,13 +683,27 @@ void createPopStageNum()
 	iSize size;
 
 	img = new iImage();
+	size = iSizeMake(devSize.width * 0.7f, devSize.height * 0.2f);
+	tex = createTexture(size.width, size.height);
+	fbo->bind(tex);
+	t = createImage("assets/PlayerUI/StageNumBanner.png");
+	DRAWIMAGE(t, size);
+	freeImage(t);
+	fbo->unbind();
+
+	img->addObject(tex);
+	freeImage(tex);
+	pop->addObject(img);
+
+
+	img = new iImage();
 	iStrTex* st = new iStrTex(methodStStageNum);
 	st->setString("%d", 0);
 	stStageNum = st;
 	img->addObject(st->tex);
 
 	pop->addObject(img);
-	iPoint p = iPointMake(devSize.width - img->tex->width, devSize.height - img->tex->height) / 2.0f;
+	iPoint p = iPointMake((devSize.width - size.width)/2.0f, (devSize.height - size.height) / 2.0f);
 	pop->openPosition = iPointMake(p.x, -img->tex->height);
 	pop->closePosition = iPointMake(p.x, p.y);
 	
@@ -690,15 +718,11 @@ Texture* methodStStageNum(const char* str)
 	iString::freeStringLine(line, lineNum);
 
 	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(devSize.width * 0.7f, devSize.height * 0.2);
+	iSize size = iSizeMake(devSize.width * 0.7f, devSize.height * 0.17f);
 	g->init(size);
 
-	setRGBA(0, 0, 0, 0.5);
-	g->fillRect(0, 0, size.width, size.height, 30);
-	setRGBA(1, 1, 1, 1);
-
-	setStringSize(devSize.height * 0.18);
-	setStringRGBA(0, 1, 0.2f, 1);
+	setStringSize(devSize.height * 0.1f);
+	setStringRGBA(1, 1, 0, 1);
 	setStringBorder(2);
 	setStringBorderRGBA(0, 0, 0, 1);
 	g->drawString(size.width / 2.0f, size.height / 2.0f, VCENTER | HCENTER, "Stage : %d", stage);
@@ -764,8 +788,9 @@ void createPopState()
 		"assets/PlayerUI/tmp.png",
 	};
 
-	size = iSizeMake(64, 64);
-	for (i = 0; i < 2; i++)
+	iPoint p = iPointMake(devSize.width * 0.025f, devSize.height * 0.025f);
+	size = iSizeMake(devSize.width * 0.05f, devSize.width * 0.05f);
+	for (i = 0; i < 2; i++) // icon
 	{
 		img = new iImage();
 		tex = createTexture(size.width, size.height);
@@ -779,12 +804,14 @@ void createPopState()
 		img->addObject(tex);
 		freeImage(tex);
 
-		img->position = iPointMake(32, 32 + 74 * i);
+		//size = iSizeMake(devSize.width * 0.2f, devSize.height * 0.07f);
+		img->position = iPointMake(p.x, p.y + size.height * 1.1f * i);
 		pop->addObject(img);
 	}
 
-	size = iSizeMake(256, 32);
-	for (i = 0; i < 2; i++)
+	p = iPointMake(p.x * 3.0f, p.y * 2.0f);
+	size = iSizeMake(size.width * 4, size.height * 0.5f);
+	for (i = 0; i < 2; i++) // bar
 	{
 		img = new iImage();
 		tex = createTexture(size.width, size.height);
@@ -797,8 +824,7 @@ void createPopState()
 
 		img->addObject(tex);
 		freeImage(tex);
-		img->position = iPointMake(96, 64 + 74 * i);
-
+		img->position = iPointMake(p.x, p.y + size.height * 2.0f * 1.1f * i);
 		pop->addObject(img);
 	}
 	
@@ -822,7 +848,7 @@ void createPopState()
 		img->addObject(tex);
 		freeImage(tex);
 
-		img->position = iPointMake(96, 64 + 74 * i);
+		img->position = iPointMake(p.x, p.y + size.height * 2.0f * 1.1f * i);
 		imgState[i] = img;
 
 		pop->addObject(img);
@@ -832,17 +858,33 @@ void createPopState()
 	iStrTex* st = new iStrTex(methodStState);
 	st->setString("%d\n%d", 0, 0);
 	img->addObject(st->tex);
-	img->position = iPointMake(100, 24);
+	img->position = iPointMake(p.x * 1.2f, p.y * 0.3f);
 	stState = st;
 	pop->addObject(img);
 
 
 	img = new iImage();
-	size = iSizeMake(128, 64);
+	size = iSizeMake(devSize.width * 0.2f, devSize.height * 0.04f);
+	p = iPointMake(devSize.width - size.width * 1.1f, size.height * 0.2f);
+	tex = createTexture(size.width, size.height);
+
+	fbo->bind(tex);
+	t = createImage("assets/PlayerUI/StageNumBanner.png");
+	DRAWIMAGE(t, size);
+	freeImage(t);
+	fbo->unbind();
+
+	img->addObject(tex);
+	freeImage(tex);
+	img->position = p;
+	pop->addObject(img);
+
+
+	img = new iImage();
 	st = new iStrTex(methodStDisplayStageNum);
 	st->setString("%d", 0);
 	img->addObject(st->tex);
-	img->position = iPointMake((devSize.width - size.width) * 0.5f, 10);
+	img->position = p;
 	stDisplayStageNum = st;
 	pop->addObject(img);
 
@@ -858,13 +900,14 @@ Texture* methodStState(const char* str)
 	iString::freeStringLine(line, lineNum);
 
 	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(256, 32);
+	iSize size = iSizeMake(devSize.width * 0.15f, devSize.width * 0.025f);
+
 	g->init(size);
 
 	g->fillRect(0, 0, size.width, size.height,5);
 
 	setStringRGBA(0, 0, 0, 1);
-	setStringSize(25);
+	setStringSize(size.height * 0.7f);
 	setStringBorder(0);
 	g->drawString(size.width / 2.0f, size.height / 2.0f, VCENTER | HCENTER, "HP : %d / %d", hp, _hp);
 
@@ -876,15 +919,11 @@ Texture* methodStDisplayStageNum(const char* str)
 	int stage = atoi(str);
 
 	iGraphics* g = iGraphics::instance();
-	iSize size = iSizeMake(160, 64);
+	iSize size = iSizeMake(devSize.width * 0.2f, devSize.height * 0.04f);
 	g->init(size);
 
-	setRGBA(0.5f, 0.5f, 0.5f, 1);
-	g->fillRect(0, 0, size.width, size.height, 15);
-	setRGBA(1, 1, 1, 1);
-
-	setStringSize(32);
-	setStringRGBA(1, 1, 1, 1);
+	setStringSize(size.height * 0.7f);
+	setStringRGBA(0, 0, 0, 1);
 	setStringBorder(0);
 	g->drawString(size.width / 2.0f, size.height / 2.0f, VCENTER | HCENTER, "Stage: %d", stage);
 
@@ -930,7 +969,7 @@ iImage** imgProcButtonBtn;
 iImage* imgInvenWeaponBtn;
 
 void drawPopProcButtonBefore(iPopup* me, iPoint p, float dt);
-
+#define ProcButton_NUM 2
 void createPopProcButton()
 {
 	int i, j;
@@ -941,70 +980,74 @@ void createPopProcButton()
 
 
 	//menu, inven
-	imgProcButtonBtn = (iImage**)malloc(sizeof(iImage*) * 2);
+	imgProcButtonBtn = (iImage**)malloc(sizeof(iImage*) * ProcButton_NUM);
 
-	iGraphics* g = iGraphics::instance();
-	setStringRGBA(0, 0, 0, 1);
-	setStringSize(30);
-	setStringBorder(0);
-	for (i = 0; i < 2; i++)
+
+	const char* strPath[ProcButton_NUM] = {
+		"assets/PlayerUI/MenuBtn.png",
+		"assets/PlayerUI/WeaponBtn.png",
+	};
+
+	iSize sizes[ProcButton_NUM] = {
+		{devSize.width * 0.2f, devSize.height * 0.067f},
+		{devSize.width * 0.1f, devSize.width * 0.1f},
+	};
+
+	iPoint imgPos[ProcButton_NUM] = {
+		{sizes[0].width * 0.1f, devSize.height - sizes[0].height * 1.5f},
+		{devSize.width - sizes[1].width, devSize.height - sizes[1].height * 1.2f},
+	};
+
+	for (i = 0; i < ProcButton_NUM; i++)
 	{
 		img = new iImage();
 
 		for (j = 0; j < 2; j++)
 		{
+			size = sizes[i];
+			tex = createTexture(size.width, size.height);
+
+			fbo->bind(tex);
+			t = createImage(strPath[i]);
+			if (j == 0) setRGBA(1, 1, 1, 1);
+			else		setRGBA(0, 1, 0, 1);
+
 			if (i == 0)
 			{
-				size = iSizeMake(128, 64);
-				g->init(size);
-				if (j == 0) 	setRGBA(1, 1, 1, 1);
-				else 	setRGBA(0, 1, 0, 1);
-				g->fillRect(0, 0, size.width, size.height, 10);
-				g->drawString(size.width / 2.0f, size.height / 2.0f, VCENTER | HCENTER, "menu");
-
-				tex = g->getTexture();
-				img->addObject(tex);
-				freeImage(tex);
-
-				img->position = iPointMake(devSize.width / 2.0f, devSize.height - size.height - 32);
+				drawImage(t, 0, size.height / 2.0f,
+					t->width * 0.5f, 0, t->width, t->height,
+					VCENTER | LEFT, size.width / (t->width * 0.5f), size.height / t->height, 
+					2, 0, REVERSE_HEIGHT);
 			}
-			else if (i == 1)
-			{
-				size = iSizeMake(128, 128);
-				tex = createTexture(size.width, size.height);
-
-				fbo->bind(tex);
-				if (j == 0) setRGBA(1, 1, 1, 1);
-				else		setRGBA(0, 1, 0, 1);
-				t = createImage("assets/menu/selectButton1.png");
+			else
 				DRAWIMAGE(t, size);
-				freeImage(t);
-				fbo->unbind();
+			freeImage(t);
+			fbo->unbind();
 
-				img->addObject(tex);
-				freeImage(tex);
-
-				img->position = iPointMake(devSize.width - size.width - 32, devSize.height - size.height - 32);
-			}
+			img->addObject(tex);
+			freeImage(tex);
 		}
 
+		img->position = imgPos[i];
 		imgProcButtonBtn[i] = img;
 		pop->addObject(img);
 	}
 	setRGBA(1, 1, 1, 1);
 
 	img = new iImage();
-	size = iSizeMake(100, 100);
+	size = sizes[1] * 0.7f;
 	tex = createTexture(size.width, size.height);
+
 	fbo->bind(tex);
 	Weapon* w = (Weapon*)player->arrayWeapon->objectAtIndex(player->currWeaponIndex());
 	t = w->img->tex;
 	DRAWIMAGE(t, size);
 	fbo->unbind();
+
 	img->addObject(tex);
 	freeImage(tex);
 	
-	img->position = iPointMake(devSize.width - size.width - 42, devSize.height - size.height - 42);
+	img->position = imgPos[1] + iPointMake(sizes[1].width * 0.15f, sizes[1].height * 0.15f);
 	imgInvenWeaponBtn = img;
 	pop->addObject(img);
 
@@ -1025,9 +1068,10 @@ void showPopProcButton(bool show)
 
 void drawPopProcButtonBefore(iPopup* me, iPoint p, float dt)
 {
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < ProcButton_NUM; i++)
 		imgProcButtonBtn[i]->setTexAtIndex(i == popProcButton->selected);
 
+#if 0
 	Weapon* w = (Weapon*)player->arrayWeapon->objectAtIndex(player->currWeaponIndex());
 	Texture* t = w->img->tex;
 	iSize size = iSizeMake(100, 100);
@@ -1040,6 +1084,7 @@ void drawPopProcButtonBefore(iPopup* me, iPoint p, float dt)
 		VCENTER | HCENTER, r, r,
 		2, 0, REVERSE_HEIGHT);
 	fbo->unbind();
+#endif
 }
 
 void drawPopProcButton(float dt)
@@ -1080,7 +1125,7 @@ bool keyPopProcButton(iKeyState stat, iPoint point)
 	}
 	case iKeyStateMoved:
 	{
-		for (i = 0; i < 2; i++)
+		for (i = 0; i < ProcButton_NUM; i++)
 		{
 			if (containPoint(point, imgProcButtonBtn[i]->touchRect(popProcButton->closePosition)))
 			{
@@ -1273,7 +1318,6 @@ iPopup* popInven;
 iImage** imgInvenBtn;
 iImage** imgInveWeapon;
 
-
 void drawPopInvenBefore(iPopup* me, iPoint p, float dt);
 
 void createPopInven()
@@ -1287,76 +1331,11 @@ void createPopInven()
 	imgInvenBtn = (iImage**)malloc(sizeof(iImage*) * 8);
 	imgInveWeapon = (iImage**)malloc(sizeof(iImage*) * 8);
 
+	// 키를 누르면 오른쪽에서 왼쪽으로 열리면서 팝업이 띄워짐
+	// 현재 무기가 바뀌거나 버려졌을때 새로 이미지를 그림
+	// 
 
-	img = new iImage();
-	iSize frameSize = iSizeMake(devSize.width / 2.0f, devSize.height / 2.0f);
-	tex = createTexture(frameSize.width, frameSize.height);
-	iGraphics* g = iGraphics::instance();
-	g->init(frameSize);
-	setRGBA(0, 0, 0, 1);
-	g->fillRect(0, 0, frameSize.width, frameSize.height);
-	setStringSize(40);
-	setStringRGBA(1, 1, 1, 1);
-	setStringBorder(0);
-	g->drawString(frameSize.width / 2.0f, 50, VCENTER | HCENTER, "Inventory");
-	setRGBA(1, 1, 1, 1);
-	text = g->getTexture();
 
-	fbo->bind(tex);
-	fbo->clear(0, 0.5f, 0.2f, 1);
-	drawImage(text, 0, 0,
-		0,0, text->width,text->height,
-		TOP|LEFT,1.0f,1.0f,
-		2, 0, REVERSE_HEIGHT);
-	freeImage(text);
-	fbo->unbind();
-
-	img->addObject(tex);
-	freeImage(tex);
-	pop->addObject(img);
-
-	size = frameSize * 0.2f;
-	for (i = 0; i < 8; i++)
-	{
-		img = new iImage();
-		for (j = 0; j < 2; j++)
-		{
-			tex = createTexture(size.width, size.height);
-
-			fbo->bind(tex);
-			if (j == 0) setRGBA(0.5f, 0.2f, 0.1f, 1);
-			else setRGBA(0, 1, 0, 1);
-			fillRect(0, 0, size.width, size.height);
-			fbo->unbind();
-
-			img->addObject(tex);
-			freeImage(tex);
-		}
-		iPoint p = iPointMake(size.width * 0.05 + size.width * 1.05f * (i % 4),
-			size.height * 2.0f + size.height * 1.1f * (i / 4));
-		img->position = p;
-		imgInvenBtn[i] = img;
-		pop->addObject(img);
-
-		img = new iImage();
-		tex = createTexture(size.width * 0.8f, size.height * 0.8f);
-		
-		fbo->bind(tex); // 무기이미지
-		setRGBA(1, 0.5f, 0.2f, 1);
-		fillRect(0, 0, size.width, size.height);
-		fbo->unbind();
-
-		img->addObject(tex);
-		freeImage(tex);
-
-		img->position = p + iPointMake(size.width * 0.1f, size.height * 0.1f);
-		imgInveWeapon[i] = img;
-		pop->addObject(img);
-	}
-	setRGBA(1, 1, 1, 1);
-
-	pop->openPosition =
-	pop->closePosition = iPointMake((devSize.width - frameSize.width) / 2.0f, (devSize.height - frameSize.height) / 2.0f);
 	pop->methodDrawBefore = drawPopInvenBefore;
 	popInven = pop;
 }
@@ -1374,36 +1353,7 @@ void showPopInven(bool show)
 
 void drawPopInvenBefore(iPopup* me, iPoint p, float dt)
 {
-	int i;
-	Texture* tex, *t;
-	iSize size;
-	for (i = 0; i < 8; i++)
-		imgInvenBtn[i]->setTexAtIndex(i == popInven->selected);
 
-	for (i = 0; i < 8; i++)
-	{
-		tex = imgInveWeapon[i]->tex;
-		size = iSizeMake(tex->width, tex->height);
-		fbo->bind(tex);
-		fbo->clear(0, 0, 0, 0);
-		if (i < player->arrayWeapon->count)
-		{
-			Weapon* w = (Weapon*)player->arrayWeapon->objectAtIndex(i);
-			t = w->img->tex;
-			float r = min(size.width / t->width, size.height / t->height);
-			drawImage(t, size.width / 2.0f, size.height / 2.0f,
-				0, 0, t->width, t->height,
-				VCENTER | HCENTER, r, r,
-				2, 0, REVERSE_HEIGHT);
-		}
-		else
-		{
-			setRGBA(1, 0.5f, 0.2f, 1);
-			fillRect(0, 0, size.width, size.height);
-		}
-		fbo->unbind();
-	}
-	setRGBA(1, 1, 1, 1);
 }
 
 void drawPopInven(float dt)
@@ -1432,11 +1382,7 @@ bool keyPopInven(iKeyState stat, iPoint point)
 			break;
 		}
 
-		if (i < player->arrayWeapon->count)
-		{
-			player->selectWeapon(i);
-			showPopInven(false);
-		}
+
 		popInven->selected = -1;
 		audioPlay(AUDIO_MenuSelected);
 		return true;
@@ -1476,70 +1422,65 @@ iPopup* popProcMenu;
 iImage** imgProcMenu;
 
 void drawPopProcMenuBefore(iPopup* me, iPoint p, float dt);
-
+#define ProcMenuBtn_NUM 4
 void createPopProcMenu()
 {
 	int i, j;
 	iImage* img;
-	Texture* tex;
-	iPopup* pop = new iPopup(iPopupStyleMove);
+	Texture* tex, *t;
+	iPopup* pop = new iPopup(iPopupStyleZoom);
 	iSize size;
-	imgProcMenu = (iImage**)malloc(sizeof(iImage*) * 3);
+
 
 	img = new iImage();
-	iSize frameSize = iSizeMake(160, 250);
+	iSize frameSize = iSizeMake(devSize.width * 0.4f, devSize.height * 0.7f);
 	tex = createTexture(frameSize.width, frameSize.height);
 
 	fbo->bind(tex);
-	fbo->clear(1, 1, 1, 1);
+	t = createImage("assets/menu/Menu panel.png");
+	DRAWIMAGE(t, frameSize);
+	freeImage(t);
 	fbo->unbind();
 
 	img->addObject(tex);
 	freeImage(tex);
 	pop->addObject(img);
-	
 
-	iGraphics* g = iGraphics::instance();
-	size = iSizeMake(128, 64);
-	const char* strBtn[3] = {
-		"Resume", "Option", "Exit",
+	imgProcMenu = (iImage**)malloc(sizeof(iImage*) * ProcMenuBtn_NUM);
+	const char* strPath[ProcMenuBtn_NUM] = {
+		"assets/menu/New game Button%d.png",
+		"assets/menu/Continue Button%d.png",
+		"assets/menu/Settings Button%d.png",
+		"assets/menu/Quit Button%d.png",
 	};
 
-	setStringSize(30);
-	setStringBorder(0);
-	for (i = 0; i < 3; i++)
+	size = iSizeMake(frameSize.width * 0.8f ,frameSize.height * 0.15f);
+	for (i = 0; i < ProcMenuBtn_NUM; i++)
 	{
 		img = new iImage();
+		
 		for (j = 0; j < 2; j++)
 		{
-			g->init(size);
+			tex = createTexture(size.width, size.height);
+			fbo->bind(tex);
+			t = createImage(strPath[i], j);
+			DRAWIMAGE(t, size);
+			freeImage(t);
+			fbo->unbind();
 
-			if (j == 0)
-			{
-				setRGBA(0, 0, 0, 1);
-				setStringRGBA(1, 1, 1, 1);
-			}
-			else
-			{
-				setRGBA(0, 0.5f, 0, 1);
-				setStringRGBA(0, 0, 0, 1);
-			}
-			g->fillRect(0, 0, size.width, size.height, 5);
-			g->drawString(size.width / 2.0f, size.height / 2.0f, VCENTER | HCENTER, strBtn[i]);
-
-			tex = g->getTexture();
 			img->addObject(tex);
 			freeImage(tex);
 		}
 
-		img->position = iPointMake((frameSize.width-size.width) * 0.5f, frameSize.height * 0.1f + (size.height + 10) * i);
+		img->position = iPointMake(frameSize.width * 0.1f, size.height * 1.5f + size.height * 1.1f * i);
 		imgProcMenu[i] = img;
 		pop->addObject(img);
 	}
-	setRGBA(1, 1, 1, 1);
+	
 
-	pop->openPosition = iPointMake((devSize.width - size.width) / 2.0f, -300);
-	pop->closePosition = iPointMake((devSize.width - size.width) / 2.0f, devSize.height / 2.0f - 100);
+	//pop->openPosition = iPointMake((devSize.width - frameSize.width) / 2.0f, -frameSize.height);
+	pop->openPosition = imgProcButtonBtn[0]->position;
+	pop->closePosition = iPointMake((devSize.width - frameSize.width) / 2.0f, (devSize.height - frameSize.height) / 2.0f);
 	pop->methodDrawBefore = drawPopProcMenuBefore;
 	popProcMenu = pop;
 }
@@ -1557,7 +1498,7 @@ void showPopProcMenu(bool show)
 
 void drawPopProcMenuBefore(iPopup* me, iPoint p, float dt)
 {
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < ProcMenuBtn_NUM; i++)
 		imgProcMenu[i]->setTexAtIndex(i == popProcMenu->selected);
 }
 
@@ -1588,15 +1529,22 @@ bool keyPopProcMenu(iKeyState stat, iPoint point)
 
 		if (i == 0)
 		{
+			// new Game
+			isNewGame = true;
+			setLoading(gamestat_proc, freeProc, loadProc);
+
+		}
+		else if (i == 1)
+		{
 			// 재개
 			showPopProcMenu(false);
 		}
-		else if (i == 1)
+		else if (i == 2)
 		{
 			// 옵션
 			showPopOption(true);
 		}
-		else if (i == 2)
+		else if (i == 3)
 		{
 			//나가기
 			setLoading(gamestat_intro, freeProc, loadIntro);
@@ -1607,7 +1555,7 @@ bool keyPopProcMenu(iKeyState stat, iPoint point)
 	}
 	case iKeyStateMoved:
 	{
-		for (i = 0; i < 3; i++)
+		for (i = 0; i < ProcMenuBtn_NUM; i++)
 		{
 			if (containPoint(point, imgProcMenu[i]->touchRect(popProcMenu->closePosition)))
 			{

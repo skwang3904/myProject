@@ -102,6 +102,7 @@ public:
 
 	float moveSpeed;
 };
+extern Object** objects;
 
 //----------------------------------------------------------------------------
 // Pop Option

@@ -833,6 +833,21 @@ void freeMonster()
 
 void drawMonster(float dt)
 {
+#if SORTING
+	for (int i = 0; i < monsterNum; i++)
+	{
+		Monster* m = monster[i];
+		if (m->alive == false)
+		{ // death
+			monsterNum--;
+			monster[i] = monster[monsterNum];
+			i--;
+			continue;
+		}
+		objects[procSort->sdNum] = m;
+		procSort->add(m->position.y + m->img->tex->height/2.0f);
+	}
+#else
 	for (int i = 0; i < monsterNum; i++)
 	{
 		Monster* m = monster[i];
@@ -845,6 +860,7 @@ void drawMonster(float dt)
 			i--;
 		}
 	}
+#endif
 }
 
 //---------------------------------------------------------------------------------------

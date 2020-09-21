@@ -1,8 +1,9 @@
 #include "Item.h"
 
+#include "Proc.h"
+#include "ProcData.h"
 #include "Tile.h"
 #include "Map.h"
-#include "ProcData.h"
 #include "PlayerChar.h"
 #include "Monster.h"
 
@@ -199,8 +200,22 @@ void freeItem()
 
 void drawItem(float dt)
 {
-	int i;
-	for (i = 0; i < itemNum; i++)
+#if SORTING
+	for (int i = 0; i < itemNum; i++)
+	{
+		Item* it = item[i];
+		if (it->alive == false)
+		{
+			itemNum--;
+			item[i] = item[itemNum];
+			i--;
+			continue;
+		}
+		objects[procSort->sdNum] = it;
+		procSort->add(it->position.y + it->img->tex->height);
+	}
+#else
+	for (int i = 0; i < itemNum; i++)
 	{
 		Item* it = item[i];
 		it->paint(dt, DRAW_OFF);
@@ -212,6 +227,7 @@ void drawItem(float dt)
 			i--;
 		}
 	}
+#endif
 }
 
 //-----------------------------------------------------------

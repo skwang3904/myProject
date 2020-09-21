@@ -8,7 +8,6 @@
 
 void loadGame()
 {
-
 	//--------------------------------------------------------
 	// sound // itunes로 변환해서 사용
 	AudioInfo ai[11] = {
@@ -32,7 +31,7 @@ void loadGame()
 
 	loadAudio(ai, 11);
 
-#if 1
+#if 0
 	loadIntro();
 	gamestat = gamestat_intro;
 	audioPlay(AUDIO_INTRO);
@@ -43,6 +42,7 @@ void loadGame()
 #endif
 
 	createPopOption();
+	loadGameLoading();
 }
 
 void freeGame()
@@ -56,6 +56,7 @@ void freeGame()
 	freeAudio();
 
 	freePopOption();
+	freeGameLoading();
 }
 
 void drawGame(float dt)

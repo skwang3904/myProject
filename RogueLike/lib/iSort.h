@@ -23,5 +23,5 @@ public:
 	int sdNum;
 };
 
-#define _sdNum 200
+#define _sdNum 300
 

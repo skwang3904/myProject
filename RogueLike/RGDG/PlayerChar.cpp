@@ -8,7 +8,6 @@
 
 #include "Projectile.h"
 
-
 PlayerChar* player = NULL;
 PlayerChar::PlayerChar(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos)
 {
@@ -249,8 +248,10 @@ void PlayerChar::drawShadow(float dt, iPoint off)
 void PlayerChar::action(Object* obj)
 {
 	hp -= obj->attackPoint;
+#if 0	// game over
 	if (hp <= 0.0f)
 		showPopGameOver(true);
+#endif
 }
 
 void PlayerChar::setNewStage(int index, int8 mapNum, iPoint pos)
@@ -286,6 +287,19 @@ void PlayerChar::removeWeapon(int index)
 void PlayerChar::selectWeapon(int index)
 {
 	arrayWeapon->objectAtIndex(index);
+
+	Weapon* w = (Weapon*)player->arrayWeapon->objectAtIndex(player->currWeaponIndex());
+	Texture* t = w->img->tex;
+	iSize size = iSizeMake(imgProcButtonBtn[1]->tex->width * 0.7f, imgProcButtonBtn[1]->tex->height * 0.7f);
+	float r = min(size.width / t->width, size.height / t->height);
+
+	fbo->bind(imgInvenWeaponBtn->tex);
+	fbo->clear(0, 0, 0, 0);
+	drawImage(t, size.width / 2.0f, size.height / 2.0f,
+		0, 0, t->width, t->height,
+		VCENTER | HCENTER, r, r,
+		2, 0, REVERSE_HEIGHT);
+	fbo->unbind();
 }
 
 int PlayerChar::currWeaponIndex()
@@ -322,5 +336,10 @@ void freePlayerChar()
 
 void drawPlayerChar(float dt)
 {
+#if SORTING
+	objects[procSort->sdNum] = player;
+	procSort->add(player->position.y + player->img->tex->height);
+#else
 	player->paint(dt, DRAW_OFF);
+#endif
 }

@@ -940,12 +940,19 @@ void drawMap(float dt)
 	}
 	setRGBA(1, 1, 1, 1);
 
+#if SORTING
+	for (i = 0; i < mapObjNum; i++)
+	{
+		MapObject* mo = mapObj[i];
+		objects[procSort->sdNum] = mo;
+		procSort->add(mo->position.y);
+	}
+#else
 	for (i = 0; i < mapObjNum; i++)
 	{
 		MapObject* mo = mapObj[i];
 		if (mo->mapNumber == player->mapNumber)
 			mo->paint(dt, DRAW_OFF);
-
 #if 0 // 아직 alive 사용안함
 		if (mo->alive == false)
 		{
@@ -955,6 +962,7 @@ void drawMap(float dt)
 		}
 #endif
 	}
+#endif
 }
 
 iImage** imgMaps = NULL;

@@ -176,16 +176,16 @@ void* rgArray::objectAtIndex(int index)
 	if (count == 1)
 		return curr->data;
 
-	int ind = index;
-	if (ind < 0)
-		ind = count - 1;
-	else if (ind > count - 1)
-		ind = 0;
+	if (index < 0 || index > count - 1)
+	{
+		printf("weapon index range error\n");
+		return;
+	}
 
 	rgxArray* a = head->next;
 	for (int i = 0; i < count; i++)
 	{
-		if (i == ind)
+		if (i == index)
 		{
 			currIndex = i;
 			//curr = a;

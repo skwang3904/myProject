@@ -96,8 +96,13 @@ void drawProc(float dt)
 	drawItem(pass_dt);
 #if SORTING
 	procSort->update();
-	for(int i=0; i<procSort->sdNum;i++)
-		objects[procSort->get(i)]->paint(dt, DRAW_OFF);
+	for (int i = 0; i < procSort->sdNum; i++)
+	{
+		Object* obj = objects[procSort->get(i)];
+		if(obj->mapNumber == player->mapNumber)
+			obj->paint(dt, DRAW_OFF);
+	}
+
 #endif
 	drawProjectile(pass_dt);
 
@@ -768,12 +773,17 @@ bool keyPopStageNum(iKeyState stat, iPoint point)
 //-----------------------------------------------------------
 // UI
 iPopup* popState;
-iStrTex* stState;
-iStrTex* stDisplayStageNum;
+iImage** imgHpBar;
 
-iImage** imgState;
+iStrTex* stState;
 Texture* methodStState(const char* str);
+iStrTex* stCoin;
+Texture* methodStCoin(const char* str);
+iStrTex* stGem;
+Texture* methodStGem(const char* str);
+iStrTex* stDisplayStageNum;
 Texture* methodStDisplayStageNum(const char* str);
+
 
 void createPopState()
 {
@@ -782,15 +792,18 @@ void createPopState()
 	Texture* tex, *t;
 	iPopup* pop = new iPopup(iPopupStyleNone);
 	iSize size;
+	iStrTex* st;
 
-	const char* strIcon[2] = {
+	const char* strIcon[4] = {
 		"assets/PlayerUI/heart.png",
 		"assets/PlayerUI/tmp.png",
+		"assets/PlayerUI/icon_coin.png",
+		"assets/PlayerUI/Icon_gem.png",
 	};
 
 	iPoint p = iPointMake(devSize.width * 0.025f, devSize.height * 0.025f);
 	size = iSizeMake(devSize.width * 0.05f, devSize.width * 0.05f);
-	for (i = 0; i < 2; i++) // icon
+	for (i = 0; i < 4; i++) // icon
 	{
 		img = new iImage();
 		tex = createTexture(size.width, size.height);
@@ -809,10 +822,38 @@ void createPopState()
 		pop->addObject(img);
 	}
 
+	for (i = 0; i < 2; i++)
+	{
+		img = new iImage();
+		if (i == 0)
+		{
+			st = new iStrTex(methodStCoin);
+			stCoin = st;
+		}
+		else
+		{
+			st = new iStrTex(methodStGem);
+			stGem = st;
+		}
+
+		st->setString("%d", 0);
+		img->addObject(st->tex);
+		img->position = iPointMake(p.x + devSize.width * 0.07f, p.y + size.height * 1.2f * (2 + i));
+		pop->addObject(img);
+	}
+
+	imgHpBar = (iImage**)malloc(sizeof(iImage*) * 2);
+	const char* strBar[2] = {
+		"assets/PlayerUI/Bar_heart.png",
+		"assets/PlayerUI/Bar_tmp.png",
+	};
+
 	p = iPointMake(p.x * 3.0f, p.y * 2.0f);
 	size = iSizeMake(size.width * 4, size.height * 0.5f);
 	for (i = 0; i < 2; i++) // bar
 	{
+		iPoint barPos = iPointMake(p.x, p.y + size.height * 2.0f * 1.1f * i);
+
 		img = new iImage();
 		tex = createTexture(size.width, size.height);
 
@@ -824,18 +865,9 @@ void createPopState()
 
 		img->addObject(tex);
 		freeImage(tex);
-		img->position = iPointMake(p.x, p.y + size.height * 2.0f * 1.1f * i);
+		img->position = barPos;
 		pop->addObject(img);
-	}
-	
-	imgState = (iImage**)malloc(sizeof(iImage*) * 2);
-	const char* strBar[2] = {
-		"assets/PlayerUI/Bar_heart.png",
-		"assets/PlayerUI/Bar_tmp.png",
-	};
 
-	for (i = 0; i < 2; i++)
-	{
 		img = new iImage();
 		tex = createTexture(size.width, size.height);
 
@@ -848,14 +880,15 @@ void createPopState()
 		img->addObject(tex);
 		freeImage(tex);
 
-		img->position = iPointMake(p.x, p.y + size.height * 2.0f * 1.1f * i);
-		imgState[i] = img;
+		img->position = barPos;
+		imgHpBar[i] = img;
 
 		pop->addObject(img);
 	}
-
+	
+	// hp : %d / %d
 	img = new iImage();
-	iStrTex* st = new iStrTex(methodStState);
+	st = new iStrTex(methodStState);
 	st->setString("%d\n%d", 0, 0);
 	img->addObject(st->tex);
 	img->position = iPointMake(p.x * 1.2f, p.y * 0.3f);
@@ -863,6 +896,7 @@ void createPopState()
 	pop->addObject(img);
 
 
+	// stageNum banner
 	img = new iImage();
 	size = iSizeMake(devSize.width * 0.2f, devSize.height * 0.04f);
 	p = iPointMake(devSize.width - size.width * 1.1f, size.height * 0.2f);
@@ -879,7 +913,6 @@ void createPopState()
 	img->position = p;
 	pop->addObject(img);
 
-
 	img = new iImage();
 	st = new iStrTex(methodStDisplayStageNum);
 	st->setString("%d", 0);
@@ -887,6 +920,7 @@ void createPopState()
 	img->position = p;
 	stDisplayStageNum = st;
 	pop->addObject(img);
+
 
 	popState = pop;
 }
@@ -914,9 +948,46 @@ Texture* methodStState(const char* str)
 	return g->getTexture();
 }
 
+Texture* methodStCoin(const char* str)
+{
+	int coin = atoi(str);
+
+	iGraphics* g = iGraphics::instance();
+	iSize size = iSizeMake(devSize.width * 0.05f, devSize.width * 0.025f);
+
+	g->init(size);
+	setRGBA(1, 1, 1, 1);
+	g->fillRect(0, 0, size.width, size.height, 5);
+
+	setStringRGBA(0, 0, 0, 1);
+	setStringSize(size.height * 0.7f);
+	setStringBorder(0);
+	g->drawString(size.width / 2.0f, size.height / 2.0f, VCENTER | HCENTER, "%d", coin);
+
+	return g->getTexture();
+}
+
+Texture* methodStGem(const char* str)
+{
+	int gem = atoi(str);
+	iGraphics* g = iGraphics::instance();
+	iSize size = iSizeMake(devSize.width * 0.05f, devSize.width * 0.025f);
+
+	g->init(size);
+	setRGBA(1, 1, 1, 1);
+	g->fillRect(0, 0, size.width, size.height, 5);
+
+	setStringRGBA(0, 0, 0, 1);
+	setStringSize(size.height * 0.7f);
+	setStringBorder(0);
+	g->drawString(size.width / 2.0f, size.height / 2.0f, VCENTER | HCENTER, "%d", gem);
+
+	return g->getTexture();
+}
+
 Texture* methodStDisplayStageNum(const char* str)
 {
-	int stage = atoi(str);
+	int stage = atoi(str) + 1;
 
 	iGraphics* g = iGraphics::instance();
 	iSize size = iSizeMake(devSize.width * 0.2f, devSize.height * 0.04f);
@@ -934,8 +1005,10 @@ void freePopState()
 {
 	delete popState;
 	delete stState;
+	delete stCoin;
+	delete stGem;
 	delete stDisplayStageNum;
-	free(imgState);
+	free(imgHpBar);
 }
 
 void showPopState(bool show)
@@ -948,12 +1021,14 @@ void drawPopState(float dt)
 	popState->paint(dt);
 
 #if 1
-	imgState[0]->texCoordx = player->hp / player->_hp;
-	imgState[1]->texCoordx = player->hp / player->_hp;
+	imgHpBar[0]->texCoordx = player->hp / player->_hp;
+	imgHpBar[1]->texCoordx = player->hp / player->_hp;
 #endif
 
 	stState->setString("%.0f\n%.0f", player->hp, player->_hp);
-	stDisplayStageNum->setString("%d", st->stageNum + 1);
+	stCoin->setString("%d", player->coin);
+	stGem->setString("%d", player->gem);
+	stDisplayStageNum->setString("%d", st->stageNum);
 }
 
 bool keyPopState(iKeyState stat, iPoint point)
@@ -965,8 +1040,6 @@ bool keyPopState(iKeyState stat, iPoint point)
 // ProcButton
 iPopup* popProcButton;
 iImage** imgProcButtonBtn;
-
-iImage* imgInvenWeaponBtn;
 
 void drawPopProcButtonBefore(iPopup* me, iPoint p, float dt);
 #define ProcButton_NUM 1
@@ -1030,23 +1103,6 @@ void createPopProcButton()
 		pop->addObject(img);
 	}
 	setRGBA(1, 1, 1, 1);
-
-	img = new iImage();
-	size = sizes[1] * 0.7f;
-	tex = createTexture(size.width, size.height);
-
-	fbo->bind(tex);
-	Weapon* w = (Weapon*)player->arrayWeapon->objectAtIndex(player->currWeaponIndex(), false);
-	t = w->img->tex;
-	DRAWIMAGE(t, size);
-	fbo->unbind();
-
-	img->addObject(tex);
-	freeImage(tex);
-	
-	img->position = imgPos[1] + iPointMake(sizes[1].width * 0.15f, sizes[1].height * 0.15f);
-	imgInvenWeaponBtn = img;
-	pop->addObject(img);
 
 	pop->methodDrawBefore = drawPopProcButtonBefore;
 	popProcButton = pop;
@@ -1142,7 +1198,7 @@ bool keyPopProcButton(iKeyState stat, iPoint point)
 	}
 	}
 
-	return true;
+	return false;
 }
 
 //-----------------------------------------------------------
@@ -1213,7 +1269,7 @@ void createPopMiniMap()
 	popMiniMap = pop;
 
 	const char* strState[2] = {
-		"Boss", "ItemBox"
+		"Boss", "Chest"
 	};
 	pop = new iPopup(iPopupStyleNone);
 	iGraphics* g = iGraphics::instance();
@@ -1344,8 +1400,13 @@ void createPopInven()
 
 			fbo->bind(tex);
 			t = createImage(strPath);
-			if (j == 0)setRGBA(1, 1, 1, 1);
-			else setRGBA(0, 1, 0, 1);
+			if (i == 0)
+				setRGBA(1, 0.7f, 0, 1);
+			else
+			{
+				if (j == 0)setRGBA(1, 1, 1, 1);
+				else setRGBA(0, 1, 0, 1);
+			}
 			DRAWIMAGE(t, size);
 			freeImage(t);
 			fbo->unbind();
@@ -1393,6 +1454,7 @@ void createPopInven()
 void freePopInven()
 {
 	delete popInven;
+	popInven = NULL;
 	free(imgInvenBtn);
 	free(imgInvenWeapon);
 }
@@ -1536,20 +1598,22 @@ bool keyPopInven(iKeyState stat, iPoint point)
 	}
 	case iKeyStateMoved:
 	{
-		for (i = 0; i < 8; i++)
+		if (invenOpen == false)
 		{
-			if (containPoint(point, imgInvenBtn[i]->touchRect(popInven->closePosition)))
+			for (i = 0; i < 8; i++)
 			{
-				j = i;
-				break;
+				if (containPoint(point, imgInvenBtn[i]->touchRect(popInven->closePosition)))
+				{
+					j = i;
+					break;
+				}
 			}
+
+			if (popInven->selected != j && j != -1)
+				audioPlay(AUDIO_MenuMouseOver);
+
+			popInven->selected = j;
 		}
-
-		if (popInven->selected != j && j != -1)
-			audioPlay(AUDIO_MenuMouseOver);
-
-		popInven->selected = j;
-
 		break;
 	}
 	case iKeyStateEnded:
@@ -1559,8 +1623,7 @@ bool keyPopInven(iKeyState stat, iPoint point)
 	}
 	}
 
-
-	return true;
+	return false;
 }
 
 //-----------------------------------------------------------
@@ -1585,7 +1648,9 @@ void createPopProcMenu()
 
 	fbo->bind(tex);
 	t = createImage("assets/menu/Menu panel.png");
+	setRGBA(1, 1, 1, 0.9f);
 	DRAWIMAGE(t, frameSize);
+	setRGBA(1, 1, 1, 1);
 	freeImage(t);
 	fbo->unbind();
 
@@ -1739,69 +1804,68 @@ void createPopGameOver()
 {
 	int i, j;
 	iImage* img;
-	Texture* tex;
-	iPopup* pop = new iPopup(iPopupStyleMove);
-	
-	img = new iImage();
-	iGraphics* g = iGraphics::instance();
+	Texture* tex, *t, *text;
+	iPopup* pop = new iPopup(iPopupStyleAlpha);
 	iSize size;
-	iSize frameSize = iSizeMake(512, 512);
-	g->init(frameSize);
 
-	setRGBA(0, 1, 0, 1);
-	g->fillRect(0, 0, frameSize.width, frameSize.height, 20);
-	setRGBA(1, 1, 1, 1);
-
-	setStringRGBA(0, 0, 0, 1);
-	setStringSize(40);
+	iSize frameSize = iSizeMake(devSize.width * 0.7f, devSize.height * 0.3f);
+	size = iSizeMake(frameSize.width, frameSize.height);
+	iGraphics* g = iGraphics::instance();
+	g->init(size);
+	setStringRGBA(1, 0, 0, 1);
+	setStringSize(size.height * 0.2f);
 	setStringBorder(0);
-	g->drawString(frameSize.width / 2.0f, 32, VCENTER | HCENTER, "Game Over");
+	g->drawString(size.width / 2.0f, size.height / 2.0f, VCENTER | HCENTER, "Game Over");
+	text = g->getTexture();
 
-	tex = g->getTexture();
+	img = new iImage();
+	size = frameSize;
+	tex = createTexture(size.width, size.height);
+	fbo->bind(tex);
+	t = createImage("assets/PlayerUI/gameOver/Logo.png");
+	DRAWIMAGE(t, size);
+	freeImage(t);
+	drawImage(text, size.width * 0.5f, size.height * 0.37f,
+		0, 0, text->width, text->height,
+		VCENTER | HCENTER, 1.0f, 1.0f,
+		2, 0, REVERSE_HEIGHT);
+	freeImage(text);
+	fbo->unbind();
+
 	img->addObject(tex);
 	freeImage(tex);
 	pop->addObject(img);
 
 
 	imgGameOverBtn = (iImage**)malloc(sizeof(iImage*) * 2);
+
 	const char* strBtn[2] = {
-		"Menu", "Exit"
+		"assets/PlayerUI/gameOver/New game Button%d.png",
+		"assets/PlayerUI/gameOver/Quit Button%d.png",
 	};
-	size = iSizeMake(312, 128);
+
+	size = iSizeMake(frameSize.width * 0.2f, frameSize.height * 0.2f);
 	for (i = 0; i < 2; i++)
 	{
 		img = new iImage();
 		for (j = 0; j < 2; j++)
 		{
-			g->init(size);
+			tex = createTexture(size.width, size.height);
+			fbo->bind(tex);
+			t = createImage(strBtn[i], j);
+			DRAWIMAGE(t, size);
+			freeImage(t);
+			fbo->unbind();
 
-			if (j == 0)
-			{
-				setRGBA(0, 0.5f, 0.5f, 1);
-				setStringRGBA(1, 1, 1, 1);
-			}
-			else
-			{
-				setRGBA(1, 1, 1, 1);
-				setStringRGBA(0, 0, 0, 1);
-			}
-			g->fillRect(0, 0, size.width, size.height, 5);
-			setRGBA(1, 1, 1, 1);
-
-			setStringSize(50);
-			setStringBorder(0);
-			g->drawString(size.width / 2.0f, size.height / 2.0f, VCENTER | HCENTER, strBtn[i]);
-
-			tex = g->getTexture();
 			img->addObject(tex);
 			freeImage(tex);
 		}
-		img->position = iPointMake((frameSize.width- size.width) * 0.5f, 80 + size.height * 1.2 * i);
+		img->position = iPointMake(frameSize.width * 0.25 + frameSize.width * 0.32f * i, frameSize.height * 0.85f);
 		imgGameOverBtn[i] = img;
 		pop->addObject(img);
 	}
 
-	pop->openPosition = iPointMake((devSize.width - frameSize.width) / 2.0f, -128);
+	pop->openPosition = 
 	pop->closePosition = iPointMake((devSize.width - frameSize.width) / 2.0f, (devSize.height - frameSize.height) / 2.0f);
 	pop->methodDrawBefore = drawPopGameOverBefore;
 	popGameOver = pop;
@@ -1826,6 +1890,15 @@ void drawPopGameOverBefore(iPopup* me, iPoint p, float dt)
 
 void drawPopGameOver(float dt)
 {
+	if (popGameOver->bShow)
+	{
+		float d = popGameOver->showDt / popGameOver->_showDt;
+		if (d > 1.0f)
+			d = 1.0f;
+		setRGBA(0, 0, 0, d);
+		fillRect(0, 0, devSize.width, devSize.height);
+		setRGBA(1, 1, 1, 1);
+	}
 	popGameOver->paint(dt);
 }
 
@@ -1852,15 +1925,16 @@ bool keyPopGameOver(iKeyState stat, iPoint point)
 		if (i == 0)
 		{
 			// main
-			showPopGameOver(false);
-			setLoading(gamestat_intro, freeProc, loadIntro);
+			//showPopGameOver(false);
+			setLoading(gamestat_proc, freeProc, loadProc);
 		}
 		else if (i == 1)
 		{
 			//exit
-			showPopGameOver(false);
-			runWnd = false;
+			//showPopGameOver(false);
+			setLoading(gamestat_intro, freeProc, loadIntro);
 		}
+
 		audioPlay(AUDIO_MenuSelected);
 		audioStop(AUDIO_GameMusic);
 		break;

@@ -121,9 +121,11 @@ void Item::action(Object* obj)
 	PlayerChar* p = player;
 	switch (index)
 	{
-	case 0:
-	case 1:
-	case 2: 
+	case 0:	p->coin += value;  break;
+	case 1: p->gem += value;   break;
+	case 2:
+	case 3:
+	case 4:
 	{
 		p->hp += value;
 		if (p->hp > 100.0f)
@@ -151,6 +153,59 @@ void Item::addItem(Object* obj, iPoint dropPos)
 	get = false;
 	actionDt = 0.0f;
 	dropPosition = position + dropPos;
+}
+
+//------------------------------------------------------------------
+
+void setItemDropPosition(int dropNum)
+{
+	float distance = -1.0f * ((float)dropNum / 2.0f) * ITEM_DROP_DISTANCE;
+	for (int i = 0; i < dropNum; i++)
+		itemDropPosition[i] = iPointMake(distance + ITEM_DROP_DISTANCE * i, 0);
+}
+
+void Item::dropMonsterItem(Monster* m)
+{
+	int i, j, num = m->itemDropNum;
+	setItemDropPosition(num);
+
+	int kind;
+	for (i = 0; i < num; i++)
+	{
+		kind = m->itemTypeKind[random() % m->itemTypeKindNum];
+		for (j = 0; j < ITEM_CREATE_NUM; j++)
+		{
+			Item* it = _item[kind][j];
+			if (it->alive == false)
+			{
+				it->addItem(m, itemDropPosition[i]);
+
+				item[itemNum] = it;
+				itemNum++;
+				break;
+			}
+		}
+	}
+}
+
+void Item::dropMapObjectItem(MapObject* mo)
+{
+	int i, j;
+	setItemDropPosition(1);
+
+	int kind = random() % item_max;
+	for (i = 0; i < ITEM_CREATE_NUM; i++)
+	{
+		Item* it = _item[kind][i];
+		if (it->alive == false)
+		{
+			it->addItem(mo, itemDropPosition[0]);
+
+			item[itemNum] = it;
+			itemNum++;
+			break;
+		}
+	}
 }
 
 //-----------------------------------------------------------
@@ -235,7 +290,8 @@ void drawItem(float dt)
 void createItemImage()
 {
 	int i, j, k;
-	Texture* tex;
+	Texture* tex, *t;
+	Texture** texs = NULL;
 	iImage* img;
 	iSize size;
 	imgItems = (iImage**)malloc(sizeof(iImage*) * item_max);
@@ -246,13 +302,17 @@ void createItemImage()
 
 		ItemImageInfo* iti = &itemImageInfo[i];
 		size = iti->size;
+		if (i == 0)
+			texs = createDivideImage(4, 1, iti->strPath);
+
 		for (j = 0; j < iti->imgNum; j++)
 		{
 			tex = createTexture(size.width, size.height);
 
 			fbo->bind(tex);
 			//Texture* t = createImage(iti->strPath, j);
-			Texture* t = createImage(iti->strPath);
+			if (i == 0)	t = texs[j];
+			else		t = createImage(iti->strPath);
 			DRAWIMAGE(t, size);
 			freeImage(t);
 			fbo->unbind();
@@ -260,10 +320,18 @@ void createItemImage()
 			img->addObject(tex);
 			freeImage(tex);
 		}
+		if (i == 0)
+		{
+			free(texs);
+			img->animation = true;
+		}
+		
 
 		img->_aniDt = iti->aniDt;
 		imgItems[i] = img;
+
 	}
+
 }
 
 void freeItemImage()
@@ -277,37 +345,3 @@ void freeItemImage()
 }
 
 //-----------------------------------------------------------
-
-void setItemDropPosition(int dropNum)
-{
-	float distance = -1.0f * ((float)dropNum / 2.0f) * ITEM_DROP_DISTANCE;
-	for (int i = 0; i < dropNum; i++)
-	{
-		itemDropPosition[i] = iPointMake(distance + ITEM_DROP_DISTANCE * i, 0);
-	}
-}
-
-void dropMonsterItem(Monster* m)
-{
-	int i, j, num = m->itemDropNum;
-	setItemDropPosition(num);
-
-	int kind;
-	for (i = 0; i < num; i++)
-	{
-		for (j = 0; j < ITEM_CREATE_NUM; j++)
-		{
-			kind = m->itemTypeKind[random() % m->itemTypeKindNum];
-			Item* it = _item[kind][j];
-			if (it->alive == false)
-			{
-				it->addItem(m, itemDropPosition[i]);
-
-				item[itemNum] = it;
-				itemNum++;
-				break;
-			}
-		}
-	}
-}
-

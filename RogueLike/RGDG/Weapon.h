@@ -42,7 +42,6 @@ public:
 	
 	iPoint drawPos;
 
-	iPoint rootPos;
 	float rootDt, _rootDt;
 };
 extern Weapon** weapon;

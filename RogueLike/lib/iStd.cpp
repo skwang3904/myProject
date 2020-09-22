@@ -182,7 +182,8 @@ static void keyLib(uint32& key, iKeyState stat, int c)
         case 'i': case 'I': key |= keyboard_i; break;
         case 'o': case 'O': key |= keyboard_o; break;
 		case 'j': case 'J': key |= keyboard_j; break;
-		case 'r': case 'R': key |= keyboard_r; break;
+        case 'r': case 'R': key |= keyboard_r; break;
+        case 'u': case 'U': key |= keyboard_u; break;
 		case VK_TAB:  key |= keyboard_tab; break;
         case VK_ESCAPE: key |= keyboard_escape; break;
         }
@@ -208,6 +209,7 @@ static void keyLib(uint32& key, iKeyState stat, int c)
         case 'o': case 'O': key &= ~keyboard_o; break;
 		case 'j': case 'J': key &= ~keyboard_j; break;
 		case 'r': case 'R': key &= ~keyboard_r; break;
+        case 'u': case 'U': key &= ~keyboard_u; break;
 		case VK_TAB: key &= ~keyboard_r; break;
         case VK_ESCAPE: key &= ~keyboard_escape; break;
         }

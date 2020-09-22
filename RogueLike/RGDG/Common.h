@@ -31,8 +31,7 @@
 #define WEAPON_IMG_COUNT 5
 
 /* Item */
-#define ITEM_KINDS 3
-#define ITEM_IMG_COUNT 3
+#define ITEM_KINDS 5
 
 //----------------------------------------------------------------------------
 // enum
@@ -66,6 +65,19 @@ enum WeaponType {
 
 	WT_max,
 };
+
+/* Item Type */
+enum ItemList
+{
+	item_Coin = 0,
+	item_gem,
+	item_PotionSmall,
+	item_PotionMiddle,
+	item_PotionLarge,
+
+	item_max
+};
+
 
 //----------------------------------------------------------------------------
 // class

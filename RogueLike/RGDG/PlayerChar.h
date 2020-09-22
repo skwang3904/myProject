@@ -45,6 +45,10 @@ public:
 	iPoint wpPosition;
 
 	rgArray* arrayWeapon;
+
+
+	int coin;
+	int gem;
 };
 extern PlayerChar* player;
 

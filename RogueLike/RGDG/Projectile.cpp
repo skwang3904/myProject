@@ -70,6 +70,9 @@ BowGunArrow::BowGunArrow(int index, int8 mapNum, iPoint pos) : Projectile(index,
 	img->angle = 0.0f;
 	img->anc = VCENTER | HCENTER;
 	this->img = img;
+
+	touchSize = iSizeMake(img->tex->width, img->tex->height);
+	touchRect = iRectMake(position - iPointMake(touchSize.width,touchSize.height), touchSize);
 }
 
 BowGunArrow::~BowGunArrow()
@@ -96,12 +99,25 @@ void BowGunArrow::paint(float dt, iPoint off)
 		return;
 	}
 
+	iSize size = touchSize;
+	if (vector.x != 0.0f)
+		size = iSizeMake(size.height, size.width);
+	
+	touchRect = iRectMake(position - iPointMake(size.width, size.height) * 0.5f, size);
+
+#if SHOW_TOUCHRECT
+	iRect rt = touchRect;
+	rt.origin += off;
+	setRGBA(0.5, 0.5, 0.5, 1);
+	fillRect(rt);
+	setRGBA(1, 1, 1, 1);
+#endif
 	for (int i = 0; i < monsterNum; i++)
 	{
 		Monster* m = monster[i];
 		if (mapNumber == m->mapNumber)
 		{
-			if (containPoint(position, m->touchRect))
+			if (containRect(touchRect, m->touchRect))
 			{
 				alive = false;
 				m->action(this);

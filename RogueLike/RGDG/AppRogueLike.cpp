@@ -173,14 +173,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_LBUTTONDOWN:
         cursor = convertCoordinate(LOWORD(lParam), HIWORD(lParam));
+        keyCursor(iKeyStateBegan);
         keyGame(iKeyStateBegan, cursor);
         break;
     case WM_MOUSEMOVE:
         cursor = convertCoordinate(LOWORD(lParam), HIWORD(lParam));
+        //keyCursor(iKeyStateMoved);
         keyGame(iKeyStateMoved, cursor);
         break;
     case WM_LBUTTONUP:
         cursor = convertCoordinate(LOWORD(lParam), HIWORD(lParam));
+        keyCursor(iKeyStateEnded);
         keyGame(iKeyStateEnded, cursor);
         break;
     case WM_SETCURSOR:
@@ -216,28 +219,57 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 // ------------------------------------
 // Cursor
 // ------------------------------------
-static Texture* texCursor;
+static iImage* imgCursor;
 iPoint cursor;
 static bool bCursor;
 
 void loadCursor()
 {
-    texCursor = createImage("assets/cursor.png");
+    iImage* img = new iImage();
+    Texture* tex, *t;
+
+    const char* strPath[2] = {
+        "assets/mouse_cursor_idle.png",
+        "assets/mouse_cursor_click.png",
+    };
+    iSize size = iSizeMake(96, 96);
+    for (int i = 0; i < 2; i++)
+    {
+        tex = createTexture(size.width, size.height);
+        fbo->bind(tex);
+        t = createImage(strPath[i]);
+        DRAWIMAGE(t, size);
+        freeImage(t);
+        fbo->unbind();
+
+        img->addObject(tex);
+        freeImage(tex);
+    }
+    imgCursor = img;
+
     cursor = iPointZero;
     bCursor = false;
 }
 
 void freeCursor()
 {
-    freeImage(texCursor);
+    delete imgCursor;
 }
 
 void drawCursor(float dt)
 {
     if (bCursor)
     {
-        drawImage(texCursor, cursor.x, cursor.y, TOP | LEFT);
+        drawImage(imgCursor->tex, cursor.x, cursor.y, TOP | LEFT);
     }
+}
+
+void keyCursor(iKeyState stat)
+{
+    if (stat == iKeyStateBegan)
+        imgCursor->setTexAtIndex(1);
+    else if (stat == iKeyStateEnded)
+        imgCursor->setTexAtIndex(0);
 }
 
 bool updateCursor(bool inClient)

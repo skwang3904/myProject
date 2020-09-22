@@ -100,4 +100,4 @@ struct ItemImageInfo
 	float aniDt;
 	iSize size;
 };
-extern ItemImageInfo itemImageInfo[ITEM_IMG_COUNT];
+extern ItemImageInfo itemImageInfo[ITEM_KINDS];

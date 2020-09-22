@@ -41,8 +41,9 @@ enum iKeyState {
 #define keyboard_j			128
 
 #define keyboard_r			256
-#define keyboard_tab		512
-#define keyboard_escape     1024
+#define keyboard_u          512
+#define keyboard_tab		1024
+#define keyboard_escape     2048
 
 struct Texture {
     uint32 texID;

@@ -110,8 +110,10 @@ PlayerChar::PlayerChar(int index, int8 mapNum, iPoint pos) : Object(index, mapNu
 	_attackSpeed = pd->_attackSpeed;
 	moveSpeed = pd->moveSpeed;
 
-
 	arrayWeapon = new rgArray();
+
+	coin = 0;
+	gem = 0;
 }
 
 PlayerChar::~PlayerChar()
@@ -216,15 +218,33 @@ void PlayerChar::paint(float dt, iPoint off)
 	if (state != player_jump)
 		imgs[headNum]->paint(dt, p + iPointMake(4, -img->tex->height / 1.8f));
 
+
 	// change weapon
+	int i;
 	if (getKeyDown(keyboard_i) && state < player_attack)
 	{
-		for (int i = 0; i < weaponNum; i++)
+		for (i = 0; i < weaponNum; i++)
 		{
 			if (weapon[i]->attacking)
 				return;
 		}
 		selectWeapon(arrayWeapon->currIndex - 1);
+	}
+
+	if (getKeyDown(keyboard_u) && state < player_attack)
+	{
+		for (int i = 0; i < weaponNum; i++)
+		{
+			Weapon* w = weapon[i];
+			if (w->get || w->rootDt < w->_rootDt)
+				continue;
+
+			if (containRect(touchRect, w->touchRect))
+			{
+				w->getWeapon();
+				break;
+			}
+		}
 	}
 
 #if SHOW_TOUCHRECT
@@ -238,8 +258,9 @@ void PlayerChar::paint(float dt, iPoint off)
 
 void PlayerChar::drawShadow(float dt, iPoint off)
 {
+	//
 	iSize size = iSizeMake(img->tex->width, img->tex->height);
-	iPoint p = position + iPointMake(size.width / 2.0f, size.height * 0.6f) + off;
+	iPoint p = position + iPointMake(size.width / 2.0f, size.height * 0.75f) + off;
 	setRGBA(0, 0, 0, 0.3f);
 	fillEllipse(p.x, p.y, size.width, size.height * 0.5f);
 	setRGBA(1, 1, 1, 1);
@@ -248,7 +269,7 @@ void PlayerChar::drawShadow(float dt, iPoint off)
 void PlayerChar::action(Object* obj)
 {
 	hp -= obj->attackPoint;
-#if 0	// game over
+#if 1	// game over
 	if (hp <= 0.0f)
 		showPopGameOver(true);
 #endif
@@ -292,20 +313,6 @@ void PlayerChar::selectWeapon(int index)
 {
 	arrayWeapon->objectAtIndex(index);
 
-#if 0
-	Weapon* w = (Weapon*)player->arrayWeapon->objectAtIndex(player->currWeaponIndex(), false);
-	Texture* t = w->img->tex;
-	iSize size = iSizeMake(imgProcButtonBtn[1]->tex->width * 0.7f, imgProcButtonBtn[1]->tex->height * 0.7f);
-	float r = min(size.width / t->width, size.height / t->height);
-
-	fbo->bind(imgInvenWeaponBtn->tex);
-	fbo->clear(0, 0, 0, 0);
-	drawImage(t, size.width / 2.0f, size.height / 2.0f,
-		0, 0, t->width, t->height,
-		VCENTER | HCENTER, r, r,
-		2, 0, REVERSE_HEIGHT);
-	fbo->unbind();
-#endif
 	drawPopInvenRefreshWeapon();
 }
 
@@ -345,7 +352,7 @@ void drawPlayerChar(float dt)
 {
 #if SORTING
 	objects[procSort->sdNum] = player;
-	procSort->add(player->position.y + player->img->tex->height);
+	procSort->add(player->position.y + player->img->tex->height * 0.75f);
 #else
 	player->paint(dt, DRAW_OFF);
 #endif

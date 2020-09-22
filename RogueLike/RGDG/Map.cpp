@@ -5,6 +5,7 @@
 #include "PlayerChar.h"
 #include "Monster.h"
 #include "Weapon.h"
+#include "Item.h"
 
 struct ConnectTile
 {
@@ -349,6 +350,7 @@ int mapObjBrokenNum;
 
 MapObject::MapObject(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos)
 {
+	method = NULL;
 	value = 0;
 
 	tileNumX = 0;
@@ -692,7 +694,6 @@ MapObjectBarrel::MapObjectBarrel(int index, int8 mapNum, iPoint pos, int tileNum
 	iImage* img;
 	Texture* tex, *t;
 	iSize size = iSizeMake(TILE_Width * tileNumX, TILE_Height * tileNumY);
-
 	if (imgMapObjBarrel == NULL)
 	{
 		imgMapObjBarrel = (iImage**)malloc(sizeof(iImage*) * 2);
@@ -703,33 +704,34 @@ MapObjectBarrel::MapObjectBarrel(int index, int8 mapNum, iPoint pos, int tileNum
 		};
 
 		setRGBA(1, 1, 1, 1);
+		iSize s = size * 1.5f;
+
 		for (i = 0; i < 2; i++)
 		{
 			img = new iImage();
 			for (j = 0; j < 2; j++)
 			{
-				tex = createTexture(size.width, size.height);
+				tex = createTexture(s.width, s.height);
 
 				fbo->bind(tex);
 				t = createImage(strPath[i], j);
-				DRAWIMAGE(t, size);
+				DRAWIMAGE(t, s);
 				freeImage(t);
 				fbo->unbind();
 
 				img->addObject(tex);
 				freeImage(tex);
 			}
-
+			img->position = iPointMake(size.width - s.width, size.height - s.height) * 0.5f;
 			imgMapObjBarrel[i] = img;
 		}
 	}
 
 	img = imgMapObjBarrel[random()%2]->copy();
-
-	//img->animation = true;
 	img->_aniDt = 1.0f;
 	this->img = img;
 
+	alive = true;
 	touchRect = iRectMake(position, size);
 }
 
@@ -748,15 +750,33 @@ MapObjectBarrel::~MapObjectBarrel()
 
 void MapObjectBarrel::paint(float dt, iPoint off)
 {
+	drawShadow(dt, off);
+
 	img->paint(dt, position + off);
 }
 
 void MapObjectBarrel::drawShadow(float dt, iPoint off)
 {
+	iSize size = iSizeMake(img->tex->width, img->tex->height);
+	iPoint p = position + iPointMake(size.width * 0.33f, size.height * 0.67f) + off;
+	setRGBA(0, 0, 0, 0.3f);
+	fillEllipse(p.x, p.y, size.width * 0.75f, size.height * 0.3f);
+	setRGBA(1, 1, 1, 1);
 }
 
 void MapObjectBarrel::action(Object* obj)
 {
+	if (alive == false)
+		return;
+
+	alive = false;
+	img->setTexAtIndex(1);
+
+	int num = tileNumX * tileNumY;
+	for (int i = 0; i < num; i++)
+		maps[mapNumber]->tile[tileNumber[i]] = 01;
+
+	Item::dropMapObjectItem(this);
 }
 
 //----------------------------------------------------------------------------------
@@ -815,7 +835,10 @@ MapObjectItemBox::MapObjectItemBox(int index, int8 mapNum, iPoint pos, int tileN
 	img = imgMapObjItemBox->copy();
 	img->lastFrame = true;
 	img->_repeatNum = 1;
+	img->_aniDt = 1.0f;
 	this->img = img;
+
+	alive = true;
 
 	touchRect = iRectMake(position, size);
 }
@@ -831,27 +854,54 @@ MapObjectItemBox::~MapObjectItemBox()
 	}
 }
 
+void rootWeaponFromItemBox(MapObject* mo, float dt)
+{
+	while (1)
+	{
+		int n = random() % weaponNum;
+		if (weapon[n]->index == -1)
+		{
+			mo->alive = false;
+			weapon[n]->rootWeapon(mo->position + iPointMake(mo->img->tex->width / 2.0f, mo->img->tex->height));
+			break;
+		}
+	}
+
+	mo->method = NULL;
+}
+
 void MapObjectItemBox::paint(float dt, iPoint off)
 {
+	drawShadow(dt, off);
+
 	img->paint(dt, position + off);
+
+	if (method)
+	{
+		if (img->animation == false)
+		{
+			method(this, dt);
+		}
+	}
 }
 
 void MapObjectItemBox::drawShadow(float dt, iPoint off)
 {
+	iSize size = iSizeMake(img->tex->width, img->tex->height);
+	iPoint p = position + iPointMake(size.width / 2.0f, size.height * 0.75f) + off;
+	setRGBA(0, 0, 0, 0.3f);
+	fillEllipse(p.x, p.y, size.width, size.height * 0.5f);
+	setRGBA(1, 1, 1, 1);
 }
 
 void MapObjectItemBox::action(Object* obj)
 {
+	if (alive == false)
+		return;
+
 	img->startAnimation();
 	
-	for (int i = 0; i < weaponNum; i++)
-	{
-		if (weapon[i]->index == -1)
-		{
-			weapon[i]->rootWeapon(position + iPointMake(img->tex->width / 2.0f, img->tex->height));
-			break;
-		}
-	}
+	method = rootWeaponFromItemBox;
 }
 
 
@@ -940,12 +990,16 @@ void drawMap(float dt)
 	}
 	setRGBA(1, 1, 1, 1);
 
+	mapObjNextDoor->paint(dt, DRAW_OFF);
+
 #if SORTING
 	for (i = 0; i < mapObjNum; i++)
 	{
 		MapObject* mo = mapObj[i];
+		if (mo == mapObjNextDoor) 
+			continue;
 		objects[procSort->sdNum] = mo;
-		procSort->add(mo->position.y);
+		procSort->add(mo->position.y + mo->img->tex->height + mo->img->position.y);
 	}
 #else
 	for (i = 0; i < mapObjNum; i++)

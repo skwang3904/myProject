@@ -23,7 +23,6 @@ Weapon::Weapon(int index, int8 mapNum, iPoint pos) : Object(index, mapNum, pos)
 
 	drawPos = iPointZero;
 
-	rootPos = iPointZero;
 	rootDt =
 	_rootDt = 2.0f;
 }
@@ -39,7 +38,7 @@ void Weapon::paint(float dt, iPoint off)
 	if (mapNumber != player->mapNumber)
 		return;
 #endif
-
+	iPoint p = position;
 	if (get)
 	{
 		if (index == player->currWeaponIndex())
@@ -65,12 +64,7 @@ void Weapon::paint(float dt, iPoint off)
 			if (rootDt > _rootDt)
 				rootDt = _rootDt;
 			float d = rootDt / _rootDt;
-			position.y = rootPos.y - _sin(180 * d) * 100;
-		}
-		else if (rootDt == _rootDt)
-		{
-			if (getKeyDown(keyboard_i))
-				getWeapon();
+			p.y = position.y - _sin(180 * d) * 100;
 		}
 
 #if SHOW_TOUCHRECT
@@ -82,7 +76,7 @@ void Weapon::paint(float dt, iPoint off)
 #endif
 	}
 
-	img->paint(dt, position + drawPos + off);
+	img->paint(dt, p + drawPos + off);
 }
 
 void Weapon::drawShadow(float dt, iPoint off)
@@ -149,12 +143,9 @@ void Weapon::getWeapon()
 	if (w->attacking)
 		return;
 
-	if (containRect(touchRect, player->touchRect))
-	{
-		get = true;
-		player->addWeapon(this);
-		index = player->currWeaponIndex();
-	}
+	get = true;
+	player->addWeapon(this);
+	index = player->currWeaponIndex();
 }
 
 void Weapon::addThisWeapon()
@@ -193,7 +184,6 @@ void Weapon::rootWeapon(iPoint pos)
 {
 	// drop test
 	position = pos;
-	rootPos = pos;
 	float w = img->tex->width;
 	float h = img->tex->height;
 	touchRect = iRectMake(position.x - w / 2.0f, position.y - h / 2.0f, w, h);
@@ -1044,8 +1034,10 @@ void drawWeapon(float dt)
 	for (int i = 0; i < weaponNum; i++)
 	{
 		Weapon* w = weapon[i];
+		if(w->get)
+			w->mapNumber = player->mapNumber;
 		objects[procSort->sdNum] = w;
-		procSort->add(w->position.y);
+		procSort->add(player->position.y + player->img->tex->height * 0.75f + w->vector.y);
 	}
 #else
 	for (int i = 0; i < weaponNum; i++)

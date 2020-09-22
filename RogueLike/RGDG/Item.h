@@ -6,15 +6,8 @@
 
 #define ITEM_CREATE_NUM 20
 
-enum ItemList
-{
-	item_PotionSmall = 0,
-	item_PotionMiddle,
-	item_PotionLarge,
-
-	item_max
-};
-
+class Monster;
+class MapObject;
 class Item : public Object
 {
 public:
@@ -28,6 +21,8 @@ public:
 
 	void addItem(Object* obj, iPoint dropPos);
 
+	static void dropMonsterItem(Monster* m);
+	static void dropMapObjectItem(MapObject* mo);
 public:
 	bool get;
 	float value;
@@ -43,6 +38,3 @@ extern int itemNum;
 void loadItem();
 void freeItem();
 void drawItem(float dt);
-
-class Monster;
-void dropMonsterItem(Monster* m);

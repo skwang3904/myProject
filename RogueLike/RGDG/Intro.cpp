@@ -133,7 +133,9 @@ void createPopPressAnyKey()
 
     fbo->bind(tex);
     t = createImage("assets/intro/introPressAnyKey.png");
+    setRGBA(0.5, 0.6, 0.4, 1);
     DRAWIMAGE(t, size);
+    setRGBA(1, 1, 1, 1);
     freeImage(t);
     fbo->unbind();
     

@@ -24,14 +24,15 @@ void loadGame()
 	{"assets/snd/bgm_IntroMusic.wav", true, 0.3f},
 	};
 
-#if 1
+#if 0
 	for (int i = 0; i < 11; i++)
 		ai[i].volume = 0.0f;
 #endif
 
 	loadAudio(ai, 11);
+	audioVolume(0.0f, 0.0f, SFX_NUM);
 
-#if 0
+#if 1
 	loadIntro();
 	gamestat = gamestat_intro;
 	audioPlay(AUDIO_INTRO);

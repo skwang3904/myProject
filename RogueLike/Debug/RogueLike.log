@@ -1,111 +1,36 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(459,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (TowerDefense.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  Proc.cpp
+  intro.cpp
 C:\Users\user\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(16,17): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 C:\Users\user\Documents\GitHub\myProject\RogueLike\lib\iFPS.h(18,25): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(141,16): warning C4101: 'k' :참조되지 않은 지역 변수입니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(294,74): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(294,42): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(541,38): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(541,26): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(547,20): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(547,10): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(546,46): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(546,26): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(571,40): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(571,28): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(574,4): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(580,23): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(580,13): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(579,49): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(579,29): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(687,38): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(687,26): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(690,2): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(679,9): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(679,6): warning C4101: 'i' :참조되지 않은 지역 변수입니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(796,39): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(796,27): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(800,3): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(817,39): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(817,27): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(821,3): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(840,39): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(840,27): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(844,3): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(869,38): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(869,26): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(873,2): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(780,9): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1005,40): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1005,28): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1015,37): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1015,27): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1015,15): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1014,33): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1020,5): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1036,38): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1036,26): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1041,2): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1166,73): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1166,36): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1201,38): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1201,26): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1231,20): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1232,40): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1194,9): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1283,6): warning C4101: 'i' :참조되지 않은 지역 변수입니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1343,40): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1343,28): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1349,4): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1363,33): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1363,24): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1367,3): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1321,21): warning C4101: 'text' :참조되지 않은 지역 변수입니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1447,21): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1447,11): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1446,47): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1446,27): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1585,48): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1585,31): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1589,2): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1612,40): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1612,28): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1615,4): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\Proc.cpp(1800,71): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-Weapon.obj : warning LNK4099: 'vc142.pdb' PDB를 'Weapon.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Tile.obj : warning LNK4099: 'vc142.pdb' PDB를 'Tile.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Projectile.obj : warning LNK4099: 'vc142.pdb' PDB를 'Projectile.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-ProcData.obj : warning LNK4099: 'vc142.pdb' PDB를 'ProcData.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-PlayerChar.obj : warning LNK4099: 'vc142.pdb' PDB를 'PlayerChar.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Monster.obj : warning LNK4099: 'vc142.pdb' PDB를 'Monster.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Menu.obj : warning LNK4099: 'vc142.pdb' PDB를 'Menu.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Map.obj : warning LNK4099: 'vc142.pdb' PDB를 'Map.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Loading.obj : warning LNK4099: 'vc142.pdb' PDB를 'Loading.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Item.obj : warning LNK4099: 'vc142.pdb' PDB를 'Item.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-intro.obj : warning LNK4099: 'vc142.pdb' PDB를 'intro.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\intro.cpp(132,41): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\intro.cpp(132,29): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\intro.cpp(136,29): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\intro.cpp(137,5): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\intro.cpp(124,12): warning C4101: 'j' :참조되지 않은 지역 변수입니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\intro.cpp(124,9): warning C4101: 'i' :참조되지 않은 지역 변수입니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\intro.cpp(171,13): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\intro.cpp(246,49): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\intro.cpp(246,37): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\intro.cpp(252,13): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\intro.cpp(258,34): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\intro.cpp(258,24): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\intro.cpp(257,41): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\intro.cpp(262,13): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\intro.cpp(356,13): warning C4390: ';': 제어된 빈 문이 있습니다. 이 문이 필요합니까?
+C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\intro.cpp(415,49): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\intro.cpp(415,37): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\intro.cpp(421,13): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\intro.cpp(427,31): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\intro.cpp(427,22): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\intro.cpp(426,41): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\intro.cpp(431,13): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\user\Documents\GitHub\myProject\RogueLike\RGDG\intro.cpp(530,13): warning C4390: ';': 제어된 빈 문이 있습니다. 이 문이 필요합니까?
 glew.obj : warning LNK4099: 'vc142.pdb' PDB를 'glew.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Game.obj : warning LNK4099: 'vc142.pdb' PDB를 'Game.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Effect.obj : warning LNK4099: 'vc142.pdb' PDB를 'Effect.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Common.obj : warning LNK4099: 'vc142.pdb' PDB를 'Common.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-AppRogueLike.obj : warning LNK4099: 'vc142.pdb' PDB를 'AppRogueLike.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-rgArray.obj : warning LNK4099: 'vc142.pdb' PDB를 'rgArray.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iStrTex.obj : warning LNK4099: 'vc142.pdb' PDB를 'iStrTex.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iString.obj : warning LNK4099: 'vc142.pdb' PDB를 'iString.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iStd.obj : warning LNK4099: 'vc142.pdb' PDB를 'iStd.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
 iSort.obj : warning LNK4099: 'vc142.pdb' PDB를 'iSort.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
 iSize.obj : warning LNK4099: 'vc142.pdb' PDB를 'iSize.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iShortestPath.obj : warning LNK4099: 'vc142.pdb' PDB를 'iShortestPath.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iShaderToy.obj : warning LNK4099: 'vc142.pdb' PDB를 'iShaderToy.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
 iRect.obj : warning LNK4099: 'vc142.pdb' PDB를 'iRect.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iPopup.obj : warning LNK4099: 'vc142.pdb' PDB를 'iPopup.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iPoint.obj : warning LNK4099: 'vc142.pdb' PDB를 'iPoint.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iOpenGL.obj : warning LNK4099: 'vc142.pdb' PDB를 'iOpenGL.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iOpenAL.obj : warning LNK4099: 'vc142.pdb' PDB를 'iOpenAL.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
 iMatrix.obj : warning LNK4099: 'vc142.pdb' PDB를 'iMatrix.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iImage.obj : warning LNK4099: 'vc142.pdb' PDB를 'iImage.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iGraphics.obj : warning LNK4099: 'vc142.pdb' PDB를 'iGraphics.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
 iFPS.obj : warning LNK4099: 'vc142.pdb' PDB를 'iFPS.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-iDrawNumber.obj : warning LNK4099: 'vc142.pdb' PDB를 'iDrawNumber.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
 iColor.obj : warning LNK4099: 'vc142.pdb' PDB를 'iColor.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
 iArray.obj : warning LNK4099: 'vc142.pdb' PDB를 'iArray.obj' 또는 'C:\Users\user\Documents\GitHub\myProject\Debug\vc142.pdb'에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
   RogueLike.vcxproj -> C:\Users\user\Documents\GitHub\myProject\Debug\RogueLike.exe

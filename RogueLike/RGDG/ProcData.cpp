@@ -35,7 +35,7 @@ MonsterInfo monsterInfo[MT_max] = {
 
 		2, 
 		2, 
-		{0, 1}
+		{0, 2}
 	},
 	{	//GOLEM_ELETE
 		100.0f,		20.0f,
@@ -67,7 +67,7 @@ MonsterInfo monsterInfo[MT_max] = {
 
 		2,
 		2,
-		{0, 1}
+		{0, 3}
 	},
 };
 
@@ -198,16 +198,22 @@ WeaponImageInfo weaponImageInfo[WEAPON_IMG_COUNT] = {
 //----------------------------------------------------------------
 
 ItemInfo itemInfo[ITEM_KINDS] = {
+	{ 1.0f, 0.5f},
+	{ 1.0f, 0.5f},
 	{ 5.0f, 0.5f},
 	{ 10.0f, 0.5f},
 	{ 20.0f, 0.5f},
 };
 
-ItemImageInfo itemImageInfo[ITEM_IMG_COUNT] = {
+ItemImageInfo itemImageInfo[ITEM_KINDS] = {
+	{ "assets/item/coin_gold.png",
+		4, 0.08f, iSizeMake(64, 64) * 1.0f },
+	{ "assets/item/gemBlue.png",
+		1, 0.08f, iSizeMake(64, 64) * 1.0f },
 	{ "assets/item/PotionSmall.png",
-		1, 0.08f, iSizeMake(64, 64) },
+		1, 0.08f, iSizeMake(64, 64) * 0.7f },
 	{ "assets/item/PotionMiddle.png",
-		1, 0.08f, iSizeMake(64, 64) },
+		1, 0.08f, iSizeMake(64, 64) * 0.7f },
 	{ "assets/item/PotionLarge.png",
-		1, 0.08f, iSizeMake(64, 64) },
+		1, 0.08f, iSizeMake(64, 64) * 0.7f },
 };

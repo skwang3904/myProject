@@ -10,6 +10,7 @@ void loadCursor();
 void freeCursor();
 void drawCursor(float dt);
 bool updateCursor(bool inClient);
+void keyCursor(iKeyState stat);
 
 extern bool isFullscreen;
 void goFullscreen();

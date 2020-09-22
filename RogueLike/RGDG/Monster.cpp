@@ -115,14 +115,15 @@ void Monster::drawHPbar(float dt, iPoint p)
 	if (showHpDt < _showHpDt)
 	{
 		showHpDt += dt;
-
+		float w = img->tex->width * 0.5f;
+		p.x += w * 0.5f;
 		float h = linear(min(showHpDt / _showHpDt * 2.0f,1.0f), prevHp, hp);
 		setRGBA(0, 0, 0, 1);
-		fillRect(p.x, p.y + 30, img->tex->width, 20);
+		fillRect(p.x, p.y + 30, w, 20);
 		setRGBA(1, 0, 0, 1);
-		fillRect(p.x, p.y + 30, img->tex->width * (prevHp / _hp), 20);
+		fillRect(p.x, p.y + 30, w * (prevHp / _hp), 20);
 		setRGBA(0.5f, 1, 0, 1);
-		fillRect(p.x, p.y + 30, img->tex->width * (h / _hp), 20);
+		fillRect(p.x, p.y + 30, w * (h / _hp), 20);
 		setRGBA(1, 1, 1, 1);
 
 		if (showHpDt >= _showHpDt)
@@ -213,7 +214,11 @@ GolemNomal::GolemNomal(int index, int8 mapNum, iPoint pos) : Monster(index, mapN
 	itemDropNum = mi->itemDropNum;
 	itemTypeKindNum = mi->itemTypeKindNum;
 	for (i = 0; i < itemTypeKindNum; i++)
+#if 0
 		itemTypeKind[i] = mi->itemTypeKind[i];
+#else
+		itemTypeKind[i] = random() % item_max;
+#endif
 
 	distance = 0.0f;
 	reverse = REVERSE_NONE;
@@ -287,6 +292,7 @@ void GolemNomal::paint(float dt, iPoint off)
 	iPoint p = position + off;
 	img->paint(dt, p);
 
+	p.y -= img->tex->height * 0.3f;
 	drawHPbar(dt, p);
 
 	if (cbMethod)
@@ -307,9 +313,9 @@ void GolemNomal::paint(float dt, iPoint off)
 void GolemNomal::drawShadow(float dt, iPoint off)
 {
 	iSize size = iSizeMake(img->tex->width, img->tex->height);
-	iPoint p = position + iPointMake(size.width / 2.0f, size.height * 0.6f) + off;
+	iPoint p = position + iPointMake(size.width / 2.0f, size.height * 0.56f) + off;
 	setRGBA(0, 0, 0, 0.3f);
-	fillEllipse(p.x, p.y, size.width * 0.5f, size.height * 0.25f);
+	fillEllipse(p.x, p.y, size.width * 0.3f, size.height * 0.15f);
 	setRGBA(1, 1, 1, 1);
 }
 
@@ -423,7 +429,7 @@ void GolemNomal::actionDeath(float dt)
 	{
 		img->startAnimation();
 		cbMethod = &Monster::cbMonsterSetAliveFalse;
-		dropMonsterItem(this);
+		Item::dropMonsterItem(this);
 	}
 }
 
@@ -531,7 +537,11 @@ GolemBoss::GolemBoss(int index, int8 mapNum, iPoint pos) : Monster(index, mapNum
 	itemDropNum = mi->itemDropNum;
 	itemTypeKindNum = mi->itemTypeKindNum;
 	for (i = 0; i < itemTypeKindNum; i++)
+#if 0
 		itemTypeKind[i] = mi->itemTypeKind[i];
+#else
+		itemTypeKind[i] = random() % item_max;
+#endif
 
 	distance = 0.0f;
 	reverse = REVERSE_NONE;
@@ -611,6 +621,7 @@ void GolemBoss::paint(float dt, iPoint off)
 	iPoint p = position + off;
 	img->paint(dt, p);
 
+	p.y -= img->tex->height * 0.5f;
 	drawHPbar(dt, p);
 
 	if (cbMethod)
@@ -633,7 +644,7 @@ void GolemBoss::drawShadow(float dt, iPoint off)
 	iSize size = iSizeMake(img->tex->width, img->tex->height);
 	iPoint p = position + iPointMake(size.width / 2.0f, size.height * 0.6f) + off;
 	setRGBA(0, 0, 0, 0.3f);
-	fillEllipse(p.x, p.y, size.width * 0.5f, size.height * 0.25f);
+	fillEllipse(p.x, p.y, size.width * 0.4f, size.height * 0.2f);
 	setRGBA(1, 1, 1, 1);
 }
 
@@ -745,7 +756,7 @@ void GolemBoss::actionDeath(float dt)
 		img->startAnimation();
 		cbMethod = &Monster::cbMonsterSetAliveFalse;
 		MapObjectNextDoor::setNextDoor(this);
-		dropMonsterItem(this);
+		Item::dropMonsterItem(this);
 	}
 }
 
@@ -844,8 +855,9 @@ void drawMonster(float dt)
 			i--;
 			continue;
 		}
+
 		objects[procSort->sdNum] = m;
-		procSort->add(m->position.y + m->img->tex->height/2.0f);
+		procSort->add(m->position.y + m->img->tex->height * 0.6f);
 	}
 #else
 	for (int i = 0; i < monsterNum; i++)

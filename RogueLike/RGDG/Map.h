@@ -22,12 +22,9 @@ int wallCheck(Object* obj, iPoint mp);
 //-----------------------------------------------------------------------------
 // MapObject
 // 문, 밟으면 피해입는 함정, 부숴지고 아이템나오는 상자
-#if 0
-index
-0 : Door
-1 : 
-2 :
-#endif
+
+class MapObject;
+typedef void (*MapObject_Method)(MapObject* obj, float dt);
 class MapObject : public Object
 {
 public:
@@ -40,6 +37,8 @@ public:
 
 public:
 	//type = index로 구분
+
+	MapObject_Method method;
 	int value;
 
 	int tileNumX;
@@ -51,6 +50,7 @@ extern MapObject** mapObj;
 extern int mapObjNum;
 extern MapObject** mapObjBroken;
 extern int mapObjBrokenNum;
+
 //-----------------------------------------------------------------------------
 
 class MapObjectDoor : public MapObject

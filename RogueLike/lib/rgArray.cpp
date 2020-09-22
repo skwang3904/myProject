@@ -171,29 +171,26 @@ void rgArray::removeAll()
 	currIndex = 0;
 }
 
-void* rgArray::objectAtIndex(int index)
+void* rgArray::objectAtIndex(int index, bool setCurr)
 {
 	if (count == 1)
 		return curr->data;
 
-	if (index < 0 || index > count - 1)
-	{
-		printf("weapon index range error\n");
-		return;
-	}
-
+	if (index < 0)	index = count - 1;
+	else if (index > count - 1)	index = 0;
+	
 	rgxArray* a = head->next;
 	for (int i = 0; i < count; i++)
 	{
 		if (i == index)
 		{
-			currIndex = i;
+			if(setCurr)
+				currIndex = i;
 			//curr = a;
 			return a->data;
 		}
 		a = a->next;
 	}
-
 }
 
 void rgArray::printArray(PRINT_METHOD b)

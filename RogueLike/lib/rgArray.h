@@ -23,7 +23,7 @@ public:
 	void remove(int index);
 	void removeAll();
 
-	void* objectAtIndex(int index);
+	void* objectAtIndex(int index, bool setCurr = true);
 	void printArray(PRINT_METHOD b = 0);
 public:
 	rgxArray* head;

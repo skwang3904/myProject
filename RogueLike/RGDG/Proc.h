@@ -186,6 +186,7 @@ bool keyPopMiniMap(iKeyState stat, iPoint point);
 void createPopInven();
 void freePopInven();
 void showPopInven(bool show);
+void drawPopInvenRefreshWeapon();
 void drawPopInven(float dt);
 bool keyPopInven(iKeyState stat, iPoint point);
 

@@ -272,11 +272,15 @@ void PlayerChar::setNewStage(int index, int8 mapNum, iPoint pos)
 void PlayerChar::addWeapon(void* weapon)
 {
 	arrayWeapon->addObject(weapon);
+
+	drawPopInvenRefreshWeapon();
 }
 
 void PlayerChar::removeCurrWeapon()
 {
 	arrayWeapon->remove(arrayWeapon->currIndex);
+
+	drawPopInvenRefreshWeapon();
 }
 
 void PlayerChar::removeWeapon(int index)
@@ -288,7 +292,8 @@ void PlayerChar::selectWeapon(int index)
 {
 	arrayWeapon->objectAtIndex(index);
 
-	Weapon* w = (Weapon*)player->arrayWeapon->objectAtIndex(player->currWeaponIndex());
+#if 0
+	Weapon* w = (Weapon*)player->arrayWeapon->objectAtIndex(player->currWeaponIndex(), false);
 	Texture* t = w->img->tex;
 	iSize size = iSizeMake(imgProcButtonBtn[1]->tex->width * 0.7f, imgProcButtonBtn[1]->tex->height * 0.7f);
 	float r = min(size.width / t->width, size.height / t->height);
@@ -300,6 +305,8 @@ void PlayerChar::selectWeapon(int index)
 		VCENTER | HCENTER, r, r,
 		2, 0, REVERSE_HEIGHT);
 	fbo->unbind();
+#endif
+	drawPopInvenRefreshWeapon();
 }
 
 int PlayerChar::currWeaponIndex()

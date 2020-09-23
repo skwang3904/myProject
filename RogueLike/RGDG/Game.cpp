@@ -13,15 +13,15 @@ void loadGame()
 	AudioInfo ai[11] = {
 	{"assets/snd/sfx_HammerAttack.wav", false, 1.0f},
 	{"assets/snd/sfx_SpearAttack.wav", false, 1.0f},
-	{"assets/snd/sfx_CyclonAttack.wav", true, 1.0f},
+	{"assets/snd/sfx_CyclonAttack.wav", false, 1.0f},
 	{"assets/snd/sfx_EnemyHit.wav", false, 1.0f},
 	{"assets/snd/sfx_EnemyDeath.wav", false, 1.0f},
 	{"assets/snd/sfx_NextStageMove.wav", false, 0.3f},
 	{"assets/snd/sfx_ItemPickUP.wav", false, 1.0f},
 	{"assets/snd/sfx_Menu MouseOver.wav", false, 0.7f},
 	{"assets/snd/sfx_Menu Selection.wav", false, 0.7f},
-	{"assets/snd/bgm_gameMusic.wav", true, 0.3f},
-	{"assets/snd/bgm_IntroMusic.wav", true, 0.3f},
+	{"assets/snd/bgm_gameMusic.wav", true, 0.2f},
+	{"assets/snd/bgm_IntroMusic.wav", true, 0.2f},
 	};
 
 #if 0
@@ -30,7 +30,7 @@ void loadGame()
 #endif
 
 	loadAudio(ai, 11);
-	audioVolume(0.0f, 0.0f, SFX_NUM);
+	//audioVolume(0.0f, 0.0f, SFX_NUM);
 
 #if 1
 	loadIntro();

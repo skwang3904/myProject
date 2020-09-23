@@ -123,8 +123,6 @@ PlayerChar::~PlayerChar()
 
 void PlayerChar::paint(float dt, iPoint off)
 {
-	drawShadow(dt, off);
-
 	uint8 reverse = img->reverse;
 	iPoint mp = iPointZero;
 	uint32 key = getKeyStat();
@@ -208,8 +206,7 @@ void PlayerChar::paint(float dt, iPoint off)
 	mp = vector * (moveSpeed * dt);
 	wallCheck(this, mp);
 	
-	iPoint rp = position + half * 0.5f;
-	//touchRect = iRectMake(rp.x, rp.y, half.x, half.y);
+	drawShadow(dt, off);
 
 	//evasion
 	iPoint p = position + DRAW_OFF;

@@ -835,7 +835,7 @@ MapObjectItemBox::MapObjectItemBox(int index, int8 mapNum, iPoint pos, int tileN
 	img = imgMapObjItemBox->copy();
 	img->lastFrame = true;
 	img->_repeatNum = 1;
-	img->_aniDt = 1.0f;
+	img->_aniDt = 0.5f;
 	this->img = img;
 
 	alive = true;
@@ -990,7 +990,8 @@ void drawMap(float dt)
 	}
 	setRGBA(1, 1, 1, 1);
 
-	mapObjNextDoor->paint(dt, DRAW_OFF);
+	if(mapObjNextDoor->mapNumber == player->mapNumber)
+		mapObjNextDoor->paint(dt, DRAW_OFF);
 
 #if SORTING
 	for (i = 0; i < mapObjNum; i++)

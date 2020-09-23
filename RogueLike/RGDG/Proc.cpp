@@ -43,8 +43,6 @@ void loadProc()
 	showPopState(true);
 	showPopProcButton(true);
 	showPopMiniMap(true);
-
-	audioPlay(AUDIO_GameMusic);
 }
 
 void freeProc()
@@ -85,25 +83,25 @@ void drawProc(float dt)
 		dt = 0.0f;
 
 	float pass_dt = dt;
-	if (passMap->passDt < passMap->_passDt ||
-		passMap->nextDt < passMap->_nextDt)
+	if (passMap->passDt < PASS_MAP_DT ||
+		passMap->nextDt < PASS_STAGE_DT)
 		pass_dt = 0.0f;
 
 	drawMap(pass_dt);
 	drawPlayerChar(pass_dt);
 	drawMonster(pass_dt);
 	drawWeapon(pass_dt);
-	drawItem(pass_dt);
 #if SORTING
 	procSort->update();
 	for (int i = 0; i < procSort->sdNum; i++)
 	{
 		Object* obj = objects[procSort->get(i)];
 		if(obj->mapNumber == player->mapNumber)
-			obj->paint(dt, DRAW_OFF);
+			obj->paint(pass_dt, DRAW_OFF);
 	}
 
 #endif
+	drawItem(pass_dt);
 	drawProjectile(pass_dt);
 
 	passMap->update(dt);
@@ -114,15 +112,13 @@ void drawProc(float dt)
 	drawPopInven(dt);
 	drawPopStageNum(dt);
 	drawPopProcMenu(pop_dt);
-	drawPopGameOver(pop_dt);
-
-	//numberFont->drawFont()
 
 	if (passMap->nextStage(dt))
 	{
 		drawPopStageLoading(dt);
 		return;
 	}
+	drawPopGameOver(pop_dt);
 }
 
 void keyProc(iKeyState stat, iPoint point)
@@ -168,6 +164,9 @@ void Stage::create()
 		}
 	}
 
+	//monster
+	setMonsterData(actMap, TILE_CONNECT_NUM);
+
 	//player
 	setPlayerData(actMap, TILE_CONNECT_NUM);
 
@@ -179,8 +178,6 @@ void Stage::create()
 	pd->_attackSpeed = pi->_attackSpeed;
 	pd->moveSpeed = pi->moveSpeed;
 
-	//monster
-	setMonsterData(actMap, TILE_CONNECT_NUM);
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -225,6 +222,9 @@ void Stage::setStageData()
 		}
 	}
 
+	// monsterInfo 
+	setMonsterData(actMap, TILE_CONNECT_NUM);
+
 	// playerInfo
 	setPlayerData(actMap, TILE_CONNECT_NUM);
 
@@ -237,9 +237,6 @@ void Stage::setStageData()
 	pd->attackSpeed = p->attackSpeed;
 	pd->_attackSpeed = p->_attackSpeed;
 	pd->moveSpeed = p->moveSpeed;
-
-	// monsterInfo 
-	setMonsterData(actMap, TILE_CONNECT_NUM);
 
 	// weaponInfo
 	num = weaponNum;
@@ -256,10 +253,18 @@ void Stage::setPlayerData(int* actMap, int connectNum)
 {
 	int* am = actMap;
 	int cnNum = connectNum;
-
+	int n = 0;
 	PlayerData* pd = &playerData;
 	pd->index = 0;
-	pd->mapNum = am[random() % cnNum];
+	while (1)
+	{
+		n = am[random() % cnNum];
+		if (maps[n]->state == MapType_Nomal)
+		{
+			pd->mapNum = n;
+			break;
+		}
+	}
 	pd->position = iPointMake(TILE_NUM_X * TILE_Width / 2.0f,
 		TILE_NUM_Y * TILE_Height / 2.0f);
 }
@@ -390,7 +395,7 @@ void PassMap::pass(int8 mapNum)
 
 void PassMap::update(float dt)
 {
-	if (passDt == _passDt)
+	if (passDt == PASS_MAP_DT)
 		return;
 
 	MapTile* prev = maps[prevMapNumber];
@@ -407,9 +412,9 @@ void PassMap::update(float dt)
 	}
 
 	passDt += dt;
-	if (passDt > _passDt)
+	if (passDt > PASS_MAP_DT)
 	{
-		passDt = _passDt;
+		passDt = PASS_MAP_DT;
 		prevMapNumber = mapNumber;
 
 #if 0
@@ -418,18 +423,17 @@ void PassMap::update(float dt)
 #endif 
 	}
 
-	float d = passDt / _passDt;
+	float d = passDt / PASS_MAP_DT;
 	iPoint pp = linear(d, curr->tileOff, prev->tileOff);
 	iPoint cp = linear(d, p, curr->tileOff);
 
 	setRGBA(0.3f, 0.3f, 0.3f, 1);
-	if (passDt < _passDt)
+	if (passDt < PASS_MAP_DT)
 		prev->img->paint(dt, pp + DRAW_OFF);
 	curr->img->paint(dt, cp + DRAW_OFF);
 	setRGBA(1, 1, 1, 1);
 }
 
-extern bool runWnd;
 void PassMap::startNextStage()
 {
 	st->stageNum++;
@@ -439,25 +443,23 @@ void PassMap::startNextStage()
 	}
 	else
 	{
-		MessageBox(NULL, TEXT("GAME CLEAR"), TEXT("Congratulation"), MB_OK);
-		runWnd = false;
+		//showPopGameOver(true);
 		audioStop(AUDIO_GameMusic);
 	}
 }
 
 bool PassMap::nextStage(float dt)
 {
-	if (nextDt == _nextDt)
+	if (nextDt == PASS_STAGE_DT)
 		return false;
 
-	float nd = _nextDt / 2.0f;
 	float d = 0.0f;
-	if (nextDt < nd)
+	if (nextDt < 1.0f)
 	{
 		nextDt += dt;
-		if (nextDt > nd)
+		if (nextDt > 1.0f)
 		{
-			nextDt = nd;
+			nextDt = 1.0f;
 			popDt = 0.0f;
 			createMap();
 			st->setStageData();
@@ -469,9 +471,9 @@ bool PassMap::nextStage(float dt)
 			showPopStageLoading(true);
 		}
 
-		d = 1.0f - nextDt / nd;
+		d = 1.0f - nextDt / 1.0f;
 	}
-	else if (nextDt == nd)
+	else if (nextDt == 1.0f)
 	{
 		if (popDt < _popDt)
 		{
@@ -490,19 +492,19 @@ bool PassMap::nextStage(float dt)
 		else if (popDt == _popDt)
 		{
 			if (popStageLoading->bShow == false)
-				nextDt += 0.00001f;
+				nextDt += 0.0001f;
 		}
 	}
-	else if (nextDt < _nextDt)
+	else if (nextDt < PASS_STAGE_DT)
 	{
 		nextDt += dt;
-		if (nextDt > _nextDt)
+		if (nextDt > PASS_STAGE_DT)
 		{
-			nextDt = _nextDt;
+			nextDt = PASS_STAGE_DT;
 			init();
 			showPopStageNum(true);
 		}
-		d = nextDt / nd - 1.0f;
+		d = nextDt / 1.0f - 1.0f;
 	}
 
 	setRGBA(0, 0, 0, 1);
@@ -692,7 +694,9 @@ void createPopStageNum()
 	tex = createTexture(size.width, size.height);
 	fbo->bind(tex);
 	t = createImage("assets/PlayerUI/StageNumBanner.png");
+	setRGBA(1, 1, 1, 0.8f);
 	DRAWIMAGE(t, size);
+	setRGBA(1, 1, 1, 1);
 	freeImage(t);
 	fbo->unbind();
 
@@ -1159,15 +1163,12 @@ bool keyPopProcButton(iKeyState stat, iPoint point)
 	case iKeyStateBegan:
 	{
 		i = popProcButton->selected;
-		if (i == -1)
-		{
-			audioPlay(AUDIO_MenuSelected);
-			break;
-		}
+		if (i == -1) break;
 
 		if (i == 0)
 		{
 			showPopProcMenu(true);
+			pauseAudio();
 		}
 
 		audioPlay(AUDIO_MenuSelected);
@@ -1750,6 +1751,7 @@ bool keyPopProcMenu(iKeyState stat, iPoint point)
 		{
 			// 재개
 			showPopProcMenu(false);
+			resumeAudio();
 		}
 		else if (i == 2)
 		{
@@ -1880,6 +1882,7 @@ void freePopGameOver()
 void showPopGameOver(bool show)
 {
 	popGameOver->show(show);
+	pauseAudio();
 }
 
 void drawPopGameOverBefore(iPopup* me, iPoint p, float dt)
@@ -1907,8 +1910,8 @@ bool keyPopGameOver(iKeyState stat, iPoint point)
 	if (popGameOver->bShow == false)
 		return false;
 
-	//if(popGameOver->stat != iPopupStatProc)
-	//	return false;
+	if(popGameOver->stat != iPopupStatProc)
+		return false;
 
 	int i, j = -1;
 	switch (stat)
@@ -1916,11 +1919,7 @@ bool keyPopGameOver(iKeyState stat, iPoint point)
 	case iKeyStateBegan:
 	{
 		i = popGameOver->selected;
-		if (i == -1)
-		{
-			audioPlay(AUDIO_MenuSelected);
-			break;
-		}
+		if (i == -1)break;
 
 		if (i == 0)
 		{
@@ -1950,7 +1949,7 @@ bool keyPopGameOver(iKeyState stat, iPoint point)
 			}
 		}
 
-		if (popProcMenu->selected != j && j != -1)
+		if (popGameOver->selected != j && j != -1)
 			audioPlay(AUDIO_MenuMouseOver);
 
 		popGameOver->selected = j;

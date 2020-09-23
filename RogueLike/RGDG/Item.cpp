@@ -103,12 +103,17 @@ void Item::paint(float dt, iPoint off)
 	fillRect(rt);
 	setRGBA(1, 1, 1, 1);
 #endif
-
+	drawShadow(dt, off);
 	img->paint(dt, p + off);
 }
 
 void Item::drawShadow(float dt, iPoint off)
 {
+	iSize size = iSizeMake(img->tex->width, img->tex->height);
+	iPoint p = position + iPointMake(size.width / 2.0f, size.height) + off;
+	setRGBA(0, 0, 0, 0.3f);
+	fillEllipse(p.x, p.y, size.width, size.height * 0.5f);
+	setRGBA(1, 1, 1, 1);
 }
 
 void Item::action(Object* obj)
@@ -255,7 +260,7 @@ void freeItem()
 
 void drawItem(float dt)
 {
-#if SORTING
+#if 0 //SORTING
 	for (int i = 0; i < itemNum; i++)
 	{
 		Item* it = item[i];

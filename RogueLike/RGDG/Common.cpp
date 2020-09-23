@@ -43,6 +43,7 @@ iImage** imgOption;
 
 void drawPopOptionClose(iPopup* me);
 void drawPopOptionBefore(iPopup* me, iPoint p, float dt);
+void setOptionSound();
 
 void createPopOption()
 {
@@ -91,8 +92,8 @@ void createPopOption()
 	const char* strBtn[OPTION_BUTTON_NUM] = {
 		"assets/setting/Accept%d.png",
 		"assets/setting/Close%d.png",
-		"BGM img",
-		"SFX img",
+		"assets/setting/controler.png",
+		"assets/setting/controler.png",
 		"fullscreenBtn img",
 	};
 
@@ -124,8 +125,11 @@ void createPopOption()
 			else if(i < 4)
 			{
 				// bgm:sfx bar
-				if (j == 0) fbo->clear(1, 0, 1, 1);
-				else		fbo->clear(0, 1, 0, 1);
+				t = createImage(strBtn[i]);
+				if (j == 0) setRGBA(1, 0.3f, 0.5f, 1);
+				else setRGBA(1, 1, 1, 1);
+				DRAWIMAGE(t, size);
+				freeImage(t);
 			}
 			else
 			{
@@ -195,6 +199,9 @@ void createPopOption()
 	pop->methodDrawBefore = drawPopOptionBefore;
 	pop->_showDt = 0.5f;
 	popOption = pop;
+
+	drawPopOptionClose(NULL);
+	setOptionSound();
 }
 
 void freePopOption()
@@ -257,8 +264,8 @@ void optionSfx(iPoint point)
 
 void setOptionSound()
 {
-	float bgm = (imgOption[2]->position.x - 50.0f) / 570.0f;
-	float sfx = (imgOption[3]->position.x - 50.0f) / 570.0f;
+	float bgm = (imgOption[2]->position.x - 50.0f) / 520.0f;
+	float sfx = (imgOption[3]->position.x - 50.0f) / 520.0f;
 
 	audioVolume(bgm, sfx, SFX_NUM);
 }

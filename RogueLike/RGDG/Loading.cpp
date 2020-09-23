@@ -1,5 +1,7 @@
 #include "Loading.h"
 
+#include "Common.h"
+
 int8 gamestat, _gamestat;
 METHOD_LOADING methodLoadingFree;
 METHOD_LOADING methodLoadingLoad;
@@ -83,6 +85,12 @@ void drawLoading(float dt)
 			if (loadingDt > _loadingDt)
 			{
 				loadingDt = _loadingDt;
+				switch (gamestat)
+				{
+				case gamestat_intro: audioPlay(AUDIO_INTRO);	break;
+				case gamestat_menu:	break;
+				case gamestat_proc: audioPlay(AUDIO_GameMusic);		break;
+				}
 			}
 		}
 		alpha = 1.0f - (loadingDt - halfDt) / halfDt;

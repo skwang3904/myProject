@@ -13,7 +13,6 @@ void loadIntro()
 
     showPopPressAnyKey(true);
 
-    audioPlay(AUDIO_INTRO);
 }
 
 void freeIntro()

@@ -33,7 +33,6 @@ Weapon::~Weapon()
 
 void Weapon::paint(float dt, iPoint off)
 {
-	drawShadow(dt, off);
 #if 0
 	if (mapNumber != player->mapNumber)
 		return;
@@ -76,6 +75,7 @@ void Weapon::paint(float dt, iPoint off)
 #endif
 	}
 
+	drawShadow(dt, off);
 	img->paint(dt, p + drawPos + off);
 }
 
@@ -184,6 +184,7 @@ void Weapon::rootWeapon(iPoint pos)
 {
 	// drop test
 	position = pos;
+	mapNumber = player->mapNumber;
 	float w = img->tex->width;
 	float h = img->tex->height;
 	touchRect = iRectMake(position.x - w / 2.0f, position.y - h / 2.0f, w, h);

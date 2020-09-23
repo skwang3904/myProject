@@ -4,7 +4,7 @@
 
 //----------------------------------------------------------------------------
 // macro
-#define SHOW_TOUCHRECT 1
+#define SHOW_TOUCHRECT 0
 
 /* Sound */
 #define SFX_NUM 9

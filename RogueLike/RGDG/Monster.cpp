@@ -241,8 +241,6 @@ void GolemNomal::paint(float dt, iPoint off)
 	if (actionDt < _actionDt)
 		actionDt += dt;
 
-	drawShadow(dt, off);
-
 	if (hp <= 0.0f)
 	{
 		state = monster_death;
@@ -286,6 +284,8 @@ void GolemNomal::paint(float dt, iPoint off)
 	}
 
 	(this->*stateMethod[state])(dt);
+
+	drawShadow(dt, off);
 
 	//touchRect = iRectMake(position.x, position.y, img->tex->width, img->tex->height);
 	img->reverse = reverse;
@@ -560,8 +560,6 @@ void GolemBoss::paint(float dt, iPoint off)
 	//if (mapNumber != player->mapNumber)
 		//return;
 
-	drawShadow(dt, off);
-
 	if (state < monster_meleeAttack)
 	{
 		float angle = iPointAngle(vector, iPointZero, iPointMake(1, 0));
@@ -616,6 +614,8 @@ void GolemBoss::paint(float dt, iPoint off)
 	}
 
 	(this->*stateMethod[state])(dt);
+
+	drawShadow(dt, off);
 
 	//img->reverse = reverse;
 	iPoint p = position + off;

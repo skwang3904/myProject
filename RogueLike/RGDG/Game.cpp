@@ -20,8 +20,8 @@ void loadGame()
 	{"assets/snd/sfx_ItemPickUP.wav", false, 1.0f},
 	{"assets/snd/sfx_Menu MouseOver.wav", false, 0.7f},
 	{"assets/snd/sfx_Menu Selection.wav", false, 0.7f},
-	{"assets/snd/bgm_gameMusic.wav", true, 0.2f},
-	{"assets/snd/bgm_IntroMusic.wav", true, 0.2f},
+	{"assets/snd/bgm_gameMusic.wav", true, 0.0001f},
+	{"assets/snd/bgm_IntroMusic.wav", true, 0.0001f},
 	};
 
 #if 0
